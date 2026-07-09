@@ -38,7 +38,16 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.99.0
         version: 5.99.0(react@19.2.5)
+      '@tiptap/core':
+        specifier: ^3.22.3
+        version: 3.22.3(@tiptap/pm@3.22.3)
+      '@tiptap/extension-bold':
+        specifier: ^3.22.3
+        version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
       '@tiptap/extension-image':
+        specifier: ^3.22.3
+        version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
+      '@tiptap/extension-italic':
         specifier: ^3.22.3
         version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
       '@tiptap/extension-link':
@@ -47,6 +56,12 @@ importers:
       '@tiptap/extension-placeholder':
         specifier: ^3.22.3
         version: 3.22.3(@tiptap/extensions@3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))(@tiptap/pm@3.22.3))
+      '@tiptap/extension-strike':
+        specifier: ^3.22.3
+        version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
+      '@tiptap/extension-underline':
+        specifier: ^3.22.3
+        version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
       '@tiptap/pm':
         specifier: ^3.22.3
         version: 3.22.3
