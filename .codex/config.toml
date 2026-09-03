@@ -1,0 +1,6 @@
+# Shared production database: keep the persistent connection project-scoped,
+# read-only, and approval-gated. A separate temporary write connection may be
+# configured only after a verified backup for an approved migration.
+[mcp_servers.supabase-genesinova]
+url = "https://mcp.supabase.com/mcp?project_ref=hievmwwctjjlhmssoxsu&read_only=true&features=database,debugging,docs"
+default_tools_approval_mode = "prompt"
