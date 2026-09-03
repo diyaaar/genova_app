@@ -253,6 +253,26 @@ async function clearRuntimeDriveFileCache() {
   return { removedCount: keys.length };
 }
 
+async function clearAllProtectedDriveFileCaches() {
+  const [offlineFileCache, runtimeFileCache] = await Promise.all([
+    caches.open(OFFLINE_FILE_CACHE),
+    caches.open(RUNTIME_FILE_CACHE),
+  ]);
+  const [offlineKeys, runtimeKeys] = await Promise.all([
+    offlineFileCache.keys(),
+    runtimeFileCache.keys(),
+  ]);
+
+  await Promise.all([
+    caches.delete(OFFLINE_FILE_CACHE),
+    caches.delete(OFFLINE_META_CACHE),
+    caches.delete(RUNTIME_FILE_CACHE),
+    caches.delete(RUNTIME_META_CACHE),
+  ]);
+
+  return { removedCount: offlineKeys.length + runtimeKeys.length };
+}
+
 async function cacheSongFilesForOffline(payload) {
   const songId = typeof payload?.songId === 'string' ? payload.songId : '';
   if (!songId) {
@@ -402,6 +422,19 @@ async function handleServiceWorkerMessage(event) {
       postMessageToPort(replyPort, {
         ok: false,
         error: error instanceof Error ? error.message : 'Runtime dosya önbelleği temizlenemedi.',
+      });
+    }
+    return;
+  }
+
+  if (message.type === 'PROTECTED_DRIVE_CACHE_CLEAR_ALL') {
+    try {
+      const result = await clearAllProtectedDriveFileCaches();
+      postMessageToPort(replyPort, { ok: true, payload: result });
+    } catch (error) {
+      postMessageToPort(replyPort, {
+        ok: false,
+        error: error instanceof Error ? error.message : 'Korumalı dosya önbellekleri temizlenemedi.',
       });
     }
   }

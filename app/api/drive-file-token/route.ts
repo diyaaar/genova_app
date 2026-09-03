@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { authorizeDriveFileAccess } from '@/lib/server/drive-file-access';
+import { isActiveDriveFileContent, makeActiveContentRejectedResponse } from '@/lib/server/drive-file-content';
 import { createDriveFileToken } from '@/lib/server/drive-file-token';
 import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
@@ -24,6 +25,10 @@ export async function POST(request: Request) {
     if (!authorizedFile) {
       console.warn(`[DRIVE_FILE_TOKEN] Access denied for file ${body.driveFileId}, user ${user.id}`);
       return new NextResponse('Bu dosyaya erişim yetkiniz yok.', { status: 403 });
+    }
+
+    if (isActiveDriveFileContent(authorizedFile)) {
+      return makeActiveContentRejectedResponse();
     }
 
     const { token, expiresAt } = createDriveFileToken(authorizedFile, DRIVE_FILE_TOKEN_TTL_MS);

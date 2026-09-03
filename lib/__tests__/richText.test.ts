@@ -20,6 +20,16 @@ describe('sanitizeRichText', () => {
     expect(sanitized).not.toContain('javascript:');
   });
 
+  it('does not let raw-text xmp content bypass sanitization', () => {
+    const sanitized = sanitizeRichText(
+      '<xmp><img src=x onerror="alert(1)"><script>alert(2)</script></xmp><p>Güvenli</p>',
+    );
+
+    expect(sanitized).toContain('<p>Güvenli</p>');
+    expect(sanitized).toContain('&lt;img src=x onerror=');
+    expect(sanitized).not.toMatch(/<(?:xmp|script|img)\b/i);
+  });
+
   it('keeps internal links without forcing new tab', () => {
     const sanitized = sanitizeRichText('<p><a href="/repertuvar/softest-rains">sayfaya git</a></p>');
 

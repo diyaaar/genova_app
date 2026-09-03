@@ -104,7 +104,6 @@ function MemberAvatar({ member }: { member: PerformanceRosterMember }) {
   return (
     <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border border-[var(--color-border-strong)] bg-[var(--color-accent-soft)] text-sm font-serif font-medium text-[var(--color-accent)]">
       {member.photo_url && !imgError ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={member.photo_url}
           alt={`${member.first_name} ${member.last_name}`}

@@ -17,6 +17,5 @@ export function ProtectedDriveImage({ file, fallback = null, alt = '', ...props 
     return <>{fallback}</>;
   }
 
-  // eslint-disable-next-line @next/next/no-img-element
   return <img {...props} src={url} alt={alt} />;
 }

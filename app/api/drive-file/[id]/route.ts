@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 
 import { createSupabaseServiceClient } from '@/lib/server/supabase-auth';
+import { isActiveDriveFileContent, makeActiveContentRejectedResponse } from '@/lib/server/drive-file-content';
 import { verifyDriveFileToken } from '@/lib/server/drive-file-token';
 
 export const dynamic = 'force-dynamic';
@@ -11,15 +12,6 @@ const DRIVE_FILE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/;
 function getSafeHeader(headers: Headers, name: string) {
   const value = headers.get(name);
   return value && value.length > 0 ? value : null;
-}
-
-function isHtmlContentType(contentType: string | null) {
-  if (!contentType) {
-    return false;
-  }
-
-  const normalized = contentType.toLowerCase();
-  return normalized.includes('text/html') || normalized.includes('application/xhtml+xml');
 }
 
 function makeContentDisposition(fileName: string) {
@@ -54,10 +46,18 @@ async function proxyStorageFile(requestMethod: string, tokenPayload: ReturnType<
     });
   }
 
+  if (isActiveDriveFileContent({
+    fileName: tokenPayload.fileName,
+    mimeType: data.type || tokenPayload.mimeType,
+  })) {
+    return makeActiveContentRejectedResponse();
+  }
+
   const responseHeaders = new Headers({
     'Content-Type': data.type || tokenPayload.mimeType || 'application/octet-stream',
     'Cache-Control': 'private, no-store',
     'Accept-Ranges': 'none',
+    'X-Content-Type-Options': 'nosniff',
   });
 
   if (tokenPayload.fileName) {
@@ -125,6 +125,10 @@ async function proxyDriveFile(request: NextRequest, { params }: { params: Promis
       return new Response('Unauthorized', { status: 401 });
     }
 
+    if (isActiveDriveFileContent(tokenPayload)) {
+      return makeActiveContentRejectedResponse();
+    }
+
     console.log(`[DRIVE_FILE_PROXY] Request started for id: ${id}, fileName: ${tokenPayload.fileName}, method: ${request.method}, range: ${request.headers.get('range')}`);
 
     if (tokenPayload.storageBucket && tokenPayload.storagePath) {
@@ -156,14 +160,6 @@ async function proxyDriveFile(request: NextRequest, { params }: { params: Promis
     const upstreamContentType = getSafeHeader(upstream.headers, 'content-type');
     const upstreamContentLength = getSafeHeader(upstream.headers, 'content-length');
 
-    if (upstream.ok && isHtmlContentType(upstreamContentType) && !isHtmlContentType(tokenPayload.mimeType ?? null)) {
-      console.error(`[DRIVE_FILE_PROXY] Upstream returned HTML instead of file for id: ${id}. This might be a Google Drive warning/login page.`);
-      return new Response('Drive indirilebilir dosya yerine HTML bir sayfa dondurdu.', {
-        status: 502,
-        headers: { 'Cache-Control': 'private, no-store' },
-      });
-    }
-
     if (!upstream.ok) {
       console.error(`[DRIVE_FILE_PROXY] Upstream fetch failed for id: ${id}, status: ${upstream.status}`);
       const errorText = await upstream.text().catch(() => 'No body');
@@ -172,6 +168,13 @@ async function proxyDriveFile(request: NextRequest, { params }: { params: Promis
         status: upstream.status,
         headers: { 'Cache-Control': 'private, no-store' },
       });
+    }
+
+    if (isActiveDriveFileContent({
+      fileName: tokenPayload.fileName,
+      mimeType: upstreamContentType || tokenPayload.mimeType,
+    })) {
+      return makeActiveContentRejectedResponse();
     }
 
     const contentType =
@@ -190,6 +193,7 @@ async function proxyDriveFile(request: NextRequest, { params }: { params: Promis
         'Cache-Control': 'private, no-store',
         'Accept-Ranges': 'bytes',
         'Content-Length': String(totalSize),
+        'X-Content-Type-Options': 'nosniff',
       });
       if (fileName) {
         baseHeaders.set('Content-Disposition', makeContentDisposition(fileName));
@@ -221,6 +225,7 @@ async function proxyDriveFile(request: NextRequest, { params }: { params: Promis
       'Content-Type': contentType,
       'Cache-Control': 'private, no-store',
       'Accept-Ranges': 'bytes',
+      'X-Content-Type-Options': 'nosniff',
     });
     if (fileName) {
       baseHeaders.set('Content-Disposition', makeContentDisposition(fileName));

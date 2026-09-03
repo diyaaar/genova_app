@@ -64,7 +64,6 @@ export default function LoginPage() {
           }}
         >
           <div className="flex h-28 w-28 items-center justify-center overflow-hidden pointer-events-none">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/login.png"
               alt="Genova Login Logo"
@@ -87,10 +86,14 @@ export default function LoginPage() {
           className="glass-panel mt-[clamp(1.5rem,3.8vh,3rem)] space-y-4 p-6"
         >
           <div className="space-y-2">
-            <label className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-medium)]">
+            <label
+              htmlFor="email"
+              className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-medium)]"
+            >
               E-posta
             </label>
             <input
+              id="email"
               type="email"
               autoComplete="email"
               value={email}
@@ -102,11 +105,15 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-medium)]">
+            <label
+              htmlFor="password"
+              className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-[var(--color-text-medium)]"
+            >
               Şifre
             </label>
             <div className="relative">
               <input
+                id="password"
                 type={showPassword ? 'text' : 'password'}
                 autoComplete="current-password"
                 value={password}
@@ -117,6 +124,7 @@ export default function LoginPage() {
               />
               <button
                 type="button"
+                aria-label={showPassword ? 'Şifreyi gizle' : 'Şifreyi göster'}
                 onClick={() => setShowPassword(p => !p)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--color-text-medium)] hover:text-[var(--color-text-high)] transition-colors"
               >

@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 
 import { sendAssignmentSubmittedPush } from '@/lib/server/push-notifications';
 import { insertAssignmentAuditLog } from '@/lib/server/assignment-audit';
+import { isActiveDriveFileContent, makeActiveContentRejectedResponse } from '@/lib/server/drive-file-content';
 import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 import type { AssignmentSubmission } from '@/lib/supabase';
 
@@ -388,6 +389,10 @@ export async function POST(request: Request) {
 
     if (file.size > MAX_SUBMISSION_SIZE_BYTES) {
       return new NextResponse(`Dosya boyutu ${MAX_SUBMISSION_SIZE_MB}MB sınırını aşıyor.`, { status: 400 });
+    }
+
+    if (isActiveDriveFileContent({ fileName: file.name, mimeType: file.type })) {
+      return makeActiveContentRejectedResponse();
     }
 
     const note = typeof noteValue === 'string' ? noteValue.trim() : '';

@@ -6,8 +6,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { supabase, ChoirMember, UserRole } from '@/lib/supabase';
 import { clearAssignmentCaches } from '@/lib/assignment-cache';
 import { clearChatCaches } from '@/lib/chat-cache';
+import { clearProtectedDriveFileUrlCache } from '@/lib/drive-file-url';
 import { clearRepertoireMetadataCaches } from '@/lib/repertuvar/cache';
-import { clearRuntimeDriveFileCache } from '@/lib/repertuvar/offline';
+import { clearProtectedDriveFileCaches } from '@/lib/repertuvar/offline';
 import { REPERTOIRE_QUERY_ROOT_KEY } from '@/lib/repertuvar/queries';
 import { createRealtimeTopic } from '@/lib/realtime';
 
@@ -132,8 +133,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearAssignmentCaches();
         clearChatCaches();
         clearRepertoireMetadataCaches();
+        clearProtectedDriveFileUrlCache();
         queryClient.removeQueries({ queryKey: REPERTOIRE_QUERY_ROOT_KEY });
-        void clearRuntimeDriveFileCache().catch(() => {});
+        void clearProtectedDriveFileCaches().catch(() => {});
         setMember(null);
         setRoles([]);
       }
@@ -197,8 +199,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     clearAssignmentCaches();
     clearChatCaches();
     clearRepertoireMetadataCaches();
+    clearProtectedDriveFileUrlCache();
     queryClient.removeQueries({ queryKey: REPERTOIRE_QUERY_ROOT_KEY });
-    void clearRuntimeDriveFileCache().catch(() => {
+    await clearProtectedDriveFileCaches().catch(() => {
       // Best-effort cleanup; sign-out should not be blocked by Cache API failures.
     });
     await supabase.auth.signOut();

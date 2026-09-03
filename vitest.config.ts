@@ -9,6 +9,32 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    include: ['**/*.test.ts'],
+    setupFiles: ['./test/setup.ts'],
+    include: ['**/*.test.{ts,tsx}'],
+    exclude: ['node_modules/**', '.next/**', 'tests/e2e/**'],
+    clearMocks: true,
+    restoreMocks: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'html'],
+      reportsDirectory: './coverage',
+      include: [
+        'lib/assignment-cache.ts',
+        'lib/drive-file-url.ts',
+        'lib/internalPageLinks.ts',
+        'lib/richText.ts',
+        'lib/server/drive-file-content.ts',
+        'lib/server/drive-file-token.ts',
+        'lib/server/reviewer-auth.ts',
+        'lib/server/supabase-auth.ts',
+        'app/api/drive-file-token/route.ts',
+      ],
+      thresholds: {
+        statements: 80,
+        branches: 65,
+        functions: 70,
+        lines: 80,
+      },
+    },
   },
 });

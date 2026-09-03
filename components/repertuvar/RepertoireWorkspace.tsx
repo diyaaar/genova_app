@@ -3090,7 +3090,6 @@ export function RepertoireWorkspace({
                           className="h-full w-full border-0"
                         />
                       ) : (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={selectedCoverPreviewSource}
                           alt={`${song.title} kapak`}
@@ -3168,7 +3167,6 @@ export function RepertoireWorkspace({
                         className="h-full w-full border-0"
                       />
                     ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={selectedCoverPreviewSource}
                         alt={`${song.title} kapak`}

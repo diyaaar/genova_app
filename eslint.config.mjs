@@ -6,9 +6,14 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default defineConfig([{
+export default defineConfig([
+  {
+    ignores: ['coverage/**', 'playwright-report/**', 'test-results/**', '.next/**'],
+  },
+  {
     extends: [...next],
     rules: {
-        "@next/next/no-img-element": "off",
+      "@next/next/no-img-element": "off",
     },
-}]);
+  },
+]);

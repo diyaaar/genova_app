@@ -132,7 +132,6 @@ function MemberAvatar({ detail }: { detail: PerformanceMemberDetail }) {
   return (
     <div className="flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-[var(--color-accent)] to-[#b48600] text-3xl font-serif font-medium text-[var(--color-background)] shadow-[0_0_24px_rgba(192,178,131,0.28)] ring-[3px] ring-[var(--color-panel-bg)]">
       {member.photo_url && !imgError ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={member.photo_url}
           alt={`${member.first_name} ${member.last_name}`}

@@ -491,7 +491,6 @@ export function FloatingMiniPlayer({ hasBottomNav }: FloatingMiniPlayerProps) {
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 shrink-0 overflow-hidden rounded-[4px] border border-[var(--color-border)] bg-[var(--color-soft-bg)]">
               {coverSource ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={coverSource} alt={songTitle} className="h-full w-full object-cover" loading="lazy" />
               ) : (
                 <div className="h-full w-full bg-[var(--color-soft-bg)]" />

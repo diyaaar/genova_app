@@ -95,7 +95,6 @@ export function TopBar() {
           <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
             <div className="icon-chip shrink-0 scale-110 relative overflow-hidden bg-[var(--color-surface-solid)]">
               {member?.photo_url && !imgError ? (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={member.photo_url} 
                   alt={displayName} 

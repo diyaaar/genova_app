@@ -1035,7 +1035,6 @@ export function SongEditModal({
                                   <FileText size={14} className="text-[var(--color-text-medium)]" />
                                 </div>
                               ) : coverPreviewUrl && !coverPreviewFailed ? (
-                                // eslint-disable-next-line @next/next/no-img-element
                                 <img
                                   src={coverPreviewUrl}
                                   alt={`${currentSong.title} kapak`}

@@ -237,7 +237,6 @@ export function AddMemberModal({
                       >
                         <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--color-surface)]">
                           {member.photo_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={member.photo_url}
                               alt={`${member.first_name} ${member.last_name}`}

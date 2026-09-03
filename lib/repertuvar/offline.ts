@@ -4,6 +4,12 @@ const OFFLINE_SETTINGS_STORAGE_KEY = 'genova.repertoire.offline.v1';
 const OFFLINE_DRIVE_ROUTE_PREFIX = '/offline-drive/';
 const SERVICE_WORKER_MESSAGE_TIMEOUT_MS = 180_000;
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
+const PROTECTED_DRIVE_CACHE_NAMES = [
+  'genova-offline-repertoire-files-v1',
+  'genova-offline-repertoire-meta-v1',
+  'genova-runtime-drive-files-v1',
+  'genova-runtime-drive-meta-v1',
+];
 
 interface OfflineSongSettingsRow {
   enabled?: boolean;
@@ -157,6 +163,27 @@ export function clearOfflineSongSyncState(songId: string) {
   writeSettingsStore(store);
 }
 
+function clearOfflineSongSettingsStore() {
+  if (!isBrowserEnvironment()) {
+    return;
+  }
+
+  try {
+    window.localStorage.removeItem(OFFLINE_SETTINGS_STORAGE_KEY);
+  } catch {
+    // Best-effort cleanup; Cache Storage cleanup must still be attempted.
+  }
+}
+
+async function deleteProtectedDriveCachesDirectly() {
+  if (!isBrowserEnvironment() || !('caches' in window)) {
+    return { removedCount: 0 };
+  }
+
+  const results = await Promise.all(PROTECTED_DRIVE_CACHE_NAMES.map((cacheName) => window.caches.delete(cacheName)));
+  return { removedCount: results.filter(Boolean).length };
+}
+
 export function buildOfflineSongVersion(files: Array<Pick<RepertoireFile, 'drive_file_id' | 'updated_at' | 'file_size_bytes' | 'file_name' | 'mime_type'>>) {
   return files
     .filter((file) => Boolean(file.drive_file_id))
@@ -284,4 +311,20 @@ export async function clearRuntimeDriveFileCache() {
   return sendMessageToServiceWorker<{ removedCount: number }>({
     type: 'RUNTIME_CLEAR_DRIVE_FILE_CACHE',
   });
+}
+
+export async function clearProtectedDriveFileCaches() {
+  clearOfflineSongSettingsStore();
+
+  if (isRepertoireOfflineSupported()) {
+    try {
+      return await sendMessageToServiceWorker<{ removedCount: number }>({
+        type: 'PROTECTED_DRIVE_CACHE_CLEAR_ALL',
+      });
+    } catch {
+      // Fall back to direct Cache Storage deletion if the worker is unavailable.
+    }
+  }
+
+  return deleteProtectedDriveCachesDirectly();
 }

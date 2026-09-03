@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 
+import { getActorMemberWithRoles } from '@/lib/server/reviewer-auth';
 import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
@@ -41,9 +42,25 @@ function getTodayInIstanbul() {
 
 export async function POST(request: Request) {
   try {
-    await requireAuthenticatedUser(request);
+    const { user } = await requireAuthenticatedUser(request);
 
     const serviceClient = createSupabaseServiceClient();
+    let actorContext;
+    try {
+      actorContext = await getActorMemberWithRoles({
+        serviceClient,
+        authUserId: user.id,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Yetki kontrolü başarısız.';
+      const status = message.includes('bulunamadı') ? 403 : 500;
+      return new NextResponse(message, { status });
+    }
+
+    if (!actorContext.isChef && !actorContext.isSectionLeader) {
+      return new NextResponse('Bu işlem için Şef veya Partisyon Şefi yetkisi gerekli.', { status: 403 });
+    }
+
     const today = getTodayInIstanbul();
     const now = new Date().toISOString();
 
