@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "Genova RN Spike",
+    "slug": "genova-rn-spike",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.genova.rnspike"
+    },
+    "android": {
+      "package": "com.genova.rnspike"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

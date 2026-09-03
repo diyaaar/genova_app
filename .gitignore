@@ -9,3 +9,13 @@ test-results/
 !.env.example
 *.tsbuildinfo
 spike/repertuvar/run.sh
+
+# Spike'larda uretilmis dosyalar — kaynak kod disinda her sey yeniden uretilebilir
+spike/*/ios/
+spike/*/android/
+spike/*/macos/
+spike/*/build/
+spike/*/.expo/
+spike/*/.dart_tool/
+spike/*/package-lock.json
+spike/*/public/canvaskit.wasm

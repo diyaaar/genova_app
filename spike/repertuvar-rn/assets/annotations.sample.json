@@ -1,0 +1,169 @@
+[
+  {
+    "page_number": 1,
+    "layer_type": "personal",
+    "annotations_json": [
+      {
+        "id": "s1",
+        "type": "pen",
+        "color": "red",
+        "strokeWidth": 0.005042,
+        "points": [
+          {
+            "x": 0.1,
+            "y": 0.1
+          },
+          {
+            "x": 0.3,
+            "y": 0.22
+          },
+          {
+            "x": 0.5,
+            "y": 0.5
+          },
+          {
+            "x": 0.7,
+            "y": 0.78
+          },
+          {
+            "x": 0.9,
+            "y": 0.9
+          }
+        ]
+      },
+      {
+        "id": "s2",
+        "type": "highlighter",
+        "color": "#facc15",
+        "strokeWidth": 0.016807,
+        "points": [
+          {
+            "x": 0.15,
+            "y": 0.3
+          },
+          {
+            "x": 0.85,
+            "y": 0.3
+          }
+        ]
+      },
+      {
+        "id": "s3",
+        "type": "arrow",
+        "color": "black",
+        "strokeWidth": 0.005042,
+        "start": {
+          "x": 0.2,
+          "y": 0.7
+        },
+        "end": {
+          "x": 0.8,
+          "y": 0.7
+        }
+      },
+      {
+        "id": "s4",
+        "type": "rectangle",
+        "color": "#22c55e",
+        "strokeWidth": 0.005042,
+        "start": {
+          "x": 0.25,
+          "y": 0.4
+        },
+        "end": {
+          "x": 0.75,
+          "y": 0.6
+        }
+      },
+      {
+        "id": "s5",
+        "type": "text",
+        "color": "#38bdf8",
+        "width": 0.28,
+        "position": {
+          "x": 0.1,
+          "y": 0.84
+        },
+        "text": "Metin notu — sol üst köşesi tam (0.10, 0.84) noktasında olmalı."
+      },
+      {
+        "id": "s6",
+        "type": "gelecekte_eklenen_tip",
+        "color": "red"
+      }
+    ]
+  },
+  {
+    "page_number": 2,
+    "layer_type": "shared_all",
+    "annotations_json": [
+      {
+        "id": "p2a",
+        "type": "pen",
+        "color": "red",
+        "strokeWidth": 0.005042,
+        "points": [
+          {
+            "x": 0.1,
+            "y": 0.5
+          },
+          {
+            "x": 0.5,
+            "y": 0.2
+          },
+          {
+            "x": 0.9,
+            "y": 0.5
+          }
+        ]
+      },
+      {
+        "id": "p2b",
+        "type": "highlighter",
+        "color": "#facc15",
+        "strokeWidth": 0.016807,
+        "points": [
+          {
+            "x": 0.15,
+            "y": 0.7
+          },
+          {
+            "x": 0.85,
+            "y": 0.7
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "page_number": 40,
+    "layer_type": "personal",
+    "annotations_json": [
+      {
+        "id": "p40a",
+        "type": "rectangle",
+        "color": "#38bdf8",
+        "strokeWidth": 0.005042,
+        "start": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "end": {
+          "x": 0.9,
+          "y": 0.9
+        }
+      },
+      {
+        "id": "p40b",
+        "type": "text",
+        "color": "red",
+        "width": 0.3,
+        "position": {
+          "x": 0.15,
+          "y": 0.45
+        },
+        "text": "SON SAYFA — burasi gorunuyorsa sayfa indeksleme 40 sayfada da dogru."
+      }
+    ]
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "name": "genova-rn-spike",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "web": "expo start --web",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dariyd/react-native-pdf-page-image": "^2.0.0",
+    "@expo/metro-runtime": "~57.0.15",
+    "@shopify/react-native-skia": "2.6.2",
+    "@types/react": "~19.2.4",
+    "expo": "^57.0.19",
+    "expo-asset": "~57.0.16",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-web": "^0.21.2",
+    "typescript": "~6.0.3"
+  }
+}
