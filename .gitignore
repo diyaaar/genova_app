@@ -8,6 +8,9 @@ test-results/
 .env*
 !.env.example
 *.tsbuildinfo
+# Local database connection metadata and exports must never enter Git.
+/supabase/.temp/
+/backup_*.sql
 spike/repertuvar/run.sh
 
 # Spike'larda uretilmis dosyalar — kaynak kod disinda her sey yeniden uretilebilir

@@ -1,6 +1,8 @@
 import { createSupabaseServiceClient } from '@/lib/server/supabase-auth';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
 interface MemberContext {
+  serviceClient: ReturnType<typeof createSupabaseServiceClient>;
   memberId: string | null;
   isChef: boolean;
   isSectionLeader: boolean;
@@ -49,7 +51,7 @@ function normalizeRoleName(value: string) {
 }
 
 async function loadMemberContext(authUserId: string): Promise<MemberContext> {
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = await createTenantServiceClient(authUserId);
   const { data: member } = await serviceClient
     .from('choir_members')
     .select('id, voice_group')
@@ -57,7 +59,7 @@ async function loadMemberContext(authUserId: string): Promise<MemberContext> {
     .maybeSingle();
 
   if (!member) {
-    return { memberId: null, isChef: false, isSectionLeader: false, voiceGroup: null };
+    return { serviceClient, memberId: null, isChef: false, isSectionLeader: false, voiceGroup: null };
   }
 
   const { data: roles } = await serviceClient
@@ -75,6 +77,7 @@ async function loadMemberContext(authUserId: string): Promise<MemberContext> {
   );
 
   return {
+    serviceClient,
     memberId: member.id,
     isChef: normalizedRoles.has('sef'),
     isSectionLeader: normalizedRoles.has('partisyon sefi') || normalizedRoles.has('sef'),
@@ -87,7 +90,7 @@ async function authorizeRepertoireFile(driveFileId: string, memberContext: Membe
     return null;
   }
 
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = memberContext.serviceClient;
   const { data: repertoireFile } = await serviceClient
     .from('repertoire_files')
     .select('drive_file_id, file_name, mime_type, song_id')
@@ -140,7 +143,7 @@ async function authorizeAssignmentSubmission(driveFileId: string, memberContext:
     return null;
   }
 
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = memberContext.serviceClient;
   const { data: submission } = await serviceClient
     .from('assignment_submissions')
     .select('drive_file_id, file_name, mime_type, member_id, drive_download_link')
@@ -184,7 +187,7 @@ async function canAccessAssignmentReviewForMember(memberId: string, memberContex
     return false;
   }
 
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = memberContext.serviceClient;
   const { data: targetMember } = await serviceClient
     .from('choir_members')
     .select('voice_group')
@@ -202,7 +205,7 @@ async function canReviewAssignmentMember(memberId: string, memberContext: Member
     return false;
   }
 
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = memberContext.serviceClient;
   const { data: targetMember } = await serviceClient
     .from('choir_members')
     .select('voice_group')
@@ -220,7 +223,7 @@ async function authorizeAssignmentReviewAudio(
     return null;
   }
 
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = memberContext.serviceClient;
   const { data: publicSubmission } = await serviceClient
     .from('assignment_submissions')
     .select('reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, member_id')
@@ -272,7 +275,7 @@ async function authorizeRepertoireCommentAudio(
     return null;
   }
 
-  const serviceClient = createSupabaseServiceClient();
+  const serviceClient = memberContext.serviceClient;
   const { data: comment } = await serviceClient
     .from('repertoire_song_comments')
     .select('audio_drive_file_id, audio_file_name, audio_mime_type, target_voice_group')

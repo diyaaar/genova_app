@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
 import { getActorMemberWithRoles } from '@/lib/server/reviewer-auth';
-import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -44,7 +45,7 @@ export async function POST(request: Request) {
   try {
     const { user } = await requireAuthenticatedUser(request);
 
-    const serviceClient = createSupabaseServiceClient();
+    const serviceClient = await createTenantServiceClient(user.id);
     let actorContext;
     try {
       actorContext = await getActorMemberWithRoles({

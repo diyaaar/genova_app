@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig([
   {
-    ignores: ['coverage/**', 'playwright-report/**', 'test-results/**', '.next/**'],
+    ignores: ['coverage/**', 'playwright-report/**', 'test-results/**', '.next/**', 'spike/**'],
   },
   {
     extends: [...next],

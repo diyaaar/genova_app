@@ -11,7 +11,7 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
     include: ['**/*.test.{ts,tsx}'],
-    exclude: ['node_modules/**', '.next/**', 'tests/e2e/**'],
+    exclude: ['node_modules/**', '.next/**', 'tests/e2e/**', 'spike/**'],
     clearMocks: true,
     restoreMocks: true,
     coverage: {
@@ -27,6 +27,8 @@ export default defineConfig({
         'lib/server/drive-file-token.ts',
         'lib/server/reviewer-auth.ts',
         'lib/server/supabase-auth.ts',
+        'lib/server/tenant-client.ts',
+        'supabase/functions/_shared/tenant-fetch.ts',
         'app/api/drive-file-token/route.ts',
       ],
       thresholds: {

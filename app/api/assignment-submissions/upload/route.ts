@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
 import { NextResponse } from 'next/server';
 
@@ -400,7 +401,7 @@ export async function POST(request: Request) {
       return new NextResponse('Not 1200 karakterden uzun olamaz.', { status: 400 });
     }
 
-    const serviceClient = createSupabaseServiceClient();
+    const serviceClient = await createTenantServiceClient(user.id);
 
     const { data: member, error: memberError } = await serviceClient
       .from('choir_members')

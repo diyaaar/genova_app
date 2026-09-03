@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
 import { insertAssignmentAuditLog } from '@/lib/server/assignment-audit';
 import { collectRoleNames, getActorMemberWithRoles } from '@/lib/server/reviewer-auth';
-import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
       return new NextResponse('assignment_id zorunlu.', { status: 400 });
     }
 
-    const serviceClient = createSupabaseServiceClient();
+    const serviceClient = await createTenantServiceClient(user.id);
 
     let actorContext;
     try {

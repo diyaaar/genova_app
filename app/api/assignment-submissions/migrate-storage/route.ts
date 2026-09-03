@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
-import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -67,7 +68,7 @@ async function invokeDriveMigration(payload: Record<string, unknown>, accessToke
 export async function POST(request: Request) {
   try {
     const { user, accessToken } = await requireAuthenticatedUser(request);
-    const serviceClient = createSupabaseServiceClient();
+    const serviceClient = await createTenantServiceClient(user.id);
 
     const { data: member, error: memberError } = await serviceClient
       .from('choir_members')

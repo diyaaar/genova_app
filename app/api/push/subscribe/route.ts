@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
-import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
       return new NextResponse('Geçersiz PushSubscription payload.', { status: 400 });
     }
 
-    const serviceClient = createSupabaseServiceClient();
+    const serviceClient = await createTenantServiceClient(user.id);
     const { data: member, error: memberError } = await serviceClient
       .from('choir_members')
       .select('id')

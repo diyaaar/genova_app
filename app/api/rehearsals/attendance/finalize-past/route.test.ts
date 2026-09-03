@@ -15,6 +15,10 @@ vi.mock('@/lib/server/reviewer-auth', () => ({
   getActorMemberWithRoles: mocks.getActorMemberWithRoles,
 }));
 
+vi.mock('@/lib/server/tenant-client', () => ({
+  createTenantServiceClient: mocks.createSupabaseServiceClient,
+}));
+
 import { POST } from '@/app/api/rehearsals/attendance/finalize-past/route';
 
 function makeServiceClient() {

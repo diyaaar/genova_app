@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
+import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
 import { sendAssignmentReviewPush } from '@/lib/server/push-notifications';
 import { insertAssignmentAuditLog } from '@/lib/server/assignment-audit';
 import { getActorMemberWithRoles } from '@/lib/server/reviewer-auth';
-import { createSupabaseServiceClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -210,7 +211,7 @@ export async function POST(request: Request) {
       return new NextResponse('Not 1200 karakterden uzun olamaz.', { status: 400 });
     }
 
-    const serviceClient = createSupabaseServiceClient();
+    const serviceClient = await createTenantServiceClient(user.id);
 
     let actorContext;
     try {

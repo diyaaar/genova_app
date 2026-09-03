@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { createTenantFetch } from '../_shared/tenant-fetch.ts';
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -207,11 +208,13 @@ function parseStorageLocation(rawValue: string | null | undefined): { bucket: st
 async function loadAssignmentForSubmission(
   supabaseAdmin: ReturnType<typeof createClient>,
   assignmentId: string,
+  choirId: string,
 ) {
   const { data: assignment, error } = await supabaseAdmin
     .from('assignments')
     .select('id, drive_folder_id, target_voice_group, created_by')
     .eq('id', assignmentId)
+    .eq('choir_id', choirId)
     .maybeSingle();
   if (error) {
     throw new Error(error.message);
@@ -225,11 +228,13 @@ async function loadAssignmentForSubmission(
 async function assignmentHasExplicitTargets(
   supabaseAdmin: ReturnType<typeof createClient>,
   assignmentId: string,
+  choirId: string,
 ) {
   const { count, error } = await supabaseAdmin
     .from('assignment_targets')
     .select('id', { count: 'exact', head: true })
-    .eq('assignment_id', assignmentId);
+    .eq('assignment_id', assignmentId)
+    .eq('choir_id', choirId);
   if (error) {
     throw new Error(error.message);
   }
@@ -239,16 +244,18 @@ async function assignmentHasExplicitTargets(
 async function canMemberSubmitAssignment(params: {
   supabaseAdmin: ReturnType<typeof createClient>;
   assignmentId: string;
+  choirId: string;
   memberId: string;
   memberVoiceGroup: string | null;
 }) {
-  const { supabaseAdmin, assignmentId, memberId, memberVoiceGroup } = params;
+  const { supabaseAdmin, assignmentId, choirId, memberId, memberVoiceGroup } = params;
 
   const { data: explicitTarget, error: explicitTargetError } = await supabaseAdmin
     .from('assignment_targets')
     .select('id')
     .eq('assignment_id', assignmentId)
     .eq('member_id', memberId)
+    .eq('choir_id', choirId)
     .limit(1)
     .maybeSingle();
   if (explicitTargetError) {
@@ -258,12 +265,12 @@ async function canMemberSubmitAssignment(params: {
     return true;
   }
 
-  const hasExplicitTargets = await assignmentHasExplicitTargets(supabaseAdmin, assignmentId);
+  const hasExplicitTargets = await assignmentHasExplicitTargets(supabaseAdmin, assignmentId, choirId);
   if (hasExplicitTargets) {
     return false;
   }
 
-  const assignment = await loadAssignmentForSubmission(supabaseAdmin, assignmentId);
+  const assignment = await loadAssignmentForSubmission(supabaseAdmin, assignmentId, choirId);
   const targetVoiceGroup =
     typeof assignment.target_voice_group === 'string'
       ? assignment.target_voice_group.trim()
@@ -278,6 +285,7 @@ async function canMemberSubmitAssignment(params: {
 async function assertMemberCanSubmitAssignment(params: {
   supabaseAdmin: ReturnType<typeof createClient>;
   assignmentId: string;
+  choirId: string;
   memberId: string;
   memberVoiceGroup: string | null;
 }) {
@@ -310,6 +318,7 @@ async function upsertAssignmentSubmission(params: {
   token: string;
   assignmentId: string;
   assignmentDriveFolderId?: string | null;
+  choirId: string;
   memberId: string;
   memberFirstName: string;
   memberLastName: string;
@@ -323,6 +332,7 @@ async function upsertAssignmentSubmission(params: {
     token,
     assignmentId,
     assignmentDriveFolderId,
+    choirId,
     memberId,
     memberFirstName,
     memberLastName,
@@ -336,6 +346,7 @@ async function upsertAssignmentSubmission(params: {
     .from('assignments')
     .select('drive_folder_id, is_locked, is_active')
     .eq('id', assignmentId)
+    .eq('choir_id', choirId)
     .maybeSingle();
   if (assignmentRowError) {
     throw new Error(assignmentRowError.message);
@@ -358,6 +369,7 @@ async function upsertAssignmentSubmission(params: {
     .select('drive_file_id')
     .eq('assignment_id', assignmentId)
     .eq('member_id', memberId)
+    .eq('choir_id', choirId)
     .maybeSingle();
 
   if (oldSub?.drive_file_id && !String(oldSub.drive_file_id).startsWith('sb_')) {
@@ -373,6 +385,7 @@ async function upsertAssignmentSubmission(params: {
   const { data: sub } = await supabaseAdmin
     .from('assignment_submissions')
     .upsert({
+      choir_id: choirId,
       assignment_id: assignmentId,
       member_id: memberId,
       drive_file_id: uploaded.id,
@@ -417,7 +430,8 @@ async function upsertAssignmentSubmission(params: {
   const { error: clearPrivateNoteError } = await supabaseAdmin
     .from('assignment_submission_private_notes')
     .delete()
-    .eq('submission_id', sub.id);
+    .eq('submission_id', sub.id)
+    .eq('choir_id', choirId);
   if (clearPrivateNoteError) {
     throw new Error(clearPrivateNoteError.message);
   }
@@ -440,13 +454,17 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) return new Response(JSON.stringify({ error: 'Geçersiz oturum' }), { status: 401, headers: jsonHeaders });
 
-    const supabaseAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-    const { data: member } = await supabaseAdmin
+    const bootstrapAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const { data: member } = await bootstrapAdmin
       .from('choir_members')
-      .select('id, first_name, last_name, voice_group, choir_member_roles(roles(name))')
+      .select('id, choir_id, first_name, last_name, voice_group, choir_member_roles(roles(name))')
       .eq('auth_user_id', user.id)
       .maybeSingle();
     if (!member) return new Response(JSON.stringify({ error: 'Üye kaydı bulunamadı' }), { status: 403, headers: jsonHeaders });
+    const supabaseAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { fetch: createTenantFetch(supabaseUrl, member.choir_id) },
+    });
     const roles = (member.choir_member_roles as any[]).map((r) => r.roles?.name);
     const roleFlags = detectRoleFlags(roles);
     const userRole = roleFlags.isChef ? 'Şef' : roleFlags.isSectionLeader ? 'Partisyon Şefi' : 'Korist';
@@ -460,19 +478,30 @@ Deno.serve(async (req) => {
       case 'init_song_folder': {
         if (userRole !== 'Şef') throw new Error('Yetkisiz');
         const { song_title, song_id } = body;
+        const { data: song } = await supabaseAdmin.from('repertoire').select('id').eq('id', song_id).maybeSingle();
+        if (!song) throw new Error('Bu şarkıya erişim yetkiniz yok');
         const repertuvarId = await findOrCreateFolder(token, 'Repertuvar', rootFolderId);
         const folder = await createFolder(token, sanitizeFolderName(song_title), repertuvarId);
-        await supabaseAdmin.from('repertoire').update({ drive_folder_id: folder.id }).eq('id', song_id);
+        await supabaseAdmin
+          .from('repertoire')
+          .update({ drive_folder_id: folder.id })
+          .eq('id', song_id)
+          .eq('choir_id', member.choir_id);
         return new Response(JSON.stringify({ folder_id: folder.id, web_view_link: folder.webViewLink }), { headers: jsonHeaders });
       }
       case 'upload_song_file': {
         if (userRole !== 'Şef') throw new Error('Yetkisiz');
         const { song_id, drive_folder_id, file_name, mime_type, file_data_base64, file_type, partition_label } = body;
+        const { data: song } = await supabaseAdmin.from('repertoire')
+          .select('id, drive_folder_id').eq('id', song_id).maybeSingle();
+        if (!song || !song.drive_folder_id || song.drive_folder_id !== drive_folder_id) {
+          throw new Error('Bu şarkı klasörüne erişim yetkiniz yok');
+        }
         const fileBytes = Uint8Array.from(atob(file_data_base64), c => c.charCodeAt(0));
         const uploaded = await uploadFileMultipart(token, fileBytes, { name: file_name, mimeType: mime_type, parents: [drive_folder_id] });
         await setFilePublicReadable(token, uploaded.id);
         const { data: fileRecord } = await supabaseAdmin.from('repertoire_files').insert({
-          song_id, file_name, file_type, partition_label, drive_file_id: uploaded.id,
+          choir_id: member.choir_id, song_id, file_name, file_type, partition_label, drive_file_id: uploaded.id,
           drive_web_view_link: uploaded.webViewLink, mime_type, file_size_bytes: parseInt(uploaded.size),
           uploaded_by: member.id
         }).select().single();
@@ -515,6 +544,7 @@ Deno.serve(async (req) => {
           .from('repertoire')
           .select('id, drive_folder_id')
           .eq('id', song_id)
+          .eq('choir_id', member.choir_id)
           .maybeSingle();
         if (songRowError) {
           throw new Error(songRowError.message);
@@ -526,6 +556,7 @@ Deno.serve(async (req) => {
         let uploadedAudio: { id: string; size?: string; webViewLink?: string; webContentLink?: string } | null = null;
         try {
           const commentPayload: Record<string, unknown> = {
+            choir_id: member.choir_id,
             song_id,
             content_html: contentHtml,
             created_by: member.id,
@@ -617,6 +648,7 @@ Deno.serve(async (req) => {
           .from('assignments')
           .select('id, created_by')
           .eq('id', assignment_id)
+          .eq('choir_id', member.choir_id)
           .maybeSingle();
         if (assignmentRowError) {
           throw new Error(assignmentRowError.message);
@@ -630,7 +662,11 @@ Deno.serve(async (req) => {
         const odevlerId = await findOrCreateFolder(token, 'Ödevler', rootFolderId);
         const creatorId = await findOrCreateFolder(token, `${member.first_name}_${member.last_name}`, odevlerId);
         const folder = await createFolder(token, sanitizeFolderName(assignment_title), creatorId);
-        await supabaseAdmin.from('assignments').update({ drive_folder_id: folder.id }).eq('id', assignment_id);
+        await supabaseAdmin
+          .from('assignments')
+          .update({ drive_folder_id: folder.id })
+          .eq('id', assignment_id)
+          .eq('choir_id', member.choir_id);
         return new Response(JSON.stringify({ folder_id: folder.id }), { headers: jsonHeaders });
       }
       case 'upload_assignment_review_audio': {
@@ -653,6 +689,7 @@ Deno.serve(async (req) => {
           .from('assignment_submissions')
           .select('id, assignment_id, member_id, drive_member_folder_id')
           .eq('id', submission_id)
+          .eq('choir_id', member.choir_id)
           .maybeSingle();
         if (submissionRowError) {
           throw new Error(submissionRowError.message);
@@ -665,6 +702,7 @@ Deno.serve(async (req) => {
           .from('choir_members')
           .select('id, first_name, last_name, voice_group')
           .eq('id', submissionRow.member_id)
+          .eq('choir_id', member.choir_id)
           .maybeSingle();
         if (targetMemberError) {
           throw new Error(targetMemberError.message);
@@ -686,6 +724,7 @@ Deno.serve(async (req) => {
           .from('assignments')
           .select('id, drive_folder_id')
           .eq('id', submissionRow.assignment_id)
+          .eq('choir_id', member.choir_id)
           .maybeSingle();
         if (assignmentRowError) {
           throw new Error(assignmentRowError.message);
@@ -740,6 +779,9 @@ Deno.serve(async (req) => {
         if (!room_id || !file_name || !file_data_base64) {
           throw new Error('Eksik chat_image verisi');
         }
+        const { data: room, error: roomError } = await supabase.from('chat_rooms')
+          .select('id').eq('id', room_id).maybeSingle();
+        if (roomError || !room) throw new Error('Bu odaya erişim yetkiniz yok');
 
         const rootFolderId = Deno.env.get('GOOGLE_DRIVE_ROOT_FOLDER_ID');
         if (!rootFolderId) throw new Error('GOOGLE_DRIVE_ROOT_FOLDER_ID eksik');
@@ -775,13 +817,14 @@ Deno.serve(async (req) => {
           throw new Error('Eksik submission verisi');
         }
 
-        const assignment = await loadAssignmentForSubmission(supabaseAdmin, assignment_id);
+        const assignment = await loadAssignmentForSubmission(supabaseAdmin, assignment_id, member.choir_id);
         if (!assignment.drive_folder_id) {
           throw new Error('Ödev klasörü bulunamadı');
         }
         await assertMemberCanSubmitAssignment({
           supabaseAdmin,
           assignmentId: assignment_id,
+          choirId: member.choir_id,
           memberId: member.id,
           memberVoiceGroup: member.voice_group ?? null,
         });
@@ -795,6 +838,7 @@ Deno.serve(async (req) => {
           token,
           assignmentId: assignment_id,
           assignmentDriveFolderId: assignment.drive_folder_id,
+          choirId: member.choir_id,
           memberId: member.id,
           memberFirstName: member.first_name,
           memberLastName: member.last_name,
@@ -819,13 +863,14 @@ Deno.serve(async (req) => {
           throw new Error('Eksik storage submission verisi');
         }
 
-        const assignment = await loadAssignmentForSubmission(supabaseAdmin, assignment_id);
+        const assignment = await loadAssignmentForSubmission(supabaseAdmin, assignment_id, member.choir_id);
         if (!assignment.drive_folder_id) {
           throw new Error('Ödev klasörü bulunamadı');
         }
         await assertMemberCanSubmitAssignment({
           supabaseAdmin,
           assignmentId: assignment_id,
+          choirId: member.choir_id,
           memberId: member.id,
           memberVoiceGroup: member.voice_group ?? null,
         });
@@ -853,6 +898,7 @@ Deno.serve(async (req) => {
           token,
           assignmentId: assignment_id,
           assignmentDriveFolderId: assignment.drive_folder_id,
+          choirId: member.choir_id,
           memberId: member.id,
           memberFirstName: member.first_name,
           memberLastName: member.last_name,
@@ -877,6 +923,7 @@ Deno.serve(async (req) => {
           .from('assignment_submissions')
           .select('id, assignment_id, member_id, file_name, mime_type, submission_note, drive_download_link')
           .eq('id', submission_id)
+          .eq('choir_id', member.choir_id)
           .single();
         if (!existingSubmission) {
           throw new Error('Submission kaydı bulunamadı');
@@ -902,10 +949,15 @@ Deno.serve(async (req) => {
           .from('choir_members')
           .select('id, first_name, last_name')
           .eq('id', existingSubmission.member_id)
+          .eq('choir_id', member.choir_id)
           .single();
         if (!targetMember) {
           throw new Error('Korist bulunamadı');
         }
+        assertStoragePathBelongsToMember({
+          assignmentId: existingSubmission.assignment_id, memberId: targetMember.id,
+          storageBucket: storageLocation.bucket, storagePath: storageLocation.path,
+        });
 
         const { data: storageFile, error: storageDownloadError } = await supabaseAdmin.storage
           .from(storageLocation.bucket)
@@ -919,6 +971,7 @@ Deno.serve(async (req) => {
           supabaseAdmin,
           token,
           assignmentId,
+          choirId: member.choir_id,
           memberId: targetMember.id,
           memberFirstName: targetMember.first_name,
           memberLastName: targetMember.last_name,
@@ -944,6 +997,7 @@ Deno.serve(async (req) => {
           .from('repertoire_song_comments')
           .select('id, created_by, audio_drive_file_id')
           .eq('id', comment_id)
+          .eq('choir_id', member.choir_id)
           .maybeSingle();
         if (commentRowError) {
           throw new Error(commentRowError.message);
@@ -973,7 +1027,8 @@ Deno.serve(async (req) => {
         const { error: deleteError } = await supabaseAdmin
           .from('repertoire_song_comments')
           .delete()
-          .eq('id', comment_id);
+          .eq('id', comment_id)
+          .eq('choir_id', member.choir_id);
         if (deleteError) {
           throw new Error(deleteError.message);
         }
@@ -983,8 +1038,17 @@ Deno.serve(async (req) => {
       case 'delete_file': {
         if (userRole !== 'Şef') throw new Error('Yetkisiz');
         const { drive_file_id, repertoire_file_id } = body;
+        const { data: file } = await supabaseAdmin.from('repertoire_files')
+          .select('id, drive_file_id').eq('id', repertoire_file_id).maybeSingle();
+        if (!file || file.drive_file_id !== drive_file_id) throw new Error('Bu dosyaya erişim yetkiniz yok');
         await fetch(`https://www.googleapis.com/drive/v3/files/${drive_file_id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
-        if (repertoire_file_id) await supabaseAdmin.from('repertoire_files').delete().eq('id', repertoire_file_id);
+        if (repertoire_file_id) {
+          await supabaseAdmin
+            .from('repertoire_files')
+            .delete()
+            .eq('id', repertoire_file_id)
+            .eq('choir_id', member.choir_id);
+        }
         return new Response(JSON.stringify({ success: true }), { headers: jsonHeaders });
       }
       case 'list_files': {
@@ -1001,11 +1065,20 @@ Deno.serve(async (req) => {
             .select('id')
             .eq('drive_folder_id', folder_id)
             .eq('created_by', member.id)
+            .eq('choir_id', member.choir_id)
             .maybeSingle();
           if (ownedAssignmentError) {
             throw new Error(ownedAssignmentError.message);
           }
           if (!ownedAssignment?.id) {
+            throw new Error('Bu klasöre erişim yetkiniz yok');
+          }
+        } else {
+          const [songs, assignments] = await Promise.all([
+            supabaseAdmin.from('repertoire').select('id').eq('drive_folder_id', folder_id).limit(1),
+            supabaseAdmin.from('assignments').select('id').eq('drive_folder_id', folder_id).limit(1),
+          ]);
+          if (songs.error || assignments.error || (!songs.data?.length && !assignments.data?.length)) {
             throw new Error('Bu klasöre erişim yetkiniz yok');
           }
         }
