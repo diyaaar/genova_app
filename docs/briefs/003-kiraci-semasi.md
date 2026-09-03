@@ -5,6 +5,10 @@ kimliği eklemek ve tüm RLS politikalarını kiracıya göre yeniden yazmak.
 
 **Tamamen backend.** Mobil istemci, ekran, derleme yok. Web uygulaması da hemen faydalanır.
 
+**4 Eylül 2026 durum:** Yerel uygulama, izolasyon ve geri alma testleri hazır.
+Canlı göç/yayın ve giriş yapılmış elle doğrulama bekliyor; görev henüz kapanmadı.
+Kanıtlar, canlı envanter ve yayın kapıları: [`003-dogrulama.md`](003-dogrulama.md).
+
 **Neden şimdi:** Bu, projedeki tek "şimdi ucuz, sonra pahalı" karar. Canlı veri ve
 yayınlanmış bir mobil uygulama varken 133 politikayı yeniden yazmak acı verici bir göç olur;
 mobil istemci yazılmadan yapmak neredeyse bedava. (`KARARLAR.md` #9)
@@ -48,11 +52,11 @@ MCP'siyle çıkar ve tam tablo listesini oradan al.
 - [ ] Kiracı kapsamındaki **her** tabloda `choir_id uuid not null` + FK + indeks
 - [ ] Mevcut tüm satırlar o tek koroya bağlanmış (hiç `null` kalmamış)
 - [ ] `public.current_choir_id()` fonksiyonu var
-- [ ] **133 politikanın tamamı** kiracıya göre yeniden yazılmış
+- [ ] Kiracı politikalarının tamamı yeniden yazılmış (4 Eyl canlı envanter: **165**, eski repo tahmini 133)
 - [ ] `choir_id` insert'lerde varsayılan olarak doluyor (istemci göndermek zorunda değil)
 - [ ] **İzolasyon testi geçti** (aşağıya bak) — bu madde olmadan görev kapanmaz
 - [ ] Web uygulaması çalışıyor: `pnpm check` yeşil, temel akışlar elle denendi
-- [ ] `MIGRATION.md` güncellendi
+- [x] `MIGRATION.md` güncellendi
 
 ---
 
