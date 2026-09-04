@@ -1,8 +1,9 @@
 # AI çalışma yöntemi — iki video metninin analizi
 
 Tarih: 4 Eylül 2026.
-Durum: kaynaklar tamamen okundu; yöntem çıkarıldı. Şablon kurulmadı, proje kuralları
-değiştirilmedi. Kullanıcının vereceği GitHub deposu henüz incelenmedi.
+Durum: video metinleri tamamen okundu; yöntem çıkarıldı. Sonraki GitHub incelemesi
+tamamlandı: [depo analizi ve alt ajan önerisi](ai-calisma-yontemi-repo-incelemesi.md).
+Şablon kurulmadı, proje kuralları değiştirilmedi. Aşağıdaki metin ilk okuma aşamasını kaydeder.
 
 ## İstek ve kaynak sınırı
 
