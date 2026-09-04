@@ -11,6 +11,11 @@ Taze `public + auth` mantıksal yedeği alındı ve izole PostgreSQL 17'ye geri 
 ile eşleşiyor. `003` canlıda hâlâ uygulanmadı. Ayrıntı ve hash'ler
 [003 doğrulama kaydında](../docs/briefs/003-dogrulama.md).
 
+Aynı taze arşivde local migration → izolasyon → down zinciri geçti: 37 public tablo
+ve 28 Auth kullanıcısı geri yüklendi; 34 tablo/165 politika izolasyonunda sızıntı
+görülmedi; down sonrası `choirs` ve `choir_id` temizlendi. Bu yerel kanıt, hosted
+transaction ve gerçek üye akışının yerine geçmez.
+
 Yerel `main`, 003 SQL'i ile web API/Edge Function uyarlamalarını içeriyor; bu
 değişiklikler henüz `origin/main`e veya üretime taşınmadı. Bu nedenle push, deploy
 veya canlı DDL kendiliğinden başlatılmadı. Sonraki anlamlı adım, tek bakım aralığında

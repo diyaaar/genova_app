@@ -47,6 +47,13 @@ satırı. Test veritabanı ve geçici roller silindi; yerel sunucunun kapalı ol
 ayrıca doğrulandı. Bu, Auth/DB ilişkileri için geri yükleme kanıtıdır; Storage/Drive
 binary verilerinin veya tüm Supabase platformunun felaket kurtarma testi değildir.
 
+Aynı taze arşivde `003_roundtrip.sql` migration ve down betiklerini aynı transaction
+içinde çalıştırdı: 37 tablonun mevcut verisi ile 168 politika, 11 tetikleyici, 8 ilgili
+fonksiyon ve kısıtlar roundtrip sonunda eşleşti. Ayrı geçici kopyada migration kalıcı
+olarak uygulanıp `003_tenant_isolation.sql` çalıştırıldı; 34 tablo/165 politika için
+izolasyon geçti. Sonraki down betiği `choirs` ve tüm `choir_id` kolonlarının kalktığını
+doğruladı. Bunların hiçbiri hosted DB veya gerçek üye oturumu kanıtı değildir.
+
 Bağlantı hazırlığında DB parolası yenilendi; macOS Anahtar Zinciri'nde
 `Genova Supabase Database` hizmeti altında tutuluyor. Parola Git'e veya bu kayda
 konulmadı. Bu bağlantıyı kullanan harici yönetim araçları güncel parolayı kullanmalı.
@@ -82,9 +89,9 @@ konulmadı. Bu bağlantıyı kullanan harici yönetim araçları güncel parolay
 | Ortak tenant transport | 22 test; %97.14 statement/branch | gerçek SDK request üretimi, sahte HTTP yanıtları |
 | Uygulama Playwright | 14/14 | masaüstü/mobil login, anonim API reddi, PWA, otomatik a11y; gerçek giriş yok |
 | Website | 25 birim, build ve 44/44 Playwright | yerel test; canlı form gönderilmedi |
-| DB izolasyonu | geçti | yerel public yedeğinde iki sentetik kullanıcı/koro, 34 tablo taraması; tüm tablolarda ayrı write fixture yok |
+| DB izolasyonu | geçti (4 Eylül, taze `public + auth` yedeği) | iki sentetik kullanıcı/koro, 34 tablo taraması; tüm tablolarda ayrı write fixture yok |
 | DB ek negatif kontroller | geçti | anon/üyesiz erişim, cross-update/delete/insert, RPC, FK, auth kimliği, service-role upsert/duyuru hedefi |
-| Veri korunması ve down | geçti | 37 tablonun içerik hash/count, 168 policy, eski function/trigger/constraint tanımları |
+| Veri korunması ve down | geçti (4 Eylül, taze arşiv) | 37 tablonun içerik hash/count, 168 policy, 11 trigger, 8 ilgili function ve constraint roundtrip'i |
 | Edge Deno check | geçti | eski `@ts-nocheck` devam ediyor; deploy/gerçek Drive çalışma testi değil |
 | Mobil | çalıştırılmadı | brief kapsam dışı; spike üretim web kapılarından çıkarıldı |
 
@@ -103,6 +110,8 @@ Yeniden çalıştırılabilir SQL:
   beklenmeyen tenant-dışı tablo yok. Hedef tablolarda 165, global website
   tablolarında 3 politika var. `public.choirs` ve `current_choir_id()` henüz yok.
 - Canlı migration defterinin son kaydı `20260512215239`; `003` uygulanmamış.
+- Taze arşivde migration varsayımları, izole migration → isolation → down zinciriyle
+  geçti; bu, canlı DDL öncesi uyumluluk kanıtıdır, hosted çalıştırma değildir.
 - Yerel `main`, `003` SQL'i ile web API/Edge Function uyarlamalarını içeriyor; bu
   değişiklikler henüz `origin/main`e veya üretime taşınmadı.
 - Bu nedenle canlı şema eski sürümle karıştırılmadı. Göç ancak aynı sürüm web/Edge
