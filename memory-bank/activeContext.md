@@ -22,6 +22,11 @@ veya canlı DDL kendiliğinden başlatılmadı. Sonraki anlamlı adım, tek bak�
 koordineli web/Edge/DB yayın yetkisi ve sonra hosted izolasyon + gerçek üyeli akış
 kanıtıdır.
 
+[004 RN kabuk ve native giriş hazırlık brief'i](../docs/briefs/004-rn-kabuk-ve-giris.md)
+yalnız ilk native işin sınırını kayda alır; ürün kodu başlamadı. 003'ün canlı kapıları
+ile mağazadan önceki çok-korolu ürün brief/kararları kapanmadan bu aşama uygulanmaz.
+Kalıcı WebView oturum köprüsü, push ve ses ayrı işlerdir.
+
 [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md): iki video, kaynak repo ve
 13 ekran görüntüsündeki yöntem Genova'ya uyarlandı. Altı kısa hafıza dosyası,
 güncel ajan kuralları ve tekrar kullanılabilir brief/devir/proje profili hazır.
@@ -40,6 +45,9 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 - `003` için yedek/geri yükleme/preflight kapısı güncel; canlı göç/yayın/üyeli akış
   kapıları açık. Önce [003 doğrulama kaydını](../docs/briefs/003-dogrulama.md) ve
   güncel ortamı tekrar kontrol et.
+- 003 kapanınca sırayı sessizce mobil kabuğa atlama: çok-korolu ürün için gerekli
+  küçük brief/kararları bitir. Native giriş/kabuk sınırı şimdiden
+  [004 brief'inde](../docs/briefs/004-rn-kabuk-ve-giris.md) kayıtlıdır.
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
