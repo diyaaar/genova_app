@@ -1,15 +1,15 @@
 # 003 — uygulama, doğrulama ve canlı geçiş kaydı
 
-4 Eylül 2026. **Yerel uygulama hazır; canlı göç yapılmadı, brief kapanmadı.**
-Kullanıcı geçişe başlanmasını onayladı. Bu oturumdaki başlangıç ön kontrolü ve
-yerel kanıt tamamlandı; GitHub push, web/Edge yayını veya canlı DDL uygulanmadı.
+4 Eylül 2026. **Canlı göç tamamlandı; brief kapandı.** Kullanıcı 003 canlı
+geçişini açıkça yetkilendirdi. Web, Edge Function ve DB şeması aynı bakım
+aralığında yayınlandı; hosted izolasyon ve oturumlu temel akış kontrolleri geçti.
 
 ## Canlı envanter ve kapsam
 
 Doğru bağlantı: `supabase-genesinova`, proje `hievmwwctjjlhmssoxsu`.
-MCP ile son kontrolde `public.choirs` yok, 168 mevcut public politika var.
-37 tablonun 34'ü kiracı kapsamına alındı; bunların 165 politikası korunarak daraltılıyor.
-Ek 34 restrictive politika gelecekteki geniş izinlere karşı kiracı sınırını koruyor.
+Göç öncesinde `public.choirs` yok ve 168 public politika vardı. 37 tablonun 34'ü
+kiracı kapsamına alındı; bunların 165 politikası korunarak daraltıldı. Ek 34
+restrictive politika gelecekteki geniş izinlere karşı kiracı sınırını koruyor.
 
 Web sitesinin `collab_inquiries`, `contact_messages`, `subscribers` tabloları global
 kalıyor; bu üç tablonun veri/politika yapısı değiştirilmedi. `public_choir_members`
@@ -33,11 +33,17 @@ Yedekler Git dışında, yalnızca kullanıcı erişimi olan klasörde:
 | `genova_public_before_003_2026-09-04.dump` | 382596 | `577233703f6d5dafbd8fb2b954938a30d3ea9d8e5233ddb190e26b9d5805cc95` |
 | `genova_public_pre_003_20260904T150155+0300.dump` | 383114 | `03fe777e0c9d8069a7cf2da61fd1dc2d90871f5b71c0ac29dfbd40ded423f84b` |
 | `genova_public_auth_pre_003_20260904T150917+0300.dump` | 509757 | `94cb2f188b68197e7d0471a829fa4199b1eaf6dc4f1735fd83d4f3fc87d1a160` |
+| `genova_public_auth_pre_003_live_20260904T154916+0300.dump` | 509790 | `125a7c2d3b489405e087c3995ed734b095cbea5a20ef34e4859f8c1b918a593e` |
 
 Public arşivin 467 içindekiler kaydı/37 tablo-veri bölümü okunabildi ve yerel
 PostgreSQL 17'ye gerçekten geri yüklendi. Auth yüzeyi yerelde asgari taklit:
 bu, tüm Supabase platformunun felaket kurtarma doğrulaması değildir. Storage/Drive
 dosyalarının binary içerikleri SQL yedeğine dahil değil.
+
+Canlı DDL'den hemen önce alınan son arşivin içerik listesi `pg_restore --list`
+ile doğrulandı. Bu son dosya ayrıca tam geri yüklenmedi; aynı gün alınan eşleşen
+`public + auth` arşivinin izole PostgreSQL 17 geri yüklemesi aşağıdaki geri dönüş
+kanıtıdır. Bu iki kanıt birbirinin yerine geçirilmez.
 
 **4 Eylül güncel yedek kanıtı:** Supabase Free planda panel yedeği olmadığı için
 IPv4 session pooler üzerinden yeni mantıksal arşiv alındı. Public-only arşivinin
@@ -89,10 +95,13 @@ konulmadı. Bu bağlantıyı kullanan harici yönetim araçları güncel parolay
 | Ortak tenant transport | 22 test; %97.14 statement/branch | gerçek SDK request üretimi, sahte HTTP yanıtları |
 | Uygulama Playwright | 14/14 | masaüstü/mobil login, anonim API reddi, PWA, otomatik a11y; gerçek giriş yok |
 | Website | 25 birim, build ve 44/44 Playwright | yerel test; canlı form gönderilmedi |
-| DB izolasyonu | geçti (4 Eylül, taze `public + auth` yedeği) | iki sentetik kullanıcı/koro, 34 tablo taraması; tüm tablolarda ayrı write fixture yok |
+| DB izolasyonu | geçti: yerel kopya + hosted production transaction | iki sentetik kullanıcı/koro, 34 tablo taraması; hosted fixture sonunda ROLLBACK |
 | DB ek negatif kontroller | geçti | anon/üyesiz erişim, cross-update/delete/insert, RPC, FK, auth kimliği, service-role upsert/duyuru hedefi |
 | Veri korunması ve down | geçti (4 Eylül, taze arşiv) | 37 tablonun içerik hash/count, 168 policy, 11 trigger, 8 ilgili function ve constraint roundtrip'i |
-| Edge Deno check | geçti | eski `@ts-nocheck` devam ediyor; deploy/gerçek Drive çalışma testi değil |
+| Edge Function | `drive-manager-v2` v14 ACTIVE; JWT'siz istek 401 | authenticated yazma yapılmadı; gerçek kullanıcı verisi değiştirilmedi |
+| Canlı web | Vercel Production `3878e1d` Ready; girişli şef üyeliğiyle ana sayfa, repertuvar/PDF, chat, duyuru, ödev, profil ve devamlılık açıldı | salt-okunur duman testi; ayrı korist hesabı ve canlı write/delete denenmedi |
+| Ortak website | ana sayfa ve `/tr/contact` 200; üç global tablo/politika korunuyor | canlı form gönderilmedi |
+| Edge Deno check | önceki yerel kontrolde geçti | bu kesimde yerel Deno kurulu değildi; server-side deploy derlemesi geçti |
 | Mobil | çalıştırılmadı | brief kapsam dışı; spike üretim web kapılarından çıkarıldı |
 
 Yeniden çalıştırılabilir SQL:
@@ -104,47 +113,30 @@ Yeniden çalıştırılabilir SQL:
 - `supabase/test-support/003_local_bootstrap.sql`: **yalnız boş yerel replica** için
   asgari roller/Auth; migration veya production test sırasına konulmamalı.
 
-## 4 Eylül canlı ön kontrol yenilemesi
+## 4 Eylül canlı geçişi
 
-- Canlı preflight: hedefteki 34 tablonun tamamı var; eksik kiracı tablosu veya
-  beklenmeyen tenant-dışı tablo yok. Hedef tablolarda 165, global website
-  tablolarında 3 politika var. `public.choirs` ve `current_choir_id()` henüz yok.
-- Canlı migration defterinin son kaydı `20260512215239`; `003` uygulanmamış.
-- Taze arşivde migration varsayımları, izole migration → isolation → down zinciriyle
-  geçti; bu, canlı DDL öncesi uyumluluk kanıtıdır, hosted çalıştırma değildir.
-- Yerel `main`, `003` SQL'i ile web API/Edge Function uyarlamalarını içeriyor; bu
-  değişiklikler henüz `origin/main`e veya üretime taşınmadı.
-- Bu nedenle canlı şema eski sürümle karıştırılmadı. Göç ancak aynı sürüm web/Edge
-  yayını için açık bir bakım aralığında, tek migration dosyasıyla uygulanabilir.
+- `3878e1d`, `origin/main`e gönderildi ve Vercel deployment
+  `BLR3gss854haXZdLutioEjnizEP5` Production/Ready oldu.
+- Yalnız `20260903214901_tenant_schema_003.sql`, doğru project-ref'in session
+  pooler bağlantısında tek transaction ile uygulandı. Eski migration yığını push edilmedi.
+- Migration defterine `20260903214901 / tenant_schema_003` kaydı işlendi.
+- Canlıda bir `Genesi Nova` koro satırı; 34/34 NOT NULL kolon, default, FK, indeks ve
+  restrictive tenant politikası doğrulandı. Toplam public politika 203 oldu.
+- `drive-manager-v2` v13 kaynağı yedeklendi; yeni v14 ACTIVE ve `verify_jwt=true`.
+- Hosted `003_tenant_isolation.sql` iki sentetik kullanıcı/koro ile geçti ve ROLLBACK yaptı.
+- Kesim sonrası gözlem aralığında Supabase Edge 5xx veya Postgres ERROR görülmedi.
+- Supabase advisor borcu sürüyor: security 58 WARN; performance 120 WARN + 72 INFO.
+  `missing_rls`/ERROR raporlanmadı; bu genel borç 003 kapsamı dışında tutuldu.
 
-## Canlıya geçiş kapıları — şu anda bekliyor
+## Kalan doğrulama sınırları
 
-**4 Eyl sonraki oturum güncellemesi:** Chrome Genesi Nova profili üzerinden doğru
-Vercel projesine erişim doğrulandı; aşağıdaki CLI engeli tarayıcı erişimiyle aşılabiliyor.
-Kullanıcı Railway ve Drive'dan çıkış araştırmasını istedi. Yeni durum/konfigürasyon:
-`docs/altyapi-2026-09-04.md`. Canlı göç henüz yapılmadı.
-
-1. Genova Vercel erişimi: mevcut CLI kullanıcısı `diyaaar`, görülebilen tek ekip
-   `diyaaars-projects`; altı proje içinde Genova yok. `genesinovachoir` scope erişimi
-   başarısız. `app.genesinovachoir.com/login` 200/Vercel veriyor; deploy yetkisi kanıtı değil.
-2. Supabase MCP proje bağlantısı bilinçli salt okunur. Aynı projeye ait IPv4 session
-   pooler, yalnız yedek/geri yükleme kanıtı için kullanıldı; canlı DDL uygulanmadı.
-   Başka hesaba veya projeye geçilmemeli.
-3. Taze yedek, geri yükleme ve tablo/politika preflight tamamlandı. DDL'den hemen önce
-   aynı kontrolü yinele; migration ile yeni web/Edge sürümünü **birlikte**, yönetilen
-   kısa bakım aralığında yayınla. Eski web'i yeni şemada ya da yeni web'i eski şemada
-   bırakma: eski service-role yazımları NULL default nedeniyle; yeni sürüm eksik
-   `choir_id` nedeniyle çalışmaz.
-4. Önce yeni web build'ini canlı trafiğe kapalı hazırla; eski web ve Edge sürümlerini
-   kaydet. Yalnız `20260903214901_tenant_schema_003.sql` dosyasını aynı projeye ait
-   yazma bağlantısıyla transaction içinde uygula; geçmiş tüm repo migration'larını
-   körlemesine push etme.
-5. Yeni Edge/web'i etkinleştir. İzinli transaction izolasyon testini çalıştır;
-   gerçek üye/şef oturumlarıyla repertuvar, chat, duyuru, ödev, profil ve yoklama
-   akışlarını doğrula. Website'nin mevcut okuma/form akışlarını da kontrol et.
-6. Ardından brief checklist'ini kapat. Şu an yalnız yedek/geri yükleme/preflight alt
-   kapısı tamamlandı; push, deploy, canlı DDL, hosted izolasyon testi ve üyeli akışlar
-   tamamlandı sayılmaz.
+- Canlı write/delete testi gerçek kullanıcı verisini değiştirmemek için yapılmadı;
+  write izolasyonu hosted transaction içindeki sentetik fixture ile kanıtlandı.
+- Ayrı korist hesabıyla UI duman testi yapılmadı. Kullanılan gerçek oturum hem koro
+  üyesi hem ŞEF rolündeydi; SQL testi iki ayrı authenticated tenant kimliğini kapsadı.
+- Website formu gönderilmedi. Global tabloların şeması/politika sayısı ile iki canlı
+  sayfanın HTTP 200 durumu kontrol edildi.
+- Storage/Drive binary yedeği ve fiziksel tenant ayrıştırması 003 kapsamı değildir.
 
 ## Geri dönüş
 

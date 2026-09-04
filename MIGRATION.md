@@ -7,9 +7,9 @@
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
-**Faz 1 — kiracı şeması (`choir_id`): yerel uygulama ve testler hazır; canlı geçiş bekliyor (4 Eyl).**
-34 kiracı tablosu, 165 mevcut politika, servis istemcileri ve geri alma testi hazır.
-Canlı DB henüz değiştirilmedi. Yayın/erişim kapıları: `docs/briefs/003-dogrulama.md`.
+**Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**
+34 kiracı tablosu, 165 mevcut politika + 34 restrictive sınır, web/Edge uyarlaması,
+hosted izolasyon ve oturumlu duman testi geçti. Kanıt: `docs/briefs/003-dogrulama.md`.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 
 ---
@@ -119,14 +119,10 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**Faz 1 — kiracı şeması.** Brief hazır: **`docs/briefs/003-kiraci-semasi.md`**.
-Kapsam: her tabloya `choir_id`, RLS'in baştan yazılması, mevcut verinin tek kiracıya taşınması.
-Sadece backend — web hemen faydalanır, mobil istemci ilk günden kiracı-farkındalıklı doğar.
-
-**4 Eyl ilerleme:** Kod ve yerel testler tamamlandı; `003` henüz kapanmadı.
-Canlı DB göçü, aynı sürüm web/Edge yayını ve giriş yapılmış temel akış kontrolleri birlikte
-tamamlanmalı. Şema tek başına uygulanırsa eski service-role yazımları bozulur.
-Detay ve geri dönüş sırası: **`docs/briefs/003-dogrulama.md`**.
+**Çok-korolu ürün kararları ve küçük brief'leri.** `003` canlıda kapandı. Doğrudan
+native kabuğa başlamadan koro oluşturma, davet/üyelik, plan-limit ve dosya sağlayıcısı
+sınırları kesinleştirilecek. Hazır `004` brief'i bundan sonra uygulama girdisidir;
+detay ve geri dönüş kaydı: **`docs/briefs/003-dogrulama.md`**.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.
 `002`'nin sonundaki 8 maddelik kurulum zinciri ürün projesinde baştan uygulanacak.
