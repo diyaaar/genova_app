@@ -3,7 +3,9 @@
 Tarih: 4 Eylül 2026.
 Durum: video metinleri tamamen okundu; yöntem çıkarıldı. Sonraki GitHub incelemesi
 tamamlandı: [depo analizi ve alt ajan önerisi](ai-calisma-yontemi-repo-incelemesi.md).
-Şablon kurulmadı, proje kuralları değiştirilmedi. Aşağıdaki metin ilk okuma aşamasını kaydeder.
+Sonraki ekran kaynaklarıyla yerel yöntem kurulumu [WF-001](briefs/WF-001-ai-calisma-duzeni.md)
+kapsamında tamamlandı. Aşağıdaki metin ilk okuma aşamasını kaydeder; o aşamadaki
+"henüz uygulanmadı" ifadeleri sonraki kurulumun durum kaydı değildir.
 
 ## İstek ve kaynak sınırı
 

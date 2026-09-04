@@ -1,6 +1,8 @@
 # AI çalışma yöntemi — kaynak repo ve alt ajan yaklaşımı
 
-4 Eylül 2026. Durum: inceleme + uyarlama önerisi; çalışan şablon/ajan sistemi kurulmadı.
+4 Eylül 2026. İlk inceleme ve öneriler aşağıda tarihsel olarak korunur.
+Sonraki adımda ekran görüntüleriyle tamamlanan yerel uyarlama
+[WF-001](briefs/WF-001-ai-calisma-duzeni.md) kapsamında kuruldu ve doğrulandı.
 Önceki bağlam: [iki video metninin analizi](ai-calisma-yontemi-kaynak-analizi.md).
 
 ## Bulunan kaynaklar ve inceleme sınırı
@@ -98,7 +100,7 @@ Aynı güçlü modelden daha çok ajan açmak kendiliğinden ucuzluk sağlamaz.
 - Başarı metriği ajan adedi değil: kabul edilen doğru çıktı, toplam süre, tekrar sayısı
   ve mümkünse gerçek toplam kullanım maliyeti. Ölçmeden tasarruf yüzdesi vaat edilmez.
 
-**Mevcut kural sınırı:** Genova `AGENTS.md` hâlâ "aynı anda tek ajan" diyor.
+**İlk inceleme anındaki kural sınırı:** Genova `AGENTS.md` "aynı anda tek ajan" diyordu.
 Bu inceleme turunda alt ajan açılmadı ve kural sessizce değiştirilmedi. Gelecek uyarlama
 önerisi: ana çalışma ağacında tek yazıcı; okuma/rapor işleri kontrollü alt ajanlara,
 gerekirse kod işleri gerçekten ayrı çalışma kopyalarına. Ayrı kopya yoksa eşzamanlı
@@ -111,3 +113,40 @@ eksik memory-bank indeksini, görev devri sözleşmesini ve doğrulama kapılar�
 bir pilot brief üzerinde denemek. Yeni projeye asgari kurulum; mevcut projeye fark
 odaklı geçiş. Hazır olmadığı görülen dosyalar "depodan çekildi" diye sunulmayacak.
 Bu turda yalnız bağlam belgeleri güncellendi; kod/kurallar/global skill, hosting ve DB değişmedi.
+
+## Ek kaynak — kullanıcının 13 ekran görüntüsü
+
+4 Eylül 2026, WF-001. Görseller video ekranından kırpılmış kaynak malzemedir;
+görünmeyen sağ/alt satırlar tamamlanmadı. Video sürümünün commit'i bilinmiyor.
+
+| Görüntü | Okunabilen içerik | Uyarlamaya etkisi |
+|---|---|---|
+| 1, 6, 13 | Altı dosya adı ve hafıza bankası rolleri | `memory-bank/` yapısı kesinleşti; içerikler Genova kaynaklarından yeniden yazıldı. |
+| 2, 3, 4 | Sorumluluk, kapsam, planlama, sınırlar, küçük fonksiyon ve ajan davranışı | Kapsamlı işi brief'e bağlama; tek sorumluluk ve kapsam dışı refactor yasağı. |
+| 5 | Rust güvenliği, doküman/geçmiş, `cargo check`, anayasal kurallar | Dile özel komutlar kopyalanmadı; mevcut web/mobil kapıları korunuyor. |
+| 7 | `techContext.md` örneği | Teknoloji, bağımlılık, ortam ve teknik kısıtları ayrı tutma. |
+| 8 | `systemPatterns.md` örneği | Modül ilişkileri ve sözleşme sınırlarını açıklama. |
+| 9 | `projectbrief.md` örneği | Amaç/kapsam ve çekirdek gereksinimleri kısa tutma. |
+| 10 | `progress.md` örneği | Çalışan/bekleyen iş ve bilinen sorunları kanıta bağlama. |
+| 11 | `productContext.md` örneği | Neden var, kullanıcı akışı ve deneyim hedeflerini ayırma. |
+| 12 | `activeContext.md` örneği | Güncel odak, yakın değişiklik ve sonraki adımı tutma. |
+
+Ekranlarda 16'ya kadar kural numarası var; incelenmiş GitHub sürümü 12 bölümdü.
+Örneğin görüntü 5 Türkçe/İngilizce teknik yoruma izin veriyor, GitHub sürümü İngilizce
+istiyor. Bunlar tek sürüm gibi birleştirilmedi. Görsellerde kaynak motorun performans
+ve hata yokluğu iddiaları bağımsız test kanıtı değildir; Genova garantisine dönüşmez.
+
+Görüntü 10 ve 12'de uzun değişiklik açıklamaları tekrarlanıyor. Genova'da activeContext
+kısa odak/devir, progress durum/kanıt indeksi olarak ayrıldı. Görüntü 13'teki `M`
+işaretleri yerel değişiklik gösterir; commit, senkron veya test geçti kanıtı değildir.
+Hiçbir görsel çalıştırılabilir bir exporter/ajan otomasyon scripti sağlamıyor.
+
+## Uyarlanan paket
+
+[Çalışma düzeni](ai-calisma-duzeni.md), [altı kısa hafıza dosyası](../memory-bank/projectbrief.md),
+[brief](briefs/_TEMPLATE.md), [ajan/oturum devri](templates/ajan-devir.md) ve
+[yeni proje profili](templates/proje-profili.md) Genova için yazıldı.
+AGENTS'teki eski Flutter ve tek-ajan ifadeleri WF-001'de görünür olarak güncellendi:
+RN + Expo, ana ağaçta tek yazıcı ve kontrollü devir. Ürün/DB/yayın değişimi yapılmadı;
+başka projelere/global skill'e kurulum veya çalışan bir ajan zamanlayıcısı iddiası yok.
+Gerçek test ve pilot sonucu yalnız [WF-001 kaydında](briefs/WF-001-ai-calisma-duzeni.md) izlenir.

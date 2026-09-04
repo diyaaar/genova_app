@@ -22,6 +22,12 @@ Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
 
 | 14 | **MusicXML aktif içerik filtresine takılıyor** | 3 Eyl güvenlik sertleştirmesi (`lib/server/drive-file-content.ts`) `.xml`/`.xsl` uzantılarını ve `+xml` ile biten tüm MIME türlerini reddediyor. MusicXML tam olarak bu: `.xml`/`.musicxml`, `application/vnd.recordare.musicxml+xml`. Planlanan "Pro'da XML yükleme" özelliği bugünkü kodda **yüklemede de indirmede de bloke.** Filtre kaldırılmayacak (stored-XSS koruması doğru); çözüm ya sunucuda ayrıştırıp güvenli temsile çevirmek ya da yalnızca `Content-Disposition: attachment` + `application/octet-stream` + `nosniff` ile indirme olarak servis edip asla satır içi açmamak. Faz 2'de karara bağlanacak. | 3 Eyl |
 
+## Çalışma düzeni kararı
+
+| # | Karar | Gerekçe | Tarih |
+|---|---|---|---|
+| 15 | **Kısa proje hafızası + brief + kanıtlı devir; aynı ağaçta tek yazıcı** | Kullanıcının video/repo/görsellerle istediği yöntem Genova'ya uyarlanır. Altı hafıza dosyası mevcut karar/durum/test kayıtlarına bağlanır. Bağımsız düşük riskli iş kontrollü alt ajana verilebilir; model seçimi riskle yapılır, ana ajan son kabul sahibidir. Eski eşzamanlı tek-ajan kuralı bu kontrollü devir düzeniyle değiştirilir; eşzamanlı ortak-ağaç yazımı yine yasaktır. Teknoloji/mobil kapsamı değişmez. Uygulama ve sınırları: [WF-001](docs/briefs/WF-001-ai-calisma-duzeni.md). | 4 Eyl 2026 |
+
 ## Spike'lardan çıkan teknik kararlar
 
 | Konu | Karar |
