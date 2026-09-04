@@ -87,6 +87,11 @@ Yeniden çalıştırılabilir SQL:
 
 ## Canlıya geçiş kapıları — şu anda bekliyor
 
+**4 Eyl sonraki oturum güncellemesi:** Chrome Genesi Nova profili üzerinden doğru
+Vercel projesine erişim doğrulandı; aşağıdaki CLI engeli tarayıcı erişimiyle aşılabiliyor.
+Kullanıcı Railway ve Drive'dan çıkış araştırmasını istedi. Yeni durum/konfigürasyon:
+`docs/altyapi-2026-09-04.md`. Canlı göç henüz yapılmadı.
+
 1. Genova Vercel erişimi: mevcut CLI kullanıcısı `diyaaar`, görülebilen tek ekip
    `diyaaars-projects`; altı proje içinde Genova yok. `genesinovachoir` scope erişimi
    başarısız. `app.genesinovachoir.com/login` 200/Vercel veriyor; deploy yetkisi kanıtı değil.
