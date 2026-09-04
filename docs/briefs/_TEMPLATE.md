@@ -15,6 +15,15 @@ Varsayım, doğrulanmış durum ve açık kullanıcı kararı ayrı yazılır.
 
 - <dosya veya sabit kaynak bağlantısı — ne için okunacak>
 
+**Geçiş başlangıç kontrolü** — Genova geçiş görevlerinde zorunlu;
+[geçiş rehberi](../gecis-rehberi.md). Başka projede o projenin rehberine uyarlanır.
+
+- Okunan talimatlar, kararlar ve mevcut kanıtın yolları:
+- Tek ekran / altyapı işi; native / WebView / ortak mantık / backend sınırı:
+- Korunacak mevcut davranış, ortak sözleşme ve web etkisi:
+- İzinli dosyalar, tek yazıcı ve bu iş için verilmiş kullanıcı yetkisi:
+- Gerekli testler, ortamları, geri dönüş ve çözülmemiş çelişkiler:
+
 **Kapsam dışı** — bu görevde kesinlikle yapılmayacaklar:
 
 - <özellikle canlı işlem, diğer modüller veya refactor sınırı>
@@ -34,6 +43,7 @@ Varsayım, doğrulanmış durum ve açık kullanıcı kararı ayrı yazılır.
 
 - [ ] <gözlenebilir davranış / belge kabulü>
 - [ ] <ilgili başarısızlık/sınır senaryosu>
+- [ ] Geçiş işiyse başlangıç kontrolü ve rehberin teslim kontrolleri kanıtlandı.
 - [ ] Proje kapısı: <gerçek komut + çalışma dizini>
 - [ ] Diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt bağlantıları güncel.
 

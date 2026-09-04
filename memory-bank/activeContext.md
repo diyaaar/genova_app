@@ -5,6 +5,13 @@ canlı paneller bu yöntem uyarlama işinde yeniden sorgulanmadı.
 
 ## Şimdiki odak
 
+[WF-002](../docs/briefs/WF-002-gecis-rehberi.md): geçiş ajanları için
+[başlangıç/kabul rehberi](../docs/gecis-rehberi.md) hazır; bağlantı/pilot kontrolü
+ve `pnpm check` geçti (114 test, ayrıntı WF-002'de). Kullanıcı bu
+hazırlıktan sonra "uygulamaya başlayayım mı?" diye sorulmasını istedi;
+**ürün geçişi için açık başlama yanıtı bekleniyor.** Bu kayıt sonraki kullanıcı
+"başla" dediğinde güncellenir; kalıcı tekrar-onay şartı değildir.
+
 [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md): iki video, kaynak repo ve
 13 ekran görüntüsündeki yöntem Genova'ya uyarlandı. Altı kısa hafıza dosyası,
 güncel ajan kuralları ve tekrar kullanılabilir brief/devir/proje profili hazır.
@@ -25,7 +32,9 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- Bu yöntem işi sonunda genel resmi ve sıradaki tek brief'i ele al.
+- Başlama onayından sonra önce özellik/brief envanterini ve belgelerdeki çelişkileri
+  netleştir; ilk açık ürün işi 003'ün canlı geçiş kapılarıdır. Genel yayın zamanlaması,
+  çoklu üyelik ve dosya sağlayıcısı henüz kesinleşmiş karar sayılmaz.
   Kendiliğinden DB göçü, DNS değişimi, ücretli plan veya push başlatma.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.

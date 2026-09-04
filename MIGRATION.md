@@ -3,6 +3,9 @@
 > Bu dosya geçişin tek doğru kaynağıdır. Yeni bir oturum önce burayı okur.
 > Bir ekranın durumu değiştiğinde **aynı commit'te** burası da güncellenir.
 
+**Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
+yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
+
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): yerel uygulama ve testler hazır; canlı geçiş bekliyor (4 Eyl).**
 34 kiracı tablosu, 165 mevcut politika, servis istemcileri ve geri alma testi hazır.

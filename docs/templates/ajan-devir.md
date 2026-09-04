@@ -11,6 +11,8 @@ boş şablon, yapılmış iş veya verilmiş izin değildir.
 - Çalışma yolu, branch ve başlangıç commit'i; mevcut kullanıcı değişiklikleri:
 - İzinli dosyalar ve yasak alanlar:
 - Okunacak kaynaklar ve mevcut desen:
+- Geçiş işiyse [geçiş rehberi](../gecis-rehberi.md), `AGENTS.md` ve ana brief'in
+  açık yolları; alıcının gerçekten okuduğu kaynaklar ve başlangıç kontrolü:
 - Beklenen çıktı ve kabul kontrolü:
 - Risk; verilmiş yetki ve ayrıca onay gerektiren işlemler:
 - Model seviyesi ve gerekçesi; araçta gerçekten seçilen model veya seçilemedi bilgisi:
@@ -38,3 +40,5 @@ Sır/token/kişisel veri yerine gerekli asgari bağlamı ver.
 
 Ana ajan diff ve kanıtı inceler; gerekli entegrasyon testini yapar. Alt ajanın
 "bitti" demesi son kabul değildir. Push/deploy/DB değişimi bu sözleşmeyle kendiliğinden yetkilenmez.
+Geçişte alıcının başlangıç kontrolü eksikse ana ajan uygulama çıktısını kabul etmez;
+önce kaynak/kapsam açığını giderir. Devir alan ajan da kurallara tabi, yeni yetki sahibi değildir.
