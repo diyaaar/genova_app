@@ -1,7 +1,8 @@
 # 006 — Üyelik yönetimi güvenlik kapısı
 
-**Durum / tarih / sorumlu yazıcı:** Planlandı; 5 Eylül 2026; ana ajan tek yazıcı.
-Canlı kapatma, parola/oturum işlemleri ve DB göçü ayrı açık yetki bekler.
+**Durum / tarih / sorumlu yazıcı:** Yerel uygulama ve doğrulama tamam; 5 Eylül
+2026; ana ajan tek yazıcı. Canlı kapatma, parola/oturum işlemleri ve DB göçü ayrı
+açık yetki bekler.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Yeni koro ve davet akışını kurmadan
 önce eski toplu kullanıcı bootstrap yolunu erişilemez kılmak ve üyelik/rol ana
@@ -34,6 +35,8 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
   eklediği restrictive politikaları kaldıran DB geri dönüşü.
 - `supabase/tests/006_membership_admin_lockdown.sql` ve gerekirse
   `supabase/test-support/006_roundtrip.sql` — izin/red ve kayıpsız geri dönüş kanıtı.
+- `supabase/tests/003_tenant_isolation.sql` — stronger RLS reddinin hata veya
+  sıfır-etkilenen-satır biçimlerinin ikisini de kabul eden tenant regresyonu.
 - `MIGRATION.md`, `KARARLAR.md`, `memory-bank/activeContext.md`,
   `memory-bank/progress.md`, `memory-bank/systemPatterns.md` — yalnız bu işin
   kısa durum/karar bağlantıları.
@@ -115,10 +118,10 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
   yapamıyor; mevcut okuma ve yetkili service-role yolları çalışıyor.
 - [ ] Etkilenen hesapların aktif oturum/parola riski onaylı yöntemle giderildi;
   kurtarma teslimatı veya kullanıcıya verilecek güvenli yol kanıtlandı.
-- [ ] Restore edilmiş DB'de 006 izin/red, down roundtrip ve 003/005 regresyonu geçti.
+- [x] Restore edilmiş DB'de 006 izin/red, down roundtrip ve 003/005 regresyonu geçti.
 - [ ] Geçiş başlangıç kontrolü ve rehberin teslim kontrolleri kanıtlandı.
-- [ ] Kökten `pnpm check` geçti; DB/Edge/Auth/canlı katmanları ayrı raporlandı.
-- [ ] Diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt
+- [x] Kökten `pnpm check` geçti; DB/Edge/Auth/canlı katmanları ayrı raporlandı.
+- [x] Yerel diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt
   bağlantıları güncel.
 
 **Opsiyonel alt görev:** Bağımsız alt iş yok; güvenlik ve canlı yetki ana ajanda.
@@ -131,6 +134,9 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 | 5 Eyl 2026 | Mevcut RLS ve çağrı envanteri | 005 öncesi taze şema yedeği + güncel repo | geçti, açık bulundu | Beş tabloda authenticated DML rol ayrımı olmadan açık; depoda gerekli doğrudan istemci yazısı veya eski fonksiyon çağrısı yok. |
 | 5 Eyl 2026 | Supabase changelog ve Auth/Edge/RLS resmi belgeleri | güncel resmî kaynak | geçti | Admin API sunucu-only; service-role istemciye açılmaz; kullanıcı Edge çağrısı doğrulanmış JWT ister. |
 | 5 Eyl 2026 | `pnpm check` | yerel | geçti | 25 dosyada 126 test; lint, typecheck, coverage, service worker ve production build geçti. DB/Edge/Auth canlı kabulü değildir. |
+| 5 Eyl 2026 | 006 migration + down roundtrip + 006/005/003 DB testleri | PostgreSQL 17'ye geri yüklenmiş canlı öncesi yedek | geçti | Authenticated doğrudan DML reddedildi, service-role yazısı çalıştı, 006 geri al/yeniden uygula veri kaybı olmadan geçti. Canlı DB sonucu değildir. |
+| 5 Eyl 2026 | Edge invocation görünümü | canlı panel, son 5 gün | sonuç yok | Panel verisinin yenilenmesi 24 saate kadar sürebilir; eski kullanım veya hiç çağrılmama kanıtı değildir. |
+| 5 Eyl 2026 | Auth e-posta yapılandırması | canlı panel, salt okunur | üretim kapısı açık | Custom SMTP yok; proje yerleşik e-posta hizmetini kullanıyor ve panel bunu production için uygun değil olarak işaretliyor. Toplu kurtarma e-postası gönderilmedi. |
 
 **Teslim:** Önce yerel migration/test; sonra açık canlı güvenlik yetkisi. Bu kapı
 kapanınca `007` koro oluşturma, ardından `008` davet/üyelik ayrı brief olur.

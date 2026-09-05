@@ -10,7 +10,9 @@ sıradaki zorunlu iştir. Canlıda eski toplu kullanıcı bootstrap fonksiyonu
 `verify_jwt=false` ve sabit başlangıç parolalarıyla service-role yazısı yapıyor;
 çağrılmadı. Üyelik/rol ana tablolarında authenticated doğrudan DML de rol ayrımı
 olmadan açık. Önce fonksiyon erişimi, hesap riski ve bu DML yolları kapatılacak;
-canlı kapatma/oturum/parola/e-posta etkileri açık yetki olmadan uygulanmayacak.
+restrictive DB kilidi ve yerel geri dönüş/regresyon kanıtı hazır. Canlı
+kapatma/oturum/parola/e-posta etkileri açık yetki olmadan uygulanmayacak; custom
+SMTP olmadığı salt okunur panel kontrolünde doğrulandı.
 
 [005 çoklu üyelik ve aktif koro](../docs/briefs/005-coklu-uyelik-aktif-koro.md)
 tamamlandı ve canlıya alındı. DB `20260905003154`, Edge v15, web `0a2b94c`;
