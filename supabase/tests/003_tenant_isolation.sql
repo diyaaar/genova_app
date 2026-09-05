@@ -416,7 +416,8 @@ begin
   begin
     update public.choir_members set auth_user_id = gen_random_uuid()
       where id = current_setting('tenant_test.member_b')::uuid;
-    raise exception 'Auth identity reassignment accepted';
+    get diagnostics affected_rows = row_count;
+    if affected_rows <> 0 then raise exception 'Auth identity reassignment accepted'; end if;
   exception when check_violation then null; end;
 end
 $tenant_b_checks$;
