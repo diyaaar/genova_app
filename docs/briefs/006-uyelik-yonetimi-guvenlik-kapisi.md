@@ -37,6 +37,13 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
   `supabase/test-support/006_roundtrip.sql` — izin/red ve kayıpsız geri dönüş kanıtı.
 - `supabase/tests/003_tenant_isolation.sql` — stronger RLS reddinin hata veya
   sıfır-etkilenen-satır biçimlerinin ikisini de kabul eden tenant regresyonu.
+- `app/auth/recovery/page.tsx`, `lib/auth-recovery.ts` ve ilgili test — kurtarma
+  bağlantısından açılan, yalnız oturum sahibinin yeni parolasını belirleyen tek
+  ekran ve doğrulama sözleşmesi.
+- `supabase/functions/account-recovery-006/` ve `supabase/config.toml` — yalnız
+  bu olay için hazırlanan,
+  iki ayrı yönetici anahtarı isteyen, önce salt denetim yapan ve yeniden
+  çalıştırmada tamamlanan hesapları atlayan geçici kurtarma işlevi/testleri.
 - `MIGRATION.md`, `KARARLAR.md`, `memory-bank/activeContext.md`,
   `memory-bank/progress.md`, `memory-bank/systemPatterns.md` — yalnız bu işin
   kısa durum/karar bağlantıları.
@@ -78,6 +85,8 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 **Kapsam dışı** — bu görevde kesinlikle yapılmayacaklar:
 
 - Koro oluşturma, davet kabulü, üyelik yönetimi UI'ı, plan/limit veya RN kabuk.
+  Buradaki tek istisna, 006 güvenlik olayını kapatmak için gereken parola kurtarma
+  ekranıdır; genel “şifremi unuttum” ürünü bu brief'e dahil değildir.
 - Yeni gerçek koro/üyelik, deneme kullanıcısı veya ikinci üyelik oluşturma.
 - Sabit parolaları belgeye, Git'e, loga, hafızaya ya da devir mesajına kopyalama.
 - `send-email` veya başka Edge Function'ları bu bulgu gerekçesiyle sessizce
@@ -109,6 +118,11 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 4. Canlı fonksiyonu erişilemez kıl, anonim ve kullanıcı JWT'siyle salt durum
    kontrolü yap; ardından onaylı parola/oturum kurtarma planını uygula ve teslimatı
    kişisel veriyi ifşa etmeden kaydet.
+5. Kurtarma ekranını ve geçici yönetici işlevini yerelde test et. Canlı işlevi
+   önce yalnız denetim modunda çalıştır; tam 27 hesap, SMTP bağlantısı ve yönlendirme
+   doğrulanmadan parola değiştirme. Ayrı etki onayı sonrası parolaları rastgeleleştir,
+   kurtarma bağlantılarını gönder, eski oturumların geçersizliğini doğrula ve geçici
+   işlevi/tek kullanımlık anahtarı canlıdan kaldır.
 
 **Bitti tanımı** — hepsi kanıtlanmadan görev kapanmaz:
 
