@@ -1,6 +1,7 @@
 # 005 — Çoklu üyelik ve aktif koro sözleşmesi
 
-**Durum / tarih / sorumlu yazıcı:** Başladı · 5 Eylül 2026 · ana ajan, tek yazıcı.
+**Durum / tarih / sorumlu yazıcı:** Yerelde tamamlandı, canlı bekliyor ·
+5 Eylül 2026 · ana ajan, tek yazıcı.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Bir Auth hesabının birden fazla koroya
 üye olabilmesini, web ve gelecekteki native istemcinin o oturum için seçtiği koroyu
@@ -63,6 +64,8 @@ kontrolünde yeniden kimlik doğrulama istedi; bu brief canlı işlem yetkisi sa
 - `components/AuthProvider.tsx`, `components/ChoirSelectionGate.tsx`,
   `components/ChoirSwitcher.tsx`, `components/TopBar.tsx`, `app/(main)/layout.tsx`
   — başlangıç kapısı, seçici ve kiracı değişiminde yeniden kurulum.
+- `lib/chat-cache.ts`, `lib/notification-cache.ts` ve ilgili testler — koro
+  değişiminde tenant türevi tarayıcı verilerini temizleme.
 - `lib/server/supabase-auth.ts`, `lib/server/tenant-client.ts`,
   `lib/server/drive-file-access.ts`, bunların testleri ve çağıran `app/api/**`
   yolları — doğrulanmış access token üzerinden aktif koro çözümü.
@@ -119,21 +122,21 @@ kontrolünde yeniden kimlik doğrulama istedi; bu brief canlı işlem yetkisi sa
 
 ## Bitti tanımı
 
-- [ ] Tek Auth hesabı iki koroda ayrı üye olabilir; aynı koroda tekrar bağlanamaz.
-- [ ] Tek üyeli kullanıcı seçim yapmadan eski davranışla çalışır.
-- [ ] Çok üyeli kullanıcıda seçim yoksa tenant verisi okunmaz/yazılmaz; kendi
+- [x] Tek Auth hesabı iki koroda ayrı üye olabilir; aynı koroda tekrar bağlanamaz.
+- [x] Tek üyeli kullanıcı seçim yapmadan eski davranışla çalışır.
+- [x] Çok üyeli kullanıcıda seçim yoksa tenant verisi okunmaz/yazılmaz; kendi
   korosu seçilebilir, üye olmadığı koro reddedilir.
-- [ ] Aynı kullanıcının iki farklı JWT `session_id` oturumu birbirinden bağımsız
+- [x] Aynı kullanıcının iki farklı JWT `session_id` oturumu birbirinden bağımsız
   koro seçebilir ve cross-tenant erişemez.
-- [ ] `current_choir_member_id`, rol/ses grubu helper'ları, Next service client,
+- [x] `current_choir_member_id`, rol/ses grubu helper'ları, Next service client,
   Edge Function ve web Auth aynı aktif koroyu kullanır.
-- [ ] Koro değişiminde eski koroya ait bellek, URL, offline dosya ve Realtime
+- [x] Koro değişiminde eski koroya ait bellek, URL, offline dosya ve Realtime
   bağlantıları yeni ekrana taşınmaz.
-- [ ] Restore edilmiş DB'de migration + izolasyon + down roundtrip geçer; down,
+- [x] Restore edilmiş DB'de migration + izolasyon + down roundtrip geçer; down,
   gerçek çoklu üyelik varsa veri kaybetmeden durur.
-- [ ] Geçiş başlangıç kontrolü ve rehber teslim kontrolleri kanıtlandı.
-- [ ] Kökten `pnpm check` ve ilgili `pnpm test:e2e` senaryoları geçer.
-- [ ] Diff yalnız izinli kapsamda; ilgili hafıza/karar/durum bağlantıları güncel.
+- [x] Geçiş başlangıç kontrolü ve rehber teslim kontrolleri kanıtlandı.
+- [x] Kökten `pnpm check` ve ilgili `pnpm test:e2e` senaryoları geçer.
+- [x] Diff yalnız izinli kapsamda; ilgili hafıza/karar/durum bağlantıları güncel.
 
 ## Sonuç kaydı
 
@@ -141,6 +144,13 @@ kontrolünde yeniden kimlik doğrulama istedi; bu brief canlı işlem yetkisi sa
 |---|---|---|---|---|
 | 5 Eyl 2026 | Başlangıç kaynak/diff kontrolü | yerel `main` | geçti | Ağaç temiz; 003 kanıtı ve tek üyelik yolları okundu. |
 | 5 Eyl 2026 | `supabase-genesinova` envanter/advisor isteği | canlı MCP | bekliyor | Bağlantı `Auth required`; canlı okuma/yazma yapılmadı. |
+| 5 Eyl 2026 | 003 sonrası 005 migration + izolasyon | izole PostgreSQL 17, 4 Eyl yedeği | geçti | SHA-256 `125a7c2d...a593e`; 38 public tablo, 28 Auth kullanıcısı, 29 mevcut üyelik; 003'ün 34/34 tenant taraması ile iki session/iki koro, rol/ses/RLS ve push sahipliği test edildi. |
+| 5 Eyl 2026 | 005 down + roundtrip | aynı izole kopya | geçti | Gerçek çoklu üyelik fixture'ında down durdu; fixture uzlaştırılınca veri/policy/function/trigger/constraint/index birebir eşleşti. Geçici sunucu kapatıldı. |
+| 5 Eyl 2026 | `pnpm check` | yerel | geçti | 25 dosyada 126 test; %92,93 statement / %81,77 branch; lint, typecheck, service worker ve production build geçti. |
+| 5 Eyl 2026 | `pnpm test:e2e` | yerel Chromium + Pixel profili | geçti | 16/16; çoklu üyelik seçim kapısı, seçim sonrası aktif koro ve ciddi/kritik Axe ihlali olmaması dahil. Gerçek Supabase oturumu değildir. |
+| 5 Eyl 2026 | Edge kaynak kontrolü | yerel | sınırlı | `drive-manager-v2` aktif koro RPC'sine bağlandı; Deno kurulu olmadığından ayrı Deno check/deploy yapılmadı. Next build Edge dosyasını doğrulamaz. |
+| 5 Eyl 2026 | Üretim/test commit'i | yerel `main` | geçti | `7b86a57`; push, deploy ve canlı DB işlemi yapılmadı. |
 
-**Teslim:** Üretim ve belge commit'leri ayrı tutulur. Canlıya kadar durum
-“yerelde hazır / canlı bekliyor” kalır; sıradaki tek adım canlı kesim ön kontrolüdür.
+**Teslim:** Üretim ve belge commit'leri ayrı tutuldu. Canlıya kadar durum
+“yerelde hazır / canlı bekliyor” kalır; sıradaki tek adım yeniden Genesinova Supabase
+yetkisi, taze yedek/restore ve koordineli DB → Edge/web kesim ön kontrolüdür.

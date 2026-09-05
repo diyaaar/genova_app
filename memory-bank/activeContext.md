@@ -1,19 +1,19 @@
 # Aktif bağlam
 
-Güncelleme: 4 Eylül 2026. Kullanıcı 003 canlı geçişini açıkça yetkilendirdi;
-koordineli web/Edge/DB yayını ve doğrulama aynı gün tamamlandı.
+Güncelleme: 5 Eylül 2026. 003 canlıda kalıyor; 005 çoklu üyelik/aktif koro
+sözleşmesi yerelde tamamlandı ve canlı kesim bekliyor.
 
 ## Şimdiki odak
 
-[003 kiracı şeması](../docs/briefs/003-kiraci-semasi.md) kapandı. `3878e1d` Vercel
-Production'da; `20260903214901` canlı DB'de; `drive-manager-v2` v14 ACTIVE.
-34/34 tablo sınırı, hosted iki-koro izolasyon testi ve oturumlu ŞEF üyesiyle temel
-okuma akışları geçti. Ortak website canlı kaldı. Tam kanıt, yedek hash'i ve dürüst
-sınırlar [003 doğrulama kaydında](../docs/briefs/003-dogrulama.md).
+[005 çoklu üyelik ve aktif koro](../docs/briefs/005-coklu-uyelik-aktif-koro.md)
+yerelde tamamlandı. `7b86a57`; Auth `session_id` tabanlı sunucu seçimi, seçim kapısı,
+Next/Edge tenant çözümü ve cache ayrımı eklendi. 4 Eylül gerçek yedek kopyasında
+izolasyon/down/roundtrip, 126 birim testi, 16/16 Playwright ve `pnpm check` geçti.
+Edge için ayrı Deno check yapılmadı. Canlı Supabase/Edge/web değiştirilmedi.
 
 [004 RN kabuk ve native giriş hazırlık brief'i](../docs/briefs/004-rn-kabuk-ve-giris.md)
-yalnız ilk native işin sınırını kayda alır; ürün kodu başlamadı. Mağazadan önceki
-çok-korolu ürün brief/kararları kapanmadan bu aşama uygulanmaz.
+yalnız ilk native işin sınırını kayda alır; ürün kodu başlamadı. 005 canlı kesimi ve
+çok-korolu ürünün kalan küçük brief/kararları kapanmadan bu aşama uygulanmaz.
 Kalıcı WebView oturum köprüsü, push ve ses ayrı işlerdir.
 
 [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md): iki video, kaynak repo ve
@@ -31,18 +31,19 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 
 ## Sonraki ürün işi için durma noktaları
 
-- `003` kapandı; sonraki DB işi bunun üstüne yeni migration olarak kurulmalı. Geri
-  dönüş gerekirse [003 doğrulama kaydındaki](../docs/briefs/003-dogrulama.md) web/Edge/DB
-  sırası birlikte uygulanır.
-- Sırayı sessizce mobil kabuğa atlama: çok-korolu ürün için gerekli
-  küçük brief/kararları bitir. Native giriş/kabuk sınırı şimdiden
-  [004 brief'inde](../docs/briefs/004-rn-kabuk-ve-giris.md) kayıtlıdır.
+- 005 canlı değildir. Önce `supabase-genesinova` yeniden yetkilendirilmeli; doğru
+  project-ref, taze mantıksal yedek ve izole restore kanıtından sonra DB → Edge/web
+  kesimi birlikte yürütülmelidir. Yeni çoklu üyelik ancak yeni istemciler canlıyken eklenir.
+- Şirket adı daha sonra eklenecek; 005 teknik kesimini veya RN kurulumunu engellemez.
+  Mağaza/satıcı kimliği gereken adımlarda yeniden ele alınır.
+- Sırayı sessizce mobil kabuğa atlama: 005 canlı doğrulaması ve çok-korolu ürünün
+  kalan küçük brief/kararlarını bitir. Native sınır [004 brief'inde](../docs/briefs/004-rn-kabuk-ve-giris.md) kayıtlıdır.
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık ürün işi çok-korolu ürün karar/brief zinciridir. Genel yayın zamanlaması,
-  çoklu üyelik ve dosya sağlayıcısı henüz kesinleşmiş karar sayılmaz; kendiliğinden DB göçü,
-  DNS değişimi, ücretli plan veya push başlatma.
+- İlk açık ürün işi 005 canlı kesim ön kontrolüdür. Ardından koro oluşturma,
+  davet/üyelik, plan-limit ve dosya sağlayıcısı ayrı brief'lere bölünür; kendiliğinden
+  DB göçü, DNS değişimi, ücretli plan veya push başlatılmaz.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
 Devirde sadece değişen özet/bağlantıları güncelle; tüm dosyaları yeniden yazma.

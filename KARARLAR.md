@@ -22,6 +22,12 @@ Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
 
 | 14 | **MusicXML aktif içerik filtresine takılıyor** | 3 Eyl güvenlik sertleştirmesi (`lib/server/drive-file-content.ts`) `.xml`/`.xsl` uzantılarını ve `+xml` ile biten tüm MIME türlerini reddediyor. MusicXML tam olarak bu: `.xml`/`.musicxml`, `application/vnd.recordare.musicxml+xml`. Planlanan "Pro'da XML yükleme" özelliği bugünkü kodda **yüklemede de indirmede de bloke.** Filtre kaldırılmayacak (stored-XSS koruması doğru); çözüm ya sunucuda ayrıştırıp güvenli temsile çevirmek ya da yalnızca `Content-Disposition: attachment` + `application/octet-stream` + `nosniff` ile indirme olarak servis edip asla satır içi açmamak. Faz 2'de karara bağlanacak. | 3 Eyl |
 
+## Çok koroluluk kararı
+
+| # | Karar | Gerekçe | Tarih |
+|---|---|---|---|
+| 16 | **Aktif koro sunucuda ve Auth oturumuna bağlı çözülür** | Bir Auth hesabı birden fazla koroda ayrı üyelik taşıyabilir. Seçim JWT `session_id` ve `auth.uid()` ile doğrulanır; istemci tercihi yetki değildir. Tek üyelik geriye uyumlu seçilir, çok üyelikte seçim yoksa tenant `NULL` olur ve erişim kapalı kalır. Uygulama/kanıt: [005](docs/briefs/005-coklu-uyelik-aktif-koro.md). | 5 Eyl 2026 |
+
 ## Çalışma düzeni kararı
 
 | # | Karar | Gerekçe | Tarih |

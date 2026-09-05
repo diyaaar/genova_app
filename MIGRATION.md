@@ -10,6 +10,10 @@ yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçi
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**
 34 kiracı tablosu, 165 mevcut politika + 34 restrictive sınır, web/Edge uyarlaması,
 hosted izolasyon ve oturumlu duman testi geçti. Kanıt: `docs/briefs/003-dogrulama.md`.
+**005 — çoklu üyelik ve aktif koro: YERELDE TAMAM, CANLI BEKLİYOR (5 Eyl).**
+Auth oturumuna bağlı seçim, web/Next/Edge uyarlaması, cache ayrımı ve güvenli down
+gerçek yedek kopyasında geçti. Canlı şema ve mevcut v14 Edge henüz 005 değildir.
+Kanıt: `docs/briefs/005-coklu-uyelik-aktif-koro.md`.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 
 ---
@@ -41,8 +45,8 @@ Next.js bağımlılığını tamamen kaldırmak istemek olur — bugün öyle bi
 
 | Parça | Durum |
 |---|---|
-| Supabase (auth, realtime, storage) | hazır — mobil `supabase-js` ile aynı veriye aynı RLS ile erişir |
-| `supabase/functions/drive-manager-v2` | canlı |
+| Supabase (auth, realtime, storage) | 003 canlı; 005 aktif-koro migration'ı yerelde doğrulandı, canlı bekliyor |
+| `supabase/functions/drive-manager-v2` | v14 canlı; 005 aktif-koro kaynağı yerelde hazır, deploy edilmedi |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
 | Push (VAPID → FCM/APNs) | Faz 1'de ikinci kanal eklenecek |
@@ -119,13 +123,17 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**Çok-korolu ürün kararları ve küçük brief'leri.** `003` canlıda kapandı. Doğrudan
-native kabuğa başlamadan koro oluşturma, davet/üyelik, plan-limit ve dosya sağlayıcısı
-sınırları kesinleştirilecek. Hazır `004` brief'i bundan sonra uygulama girdisidir;
-detay ve geri dönüş kaydı: **`docs/briefs/003-dogrulama.md`**.
+**005 canlı kesim ön kontrolü.** Yerel sözleşme ve testler tamamlandı; Genesinova
+Supabase bağlantısı yeniden yetkilendirilip taze yedek/restore alınmadan DB, Edge veya
+web yayını yapılmaz. Kesim doğrulandıktan sonra koro oluşturma, davet/üyelik ve
+plan-limit işleri küçük brief'lere ayrılır; `004` RN kabuk brief'i bu zincirin ardından
+uygulanır. Şirket adının henüz kesinleşmemesi bu teknik kapıyı engellemez.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.
 `002`'nin sonundaki 8 maddelik kurulum zinciri ürün projesinde baştan uygulanacak.
+
+**Yerelde tamamlanan / canlı bekleyen:** `005` çoklu üyelik ve Auth oturumuna bağlı
+aktif koro. Kod `7b86a57`; 16/16 Playwright, 126 birim testi ve izole DB roundtrip geçti.
 
 Paralel ve teknoloji kararından bağımsız (bkz. `docs/store-yayin.md`):
 Apple/Play geliştirici hesapları, Play'in 14 günlük kapalı test saati, hesap silme, gizlilik politikası.
