@@ -123,10 +123,17 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**Çok-korolu ürünün kalan küçük brief'leri.** 005 canlı kesimi tamamlandı. Sırada koro
-oluşturma, davet/üyelik ve plan-limit işleri ayrı brief'lere bölünür; gerçek ikinci
-üyelik bu akış ve kabul testleri hazır olmadan eklenmez. `004` RN kabuk brief'i bu
-zincirin ardından uygulanır. Şirket adının henüz kesinleşmemesi bu teknik işi engellemez.
+**006 üyelik yönetimi güvenlik kapısı.** 5 Eylül canlı envanterinde eski
+`create-choir-users` fonksiyonunun kimlik doğrulaması kapalı ve sabit başlangıç
+parolalarıyla service-role yazısı yaptığı; üyelik/rol ana tablolarında authenticated
+doğrudan DML'in rol ayrımı olmadan açık olduğu doğrulandı. Fonksiyon çağrılmadı.
+[006](docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md) önce bu yolları kapatır;
+canlı erişim/parola/oturum işlemi açık etki onayı ister.
+
+Ardından koro oluşturma (`007`), davet/üyelik (`008`) ve plan-limit işleri ayrı
+brief'lere bölünür; gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan
+eklenmez. `004` RN kabuk brief'i bu zincirin ardından uygulanır. Şirket adının
+henüz kesinleşmemesi bu teknik işi engellemez.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.
 `002`'nin sonundaki 8 maddelik kurulum zinciri ürün projesinde baştan uygulanacak.

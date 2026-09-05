@@ -5,6 +5,13 @@ sözleşmesi canlıda.
 
 ## Şimdiki odak
 
+[006 üyelik yönetimi güvenlik kapısı](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md)
+sıradaki zorunlu iştir. Canlıda eski toplu kullanıcı bootstrap fonksiyonu
+`verify_jwt=false` ve sabit başlangıç parolalarıyla service-role yazısı yapıyor;
+çağrılmadı. Üyelik/rol ana tablolarında authenticated doğrudan DML de rol ayrımı
+olmadan açık. Önce fonksiyon erişimi, hesap riski ve bu DML yolları kapatılacak;
+canlı kapatma/oturum/parola/e-posta etkileri açık yetki olmadan uygulanmayacak.
+
 [005 çoklu üyelik ve aktif koro](../docs/briefs/005-coklu-uyelik-aktif-koro.md)
 tamamlandı ve canlıya alındı. DB `20260905003154`, Edge v15, web `0a2b94c`;
 taze restore, hosted 005 + 003 izolasyonu ve tek üyelikli gerçek oturum duman testi geçti.
@@ -39,9 +46,9 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık ürün işi koro oluşturma ve davet/üyelik brief'lerini sınırlandırmaktır.
-  Ardından plan-limit ve dosya sağlayıcısı ayrı brief'lere bölünür; kendiliğinden
-  DB göçü, DNS değişimi, ücretli plan veya push başlatılmaz.
+- İlk açık iş 006 güvenlik kapısıdır. Ardından koro oluşturma (`007`) ve
+  davet/üyelik (`008`), sonra plan-limit ve dosya sağlayıcısı ayrı brief'lere
+  bölünür; kendiliğinden DB göçü, DNS değişimi, ücretli plan veya push başlatılmaz.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
 Devirde sadece değişen özet/bağlantıları güncelle; tüm dosyaları yeniden yazma.

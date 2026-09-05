@@ -10,16 +10,20 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 003 kiracı şeması | Tamamlandı ve canlıda | [003 kanıtları](../docs/briefs/003-dogrulama.md); web `3878e1d`, Edge v14, hosted izolasyon ROLLBACK ve oturumlu duman testi geçti |
 | 004 RN kabuk + native giriş | Hazırlık brief'i tamam; ürün kodu başlamadı | [004](../docs/briefs/004-rn-kabuk-ve-giris.md); önce çok-korolu ürün karar/brief'leri |
 | 005 çoklu üyelik + aktif koro | Tamamlandı ve canlıda | [005](../docs/briefs/005-coklu-uyelik-aktif-koro.md); DB `20260905003154`, Edge v15, web `0a2b94c`; taze restore, hosted izolasyon ve oturumlu canlı duman testi geçti |
+| 006 üyelik yönetimi güvenlik kapısı | Planlandı; canlı risk açık | [006](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md); eski public bootstrap fonksiyonu çağrılmadı, authenticated ana-veri DML'i ve hesap kurtarma yolu kapanmayı bekliyor |
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
-| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: koro oluşturma ve davet/üyelik brief'leri; sonra plan-limit ve RN kabuk | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: 006 güvenlik kapısı; sonra 007 koro, 008 davet/üyelik, plan-limit ve RN kabuk | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
 
 ## Bilinen riskler
 
 - Yeni uygulama sürümü ile eski canlı şemayı karıştırma. Web/Edge/DB beraber planlanır.
 - Koro oluşturma/davet akışı ve kabul testleri hazır olmadan gerçek ikinci üyelik ekleme;
   005 altyapısı canlı olsa da üyelik yönetimi ayrı ürün işidir.
+- Eski `create-choir-users` fonksiyonunu çağırma veya sabit kimlik bilgilerini
+  repo/log/devir metnine taşıma. Canlı kapatma ile hesap oturum/parola kurtarmasını
+  ayrı etkiler olarak yetkilendir ve teslimatı doğrula.
 - Yedek alma, public DB geri yükleme ve tüm Auth/Storage/Drive kurtarma testi aynı şey değildir.
 - Yerel birim/build sonuçları gerçek üye/şef oturumu, provider, Android/iOS ve mağaza
   kabulünü kanıtlamaz. Sonuçları katman ve ortam adıyla aktar.
