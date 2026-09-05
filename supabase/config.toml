@@ -1,0 +1,4 @@
+[functions.account-recovery-006]
+# This service-to-service operation authenticates with the secret API key in
+# `apikey` plus a separate one-time recovery key checked by the function.
+verify_jwt = false
