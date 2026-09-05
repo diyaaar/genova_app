@@ -1,8 +1,8 @@
 # 006 — Üyelik yönetimi güvenlik kapısı
 
 **Durum / tarih / sorumlu yazıcı:** Canlı erişim ve DB güvenlik kesimi tamam;
-5 Eylül 2026; ana ajan tek yazıcı. Hesap parola/oturum kurtarması custom SMTP ve
-ayrı açık etki onayı bekler.
+5 Eylül 2026; ana ajan tek yazıcı. Kurtarma ekranı ve geçici iki anahtarlı yönetici
+işlevi yerelde hazır; canlı parola/oturum/e-posta etkisi ayrı açık onay bekler.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Yeni koro ve davet akışını kurmadan
 önce eski toplu kullanıcı bootstrap yolunu erişilemez kılmak ve üyelik/rol ana
@@ -155,7 +155,10 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 | 5 Eyl 2026 | `create-choir-users` kaldırma | canlı `hievmwwctjjlhmssoxsu` | geçti | Edge Function envanterinden silindi; güvenli `OPTIONS` kontrolü 404 döndü. Başka fonksiyona dokunulmadı. |
 | 5 Eyl 2026 | `20260905102806` migration | canlı `hievmwwctjjlhmssoxsu` | geçti | Tek transaction; 15 restrictive authenticated politika ve migration geçmişi doğrulandı. Beş hedef tablonun satır sayıları `29,28,3,15,4` olarak değişmeden kaldı. |
 | 5 Eyl 2026 | Hosted 006 + 005 + 003 testleri | canlı DB, transaction + `ROLLBACK` | geçti | 006 doğrudan DML reddi/service-role, 005 aktif koro ve 003 tenant izolasyonu geçti. 003'te bakım bağlantısının `RESET ROLE` davranışı nedeniyle başarısız ilk koşu veri yazmadan durdu; aynı kaynak test bakım rolünü koruyan mekanik uyarlamayla geçti. |
+| 5 Eyl 2026 | Kurtarma ekranı + geçici `account-recovery-006` hazırlığı | yerel | geçti | Tam 27 hesap, email sağlayıcısı, iki bağımsız anahtar, açık execute ifadesi, HTTPS yönlendirme, güçlü rastgele parola ve yeniden çalıştırma işaretleri 10 çekirdek testle doğrulandı. `pnpm check`: 27 dosyada 136 test, lint, typecheck, coverage, service worker ve build geçti. Mobil boyutta geçersiz bağlantı ekranı tarayıcı hatası olmadan doğrulandı. Edge Deno/SMTP/Auth canlı entegrasyonu çalıştırılmadı; işlev canlı envanterinde yok. |
 
-**Teslim:** Eski canlı yazma yolu ve doğrudan authenticated DML kapatıldı. 006,
-etkilenen hesapların parola/oturum riski custom SMTP destekli kontrollü kurtarmayla
-giderilene kadar kapanmaz; ardından `007` koro ve `008` davet/üyelik brief'leri gelir.
+**Teslim:** Eski canlı yazma yolu ve doğrudan authenticated DML kapatıldı. Yerel
+kurtarma yolu, parolayı e-postaya koymadan tek kullanımlık bağlantı üretir; kısmi
+hatada tamamlanan hesabı yeniden döndürmez. 006, canlı denetim ve açık etki onaylı
+27 hesap kurtarması tamamlanıp geçici işlev/anahtar kaldırılana kadar kapanmaz;
+ardından `007` koro ve `008` davet/üyelik brief'leri gelir.
