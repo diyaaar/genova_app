@@ -1,11 +1,10 @@
 # 006 — Üyelik yönetimi güvenlik kapısı
 
-**Durum / tarih / sorumlu yazıcı:** Canlı erişim ve DB güvenlik kesimi tamam;
-5 Eylül 2026; ana ajan tek yazıcı. Kurtarma ekranı canlı, geçici iki anahtarlı
-yönetici işlevinin salt denetimi tam 27 hesap ve hazır SMTP sonucu verdi. Auth
-yönlendirme listesine yalnız kesin production recovery URL'si eklendi ve tekrar
-okunarak doğrulandı. Canlı parola/oturum/e-posta etkisi başlatılmadı; işlev ve
-geçici anahtarlar kaldırılmış durumda.
+**Durum / tarih / sorumlu yazıcı:** KAPALI — canlı erişim ve DB güvenlik kesimi
+tamam; 5 Eylül 2026; ana ajan tek yazıcı. Ürün sahibi 27 hesabın mevcut
+parolalarının ve oturum riskinin değiştirilmeden kalmasını açıkça kabul etti;
+kurtarma e-postası gönderme ve toplu Auth düzeltmesi kapsamdan çıkarıldı. Bu kayıt,
+parolaların güvenli hâle getirildiği anlamına gelmez.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Yeni koro ve davet akışını kurmadan
 önce eski toplu kullanıcı bootstrap yolunu erişilemez kılmak ve üyelik/rol ana
@@ -104,6 +103,9 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 - Auth parolası/oturum değişimi kullanıcıları dışarı atar ve e-posta iletişimi
   gerektirebilir. Etkilenen 27 hesap için yöntem, SMTP teslimatı ve destek mesajı
   doğrulanmadan uygulanmaz; ayrıntılı kullanıcı verisi brief'e yazılmaz.
+- 5 Eylül 2026 ürün sahibi kararıyla kalan ortak/sabit parola ve aktif oturum riski
+  kabul edildi. Kurtarma yolu hazır kalsa da 006 kapsamında çalıştırılmayacak;
+  ileride uygulanması yeni açık yetki ve güncel hesap/e-posta denetimi gerektirir.
 - DB migration yalnız restrictive politikalar ekler. Geri dönüş bu politikaları
   kaldırır; veri satırı değiştirmez. Canlıdan önce taze yedek/restore ve 003/005
   uyumu zorunludur; Git revert canlı veritabanını geri döndürmez.
@@ -133,10 +135,11 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
   kaynak artık aktif fonksiyon olarak bulunmuyor.
 - [x] Authenticated Korist ve Şef doğrudan beş ana tabloda insert/update/delete
   yapamıyor; mevcut okuma ve yetkili service-role yolları çalışıyor.
-- [ ] Etkilenen hesapların aktif oturum/parola riski onaylı yöntemle giderildi;
-  kurtarma teslimatı veya kullanıcıya verilecek güvenli yol kanıtlandı.
+- [x] Etkilenen hesapların parola/oturum riski giderilmedi; ürün sahibi bu kalan
+  riski açıkça kabul ederek toplu düzeltme ve e-posta adımını kapsamdan çıkardı.
 - [x] Restore edilmiş DB'de 006 izin/red, down roundtrip ve 003/005 regresyonu geçti.
-- [ ] Geçiş başlangıç kontrolü ve rehberin teslim kontrolleri kanıtlandı.
+- [x] Geçiş başlangıç kontrolü ve rehberin teslim kontrolleri ilgili sonuç
+  kayıtlarıyla kanıtlandı; kabul edilen Auth riski ayrıca açıkça işaretlendi.
 - [x] Kökten `pnpm check` geçti; DB/Edge/Auth/canlı katmanları ayrı raporlandı.
 - [x] Yerel diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt
   bağlantıları güncel.
@@ -161,11 +164,12 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 | 5 Eyl 2026 | Kurtarma ekranı + geçici `account-recovery-006` hazırlığı | yerel | geçti | Tam 27 hesap, email sağlayıcısı, iki bağımsız anahtar, açık execute ifadesi, HTTPS yönlendirme, güçlü rastgele parola ve yeniden çalıştırma işaretleri 10 çekirdek testle doğrulandı. `pnpm check`: 27 dosyada 136 test, lint, typecheck, coverage, service worker ve build geçti. Mobil boyutta geçersiz bağlantı ekranı tarayıcı hatası olmadan doğrulandı. Edge Deno/SMTP/Auth canlı entegrasyonu çalıştırılmadı; işlev canlı envanterinde yok. |
 | 5 Eyl 2026 | Kurtarma ekranı yayını + `account-recovery-006` salt denetimi | canlı web + Edge/Auth paneli | kısmi geçti, yönlendirme kapısı açık | Web `/auth/recovery` 200 ve yeni ekran metni doğrulandı. İki bağımsız geçici anahtarla yalnız `audit` çağrıldı: 27 hedef, 0 tamamlanan, 27 bekleyen ve `smtp=ready`; anahtarsız istek 401. Supabase Auth redirect listesi boş, Site URL `http://localhost:3000`; bu nedenle execute çağrılmadı, parola/oturum/e-posta değişmedi. Geçici işlev ve üç geçici secret denetim sonunda silindi. |
 | 5 Eyl 2026 | Auth recovery yönlendirme izni | canlı `hievmwwctjjlhmssoxsu` paneli | geçti | İzin listesine yalnız `https://app.genesinovachoir.com/auth/recovery?recovery=1` eklendi; panelde `Total URLs: 1` ve aynı kesin değer tekrar okundu. Site URL `http://localhost:3000` olarak bırakıldı. Parola/oturum/e-posta ve Edge işlev durumu değişmedi. |
+| 5 Eyl 2026 | Kalan Auth riski kararı | kullanıcı kararı | kabul edildi, 006 kapatıldı | 27 hesabın mevcut parolaları/oturumları değiştirilmeden kalacak; kurtarma e-postası gönderilmeyecek. Bu bir güvenlik düzeltmesi sonucu değil, bilinen riskin ürün sahibi tarafından kabulüdür. |
 
 **Teslim:** Eski canlı yazma yolu ve doğrudan authenticated DML kapatıldı. Yerel
 kurtarma yolu, parolayı e-postaya koymadan tek kullanımlık bağlantı üretir; kısmi
 hatada tamamlanan hesabı yeniden döndürmez. Salt canlı denetim 27 hesabı ve SMTP'yi
 doğruladı; Auth yönlendirme izin listesinde kesin production recovery URL'si de
-doğrulandı. 006, ayrı açık etki onaylı 27 hesap kurtarması tamamlanıp geçici
-işlev/anahtar kaldırılana kadar kapanmaz;
-ardından `007` koro ve `008` davet/üyelik brief'leri gelir.
+doğrulandı. Ürün sahibi kalan 27 hesap riskini kabul edip toplu düzeltmeyi kapsamdan
+çıkardığı için 006 kapatıldı. Sonraki iş `007` koro oluşturmadır; ardından `008`
+davet/üyelik gelir.

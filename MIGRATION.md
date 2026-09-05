@@ -123,7 +123,14 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**006 üyelik yönetimi güvenlik kapısı.** 5 Eylül canlı envanterinde eski
+**007 koro oluşturma.** İlk sürüm herkese açık self-servis olmayacak: manuel
+faturalama kararı nedeniyle yalnız platform operatörünün yetkilendirdiği akış yeni
+koro, kurucu üyelik ve kurucu Şef rolünü tek transaction'da oluşturacak. Mevcut
+koro içi Şef rolü başka koro açma yetkisi vermeyecek. Önce brief ve rollback-safe
+test sözleşmesi hazırlanır; kullanıcıdan gerçek koro bilgisi gelmeden canlı kayıt
+oluşturulmaz.
+
+**006 üyelik yönetimi güvenlik kapısı: KAPALI.** 5 Eylül canlı envanterinde eski
 `create-choir-users` fonksiyonunun kimlik doğrulaması kapalı ve sabit başlangıç
 parolalarıyla service-role yazısı yaptığı; üyelik/rol ana tablolarında authenticated
 doğrudan DML'in rol ayrımı olmadan açık olduğu doğrulandı. Fonksiyon çağrılmadı.
@@ -132,7 +139,8 @@ eski canlı Edge Function silindi, restrictive DB kilidi canlıya uygulandı ve
 003/005/006 regresyonları geçti. Kurtarma ekranı canlı; salt Edge denetimi tam 27
 hesabı ve mevcut SMTP bağlantısını doğruladı. Auth redirect listesine yalnız kesin
 production recovery URL'si eklendi ve tekrar okundu. Hesap parola/oturum kurtarması
-başlatılmadı; ayrı açık etki onayı bekler.
+başlatılmadı. Ürün sahibi 27 hesabın kalan riskini açıkça kabul ederek bu adımı
+kapsamdan çıkardı; bu karar parolaların güvenli hâle getirildiği anlamına gelmez.
 
 Ardından koro oluşturma (`007`), davet/üyelik (`008`) ve plan-limit işleri ayrı
 brief'lere bölünür; gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan

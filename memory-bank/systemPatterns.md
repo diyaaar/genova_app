@@ -20,7 +20,8 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   penceresi ve beklenen sayı birlikte doğrulanır, servis anahtarı yanında ayrı tek
   kullanımlık yürütme anahtarı gerekir, denetim ve etki modları ayrılır. Kısmi
   hatada `app_metadata` ilerleme işareti tekrar çalıştırmayı güvenli kılar; işaret
-  yetkilendirme kararı değildir. Geçici işlev işlemden sonra canlıdan kaldırılır.
+  yetkilendirme kararı değildir. 006'da etki modu ürün sahibinin risk kabulüyle
+  çalıştırılmadı; bu desen ancak gelecekte yeniden açıkça yetkilendirilirse kullanılır.
 - Drive'dan nesne deposuna geçiş hedefi dosya kimliği/anotasyon bağını korumalı;
   dosya yolu veya bucket öneki yetkilendirme yerine geçmemelidir.
 - UI, iş mantığı, veri erişimi ve dosya sağlayıcısı sorumluluklarını ayır.

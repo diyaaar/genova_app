@@ -34,6 +34,12 @@ Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
 |---|---|---|---|
 | 15 | **Kısa proje hafızası + brief + kanıtlı devir; aynı ağaçta tek yazıcı** | Kullanıcının video/repo/görsellerle istediği yöntem Genova'ya uyarlanır. Altı hafıza dosyası mevcut karar/durum/test kayıtlarına bağlanır. Bağımsız düşük riskli iş kontrollü alt ajana verilebilir; model seçimi riskle yapılır, ana ajan son kabul sahibidir. Eski eşzamanlı tek-ajan kuralı bu kontrollü devir düzeniyle değiştirilir; eşzamanlı ortak-ağaç yazımı yine yasaktır. Teknoloji/mobil kapsamı değişmez. Uygulama ve sınırları: [WF-001](docs/briefs/WF-001-ai-calisma-duzeni.md). | 4 Eyl 2026 |
 
+## Hesap güvenliği kararı
+
+| # | Karar | Gerekçe | Tarih |
+|---|---|---|---|
+| 17 | **27 eski hesabın parola/oturum riski kabul edilerek 006 kapatıldı** | Ürün sahibi mevcut parolaların aynı kalmasını, toplu parola/oturum düzeltmesinin ve 27 kurtarma e-postasının atlanmasını açıkça seçti. Eski public bootstrap ve yetkisiz ana-veri yazısı kapalı kalır; risk giderilmiş sayılmaz. Gelecekte düzeltme yeni açık yetki ve güncel adres denetimi ister. | 5 Eyl 2026 |
+
 ## Spike'lardan çıkan teknik kararlar
 
 | Konu | Karar |

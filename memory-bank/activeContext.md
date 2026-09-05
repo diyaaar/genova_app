@@ -5,17 +5,17 @@ sözleşmesi canlıda.
 
 ## Şimdiki odak
 
+[007 koro oluşturma](../MIGRATION.md) sıradaki zorunlu iştir. 005'in çoklu üyelik
+altyapısını gerçek ürün akışına bağlamalı; koro kaydı, kurucu üyelik ve kurucu Şef
+rolü tek yetkili sunucu işlemi olarak tasarlanmalı. Mevcut koro içi Şef rolü global
+koro açma yetkisi sayılmaz; manuel faturalama kararına uygun platform yetkisi önce
+brief'te sınırlandırılır.
+
 [006 üyelik yönetimi güvenlik kapısı](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md)
-sıradaki zorunlu iştir. Eski `verify_jwt=false` toplu kullanıcı bootstrap
-fonksiyonu canlıdan silindi; authenticated üyelik/rol ana-veri yazıları 15
-restrictive politikayla kapatıldı. Taze yedek/restore, migration geçmişi ve canlı
-003/005/006 `ROLLBACK` testleri geçti. Etkilenen hesapların parola/oturum riski
-sürer. Kurtarma ekranı ve tam 27 hesapta fail-closed çalışan geçici iki anahtarlı
-Edge akışı 136 testlik tam kapıyı geçti; ekran canlıda 200. Canlı salt denetim tam
-27 hesabı ve Edge SMTP bağlantısını doğruladı. Auth redirect listesine yalnız kesin
-production recovery URL'si eklendi ve tekrar okundu; Site URL localhost olarak
-değişmeden kaldı. Execute edilmedi ve geçici işlev/anahtarlar kaldırılmış durumda.
-Ayrı etki onayı olmadan kurtarma e-postası, parola veya oturum değişimi yapılmaz.
+kapatıldı. Eski public bootstrap silindi, authenticated ana-veri DML'i kilitlendi,
+testler ve salt kurtarma denetimi geçti. Ürün sahibi 27 hesabın mevcut parola/oturum
+riskini açıkça kabul ederek toplu düzeltme ve e-posta adımını kapsamdan çıkardı;
+parolaların güvenli hâle getirildiği iddia edilmez.
 
 [005 çoklu üyelik ve aktif koro](../docs/briefs/005-coklu-uyelik-aktif-koro.md)
 tamamlandı ve canlıya alındı. DB `20260905003154`, Edge v15, web `0a2b94c`;
@@ -51,8 +51,8 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık iş 006 güvenlik kapısıdır. Ardından koro oluşturma (`007`) ve
-  davet/üyelik (`008`), sonra plan-limit ve dosya sağlayıcısı ayrı brief'lere
+- İlk açık iş koro oluşturmadır (`007`). Ardından davet/üyelik (`008`), sonra
+  plan-limit ve dosya sağlayıcısı ayrı brief'lere
   bölünür; kendiliğinden DB göçü, DNS değişimi, ücretli plan veya push başlatılmaz.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
