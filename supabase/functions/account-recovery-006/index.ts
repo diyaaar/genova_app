@@ -28,13 +28,14 @@ function requiredEnv(name: string): string {
   return value;
 }
 
-async function authorize(request: Request, serviceRoleKey: string): Promise<boolean> {
-  const apiKey = request.headers.get('apikey') ?? '';
+async function authorize(request: Request): Promise<boolean> {
+  const apiKey = request.headers.get('x-recovery-api-key') ?? '';
   const executionKey = request.headers.get('x-recovery-key') ?? '';
+  const expectedApiKey = requiredEnv('RECOVERY_API_KEY_006');
   const expectedExecutionKey = requiredEnv('RECOVERY_EXECUTION_KEY_006');
   return hasValidRecoveryCredentials(
     apiKey,
-    serviceRoleKey,
+    expectedApiKey,
     executionKey,
     expectedExecutionKey,
   );
@@ -79,7 +80,7 @@ Deno.serve(async (request) => {
   try {
     const supabaseUrl = requiredEnv('SUPABASE_URL');
     const serviceRoleKey = requiredEnv('SUPABASE_SERVICE_ROLE_KEY');
-    if (!(await authorize(request, serviceRoleKey))) {
+    if (!(await authorize(request))) {
       return json(401, { error: 'Yetkisiz işlem.' });
     }
 
