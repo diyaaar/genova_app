@@ -3,8 +3,9 @@
 **Durum / tarih / sorumlu yazıcı:** Canlı erişim ve DB güvenlik kesimi tamam;
 5 Eylül 2026; ana ajan tek yazıcı. Kurtarma ekranı canlı, geçici iki anahtarlı
 yönetici işlevinin salt denetimi tam 27 hesap ve hazır SMTP sonucu verdi. Auth
-yönlendirme izin listesi boş olduğu için canlı parola/oturum/e-posta etkisi
-başlatılmadı; işlev ve geçici anahtarlar yeniden kaldırıldı.
+yönlendirme listesine yalnız kesin production recovery URL'si eklendi ve tekrar
+okunarak doğrulandı. Canlı parola/oturum/e-posta etkisi başlatılmadı; işlev ve
+geçici anahtarlar kaldırılmış durumda.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Yeni koro ve davet akışını kurmadan
 önce eski toplu kullanıcı bootstrap yolunu erişilemez kılmak ve üyelik/rol ana
@@ -159,11 +160,12 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 | 5 Eyl 2026 | Hosted 006 + 005 + 003 testleri | canlı DB, transaction + `ROLLBACK` | geçti | 006 doğrudan DML reddi/service-role, 005 aktif koro ve 003 tenant izolasyonu geçti. 003'te bakım bağlantısının `RESET ROLE` davranışı nedeniyle başarısız ilk koşu veri yazmadan durdu; aynı kaynak test bakım rolünü koruyan mekanik uyarlamayla geçti. |
 | 5 Eyl 2026 | Kurtarma ekranı + geçici `account-recovery-006` hazırlığı | yerel | geçti | Tam 27 hesap, email sağlayıcısı, iki bağımsız anahtar, açık execute ifadesi, HTTPS yönlendirme, güçlü rastgele parola ve yeniden çalıştırma işaretleri 10 çekirdek testle doğrulandı. `pnpm check`: 27 dosyada 136 test, lint, typecheck, coverage, service worker ve build geçti. Mobil boyutta geçersiz bağlantı ekranı tarayıcı hatası olmadan doğrulandı. Edge Deno/SMTP/Auth canlı entegrasyonu çalıştırılmadı; işlev canlı envanterinde yok. |
 | 5 Eyl 2026 | Kurtarma ekranı yayını + `account-recovery-006` salt denetimi | canlı web + Edge/Auth paneli | kısmi geçti, yönlendirme kapısı açık | Web `/auth/recovery` 200 ve yeni ekran metni doğrulandı. İki bağımsız geçici anahtarla yalnız `audit` çağrıldı: 27 hedef, 0 tamamlanan, 27 bekleyen ve `smtp=ready`; anahtarsız istek 401. Supabase Auth redirect listesi boş, Site URL `http://localhost:3000`; bu nedenle execute çağrılmadı, parola/oturum/e-posta değişmedi. Geçici işlev ve üç geçici secret denetim sonunda silindi. |
+| 5 Eyl 2026 | Auth recovery yönlendirme izni | canlı `hievmwwctjjlhmssoxsu` paneli | geçti | İzin listesine yalnız `https://app.genesinovachoir.com/auth/recovery?recovery=1` eklendi; panelde `Total URLs: 1` ve aynı kesin değer tekrar okundu. Site URL `http://localhost:3000` olarak bırakıldı. Parola/oturum/e-posta ve Edge işlev durumu değişmedi. |
 
 **Teslim:** Eski canlı yazma yolu ve doğrudan authenticated DML kapatıldı. Yerel
 kurtarma yolu, parolayı e-postaya koymadan tek kullanımlık bağlantı üretir; kısmi
 hatada tamamlanan hesabı yeniden döndürmez. Salt canlı denetim 27 hesabı ve SMTP'yi
-doğruladı; Auth yönlendirme izin listesi güvenli hedefle tamamlanmadan execute
-edilmez. 006, açık etki onaylı 27 hesap kurtarması tamamlanıp geçici işlev/anahtar
-kaldırılana kadar kapanmaz;
+doğruladı; Auth yönlendirme izin listesinde kesin production recovery URL'si de
+doğrulandı. 006, ayrı açık etki onaylı 27 hesap kurtarması tamamlanıp geçici
+işlev/anahtar kaldırılana kadar kapanmaz;
 ardından `007` koro ve `008` davet/üyelik brief'leri gelir.
