@@ -6,13 +6,12 @@ sözleşmesi canlıda.
 ## Şimdiki odak
 
 [006 üyelik yönetimi güvenlik kapısı](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md)
-sıradaki zorunlu iştir. Canlıda eski toplu kullanıcı bootstrap fonksiyonu
-`verify_jwt=false` ve sabit başlangıç parolalarıyla service-role yazısı yapıyor;
-çağrılmadı. Üyelik/rol ana tablolarında authenticated doğrudan DML de rol ayrımı
-olmadan açık. Önce fonksiyon erişimi, hesap riski ve bu DML yolları kapatılacak;
-restrictive DB kilidi ve yerel geri dönüş/regresyon kanıtı hazır. Canlı
-kapatma/oturum/parola/e-posta etkileri açık yetki olmadan uygulanmayacak; custom
-SMTP olmadığı salt okunur panel kontrolünde doğrulandı.
+sıradaki zorunlu iştir. Eski `verify_jwt=false` toplu kullanıcı bootstrap
+fonksiyonu canlıdan silindi; authenticated üyelik/rol ana-veri yazıları 15
+restrictive politikayla kapatıldı. Taze yedek/restore, migration geçmişi ve canlı
+003/005/006 `ROLLBACK` testleri geçti. Etkilenen hesapların parola/oturum riski
+sürer; custom SMTP kurulmadan ve ayrı açık etki onayı olmadan kurtarma e-postası
+veya parola değişimi yapılmayacak.
 
 [005 çoklu üyelik ve aktif koro](../docs/briefs/005-coklu-uyelik-aktif-koro.md)
 tamamlandı ve canlıya alındı. DB `20260905003154`, Edge v15, web `0a2b94c`;

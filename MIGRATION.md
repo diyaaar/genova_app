@@ -128,8 +128,9 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 parolalarıyla service-role yazısı yaptığı; üyelik/rol ana tablolarında authenticated
 doğrudan DML'in rol ayrımı olmadan açık olduğu doğrulandı. Fonksiyon çağrılmadı.
 [006](docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md) önce bu yolları kapatır;
-yerel restrictive DB kilidi, geri dönüş ve 003/005 regresyonları geçti. Canlı
-erişim/parola/oturum işlemi açık etki onayı ister; custom SMTP henüz yoktur.
+eski canlı Edge Function silindi, restrictive DB kilidi canlıya uygulandı ve
+003/005/006 regresyonları geçti. Hesap parola/oturum kurtarması açık etki onayı ve
+custom SMTP bekler.
 
 Ardından koro oluşturma (`007`), davet/üyelik (`008`) ve plan-limit işleri ayrı
 brief'lere bölünür; gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan

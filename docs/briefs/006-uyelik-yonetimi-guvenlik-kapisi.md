@@ -1,8 +1,8 @@
 # 006 — Üyelik yönetimi güvenlik kapısı
 
-**Durum / tarih / sorumlu yazıcı:** Yerel uygulama ve doğrulama tamam; 5 Eylül
-2026; ana ajan tek yazıcı. Canlı kapatma, parola/oturum işlemleri ve DB göçü ayrı
-açık yetki bekler.
+**Durum / tarih / sorumlu yazıcı:** Canlı erişim ve DB güvenlik kesimi tamam;
+5 Eylül 2026; ana ajan tek yazıcı. Hesap parola/oturum kurtarması custom SMTP ve
+ayrı açık etki onayı bekler.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Yeni koro ve davet akışını kurmadan
 önce eski toplu kullanıcı bootstrap yolunu erişilemez kılmak ve üyelik/rol ana
@@ -112,9 +112,9 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 
 **Bitti tanımı** — hepsi kanıtlanmadan görev kapanmaz:
 
-- [ ] `create-choir-users` canlıda çağrı kabul etmiyor ve sabit parola içeren
+- [x] `create-choir-users` canlıda çağrı kabul etmiyor ve sabit parola içeren
   kaynak artık aktif fonksiyon olarak bulunmuyor.
-- [ ] Authenticated Korist ve Şef doğrudan beş ana tabloda insert/update/delete
+- [x] Authenticated Korist ve Şef doğrudan beş ana tabloda insert/update/delete
   yapamıyor; mevcut okuma ve yetkili service-role yolları çalışıyor.
 - [ ] Etkilenen hesapların aktif oturum/parola riski onaylı yöntemle giderildi;
   kurtarma teslimatı veya kullanıcıya verilecek güvenli yol kanıtlandı.
@@ -137,6 +137,11 @@ Function varsayılan olarak doğrulanmış kullanıcı JWT'si istemelidir:
 | 5 Eyl 2026 | 006 migration + down roundtrip + 006/005/003 DB testleri | PostgreSQL 17'ye geri yüklenmiş canlı öncesi yedek | geçti | Authenticated doğrudan DML reddedildi, service-role yazısı çalıştı, 006 geri al/yeniden uygula veri kaybı olmadan geçti. Canlı DB sonucu değildir. |
 | 5 Eyl 2026 | Edge invocation görünümü | canlı panel, son 5 gün | sonuç yok | Panel verisinin yenilenmesi 24 saate kadar sürebilir; eski kullanım veya hiç çağrılmama kanıtı değildir. |
 | 5 Eyl 2026 | Auth e-posta yapılandırması | canlı panel, salt okunur | üretim kapısı açık | Custom SMTP yok; proje yerleşik e-posta hizmetini kullanıyor ve panel bunu production için uygun değil olarak işaretliyor. Toplu kurtarma e-postası gönderilmedi. |
+| 5 Eyl 2026 | Taze mantıksal yedek + gerçek restore | canlı kaynak → izole PostgreSQL 17 | geçti | `public + auth + private + genova_003 + genova_005`; 651140 byte, 109 ACL kaydı, SHA-256 `4c6efe22413a1f6d78b09e1272371f4cb5bad216d14e1c83524ea68db211df06`. 38 public tablo, 28 Auth kullanıcısı ve 29 üyelik geri yüklendi; 006 roundtrip ile 003/005/006 testleri geçti. Storage/Drive dosya içerikleri kapsam dışı. |
+| 5 Eyl 2026 | `create-choir-users` kaldırma | canlı `hievmwwctjjlhmssoxsu` | geçti | Edge Function envanterinden silindi; güvenli `OPTIONS` kontrolü 404 döndü. Başka fonksiyona dokunulmadı. |
+| 5 Eyl 2026 | `20260905102806` migration | canlı `hievmwwctjjlhmssoxsu` | geçti | Tek transaction; 15 restrictive authenticated politika ve migration geçmişi doğrulandı. Beş hedef tablonun satır sayıları `29,28,3,15,4` olarak değişmeden kaldı. |
+| 5 Eyl 2026 | Hosted 006 + 005 + 003 testleri | canlı DB, transaction + `ROLLBACK` | geçti | 006 doğrudan DML reddi/service-role, 005 aktif koro ve 003 tenant izolasyonu geçti. 003'te bakım bağlantısının `RESET ROLE` davranışı nedeniyle başarısız ilk koşu veri yazmadan durdu; aynı kaynak test bakım rolünü koruyan mekanik uyarlamayla geçti. |
 
-**Teslim:** Önce yerel migration/test; sonra açık canlı güvenlik yetkisi. Bu kapı
-kapanınca `007` koro oluşturma, ardından `008` davet/üyelik ayrı brief olur.
+**Teslim:** Eski canlı yazma yolu ve doğrudan authenticated DML kapatıldı. 006,
+etkilenen hesapların parola/oturum riski custom SMTP destekli kontrollü kurtarmayla
+giderilene kadar kapanmaz; ardından `007` koro ve `008` davet/üyelik brief'leri gelir.
