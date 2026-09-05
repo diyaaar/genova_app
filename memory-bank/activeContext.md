@@ -5,11 +5,13 @@ sözleşmesi canlıda.
 
 ## Şimdiki odak
 
-[007 koro oluşturma](../MIGRATION.md) sıradaki zorunlu iştir. 005'in çoklu üyelik
+[007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)
+yerel uygulamadadır. 005'in çoklu üyelik
 altyapısını gerçek ürün akışına bağlamalı; koro kaydı, kurucu üyelik ve kurucu Şef
 rolü tek yetkili sunucu işlemi olarak tasarlanmalı. Mevcut koro içi Şef rolü global
 koro açma yetkisi sayılmaz; manuel faturalama kararına uygun platform yetkisi önce
-brief'te sınırlandırılır.
+brief'te sınırlandırıldı. Bu tur canlı DB/Edge yazısı, gerçek operatör ataması veya
+gerçek koro oluşturma yetkisi içermez.
 
 [006 üyelik yönetimi güvenlik kapısı](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md)
 kapatıldı. Eski public bootstrap silindi, authenticated ana-veri DML'i kilitlendi,
