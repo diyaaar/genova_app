@@ -11,11 +11,11 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 004 RN kabuk + native giriş | Hazırlık brief'i tamam; ürün kodu başlamadı | [004](../docs/briefs/004-rn-kabuk-ve-giris.md); önce çok-korolu ürün karar/brief'leri |
 | 005 çoklu üyelik + aktif koro | Tamamlandı ve canlıda | [005](../docs/briefs/005-coklu-uyelik-aktif-koro.md); DB `20260905003154`, Edge v15, web `0a2b94c`; taze restore, hosted izolasyon ve oturumlu canlı duman testi geçti |
 | 006 üyelik yönetimi güvenlik kapısı | Kapatıldı; kalan 27 hesap riski ürün sahibi tarafından kabul edildi | [006](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md); eski public bootstrap silindi, 15 restrictive politika ve hosted 003/005/006 testleri geçti. Toplu parola/oturum düzeltmesi ve e-posta bilinçli olarak yapılmadı; bu hesapların güvenli olduğu anlamına gelmez |
-| 007 operatör kontrollü koro oluşturma | Yerel paket hazır; canlı DB/Edge uygulanmadı | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); varsayılan boş allow-list, atomik RPC, Edge çekirdeği, down roundtrip ve restore üzerinde 003/005/006/007 testleri geçti. Hosted/Deno kabulü ve gerçek operatör/koro yok |
+| 007 operatör kontrollü koro oluşturma | Canlı altyapı hazır; gerçek kullanım yok | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); taze backup/restore, DB `20260905160539`, Edge v1 ve hosted 003/005/006/007 geçti. Allow-list boş; gerçek operatör/koro ve authenticated başarı kabulü yok |
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
-| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: 007 canlı kesim; sonra 008 davet/üyelik, plan-limit ve RN kabuk | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: 008 davet/üyelik; sonra plan-limit ve RN kabuk. İlk gerçek koro öncesi operatör seçimi ayrıca yetkilendirilecek | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
 
 ## Bilinen riskler
 

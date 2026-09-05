@@ -6,11 +6,10 @@ sözleşmesi canlıda.
 ## Şimdiki odak
 
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)
-yerel paket olarak hazırdır. Varsayılan boş platform-operatörü allow-list'i,
-atomik koro + üç rol + kurucu üyelik + kurucu Şef RPC'si, ince Edge girişi,
-rollback ve restore edilmiş DB kabul testleri yazıldı. Canlı DB/Edge yazısı,
-gerçek operatör ataması veya gerçek koro oluşturma yapılmadı; sıradaki kapı 007
-canlı kesim yetkisi ve taze yedektir.
+canlı altyapı olarak hazırdır. Taze backup/restore, kesin DB migration
+`20260905160539`, hosted 003/005/006/007 testleri ve `create-choir` Edge v1 geçti.
+Allow-list boş; gerçek operatör ataması veya gerçek koro oluşturma yapılmadı.
+Authenticated başarı yolu ilk operatör ayrı yetkiyle seçildiğinde tamamlanacak.
 
 [006 üyelik yönetimi güvenlik kapısı](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md)
 kapatıldı. Eski public bootstrap silindi, authenticated ana-veri DML'i kilitlendi,
@@ -52,9 +51,10 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık iş 007'nin taze yedekli canlı kesimidir. Ardından davet/üyelik (`008`), sonra
-  plan-limit ve dosya sağlayıcısı ayrı brief'lere
-  bölünür; kendiliğinden DB göçü, DNS değişimi, ücretli plan veya push başlatılmaz.
+- İlk açık ürün işi davet/üyelik (`008`), ardından plan-limit ve dosya sağlayıcısıdır.
+  İlk gerçek koro işlemi öncesinde platform operatörü ayrıca seçilip yetkilendirilir;
+  bu adımlar ayrı brief/işlem olarak yürütülür. Kendiliğinden DB göçü, DNS değişimi,
+  ücretli plan veya push başlatılmaz.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
 Devirde sadece değişen özet/bağlantıları güncelle; tüm dosyaları yeniden yazma.

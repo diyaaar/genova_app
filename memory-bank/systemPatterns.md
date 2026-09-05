@@ -16,11 +16,12 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   ipucudur. Tek üyelik fallback, çok üyelikte seçimsiz fail-closed davranışı korunur.
 - `005` canlıdır: DB migration `20260905003154`, Edge v15 ve web `0a2b94c` aynı
   sözleşmededir. Gerçek çoklu üyelik ancak koro/davet ürünü hazır olduğunda eklenir.
-- `007` yerel sözleşmesinde koro içi `Şef` global yetki değildir. Yalnız özel,
+- `007` canlı sözleşmesinde koro içi `Şef` global yetki değildir. Yalnız özel,
   varsayılan boş platform-operatörü kaydı; mevcut Auth kullanıcısı için koro,
   varsayılan roller, kurucu üyelik ve kurucu `Şef` eşlemesini atomik RPC ile kurar.
-  Edge kullanıcı JWT'sini doğrular ve service-role anahtarı taşımaz. Canlıya henüz
-  uygulanmadığı için bu desen üretimde varmış gibi kabul edilmez.
+  Edge kullanıcı JWT'sini doğrular ve service-role anahtarı taşımaz. DB migration
+  `20260905160539` ve Edge v1 canlıdır; allow-list boş olduğu için gerçek operatör
+  başarı yolu henüz kabul edilmemiştir.
 - Toplu Auth kurtarması sabit e-posta/parola listesine dayanmaz: değişmez oluşum
   penceresi ve beklenen sayı birlikte doğrulanır, servis anahtarı yanında ayrı tek
   kullanımlık yürütme anahtarı gerekir, denetim ve etki modları ayrılır. Kısmi

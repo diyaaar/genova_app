@@ -1,7 +1,7 @@
 # 007 — Operatör kontrollü koro oluşturma
 
-**Durum / tarih / sorumlu yazıcı:** YEREL PAKET HAZIR, CANLI UYGULAMA YOK —
-5 Eylül 2026; ana ajan tek yazıcı.
+**Durum / tarih / sorumlu yazıcı:** CANLI ALTYAPI HAZIR; ALLOW-LIST BOŞ,
+GERÇEK KORO YOK — 5 Eylül 2026; ana ajan tek yazıcı.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Manuel faturalama döneminde yalnız
 ayrıca tanımlanmış platform operatörünün, mevcut bir Auth kullanıcısı için yeni
@@ -55,15 +55,15 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
 - Korunacak davranış: mevcut web istemcisi, 003 tenant izolasyonu, 005 çoklu
   üyelik/aktif koro ve 006 doğrudan DML reddi değişmeden çalışır.
 - İzinli dosyalar yukarıda; aynı ağaçta ana ajan tek yazıcıdır. Kullanıcının
-  “evet” onayı yerel migration, Edge Function ve test hazırlığını kapsar; canlı
-  DB, Edge deploy, operatör atama ve gerçek koro kaydı bu yetkinin dışındadır.
+  “continue” onayı taze yedek/restore, canlı migration, Edge deploy ve hosted
+  testleri kapsadı. Operatör atama ve gerçek koro kaydı bu yetkinin dışındadır.
 - Testler: restore edilmiş DB'de operatör/operatör olmayan/anon/service-role
   yürütme izinleri, tam kayıt seti, duplicate/invalid girişte atomiklik,
   003/005/006 regresyonu, down roundtrip, Edge çekirdek testleri ve `pnpm check`.
 
-**Kapsam dışı** — bu görevde kesinlikle yapılmayacaklar:
+**Kapsam dışı** — bu kesimde kesinlikle yapılmayanlar:
 
-- Canlı DB migration, Edge deploy, canlı operatör kaydı veya gerçek koro/üyelik.
+- Canlı operatör kaydı veya gerçek koro/üyelik oluşturma.
 - Yeni Auth kullanıcısı oluşturma, davet/e-posta, üyelik yönetimi UI'ı; bunlar 008.
 - Herkese açık self-servis koro açma, ödeme, abonelik veya plan-limit mantığı.
 - RN ekranı, mevcut web UI'ını mobile benzetme, Drive/storage veya hosting taşıması.
@@ -90,8 +90,9 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
    Function ile birim testlerini ekle.
 3. Taze restore üzerinde 007 izin/atomiklik/roundtrip ve 003/005/006 regresyonunu;
    ardından `pnpm check` ve diff incelemesini çalıştır.
-4. Yerel teslimi ayrı kod/belge commit'leriyle kaydet; canlı uygulama için taze
-   yetki, yedek ve gerçek operatör/kurucu bilgilerini bekle.
+4. Yerel teslimi ayrı kod/belge commit'leriyle kaydet; açık canlı yetkisinden
+   sonra taze yedek/restore, kesin migration, Edge deploy ve hosted testleri yap.
+   Gerçek operatör/kurucu bilgilerini ayrı yetki gelene kadar kullanma.
 
 **Bitti tanımı** — hepsi kanıtlanmadan görev kapanmaz:
 
@@ -101,7 +102,9 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
   RPC çağrısı reddediliyor; geçersiz/tekrarlı giriş kısmi veri bırakmıyor.
 - [ ] Edge Function kullanıcı JWT'sini doğruluyor, service-role kullanmıyor ve
   DB hata sınıflarını kişisel veri sızdırmadan güvenli yanıta çeviriyor. Kod ve
-  dört çekirdek testi geçti; Deno/hosted çağrı henüz çalıştırılmadı.
+  beş çekirdek testi ile hosted 401/CORS/handler başlangıç kontrolleri geçti;
+  allow-list boş tutulduğu için gerçek authenticated operatör başarı yolu
+  çalıştırılmadı.
 - [x] 007 down roundtrip ile 003/005/006 regresyonları restore edilmiş DB'de geçti.
 - [x] Geçiş rehberinin teslim kontrolleri ve kökten `pnpm check` geçti; canlı
   DB/Edge/Auth/gerçek cihaz/yayın katmanları ayrı ve doğru biçimde raporlandı.
@@ -119,10 +122,18 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
 | 5 Eyl 2026 | İlk 007 DB kabul testi | izole PostgreSQL 17 restore | beklenen mimari çakışmayı buldu | 003 tetikleyicisi operatörün başka Auth kimliğini kurucu atamasını reddetti. 003 gevşetilmedi; yetkili definer işleminde yalnız kurucu insert'i sırasında JWT bağlamı temizlenip hata/başarı yolunda geri yüklendi. |
 | 5 Eyl 2026 | 007 migration + izin/atomiklik + down roundtrip | izole PostgreSQL 17 restore | geçti | Operatör tam kayıt setini oluşturdu; koro içi Şef/anon/service-role reddedildi; duplicate ve geçersiz giriş kısmi veri bırakmadı; migration varsayılan boş allow-list ile geldi ve down ürün verisini değiştirmedi. |
 | 5 Eyl 2026 | 003/005/006 regresyonları | aynı izole restore, transaction + `ROLLBACK` | geçti | Tenant izolasyonu, aktif koro ve authenticated DML kilidi 007 uygulanmış durumda geçti. Gerçek kullanıcı veya canlı veri yazılmadı. |
-| 5 Eyl 2026 | Edge çekirdek testi | yerel Vitest | geçti | Dört test: giriş normalizasyonu/red, hata sınıfları ve RPC sonuç sözleşmesi. Deno kurulu olmadığı ve Docker daemon çalışmadığı için Edge runtime entegrasyonu çalıştırılmadı. |
-| 5 Eyl 2026 | `pnpm check` | yerel | geçti | 28 dosyada 140 test; lint, typecheck, coverage, service worker ve production build geçti. Edge Deno ve canlı kabul değildir. |
+| 5 Eyl 2026 | Edge çekirdek testi | yerel Vitest | geçti | Beş test: publishable-key/legacy-key seçimi, giriş normalizasyonu/red, hata sınıfları ve RPC sonuç sözleşmesi. |
+| 5 Eyl 2026 | `pnpm check` | yerel | geçti | 28 dosyada 141 test; lint, typecheck, coverage, service worker ve production build geçti. Edge Deno ve canlı kabul değildir. |
 | 5 Eyl 2026 | Supabase DB lint denemesi | izole PostgreSQL 17 | çalıştırılamadı | Yerel sunucuda `pgsql_check` eklentisi yoktu; migration gerçek restore üzerinde doğrudan uygulanıp SQL kabul testleriyle doğrulandı. |
+| 5 Eyl 2026 | Taze schema + data yedeği ve geri yükleme | canlı kaynak → izole PostgreSQL 17 | geçti | `genova_pre_007_live_20260905T230753+0300_{schema,data}.sql`; SHA-256 sırasıyla `8a55378fdeb38c56008dcaa14c819f31c85721f4862e079437aafc49efad3901` ve `9473e4b7e6830e831f95a1e7bd86b400244472ca4a899575597ae70dfce3c5e1`. Restore sayıları 1 koro, 28 Auth kullanıcısı, 29 üyelik, 3 rol ve 28 rol eşlemesiydi. Storage/Drive geri yüklemesi değildir. |
+| 5 Eyl 2026 | 007 kesin migration + migration geçmişi | canlı `hievmwwctjjlhmssoxsu` | geçti | Yalnız `20260905160539_operator_controlled_choir_creation_007.sql` uygulandı ve geçmişe işlendi; toplu `db push` kullanılmadı. RPC yalnız `authenticated`; anon ve service-role yürütme yetkisi yok. |
+| 5 Eyl 2026 | `create-choir` Edge deploy | canlı | geçti | ACTIVE v1, `verify_jwt=true`, SHA `2e05c26d52ba6d660e50d9aa3cdf91825a10241fab8f00352b152820ad8e3561`. Yetkisiz istek 401, anon JWT handler'da güvenli 401, CORS preflight 200 verdi. Gerçek operatör başarı çağrısı yapılmadı. |
+| 5 Eyl 2026 | Hosted 003/005/006/007 SQL kabul testleri | canlı, transaction + `ROLLBACK` | geçti | Dört dosya sıfır çıkışla tamamlandı. Sonrasında 1 koro, 29 üyelik, 0 operatör ve 0 audit kaydı yeniden doğrulandı. |
+| 5 Eyl 2026 | DB advisor | canlı salt okunur | kapsam sınırıyla geçti | 007'ye özgü security: iki `RLS enabled/no policy` INFO; tablolar doğrudan erişime kapalı olduğu için beklenen. Performance: yeni/boş tablolarda üç unused-index INFO. Kalan 55 security WARN ve 120 performance WARN paylaşımlı mevcut şemaya ait, bu brief'te değiştirilmedi. |
 
-**Teslim:** Planlama `39171c1`, üretim kodu `22889f8`. Yerel paket hazırdır;
-canlı migration, Edge deploy, gerçek operatör atama ve koro oluşturma yapılmadı.
-Canlı kesim için taze yedek/restore, Deno/hosted Edge kabulü ve ayrı açık yetki gerekir.
+**Teslim:** Planlama `39171c1`, üretim kodu `22889f8`, yerel kanıt
+`77a22ef`, publishable-key uyumu `58d171b`. Kod commit'leri `main` dalına
+gönderildi; canlı DB migration ve Edge v1 aktiftir. Allow-list boş bırakıldı,
+gerçek operatör atanmadı ve gerçek koro oluşturulmadı. İlk gerçek işlemden önce
+operatör kimliği ayrıca seçilip yetkilendirilmeli ve authenticated başarı yolu
+kontrollü kabul kaydıyla tamamlanmalıdır.

@@ -14,6 +14,10 @@ hosted izolasyon ve oturumlu duman testi geçti. Kanıt: `docs/briefs/003-dogrul
 Auth oturumuna bağlı seçim, web/Next/Edge uyarlaması, cache ayrımı ve güvenli down
 taze yedek kopyasında geçti; canlı DB migration, hosted test, Edge v15 ve web yayını doğrulandı.
 Kanıt: `docs/briefs/005-coklu-uyelik-aktif-koro.md`.
+**007 — operatör kontrollü koro oluşturma: CANLI ALTYAPI HAZIR (5 Eyl).**
+DB `20260905160539`, `create-choir` Edge v1 ve hosted 003/005/006/007 testleri
+geçti. Allow-list boş; gerçek operatör veya yeni koro yok.
+Kanıt: `docs/briefs/007-operator-kontrollu-koro-olusturma.md`.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 
 ---
@@ -45,8 +49,9 @@ Next.js bağımlılığını tamamen kaldırmak istemek olur — bugün öyle bi
 
 | Parça | Durum |
 |---|---|
-| Supabase (auth, realtime, storage) | 003 ve 005 canlı; aktif koro Auth `session_id` ile sunucuda çözülüyor |
+| Supabase (auth, realtime, storage) | 003, 005 ve 007 canlı; aktif koro Auth `session_id` ile sunucuda çözülüyor; koro oluşturma allow-list'i boş |
 | `supabase/functions/drive-manager-v2` | v15 canlı; 005 aktif-koro sözleşmesi, `verify_jwt=true` |
+| `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu henüz çalıştırılmadı |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
 | Push (VAPID → FCM/APNs) | Faz 1'de ikinci kanal eklenecek |
@@ -123,14 +128,14 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**007 koro oluşturma: YEREL PAKET HAZIR, CANLI DEĞİL.** İlk sürüm herkese açık
+**007 koro oluşturma: CANLI ALTYAPI HAZIR, GERÇEK KULLANIM YOK.** İlk sürüm herkese açık
 self-servis olmayacak: manuel
 faturalama kararı nedeniyle yalnız platform operatörünün yetkilendirdiği akış yeni
 koro, kurucu üyelik ve kurucu Şef rolünü tek transaction'da oluşturacak. Mevcut
 koro içi Şef rolü başka koro açma yetkisi vermeyecek. Migration, geri dönüş,
 Edge giriş noktası ve restore edilmiş DB kabul testleri
-[007 brief'inde](docs/briefs/007-operator-kontrollu-koro-olusturma.md) hazırlandı;
-allow-list varsayılan boş. Canlı DB/Edge işlemi ve gerçek koro kaydı yapılmadı.
+[007 brief'inde](docs/briefs/007-operator-kontrollu-koro-olusturma.md) hazırlandı
+ve canlıya uygulandı; allow-list boş. Gerçek operatör ataması ve koro kaydı yapılmadı.
 
 **006 üyelik yönetimi güvenlik kapısı: KAPALI.** 5 Eylül canlı envanterinde eski
 `create-choir-users` fonksiyonunun kimlik doğrulaması kapalı ve sabit başlangıç
@@ -144,9 +149,10 @@ production recovery URL'si eklendi ve tekrar okundu. Hesap parola/oturum kurtarm
 başlatılmadı. Ürün sahibi 27 hesabın kalan riskini açıkça kabul ederek bu adımı
 kapsamdan çıkardı; bu karar parolaların güvenli hâle getirildiği anlamına gelmez.
 
-Ardından koro oluşturma (`007`), davet/üyelik (`008`) ve plan-limit işleri ayrı
-brief'lere bölünür; gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan
-eklenmez. `004` RN kabuk brief'i bu zincirin ardından uygulanır. Şirket adının
+Ardından davet/üyelik (`008`) ve plan-limit işleri ayrı brief'lere bölünür;
+gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan eklenmez. İlk gerçek
+koro işlemi için platform operatörü ayrıca seçilip yetkilendirilir. `004` RN kabuk
+brief'i bu zincirin ardından uygulanır. Şirket adının
 henüz kesinleşmemesi bu teknik işi engellemez.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.
