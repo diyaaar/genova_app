@@ -27,6 +27,7 @@ Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
 | # | Karar | Gerekçe | Tarih |
 |---|---|---|---|
 | 16 | **Aktif koro sunucuda ve Auth oturumuna bağlı çözülür** | Bir Auth hesabı birden fazla koroda ayrı üyelik taşıyabilir. Seçim JWT `session_id` ve `auth.uid()` ile doğrulanır; istemci tercihi yetki değildir. Tek üyelik geriye uyumlu seçilir, çok üyelikte seçim yoksa tenant `NULL` olur ve erişim kapalı kalır. Uygulama/kanıt: [005](docs/briefs/005-coklu-uyelik-aktif-koro.md). | 5 Eyl 2026 |
+| 18 | **Yeni koroyu yalnız ayrı platform operatörü atomik olarak kurar** | Koro içi `Şef` global yetki değildir. Manuel faturalama döneminde varsayılan boş özel allow-list'teki operatör; mevcut Auth kullanıcısı için koro, üç varsayılan rol, kurucu üyelik ve kurucu `Şef` eşlemesini tek DB transaction'ında oluşturur. Davet/yeni Auth kullanıcısı 008'de kalır. Uygulama/kanıt: [007](docs/briefs/007-operator-kontrollu-koro-olusturma.md). | 5 Eyl 2026 |
 
 ## Çalışma düzeni kararı
 

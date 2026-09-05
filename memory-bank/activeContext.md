@@ -6,12 +6,11 @@ sözleşmesi canlıda.
 ## Şimdiki odak
 
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)
-yerel uygulamadadır. 005'in çoklu üyelik
-altyapısını gerçek ürün akışına bağlamalı; koro kaydı, kurucu üyelik ve kurucu Şef
-rolü tek yetkili sunucu işlemi olarak tasarlanmalı. Mevcut koro içi Şef rolü global
-koro açma yetkisi sayılmaz; manuel faturalama kararına uygun platform yetkisi önce
-brief'te sınırlandırıldı. Bu tur canlı DB/Edge yazısı, gerçek operatör ataması veya
-gerçek koro oluşturma yetkisi içermez.
+yerel paket olarak hazırdır. Varsayılan boş platform-operatörü allow-list'i,
+atomik koro + üç rol + kurucu üyelik + kurucu Şef RPC'si, ince Edge girişi,
+rollback ve restore edilmiş DB kabul testleri yazıldı. Canlı DB/Edge yazısı,
+gerçek operatör ataması veya gerçek koro oluşturma yapılmadı; sıradaki kapı 007
+canlı kesim yetkisi ve taze yedektir.
 
 [006 üyelik yönetimi güvenlik kapısı](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md)
 kapatıldı. Eski public bootstrap silindi, authenticated ana-veri DML'i kilitlendi,
@@ -53,7 +52,7 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık iş koro oluşturmadır (`007`). Ardından davet/üyelik (`008`), sonra
+- İlk açık iş 007'nin taze yedekli canlı kesimidir. Ardından davet/üyelik (`008`), sonra
   plan-limit ve dosya sağlayıcısı ayrı brief'lere
   bölünür; kendiliğinden DB göçü, DNS değişimi, ücretli plan veya push başlatılmaz.
 

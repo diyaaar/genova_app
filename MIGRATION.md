@@ -123,12 +123,14 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**007 koro oluşturma.** İlk sürüm herkese açık self-servis olmayacak: manuel
+**007 koro oluşturma: YEREL PAKET HAZIR, CANLI DEĞİL.** İlk sürüm herkese açık
+self-servis olmayacak: manuel
 faturalama kararı nedeniyle yalnız platform operatörünün yetkilendirdiği akış yeni
 koro, kurucu üyelik ve kurucu Şef rolünü tek transaction'da oluşturacak. Mevcut
-koro içi Şef rolü başka koro açma yetkisi vermeyecek. Önce brief ve rollback-safe
-test sözleşmesi hazırlanır; kullanıcıdan gerçek koro bilgisi gelmeden canlı kayıt
-oluşturulmaz.
+koro içi Şef rolü başka koro açma yetkisi vermeyecek. Migration, geri dönüş,
+Edge giriş noktası ve restore edilmiş DB kabul testleri
+[007 brief'inde](docs/briefs/007-operator-kontrollu-koro-olusturma.md) hazırlandı;
+allow-list varsayılan boş. Canlı DB/Edge işlemi ve gerçek koro kaydı yapılmadı.
 
 **006 üyelik yönetimi güvenlik kapısı: KAPALI.** 5 Eylül canlı envanterinde eski
 `create-choir-users` fonksiyonunun kimlik doğrulaması kapalı ve sabit başlangıç

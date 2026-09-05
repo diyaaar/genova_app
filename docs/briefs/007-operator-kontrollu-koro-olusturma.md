@@ -1,7 +1,7 @@
 # 007 — Operatör kontrollü koro oluşturma
 
-**Durum / tarih / sorumlu yazıcı:** YEREL UYGULAMA BAŞLADI — 5 Eylül 2026;
-ana ajan tek yazıcı.
+**Durum / tarih / sorumlu yazıcı:** YEREL PAKET HAZIR, CANLI UYGULAMA YOK —
+5 Eylül 2026; ana ajan tek yazıcı.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Manuel faturalama döneminde yalnız
 ayrıca tanımlanmış platform operatörünün, mevcut bir Auth kullanıcısı için yeni
@@ -95,16 +95,17 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
 
 **Bitti tanımı** — hepsi kanıtlanmadan görev kapanmaz:
 
-- [ ] Yalnız özel kaydı olan authenticated operatör koro + üç varsayılan rol +
+- [x] Yalnız özel kaydı olan authenticated operatör koro + üç varsayılan rol +
   kurucu üyelik + kurucu `Şef` eşlemesini tek transaction'da oluşturabiliyor.
-- [ ] Koro içi `Şef`, operatör olmayan kullanıcı, anon ve service-role doğrudan
+- [x] Koro içi `Şef`, operatör olmayan kullanıcı, anon ve service-role doğrudan
   RPC çağrısı reddediliyor; geçersiz/tekrarlı giriş kısmi veri bırakmıyor.
 - [ ] Edge Function kullanıcı JWT'sini doğruluyor, service-role kullanmıyor ve
-  DB hata sınıflarını kişisel veri sızdırmadan güvenli yanıta çeviriyor.
-- [ ] 007 down roundtrip ile 003/005/006 regresyonları restore edilmiş DB'de geçti.
-- [ ] Geçiş rehberinin teslim kontrolleri ve kökten `pnpm check` geçti; canlı
+  DB hata sınıflarını kişisel veri sızdırmadan güvenli yanıta çeviriyor. Kod ve
+  dört çekirdek testi geçti; Deno/hosted çağrı henüz çalıştırılmadı.
+- [x] 007 down roundtrip ile 003/005/006 regresyonları restore edilmiş DB'de geçti.
+- [x] Geçiş rehberinin teslim kontrolleri ve kökten `pnpm check` geçti; canlı
   DB/Edge/Auth/gerçek cihaz/yayın katmanları ayrı ve doğru biçimde raporlandı.
-- [ ] Diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt
+- [x] Diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt
   bağlantıları güncel.
 
 **Opsiyonel alt görev:** Bağımsız alt iş yok; DB yetki tasarımı ve kabul ana ajanda.
@@ -115,6 +116,13 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
 |---|---|---|---|---|
 | 5 Eyl 2026 | Başlangıç repo/şema/talimat kontrolü | yerel + canlı salt okunur | geçti | Kesin proje `hievmwwctjjlhmssoxsu`; 005/006 durumu ve dört hedef tablonun mevcut sözleşmesi doğrulandı. MCP erişimi reddedildi; CLI ile yalnız okuma yapıldı. |
 | 5 Eyl 2026 | Güncel Supabase Auth/Edge/RLS belge kontrolü | resmi kaynak | geçti | Kullanıcı JWT'si istek bağlamında doğrulanacak; service-role Edge'e eklenmeyecek; DB yetkisi varsayılan kapalı kalacak. |
+| 5 Eyl 2026 | İlk 007 DB kabul testi | izole PostgreSQL 17 restore | beklenen mimari çakışmayı buldu | 003 tetikleyicisi operatörün başka Auth kimliğini kurucu atamasını reddetti. 003 gevşetilmedi; yetkili definer işleminde yalnız kurucu insert'i sırasında JWT bağlamı temizlenip hata/başarı yolunda geri yüklendi. |
+| 5 Eyl 2026 | 007 migration + izin/atomiklik + down roundtrip | izole PostgreSQL 17 restore | geçti | Operatör tam kayıt setini oluşturdu; koro içi Şef/anon/service-role reddedildi; duplicate ve geçersiz giriş kısmi veri bırakmadı; migration varsayılan boş allow-list ile geldi ve down ürün verisini değiştirmedi. |
+| 5 Eyl 2026 | 003/005/006 regresyonları | aynı izole restore, transaction + `ROLLBACK` | geçti | Tenant izolasyonu, aktif koro ve authenticated DML kilidi 007 uygulanmış durumda geçti. Gerçek kullanıcı veya canlı veri yazılmadı. |
+| 5 Eyl 2026 | Edge çekirdek testi | yerel Vitest | geçti | Dört test: giriş normalizasyonu/red, hata sınıfları ve RPC sonuç sözleşmesi. Deno kurulu olmadığı ve Docker daemon çalışmadığı için Edge runtime entegrasyonu çalıştırılmadı. |
+| 5 Eyl 2026 | `pnpm check` | yerel | geçti | 28 dosyada 140 test; lint, typecheck, coverage, service worker ve production build geçti. Edge Deno ve canlı kabul değildir. |
+| 5 Eyl 2026 | Supabase DB lint denemesi | izole PostgreSQL 17 | çalıştırılamadı | Yerel sunucuda `pgsql_check` eklentisi yoktu; migration gerçek restore üzerinde doğrudan uygulanıp SQL kabul testleriyle doğrulandı. |
 
-**Teslim:** Yerel kod ve test kanıtları tamamlandıktan sonra doldurulacak. Canlı
-uygulama, gerçek operatör atama ve koro oluşturma ayrı açık yetki bekler.
+**Teslim:** Planlama `39171c1`, üretim kodu `22889f8`. Yerel paket hazırdır;
+canlı migration, Edge deploy, gerçek operatör atama ve koro oluşturma yapılmadı.
+Canlı kesim için taze yedek/restore, Deno/hosted Edge kabulü ve ayrı açık yetki gerekir.
