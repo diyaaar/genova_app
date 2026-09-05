@@ -14,8 +14,8 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
 - `003` canlı tenant sınırıdır. `005` ile aktif koro yalnız doğrulanmış `auth.uid()`
   ve JWT `session_id` üzerinden sunucuda çözülür; istemci tercihi yalnız geri çağırma
   ipucudur. Tek üyelik fallback, çok üyelikte seçimsiz fail-closed davranışı korunur.
-- `005` kaynak ve yerel test olarak hazırdır; canlı şema durumu ayrı kapıdır.
-  Kod, SQL, eski/yeni web ve Edge sürümlerinin birlikte ele alınması gerekir.
+- `005` canlıdır: DB migration `20260905003154`, Edge v15 ve web `0a2b94c` aynı
+  sözleşmededir. Gerçek çoklu üyelik ancak koro/davet ürünü hazır olduğunda eklenir.
 - Drive'dan nesne deposuna geçiş hedefi dosya kimliği/anotasyon bağını korumalı;
   dosya yolu veya bucket öneki yetkilendirme yerine geçmemelidir.
 - UI, iş mantığı, veri erişimi ve dosya sağlayıcısı sorumluluklarını ayır.

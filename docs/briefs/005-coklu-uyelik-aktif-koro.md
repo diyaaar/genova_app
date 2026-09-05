@@ -1,6 +1,6 @@
 # 005 — Çoklu üyelik ve aktif koro sözleşmesi
 
-**Durum / tarih / sorumlu yazıcı:** Yerelde tamamlandı, canlı bekliyor ·
+**Durum / tarih / sorumlu yazıcı:** Tamamlandı ve canlıda ·
 5 Eylül 2026 · ana ajan, tek yazıcı.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Bir Auth hesabının birden fazla koroya
@@ -93,7 +93,7 @@ kontrolünde yeniden kimlik doğrulama istedi; bu brief canlı işlem yetkisi sa
 - Plan/limit tabloları, ödeme/faturalama ve mağaza kayıtları.
 - Railway/Drive/R2 dosya taşıması, DNS veya hosting kesimi.
 - RN ürün alanı, native giriş/kabuk ve kalıcı WebView ekranları.
-- Canlı DB migration, Edge deploy, web push veya gerçek kullanıcıya ikinci üyelik.
+- Gerçek kullanıcıya ikinci üyelik ekleme; bu kesimde yalnız sözleşme yayınlandı.
 - İlgisiz politika temizliği, advisor borcu veya geniş refactor.
 
 ## Risk / yetki / geri dönüş
@@ -150,7 +150,12 @@ kontrolünde yeniden kimlik doğrulama istedi; bu brief canlı işlem yetkisi sa
 | 5 Eyl 2026 | `pnpm test:e2e` | yerel Chromium + Pixel profili | geçti | 16/16; çoklu üyelik seçim kapısı, seçim sonrası aktif koro ve ciddi/kritik Axe ihlali olmaması dahil. Gerçek Supabase oturumu değildir. |
 | 5 Eyl 2026 | Edge kaynak kontrolü | yerel | sınırlı | `drive-manager-v2` aktif koro RPC'sine bağlandı; Deno kurulu olmadığından ayrı Deno check/deploy yapılmadı. Next build Edge dosyasını doğrulamaz. |
 | 5 Eyl 2026 | Üretim/test commit'i | yerel `main` | geçti | `7b86a57`; push, deploy ve canlı DB işlemi yapılmadı. |
+| 5 Eyl 2026 | Taze mantıksal yedek + gerçek restore | canlı kaynak → izole PostgreSQL 17 | geçti | `public + auth + genova_003`; 632524 byte, 951 kayıt, SHA-256 `20f65ecbb957d5854524eb75a3763fc818725b010cb23ab7a84f51aba4707f49`. 38 public tablo, 28 Auth kullanıcısı ve 29 üyelik geri yüklendi; 005, 003 regresyonu ve kayıpsız roundtrip geçti. Storage/Drive binary içerikleri kapsam dışı. |
+| 5 Eyl 2026 | `20260905003154` migration | canlı `hievmwwctjjlhmssoxsu` | geçti | Tek transaction; migration SHA-256 `85d450459b4b34c4ca1d5a739a30663d0e22acbd72282b2b4f76b2cb861c50e4`. Hosted 005 ve 003 testleri ROLLBACK ile geçti; gerçek 1 koro/29 üyelik ve website global tablo hash'leri değişmedi. |
+| 5 Eyl 2026 | Edge + web yayını | canlı | geçti | `drive-manager-v2` v15 ACTIVE ve `verify_jwt=true`; kimliksiz istek 401. `main` `0a2b94c`'ye gönderildi, Vercel `BSdrDqg7GaYhHx2Sj1cvAmajAZkq` tamamlandı. Canlı 005 chunk'ı yerel build ile aynı SHA-256 ve yeni RPC adlarını içeriyor. |
+| 5 Eyl 2026 | Oturumlu canlı duman testi | Chrome, salt-okunur | geçti | Tek üyelik fallback ile ana sayfa, repertuvar/PDF-notlar, sohbet, ödevler, profil ve takvim açıldı; console error yok. İkinci gerçek üyelik/seçici ve write/delete denenmedi. |
+| 5 Eyl 2026 | Supabase gözlem/advisor | canlı panel | geçti, mevcut borç sürüyor | Son 60 dakikada Postgres ve Edge 0 error. Yenilenen linter: security 0 error/57 warning; performance 0 error/120 warning/73 info. Bu tarihsel borç 005 kapsamında temizlenmedi. |
 
-**Teslim:** Üretim ve belge commit'leri ayrı tutuldu. Canlıya kadar durum
-“yerelde hazır / canlı bekliyor” kalır; sıradaki tek adım yeniden Genesinova Supabase
-yetkisi, taze yedek/restore ve koordineli DB → Edge/web kesim ön kontrolüdür.
+**Teslim:** Üretim ve belge commit'leri ayrı tutuldu. 005 DB → Edge → web sırasıyla
+canlıya alındı ve doğrulandı. Gerçek ikinci üyelik henüz oluşturulmadı; sıradaki ürün
+işi koro oluşturma ile davet/üyelik akışını ayrı küçük brief'lere bölmektir.
