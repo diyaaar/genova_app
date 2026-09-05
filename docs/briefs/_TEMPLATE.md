@@ -4,6 +4,9 @@
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:**
 
+**Teslim odağı:** Hangi kullanıcı akışı / plan adımı ilerler? Hangi somut engel
+kapanır? En küçük kabul ve bu brief'te ertelenen geliştirmeler nelerdir?
+
 **Başlangıç kanıtı:** çalışma ağacı, ilgili kod/karar, sorun veya ihtiyaç.
 Varsayım, doğrulanmış durum ve açık kullanıcı kararı ayrı yazılır.
 
@@ -19,7 +22,7 @@ Varsayım, doğrulanmış durum ve açık kullanıcı kararı ayrı yazılır.
 [geçiş rehberi](../gecis-rehberi.md). Başka projede o projenin rehberine uyarlanır.
 
 - Okunan talimatlar, kararlar ve mevcut kanıtın yolları:
-- Tek ekran / altyapı işi; native / WebView / ortak mantık / backend sınırı:
+- Tek doğrulanabilir sonuç; native / WebView / ortak mantık / backend sınırı:
 - Korunacak mevcut davranış, ortak sözleşme ve web etkisi:
 - İzinli dosyalar, tek yazıcı ve bu iş için verilmiş kullanıcı yetkisi:
 - Gerekli testler, ortamları, geri dönüş ve çözülmemiş çelişkiler:
@@ -47,7 +50,8 @@ Varsayım, doğrulanmış durum ve açık kullanıcı kararı ayrı yazılır.
 - [ ] Proje kapısı: <gerçek komut + çalışma dizini>
 - [ ] Diff incelendi; kapsam dışı değişiklik yok; ilgili hafıza ve kanıt bağlantıları güncel.
 
-Genova: web kapısı kökten `pnpm check`. RN ürün alanı kurulduktan sonra o dizinde
+Genova: salt belge için bağlantı/tutarlılık/diff; web/ortak kod kapısı kökten
+`pnpm check`. RN değişiminde ürün alanı kurulduktan sonra o dizinde
 `npx tsc --noEmit && npm test`; UI/DB/Edge/native/yayın katmanları ayrıca seçilir.
 Başka projeye taşırken bu paragrafı o projenin doğrulanmış kapılarıyla değiştir.
 

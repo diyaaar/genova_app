@@ -36,13 +36,15 @@ ana ajan ana brief'e işler. Okunmayan kaynağa "okundu" denmez.
   [repo incelemesi](ai-calisma-yontemi-repo-incelemesi.md); doğrudan emir değildir.
 
 Çelişkiyi sessizce çözme veya eski tahmini doğrulanmış gerçek diye taşıma.
-Etkilenen işi durdur, asıl kod/karar/kanıtı karşılaştır; yeni ürün kararı gerekiyorsa sor.
+Asıl kod/karar/kanıtı karşılaştır; kapsam içi teknik seçimi kaydet ve ilerle.
+Yeni ürün kararı gerekiyorsa yalnız buna bağlı işi beklet; bağımsız hazırlığı sürdür.
 Özellikle eski Flutter ifadeleri, chat için "UI hazır", tüm TS'nin aynen taşınacağı,
 mağaza muafiyeti ve süre/maliyet iddiaları yeni brief'te kanıtsız kullanılmaz.
 
 ## 3. Geçiş işi seçme
 
-Aşağıdaki sıra görevleri bulmak içindir; tek seferde uygulama emri veya yeni faz numarası değildir.
+Güncel sıra [mobil teslim planındadır](mobil-teslim-plani.md), karar #19.
+Aşağıdaki tablo kaynak indeksidir; tamamlanmış 003 yeniden açılmaz.
 
 | İş | Başvurulacak kaynak / önkoşul |
 |---|---|
@@ -56,8 +58,8 @@ Aşağıdaki sıra görevleri bulmak içindir; tek seferde uygulama emri veya ye
 
 Mağaza hazırlığı ve izole altyapı denemeleri uygun bağımsız iş olarak ilerleyebilir;
 003 şema göçü ile hosting/DNS/dosya göçünü tek riskli geçişte birleştirme.
-Önceki sohbetin "kabukta beta, repertuvar sonrası genel yayın" önerisi henüz
-onaylı sıra değişikliği değildir; yayın brief'inde karara bağlanmalıdır.
+İlk hedef giriş/koro seçimi/repertuvar/PDF cihaz pilotudur. Beta dağıtımı ile genel
+mağaza yayını ayrı kabul edilir; ayrıntılı yayın kapsamı pilot sonucuyla belirlenir.
 
 ## 4. Her özellikte korunacak sınırlar
 
@@ -89,7 +91,8 @@ Ana ajan şu maddeleri kanıt üzerinden kontrol etmeden görevi kapatmaz:
 - [ ] Başlangıç kontrolü gerçek kaynaklarla tamamlandı; diff yalnız onaylı kapsamda.
 - [ ] Modül sınırı, ortak sözleşme ve native/WebView hedefi korundu.
 - [ ] Brief'in gerekli testleri geçti; çalıştırılmayan/başarısız katmanlar açık.
-- [ ] Web için `pnpm check`; kurulmuş RN ürün alanında `npx tsc --noEmit && npm test`;
+- [ ] Salt belgede bağlantı/tutarlılık/diff; web veya ortak kodda `pnpm check`;
+  RN değişiminde kurulmuş ürün alanında `npx tsc --noEmit && npm test`;
   DB/Edge/provider/tarayıcı/gerçek cihaz/yayın kanıtı ihtiyaca göre ayrıca var.
 - [ ] Sonuç tarih/ortam/komut/sınır içeriyor; brief, ilgili hafıza ve ekran durumu güncel.
 - [ ] Kod ve belge commit'leri ayrı ve birlikte devredildi; push/deploy/DB ayrı ele alındı.

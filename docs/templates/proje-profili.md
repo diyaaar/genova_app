@@ -7,6 +7,9 @@ Bu dosyanın kopyalanması tek başına kurulum veya kabul değildir.
 ## Kimlik ve kaynak haritası
 
 - Proje adı, amacı, kullanıcıları:
+- İlk çalıştırılabilir kullanıcı akışı ve cihaz/ortam kabulü:
+- Bu akışın asgari önkoşulları ve ertelenen işler:
+- Yol haritasının tek kaynağı; altyapı işini öne alma ölçütü:
 - Depo / sahip / çalışma dizini (kimlik bilgisi değil):
 - Mevcut giriş kuralları, karar kaydı, durum defteri, görev brief'leri:
 - Mevcut hafıza sistemi varsa korunacak kaynak ve yeni düzene eşleştirmesi:

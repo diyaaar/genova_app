@@ -1,6 +1,6 @@
 # Proje özeti — Genova
 
-Son karşılaştırma: 4 Eylül 2026, yerel karar ve durum belgeleri.
+Son karşılaştırma: 5 Eylül 2026, kullanıcı yönü ve yerel karar/durum belgeleri.
 
 Genova, şef ve koristlerin repertuvar, PDF/anotasyon, ses, sohbet, ödev ve koro
 işlerini yürüttüğü uygulamadır. Hedef, mevcut web'i koruyarak çok korolu ürünü
@@ -10,7 +10,9 @@ Bu hedef, mağaza yayınının veya çok korolu ürünün tamamlandığı anlam�
 ## Kapsam ve sınırlar
 
 - React Native + Expo; mevcut web ile aynı depo ve ortak TypeScript sözleşmeleri.
-- Önce kiracı şeması, sonra çok kiracılı ürün, mobil kabuk/mağaza ve repertuvar.
+- İlk teslim: minimum davet/limit sonrası telefonda giriş → koro seçimi →
+  repertuvar/PDF okuma. Pilot ardından mağaza adayı; [plan](../docs/mobil-teslim-plani.md).
+  Çok korolu ürün mağazadan önce kalır; gelişmiş ticari yönetim ilk cihazı bekletmez.
 - Kalıcı WebView ekranları korunur; tüm ekranları native yapmak hedef değildir.
 - PDF ve seslerin production'da Drive bağımlılığından çıkarılması istenmiştir;
   sağlayıcı geçişi ayrı, henüz tamamlanmamış bir iştir.

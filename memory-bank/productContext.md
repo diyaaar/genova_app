@@ -9,6 +9,12 @@ Kaynak: 4 Eylül 2026 tarihli yerel [geçiş kaydı](../MIGRATION.md) ve
 - Üyeler repertuvar ve seslere erişir, ödev teslim eder ve koro içi iletişim kurar.
 - Yönetim/üyelik/koro sınırları aynı veri üzerinde çalışan web ve mobilde korunur.
 
+## İlk doğrulanacak ürün akışı
+
+Giriş → koro seçimi → repertuvar → PDF/mevcut anotasyon okuma → çıkış.
+Şef ve korist pilotuyla cihazda doğrulanır; sonra yazma/ses/WebView ve mağaza adayı
+[teslim planına](../docs/mobil-teslim-plani.md) göre tamamlanır.
+
 ## Deneyim hedefleri
 
 - PDF açma, çizim, kaydırma ve ses dinleme temel akışlardır. Büyük dosya, zayıf ağ,

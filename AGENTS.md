@@ -49,7 +49,11 @@
 - genesinovachoir sitesiyle aynı Supabase DB — schema değişikliklerinde her iki projeyi göz önünde bulundur
 
 ## Geçiş kuralları
-- **Bir oturumda bir ekran.** `docs/briefs/` altındaki brief'i oku, kapsam dışına çıkma.
+- **Bir brief'te tek doğrulanabilir sonuç.** Bağlı kullanıcı akışı birden çok modüle
+  dokunabilir; izinli alanları brief'te yaz. Oturum sınırı işin bitiş ölçütü değildir.
+- **Teslim önceliği:** [mobil teslim planı](docs/mobil-teslim-plani.md). Minimum
+  davet/limit → native giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
+  Yeni altyapıyı öne almak için hangi akışı engellediğini ve en küçük çözümü yaz.
 - **İki istemci ayrı görünebilir.** Web UI'ını mobile benzetmek için değiştirme; tersi de geçerli. Piksel eşitliği hedef değil.
 - **Anotasyon şeması ortak sözleşmedir.** `lib/repertuvar/annotation-types.ts` tek doğru kaynaktır. RN aynı TypeScript sözleşmesini paylaşır; ayrı Dart aynası üretilmez. Değişiklikte iki istemci ve eski mobil sürümler birlikte değerlendirilir.
 - **Sunucu mantığı Edge Function'a.** Native'e taşınan bir ekran için yeni Next.js API route'u açma; `supabase/functions/` altına yaz ve web'i de aynı fonksiyona bağla.
@@ -79,7 +83,8 @@
   `.expo/`, `canvaskit.wasm` gibi üretilmiş dosyalar `.gitignore`'da.
 
 ## Kapılar — geçmeden görev bitmiş sayılmaz
-- **Web:** `pnpm check`
+- **Salt belge:** yerel bağlantı, karar/durum tutarlılığı ve `git diff --check`.
+- **Web / ortak kod / bağımlılık / build ayarı:** `pnpm check`
 - **Mobil (RN):** Ürün çalışma alanı kurulduktan sonra orada `npx tsc --noEmit && npm test`;
   ayrıca değişime uygun cihaz/platform kontrolü. Henüz olmayan çalışma alanı geçmiş sayılmaz.
 - `pnpm check` E2E, canlı DB, Edge deploy veya gerçek cihaz testi değildir. Gerekli
@@ -90,7 +95,8 @@
 ## Dosya hijyeni
 - Kök dizine geçici dosya, script veya çıktı yazma. Denemeler `spike/`, notlar `docs/`.
 - Üretilen dosyalar elle düzenlenmez — üreteci düzeltilir.
-- Modül sınırını ve tek sorumluluğu koru; kapsam dışı refactor yapma. Dosyada 800 /
+- Modül sınırını ve tek sorumluluğu koru; kapsam dışı refactor yapma.
+  Brief'in kabulü için gerekli sınırlı refactor gerekçesi ve testleriyle yapılabilir. Dosyada 800 /
   fonksiyonda 100 satır yalnız inceleme sinyalidir; otomatik bölme veya yeni servis emri değildir.
 - Önemli ortak API'lerde amaç, yetki, yan etki ve hata davranışını açıkla; anlamsız
   yorum veya öznel 8/10 puan gerçek incelemenin/testin yerine geçmez.

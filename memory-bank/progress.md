@@ -15,7 +15,10 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
-| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: 008 davet/üyelik; sonra plan-limit ve RN kabuk. İlk gerçek koro öncesi operatör seçimi ayrıca yetkilendirilecek | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: minimum 008/limit → 004 giriş/koro seçimi → repertuvar/PDF → pilot; [plan](../docs/mobil-teslim-plani.md). Gerçek operatör ataması ayrı | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+
+WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
+Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 
 ## Bilinen riskler
 

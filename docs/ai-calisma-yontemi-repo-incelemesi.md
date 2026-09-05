@@ -150,3 +150,13 @@ AGENTS'teki eski Flutter ve tek-ajan ifadeleri WF-001'de görünür olarak günc
 RN + Expo, ana ağaçta tek yazıcı ve kontrollü devir. Ürün/DB/yayın değişimi yapılmadı;
 başka projelere/global skill'e kurulum veya çalışan bir ajan zamanlayıcısı iddiası yok.
 Gerçek test ve pilot sonucu yalnız [WF-001 kaydında](briefs/WF-001-ai-calisma-duzeni.md) izlenir.
+
+## 5 Eylül 2026 — kullanım sonrası yeniden değerlendirme
+
+Aynı sabit GitHub sürümü yeniden açıldı. Kaynakta katı dosya sınırları, her değişimde
+çoklu belge güncelleme, 8/10 öz puan ve belirsizlikte zorunlu soru kuralları var.
+Genova bunların çoğunu WF-001'de zaten uyarlamıştı; birebir kopya hedeflenmez.
+Bu turdaki farklar: tek sonuçlu brief, değişen katmana göre test, kapsam içi teknik
+seçimde ilerleme ve erken cihaz akışı. Gerekçeler [WF-003](briefs/WF-003-mobil-teslim-odagi.md),
+güncel sıra [teslim planında](mobil-teslim-plani.md). Yukarıdaki ilk inceleme önerileri
+tarihsel kayıttır; aktif talimat AGENTS ve çalışma düzenidir.

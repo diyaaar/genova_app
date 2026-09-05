@@ -1,7 +1,8 @@
 # Mobil Geçiş — Durum Defteri
 
 > Bu dosya geçişin tek doğru kaynağıdır. Yeni bir oturum önce burayı okur.
-> Bir ekranın durumu değiştiğinde **aynı commit'te** burası da güncellenir.
+> Durum değişikliği, koddan ayrı ama birlikte devredilen belge commit'ine işlenir.
+> Güncel teslim sırası: [mobil teslim planı](docs/mobil-teslim-plani.md), karar #19.
 
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
@@ -31,7 +32,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Giriş | 164 | native | bekliyor | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | bekliyor | 2 |
-| Chat | 8.552 | **native** (UI hazır, veri katmanı yazılacak) | bekliyor | 3 |
+| Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
 | Duyurular | 977 | **WebView — kalıcı** | — | — |
@@ -39,9 +40,8 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | — | — |
 | Devamsızlık | 1.461 | **WebView — kalıcı** | — | — |
 
-**WebView'da kalanlara mobil tarafta dokunulmaz.** Hepsi liste, form ve metin ekranı;
-WebView bu işlerde ölçülebilir hiçbir şey kaybettirmiyor. Native yapmanın tek gerekçesi
-Next.js bağımlılığını tamamen kaldırmak istemek olur — bugün öyle bir gerekçe yok.
+Kalıcı WebView ekranları native yeniden yazılmaz. Oturum, geri navigasyon,
+erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık varsayılmaz.
 
 ---
 
@@ -72,13 +72,18 @@ Genova'ya girecek olan `lib/features/dm/` (conversation, dm_message, chat_screen
 
 **Sonuç (3 Eyl, RN kararından sonra güncellendi):** Orbiba Dart olduğu için **chat arayüzü
 kullanılamıyor** — bu, RN kararının bilinen bedeli (`KARARLAR.md` #7). Buna karşılık
-`lib/chat.ts`'teki 1.641 satır TypeScript iş mantığı aynen taşınıyor; Flutter'da o da
+`lib/chat.ts`'teki TypeScript iş mantığı paylaşım adayıdır; DOM/Next bağımlılıkları
+uyarlama brief'inde ayrılır. Flutter'da o mantık da
 yeniden yazılacaktı. Orbiba'dan kalan değer: FCM/APNs kurulum örneği ve mimari referans.
 **Faz 3 tahmini 4–5 haftaya çıktı** (önceki 2–3 hafta, hazır UI varsayımıyla hesaplanmıştı).
 
 ## KARAR — istemci teknolojisi: React Native + Expo
 
 Karar 2 Eyl'de verildi, 3 Eyl'de spike ile doğrulandı. Karşılaştırma kayıt için burada:
+
+Bu tarihsel karşılaştırmadaki satır sayıları, aynen taşınabilirlik, araç kolaylığı
+ve süre ifadeleri güncel garanti değildir. Gerçek platform bağımlılığı ve kabul
+ilgili brief'te doğrulanır; güncel teslim sırası karar #19'dur.
 
 | | React Native + Expo | Flutter |
 |---|---|---|
@@ -109,21 +114,22 @@ Kullanıcı çok korolu mimariyi mağazadan **önce** istiyor. Doğru içgüdü 
 - **Çok kiracılı ürün** (koro kaydı, üye daveti, plan tablosu, katman limitleri):
   kullanıcı kararı — **mağazadan önce**. v1 satılabilir çıkıyor.
 - **Otomatik faturalama: v1'de YOK.** İlk korolara elle fatura kesilir, plan bayrağı elle çevrilir.
-  Bu, Apple'ın uygulama içi satın alma zorunluluğunu tamamen devre dışı bırakır.
+  Mağaza uygunluğu bu tercihten otomatik çıkmaz; yayın brief'inde güncel koşullar doğrulanır.
 
-Yeni sıra: **RN spike → Kiracı şeması → Çok kiracılı ürün → Mobil kabuk + mağaza → Repertuvar → (dur)**
-Mağaza çıkışı ~6–8 hafta ötelendi; toplam ~4–5 ay.
+Güncel sıra (#19): **minimum davet/üyelik → temel plan-limit → native giriş/koro
+seçimi → repertuvar/PDF okuma → cihaz pilotu → yayın için gereken diğer akışlar → mağaza.**
+Önceki 6–8 hafta / 4–5 ay tahminleri tarihsel; güncel teslim taahhüdü değildir.
 
 ## Ürün yönü ve maliyet
 
-**`docs/urun-ve-maliyet.md`** — sunucu gerekmiyor (mimari sunucusuz), maliyet ~$8/ay
-bugün / ~$35–55/ay ticari. Katmanlı ürün düşünülüyorsa **`choir_id` Faz 1'den önce
-şemaya girmeli**; sonradan eklemek acı verici bir göç.
+**`docs/urun-ve-maliyet.md`** tarihsel varsayım kaydıdır; güncel fiyat veya kapasite
+kanıtı değildir. Railway tercihi korunur; hazırlık, production taşıması değildir.
+Sağlayıcı geçişi [teslim planında](docs/mobil-teslim-plani.md) ayrı iş olarak izlenir.
 
 ## Mağaza yayını
 
 Ayrı bir hat: **`docs/store-yayin.md`**. Bir kısmı mobil geliştirmeyi beklemez (hesap silme,
-gizlilik politikası, demo hesap, Play'in 14 günlük kapalı test saati) ve mobile
+gizlilik politikası, demo hesap, hesaba uygulanabilir kapalı test şartları) ve mobile
 olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
@@ -152,7 +158,7 @@ kapsamdan çıkardı; bu karar parolaların güvenli hâle getirildiği anlamın
 Ardından davet/üyelik (`008`) ve plan-limit işleri ayrı brief'lere bölünür;
 gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan eklenmez. İlk gerçek
 koro işlemi için platform operatörü ayrıca seçilip yetkilendirilir. `004` RN kabuk
-brief'i bu zincirin ardından uygulanır. Şirket adının
+brief'i minimum davet/limit kabulünden sonra uygulanır; gelişmiş ticari yönetim beklenmez. Şirket adının
 henüz kesinleşmemesi bu teknik işi engellemez.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.
@@ -163,7 +169,7 @@ DB migration `20260905003154`, Edge v15 ve web `0a2b94c`; hosted izolasyon, otur
 salt-okunur duman testi, 16/16 Playwright, 126 birim testi ve izole DB roundtrip geçti.
 
 Paralel ve teknoloji kararından bağımsız (bkz. `docs/store-yayin.md`):
-Apple/Play geliştirici hesapları, Play'in 14 günlük kapalı test saati, hesap silme, gizlilik politikası.
+Apple/Play geliştirici hesapları, hesaba uygulanabilir güncel test şartları, hesap silme ve gizlilik politikası.
 
 **Tamamlanan:** `docs/briefs/001-repertuvar-spike.md` — GEÇTİ. Öğrenilenler brief'in sonunda.
 

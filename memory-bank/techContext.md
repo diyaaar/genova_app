@@ -14,6 +14,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 
 | Katman | Komut ve sınır |
 |---|---|
+| Salt belge | Bağlantı/tutarlılık incelemesi ve `git diff --check`; ürün testleri tekrar koşulmaz |
 | Web kalite kapısı | Kökten `pnpm check`: lint, typecheck, kapsamlı birim test çalıştırması, service worker sözdizimi, build |
 | Tarayıcı | Kökten `pnpm test:e2e`; testlerin gerçek üyeli akışı kapsayıp kapsamadığını ayrıca belirt |
 | RN ürün | Kurulumdan sonra ürün çalışma alanında `npx tsc --noEmit && npm test`; cihaz testi ayrıca |

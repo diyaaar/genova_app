@@ -1,7 +1,8 @@
 # Kararlar
 
-Verilmiş kararlar ve gerekçeleri. **Bir ajan bunları yeniden tartışmamalı.**
-Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
+Verilmiş kararlar ve gerekçeleri. Kanıtsız tekrar tartışma; yeni kullanıcı yönü veya
+somut çelişkide etkiyi değerlendir. Değişen kararın önceki hâlini tarihsel tut,
+yeni karara açıkça bağla. Eski tahminler güncel doğrulama değildir.
 
 | # | Karar | Gerekçe | Tarih |
 |---|---|---|---|
@@ -13,8 +14,8 @@ Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
 | 6 | Faz 4'ten sonra **durmak meşru** | ~%80 native yeterli bir bitiş. Kalan ekranlar kalıcı olarak WebView'da kalabilir. | 2 Eyl |
 | 7 | **İstemci: React Native + Expo** | `lib/` altındaki 4.342 satır TS + 12 test aynen taşınıyor; anotasyon tipleri web'le ortak (ayna yok); EAS Build Xcode'a girmeden iki mağazaya gönderiyor. Çok kiracılı ürünün önce gelmesi bu kararı kesinleştirdi — önümüzdeki haftalar ağırlıklı TypeScript backend işi. | 2 Eyl |
 | 8 | RN kararı **KESİNLEŞTİ** | `002` spike'ı 3 Eyl'de geçti: çizim matematiği web'de, PDF→görüntü+katman iOS'ta doğrulandı. Şart kalktı. Flutter spike'ı referans olarak `spike/repertuvar/` altında kalıyor. | 3 Eyl |
-| 9 | **Çok kiracılı ürün mağazadan önce** | Kullanıcı kararı. Mağaza çıkışını ~6–8 hafta öteliyor, toplam ~4–5 ay. | 2 Eyl |
-| 10 | **Otomatik faturalama v1'de yok** | İlk korolara elle fatura, plan bayrağı elle çevrilir. Ürün ilk günden satılabilir olur **ve** Apple'ın uygulama içi satın alma zorunluluğu hiç doğmaz. | 2 Eyl |
+| 9 | **Çok kiracılı ürün mağazadan önce**; mobil başlangıç sırası #19 ile güncellendi | Mağaza önkoşulu korunur. Eski takvim tahmini geçersizdir; tüm ticari yönetim ilk cihaz denemesinin önkoşulu değildir. | 2 Eyl; 5 Eyl güncelleme |
+| 10 | **Otomatik faturalama v1'de yok** | İlk korolara elle fatura, plan elle atanır. Önceki kesin mağaza muafiyeti gerekçesi iptal edildi; uygunluk yayın brief'inde doğrulanır. | 2 Eyl; 5 Eyl düzeltme |
 | 11 | Katman limitleri **Postgres'te**, koda gömülü değil | İstemcide kontrol edilen limit dakikalar içinde aşılır. Plan tablosundan okunan veri olmalı ki fiyat değişimi yeni sürüm gerektirmesin. | 2 Eyl |
 | 12 | Ajan çalışması **brief'le** | Ajan 45k satırı keşfetmek yerine 50 satır okur. Keşif maliyeti bir kez ödenir. | 2 Eyl |
 
@@ -54,3 +55,10 @@ Değişecekse buraya yeni satır eklenir, eskisi "iptal" olarak işaretlenir.
 | react-native-web Image | `StyleSheet.absoluteFill` + `resizeMode` görseli kutuya SIĞDIRMIYOR, doğal boyutunda açıyor. Genişlik/yükseklik açıkça verilmeli. |
 | Sayfa mimarisi | Sayfa = **görüntü** + üstünde Skia katmanı. PDF görüntüleyicisine gerek yok; sayfa bitmap'e render edilip aynı yere konur. **iOS'ta doğrulandı.** |
 | Kurulum zinciri | 8 maddelik liste `docs/briefs/002-rn-pdf-spike.md` sonunda. Ürün projesi kurulurken baştan uygulanacak — bugün tek tek keşfedildi, bir daha edilmesin. |
+
+## Mobil teslim odağı — 5 Eylül 2026
+
+| # | Karar | Gerekçe | Tarih |
+|---|---|---|---|
+| 19 | **Minimum davet/limit → giriş/koro seçimi → repertuvar/PDF → cihaz pilotu → mağaza adayı** | Kullanıcı bu yönü onayladı. Çok koroluluk mağazadan önce kalır; gelişmiş yönetim veya hosting göçü ilk mobil akışı geciktirmez. Kapsam/kabul: [teslim planı](docs/mobil-teslim-plani.md). | 5 Eyl 2026 |
+| 20 | **Kaynak kuralların amacı korunur; uyum yüzdesi yerine çalışan akış ölçülür** | Tek sonuçlu brief, riske uygun test, kısa hafıza ve tek yazıcı. Gereksiz katman, belge tekrarı ve kapsam içi teknik adımda tekrar onay önlenir. İnceleme: [WF-003](docs/briefs/WF-003-mobil-teslim-odagi.md). | 5 Eyl 2026 |

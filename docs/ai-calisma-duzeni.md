@@ -1,6 +1,6 @@
-# AI çalışma düzeni — ortak çekirdek v1
+# AI çalışma düzeni — ortak çekirdek v1.1
 
-4 Eylül 2026. Genova profili [AGENTS.md](../AGENTS.md) ve
+5 Eylül 2026. Genova profili [AGENTS.md](../AGENTS.md) ve
 [hafıza dosyalarıdır](../memory-bank/projectbrief.md). Bu belge çalışma yöntemidir;
 ürün mimarisini, kullanıcı yetkisini veya sağlayıcı ayarını kendiliğinden değiştirmez.
 
@@ -13,6 +13,8 @@
 3. **Yetki:** açık uygulama isteği içinde olağan adımları ilerlet. Mimari/kapsam değişimi,
    para, canlı veri veya başka kişinin işi için gerekli yeni kararı kullanıcıya taşı.
    Her küçük adımda tekrar onay isteme; izin gerektiren adımı da tahminle geçme.
+   Belirsizlikte önce kaynak/kod kontrolü yap. Kapsam içi geri alınabilir teknik
+   seçimleri gerekçesiyle kaydet ve ilerle; sadece bağlı işi etkileyen dış kararı beklet.
 4. **Uygulama:** tek hedef, küçük diff, açık modül sınırı. İlgisiz refactor yapma.
    Fonksiyon/dosya boyutu inceleme sinyalidir; körlemesine bölme gerekçesi değildir.
 5. **Doğrulama:** riske uygun testleri çalıştır, diff'i incele, sonuç/ortam/sınırı kaydet.
@@ -66,7 +68,10 @@ iş doğrudan yapılır. Ajan sayısını artırmak model maliyetini kendiliğin
 
 ## 4. Doğrulama ve doküman kalitesi
 
-Proje profilindeki temel kapıya ek olarak değişimin gerektirdiği katmanları seç:
+Değişen katmanın temel kapısını ve riske uygun ek kanıtı seç. Salt belge değişiminde
+ürün build/testini tekrarlama; bağlantı, kapsam ve tutarlılık kontrolü yap.
+Kapsamda yeni değişiklik/hata yoksa geçmiş başarılı testleri yeniden çalıştırma.
+
 
 | Değişen alan | Ek kanıt |
 |---|---|
@@ -109,3 +114,10 @@ kesilmiş satırlar tamamlanmış gibi aktarılmaz. Rust/WGPU kuralları, örne�
 performans iddiaları ve hazır olmayan exporter Genova'ya taşınmadı. Kurallar burada
 Genova için yeniden yazıldı; üçüncü taraf motor kodu kopyalanmadı.
 Alt ajan/model iş bölümü kullanıcının ek önerisidir, video deposunda hazır bir sistem değildir.
+
+## Teslim odağı
+
+Bir brief tek doğrulanabilir sonuç taşır; bağlı akış birden fazla modüle dokunabilir.
+Kabul için gerekli dar refactor brief'e yazılır. Her altyapı işi kullanıcı akışındaki
+somut bir engeli kapatmalı. Genova önceliği [teslim planındadır](mobil-teslim-plani.md).
+Kaynak yönergelere sayısal uyum, dosya sayısı veya ajan sayısı başarı ölçütü değildir.

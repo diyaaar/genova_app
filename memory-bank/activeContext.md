@@ -5,6 +5,12 @@ sözleşmesi canlıda.
 
 ## Şimdiki odak
 
+[WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md) ile kullanıcı mobil teslim
+odağını onayladı. [Plan](../docs/mobil-teslim-plani.md): minimum 008 davet/üyelik
+ve temel limit → 004 giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
+Sıradaki uygulama işi 008 sözleşmesini mevcut kodla netleştirmektir.
+
+
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)
 canlı altyapı olarak hazırdır. Taze backup/restore, kesin DB migration
 `20260905160539`, hosted 003/005/006/007 testleri ve `create-choir` Edge v1 geçti.
@@ -23,8 +29,8 @@ taze restore, hosted 005 + 003 izolasyonu ve tek üyelikli gerçek oturum duman 
 Gerçek ikinci üyelik/seçici ile canlı write/delete henüz denenmedi.
 
 [004 RN kabuk ve native giriş hazırlık brief'i](../docs/briefs/004-rn-kabuk-ve-giris.md)
-yalnız ilk native işin sınırını kayda alır; ürün kodu başlamadı. Çok-korolu ürünün
-kalan küçük brief/kararları kapanmadan bu aşama uygulanmaz.
+ilk native işin sınırını kayda alır; ürün kodu başlamadı. Minimum davet/limit
+kabulünden sonra uygulanır; tüm ticari yönetimin tamamlanması beklenmez.
 Kalıcı WebView oturum köprüsü, push ve ses ayrı işlerdir.
 
 [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md): iki video, kaynak repo ve
@@ -46,12 +52,13 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
   testleri tamamlanmadan eklenmez; altyapının varlığı ürün yönetim ekranı değildir.
 - Şirket adı daha sonra eklenecek; 005 teknik kesimini veya RN kurulumunu engellemez.
   Mağaza/satıcı kimliği gereken adımlarda yeniden ele alınır.
-- Sırayı sessizce mobil kabuğa atlama: çok-korolu ürünün kalan küçük brief/kararlarını
-  bitir. Native sınır [004 brief'inde](../docs/briefs/004-rn-kabuk-ve-giris.md) kayıtlıdır.
+- Minimum davet/limit sonrası mobil akışa geç; yeni altyapı için somut engeli yaz.
+  Native sınır [004 brief'inde](../docs/briefs/004-rn-kabuk-ve-giris.md) kayıtlıdır.
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık ürün işi davet/üyelik (`008`), ardından plan-limit ve dosya sağlayıcısıdır.
+- İlk açık ürün işi davet/üyelik (`008`), ardından minimum plan-limit ve 004'tür.
+  Dosya sağlayıcısı ayrı iş; ilk cihaz denemesinin otomatik önkoşulu değildir.
   İlk gerçek koro işlemi öncesinde platform operatörü ayrıca seçilip yetkilendirilir;
   bu adımlar ayrı brief/işlem olarak yürütülür. Kendiliğinden DB göçü, DNS değişimi,
   ücretli plan veya push başlatılmaz.
