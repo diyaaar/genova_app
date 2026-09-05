@@ -46,7 +46,7 @@ function collectRoleNames(roleRows: ReviewerRoleRow[] | null | undefined) {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as DeleteBody;
     const submissionId = body.submissionId?.trim();
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       return new NextResponse('Geçersiz submissionId.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
 
     const { data: reviewerMember, error: reviewerMemberError } = await serviceClient
       .from('choir_members')

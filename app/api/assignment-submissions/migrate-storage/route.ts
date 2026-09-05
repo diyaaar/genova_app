@@ -68,7 +68,7 @@ async function invokeDriveMigration(payload: Record<string, unknown>, accessToke
 export async function POST(request: Request) {
   try {
     const { user, accessToken } = await requireAuthenticatedUser(request);
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
 
     const { data: member, error: memberError } = await serviceClient
       .from('choir_members')

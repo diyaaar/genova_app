@@ -114,7 +114,7 @@ export function CreateAssignmentModal({
 
     let query = supabase
       .from('choir_members')
-      .select('id, first_name, last_name, voice_group, sub_voice_group, auth_user_id, email, phone, is_active')
+      .select('id, choir_id, first_name, last_name, voice_group, sub_voice_group, auth_user_id, email, phone, is_active')
       .eq('is_active', true)
       .order('voice_group')
       .order('first_name');

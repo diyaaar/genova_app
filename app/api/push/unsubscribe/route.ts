@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
-import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { createSupabaseUserClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -12,7 +11,7 @@ interface UnsubscribeBody {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as UnsubscribeBody;
     const endpoint = body.endpoint?.trim();
 
@@ -20,26 +19,10 @@ export async function POST(request: Request) {
       return new NextResponse('endpoint zorunlu.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
-    const { data: member, error: memberError } = await serviceClient
-      .from('choir_members')
-      .select('id')
-      .eq('auth_user_id', user.id)
-      .maybeSingle();
-
-    if (memberError) {
-      return new NextResponse(memberError.message, { status: 500 });
-    }
-
-    if (!member) {
-      return NextResponse.json({ ok: true });
-    }
-
-    const { error: deleteError } = await serviceClient
-      .from('push_subscriptions')
-      .delete()
-      .eq('member_id', member.id)
-      .eq('endpoint', endpoint);
+    const userClient = createSupabaseUserClient(accessToken);
+    const { error: deleteError } = await userClient.rpc('delete_my_push_subscription', {
+      p_endpoint: endpoint,
+    });
 
     if (deleteError) {
       return new NextResponse(deleteError.message, { status: 500 });

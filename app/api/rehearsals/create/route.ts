@@ -122,7 +122,7 @@ function buildEventDetails(input: {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as CreateRehearsalBody;
 
     const date = body.date?.trim() ?? '';
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
       return new NextResponse('Geçerli bir tarih zorunludur.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
 
     const { data: creatorMember, error: creatorError } = await serviceClient
       .from('choir_members')

@@ -24,6 +24,10 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '@/components/AuthProvider';
+import {
+  MAIN_NOTIFICATIONS_CACHE_PREFIX,
+  MAIN_NOTIFICATIONS_LAST_SEEN_PREFIX,
+} from '@/lib/notification-cache';
 import { supabase } from '@/lib/supabase';
 
 type NotificationKind =
@@ -91,8 +95,6 @@ interface ChoirMemberNameRow {
 }
 
 const MAX_ITEMS = 18;
-const STORAGE_KEY_PREFIX = 'main_notifications_last_seen_at:';
-const NOTIFICATIONS_CACHE_PREFIX = 'genova.main-notifications.v1';
 const NOTIFICATIONS_STALE_TIME_MS = 2 * 60_000;
 const NOTIFICATIONS_GC_TIME_MS = 30 * 60_000;
 const NOTIFICATIONS_IDLE_REFRESH_DELAY_MS = 1_500;
@@ -104,7 +106,7 @@ function getNotificationsQueryKey(memberId: string | null | undefined, scopeKey:
 }
 
 function getNotificationsCacheKey(memberId: string | null | undefined, scopeKey: string) {
-  return `${NOTIFICATIONS_CACHE_PREFIX}:${memberId ?? 'guest'}:${scopeKey}`;
+  return `${MAIN_NOTIFICATIONS_CACHE_PREFIX}:${memberId ?? 'guest'}:${scopeKey}`;
 }
 
 function readNotificationsCache(memberId: string | null | undefined, scopeKey: string) {
@@ -577,7 +579,7 @@ export function MainNotificationsBell() {
       ? `leader:${reviewerVoiceGroup ?? 'none'}`
       : 'member';
   const notificationCacheScope = memberId ? `${memberId}:${notificationScopeKey}` : 'guest';
-  const storageKey = memberId ? `${STORAGE_KEY_PREFIX}${memberId}` : null;
+  const storageKey = memberId ? `${MAIN_NOTIFICATIONS_LAST_SEEN_PREFIX}${memberId}` : null;
 
   const persistedLastSeenAt = useMemo(() => {
     if (!storageKey || typeof window === 'undefined') {

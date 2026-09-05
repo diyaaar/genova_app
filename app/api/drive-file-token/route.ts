@@ -13,7 +13,7 @@ const DRIVE_FILE_TOKEN_TTL_MS = 60 * 60_000;
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as { driveFileId?: string };
 
     if (!body.driveFileId || !DRIVE_FILE_ID_PATTERN.test(body.driveFileId)) {
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     console.log(`[DRIVE_FILE_TOKEN] Generating token for file ${body.driveFileId}, user ${user.id}`);
-    const authorizedFile = await authorizeDriveFileAccess(user.id, body.driveFileId);
+    const authorizedFile = await authorizeDriveFileAccess(user.id, accessToken, body.driveFileId);
     if (!authorizedFile) {
       console.warn(`[DRIVE_FILE_TOKEN] Access denied for file ${body.driveFileId}, user ${user.id}`);
       return new NextResponse('Bu dosyaya erişim yetkiniz yok.', { status: 403 });

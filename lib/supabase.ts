@@ -26,6 +26,7 @@ export type FileType = 'sheet' | 'midi' | 'audio' | 'other';
 
 export interface ChoirMember {
   id: string;
+  choir_id: string;
   first_name: string;
   last_name: string;
   voice_group: string | null;

@@ -38,7 +38,7 @@ function sanitizeNote(raw: unknown) {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as SubmitBody;
     const note = sanitizeNote(body.note);
 
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       return new NextResponse('Gönderilecek geçerli profil alanı bulunamadı.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
     const { data: member, error: memberError } = await serviceClient
       .from('choir_members')
       .select(PROFILE_MEMBER_SELECT)

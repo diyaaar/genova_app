@@ -401,7 +401,7 @@ export async function POST(request: Request) {
       return new NextResponse('Not 1200 karakterden uzun olamaz.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
 
     const { data: member, error: memberError } = await serviceClient
       .from('choir_members')

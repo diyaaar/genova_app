@@ -50,8 +50,8 @@ function normalizeRoleName(value: string) {
     .toLocaleLowerCase('tr-TR');
 }
 
-async function loadMemberContext(authUserId: string): Promise<MemberContext> {
-  const serviceClient = await createTenantServiceClient(authUserId);
+async function loadMemberContext(authUserId: string, accessToken: string): Promise<MemberContext> {
+  const serviceClient = await createTenantServiceClient(authUserId, accessToken);
   const { data: member } = await serviceClient
     .from('choir_members')
     .select('id, voice_group')
@@ -302,8 +302,12 @@ async function authorizeRepertoireCommentAudio(
   };
 }
 
-export async function authorizeDriveFileAccess(authUserId: string, driveFileId: string): Promise<AuthorizedDriveFile | null> {
-  const memberContext = await loadMemberContext(authUserId);
+export async function authorizeDriveFileAccess(
+  authUserId: string,
+  accessToken: string,
+  driveFileId: string,
+): Promise<AuthorizedDriveFile | null> {
+  const memberContext = await loadMemberContext(authUserId, accessToken);
   if (!memberContext.memberId) {
     return null;
   }

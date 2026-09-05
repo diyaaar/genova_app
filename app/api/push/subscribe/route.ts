@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createTenantServiceClient } from '@/lib/server/tenant-client';
 
-import { requireAuthenticatedUser } from '@/lib/server/supabase-auth';
+import { createSupabaseUserClient, requireAuthenticatedUser } from '@/lib/server/supabase-auth';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -16,7 +15,7 @@ interface PushSubscriptionBody {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as PushSubscriptionBody;
 
     const endpoint = body.endpoint?.trim();
@@ -27,33 +26,13 @@ export async function POST(request: Request) {
       return new NextResponse('Geçersiz PushSubscription payload.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
-    const { data: member, error: memberError } = await serviceClient
-      .from('choir_members')
-      .select('id')
-      .eq('auth_user_id', user.id)
-      .maybeSingle();
-
-    if (memberError) {
-      return new NextResponse(memberError.message, { status: 500 });
-    }
-
-    if (!member) {
-      return new NextResponse('Choir member kaydı bulunamadı.', { status: 404 });
-    }
-
-    const payload = {
-      member_id: member.id,
-      endpoint,
-      p256dh,
-      auth,
-      user_agent: request.headers.get('user-agent') ?? null,
-      updated_at: new Date().toISOString(),
-    };
-
-    const { error: upsertError } = await serviceClient
-      .from('push_subscriptions')
-      .upsert(payload, { onConflict: 'endpoint' });
+    const userClient = createSupabaseUserClient(accessToken);
+    const { error: upsertError } = await userClient.rpc('upsert_my_active_push_subscription', {
+      p_endpoint: endpoint,
+      p_p256dh: p256dh,
+      p_auth: auth,
+      p_user_agent: request.headers.get('user-agent') ?? null,
+    });
 
     if (upsertError) {
       return new NextResponse(upsertError.message, { status: 500 });

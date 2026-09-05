@@ -30,7 +30,7 @@ function request(body: unknown, authorized = true) {
 
 describe('POST /api/drive-file-token', () => {
   beforeEach(() => {
-    mocks.requireAuthenticatedUser.mockResolvedValue({ user: { id: 'auth-user-1' } });
+    mocks.requireAuthenticatedUser.mockResolvedValue({ user: { id: 'auth-user-1' }, accessToken: 'access-token-1' });
     mocks.authorizeDriveFileAccess.mockResolvedValue({
       driveFileId: 'safe_file-1',
       fileName: 'partisyon.pdf',
@@ -88,6 +88,6 @@ describe('POST /api/drive-file-token', () => {
       url: '/api/drive-file/safe_file-1?token=signed-token',
       expiresAt: 1_900_000_000_000,
     });
-    expect(mocks.authorizeDriveFileAccess).toHaveBeenCalledWith('auth-user-1', 'safe_file-1');
+    expect(mocks.authorizeDriveFileAccess).toHaveBeenCalledWith('auth-user-1', 'access-token-1', 'safe_file-1');
   });
 });

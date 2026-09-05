@@ -16,6 +16,22 @@ export function createSupabaseServiceClient() {
   return createClient(getRequiredEnv('NEXT_PUBLIC_SUPABASE_URL'), getRequiredEnv('SUPABASE_SERVICE_ROLE_KEY'));
 }
 
+/**
+ * Creates a database client whose RLS context comes from an already verified
+ * Supabase access token. Keep privileged service credentials out of this step:
+ * the active choir resolver must observe the caller's own Auth session_id.
+ */
+export function createSupabaseUserClient(accessToken: string) {
+  return createClient(
+    getRequiredEnv('NEXT_PUBLIC_SUPABASE_URL'),
+    getRequiredEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
+    {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { headers: { Authorization: `Bearer ${accessToken}` } },
+    },
+  );
+}
+
 export function getBearerToken(req: Request) {
   const auth = req.headers.get('authorization') || '';
   const [scheme, token] = auth.split(' ');

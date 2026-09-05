@@ -97,7 +97,9 @@ describe('chat cache', () => {
     expect(readPendingRoomMessages('member-1', 'room-1')).toEqual([]);
 
     window.localStorage.setItem('unrelated', 'keep');
+    window.localStorage.setItem('revealed-message-1', 'true');
     clearChatCaches();
     expect(window.localStorage.getItem('unrelated')).toBe('keep');
+    expect(window.localStorage.getItem('revealed-message-1')).toBeNull();
   });
 });

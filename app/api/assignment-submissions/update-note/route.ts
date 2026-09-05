@@ -49,7 +49,7 @@ function ensureHistoryArray(value: unknown): Array<Record<string, unknown>> {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as UpdateNoteBody;
 
     const submissionId = body.submissionId?.trim();
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       return new NextResponse('Not 1200 karakterden uzun olamaz.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
 
     let actorContext;
     try {

@@ -49,6 +49,7 @@ const SONG_COMMENT_FOLDER_NAME = 'Şef Notları';
 const ASSIGNMENT_REVIEW_AUDIO_MAX_BYTES = 20 * 1024 * 1024;
 const ASSIGNMENT_REVIEW_AUDIO_FOLDER_NAME = 'Değerlendirme Sesleri';
 const VOICE_GROUPS = new Set(['Soprano', 'Alto', 'Tenor', 'Bass']);
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function createFolder(token: string, name: string, parentId: string) {
   const res = await fetch(DRIVE_FILES_API + '?fields=id,webViewLink', {
@@ -454,18 +455,27 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) return new Response(JSON.stringify({ error: 'Geçersiz oturum' }), { status: 401, headers: jsonHeaders });
 
+    const { data: activeChoirId, error: activeChoirError } = await supabase.rpc('current_choir_id');
+    if (activeChoirError || typeof activeChoirId !== 'string' || !UUID_PATTERN.test(activeChoirId)) {
+      return new Response(
+        JSON.stringify({ error: 'Aktif koro seçimi gerekli' }),
+        { status: 409, headers: jsonHeaders },
+      );
+    }
+
     const bootstrapAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const { data: member } = await bootstrapAdmin
       .from('choir_members')
       .select('id, choir_id, first_name, last_name, voice_group, choir_member_roles(roles(name))')
       .eq('auth_user_id', user.id)
+      .eq('choir_id', activeChoirId)
       .maybeSingle();
     if (!member) return new Response(JSON.stringify({ error: 'Üye kaydı bulunamadı' }), { status: 403, headers: jsonHeaders });
     const supabaseAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
       auth: { persistSession: false, autoRefreshToken: false },
       global: { fetch: createTenantFetch(supabaseUrl, member.choir_id) },
     });
-    const roles = (member.choir_member_roles as any[]).map((r) => r.roles?.name);
+    const roles = ((member.choir_member_roles ?? []) as any[]).map((r) => r.roles?.name);
     const roleFlags = detectRoleFlags(roles);
     const userRole = roleFlags.isChef ? 'Şef' : roleFlags.isSectionLeader ? 'Partisyon Şefi' : 'Korist';
 

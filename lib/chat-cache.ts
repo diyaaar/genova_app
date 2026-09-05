@@ -183,6 +183,7 @@ export function clearChatCaches() {
       CHAT_ROOMS_CACHE_PREFIX,
       CHAT_ROOM_SNAPSHOT_CACHE_PREFIX,
       CHAT_PENDING_MESSAGES_CACHE_PREFIX,
+      'revealed-',
     ];
     for (let index = window.localStorage.length - 1; index >= 0; index -= 1) {
       const key = window.localStorage.key(index);

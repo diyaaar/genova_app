@@ -113,7 +113,7 @@ function formatDeadlineText(deadlineIso: string | null) {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
     const body = (await request.json()) as CreateAssignmentBody;
 
     const title = body.title?.trim() ?? '';
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
       return new NextResponse('En az bir hedef korist seçmelisiniz.', { status: 400 });
     }
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
 
     const { data: creatorMember, error: creatorError } = await serviceClient
       .from('choir_members')

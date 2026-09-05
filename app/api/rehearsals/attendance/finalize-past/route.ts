@@ -43,9 +43,9 @@ function getTodayInIstanbul() {
 
 export async function POST(request: Request) {
   try {
-    const { user } = await requireAuthenticatedUser(request);
+    const { user, accessToken } = await requireAuthenticatedUser(request);
 
-    const serviceClient = await createTenantServiceClient(user.id);
+    const serviceClient = await createTenantServiceClient(user.id, accessToken);
     let actorContext;
     try {
       actorContext = await getActorMemberWithRoles({

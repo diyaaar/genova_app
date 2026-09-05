@@ -11,6 +11,7 @@ vi.mock('@supabase/supabase-js', () => ({
 import {
   createSupabaseAnonClient,
   createSupabaseServiceClient,
+  createSupabaseUserClient,
   getBearerToken,
   requireAuthenticatedUser,
 } from '@/lib/server/supabase-auth';
@@ -47,12 +48,17 @@ describe('server Supabase authentication', () => {
     expect(getBearerToken(request())).toBeNull();
   });
 
-  it('creates anon and service clients from required environment values', () => {
+  it('creates anon, service, and caller-RLS clients from required environment values', () => {
     createSupabaseAnonClient();
     createSupabaseServiceClient();
+    createSupabaseUserClient('verified-token');
 
     expect(mocks.createClient).toHaveBeenNthCalledWith(1, 'https://project.supabase.co', 'anon-key');
     expect(mocks.createClient).toHaveBeenNthCalledWith(2, 'https://project.supabase.co', 'service-key');
+    expect(mocks.createClient).toHaveBeenNthCalledWith(3, 'https://project.supabase.co', 'anon-key', {
+      auth: { persistSession: false, autoRefreshToken: false },
+      global: { headers: { Authorization: 'Bearer verified-token' } },
+    });
   });
 
   it('fails closed when a required environment value is absent', () => {

@@ -12,6 +12,7 @@ import { useAuth } from '@/components/AuthProvider';
 import { NotificationPrompt } from '@/components/NotificationPrompt';
 import { ProfileChangeRequestNotifier } from '@/components/ProfileChangeRequestNotifier';
 import { FloatingMiniPlayer } from '@/components/FloatingMiniPlayer';
+import { ChoirSelectionGate } from '@/components/ChoirSelectionGate';
 import { useTabSwipe } from '@/hooks/useTabSwipe';
 import { getRepertoireRoleScope } from '@/lib/repertuvar/cache';
 import { getRepertoireCatalogQueryKey, loadRepertoireCatalog } from '@/lib/repertuvar/queries';
@@ -28,6 +29,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const mainNavPages = ['/', '/repertuvar', '/chat', '/odevler', '/profil'];
   const showNavigation = mainNavPages.includes(pathname);
   const roleScope = getRepertoireRoleScope(isAdmin(), isSectionLeader());
+  const memberId = member?.id ?? null;
 
 
   useEffect(() => {
@@ -37,20 +39,20 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   }, [session, isLoading, router]);
 
   useEffect(() => {
-    if (isLoading || !session) {
+    if (isLoading || !session || !memberId) {
       return;
     }
 
     void queryClient.prefetchQuery({
-      queryKey: getRepertoireCatalogQueryKey(member?.id ?? null, roleScope),
-      queryFn: () => loadRepertoireCatalog({ memberId: member?.id ?? null, roleScope }),
+      queryKey: getRepertoireCatalogQueryKey(memberId, roleScope),
+      queryFn: () => loadRepertoireCatalog({ memberId, roleScope }),
       staleTime: 30_000,
       gcTime: 24 * 60 * 60_000,
     });
-  }, [isLoading, member?.id, queryClient, roleScope, session]);
+  }, [isLoading, memberId, queryClient, roleScope, session]);
 
   useEffect(() => {
-    if (isLoading || !session) {
+    if (isLoading || !session || !memberId) {
       return;
     }
 
@@ -70,7 +72,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isLoading, session, queryClient]);
+  }, [isLoading, memberId, session, queryClient]);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development' || typeof window === 'undefined' || !('serviceWorker' in navigator)) {
@@ -105,6 +107,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   }
 
   if (!session) return null;
+  if (!member) return <ChoirSelectionGate />;
 
   const isProfilePage = pathname.startsWith('/profil');
   const isChatPage = pathname.startsWith('/chat');

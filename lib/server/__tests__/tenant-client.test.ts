@@ -6,6 +6,12 @@ import { createTenantServiceClient } from '@/lib/server/tenant-client';
 const url = 'https://tenant-test.supabase.co';
 const a = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const b = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+
+function capturedRequest(transport: ReturnType<typeof vi.fn<typeof fetch>>, index: number) {
+  const [input, init] = transport.mock.calls[index];
+  return input instanceof Request ? input : new Request(input, init);
+}
+
 function setup() {
   const transport = vi.fn<typeof fetch>().mockResolvedValue(new Response('[]', { status: 200 }));
   const guarded = createTenantFetch(url, a, transport);
@@ -91,23 +97,42 @@ describe('tenant-scoped service transport', () => {
 
 describe('verified membership bootstrap', () => {
   afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
-  it('looks up a database membership then scopes the privileged client', async () => {
+  it('resolves the JWT-session choir, verifies membership, then scopes the privileged client', async () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', url);
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-anon');
     vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service');
     const transport = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify(a), { status: 200 }))
       .mockResolvedValueOnce(new Response(JSON.stringify({ choir_id: a }), { status: 200 }))
       .mockResolvedValueOnce(new Response('[]', { status: 200 }));
     vi.stubGlobal('fetch', transport);
-    const client = await createTenantServiceClient('verified-user');
+    const client = await createTenantServiceClient('verified-user', 'verified-access-token');
     await client.from('repertoire').select('id');
-    const bootstrapUrl = new URL(String(transport.mock.calls[0][0]));
+    const activeChoirRequest = capturedRequest(transport, 0);
+    expect(new URL(activeChoirRequest.url).pathname).toBe('/rest/v1/rpc/current_choir_id');
+    expect(activeChoirRequest.headers.get('authorization')).toBe('Bearer verified-access-token');
+
+    const bootstrapUrl = new URL(capturedRequest(transport, 1).url);
     expect(bootstrapUrl.searchParams.get('auth_user_id')).toBe('eq.verified-user');
-    expect(new URL((transport.mock.calls[1][0] as Request).url).searchParams.get('choir_id')).toBe(`eq.${a}`);
+    expect(bootstrapUrl.searchParams.get('choir_id')).toBe(`eq.${a}`);
+    expect(new URL(capturedRequest(transport, 2).url).searchParams.get('choir_id')).toBe(`eq.${a}`);
   });
-  it('rejects a user without a membership instead of falling back to the only choir', async () => {
+
+  it('rejects a request without a session-active choir', async () => {
     vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', url);
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-anon');
     vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service');
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 200 })));
-    await expect(createTenantServiceClient('unregistered-user')).rejects.toThrow('üyeliği');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('null', { status: 200 })));
+    await expect(createTenantServiceClient('verified-user', 'verified-access-token')).rejects.toThrow('aktif koro');
+  });
+
+  it('rejects a resolved choir that is not owned by the verified user', async () => {
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL', url);
+    vi.stubEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', 'test-anon');
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service');
+    vi.stubGlobal('fetch', vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify(a), { status: 200 }))
+      .mockResolvedValueOnce(new Response('{}', { status: 200 })));
+    await expect(createTenantServiceClient('unregistered-user', 'verified-access-token')).rejects.toThrow('üyeliği');
   });
 });
