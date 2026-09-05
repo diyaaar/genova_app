@@ -28,6 +28,24 @@ interface RpcCreatedChoir {
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+/** Prefers Supabase's rotatable publishable key and keeps legacy anon compatibility. */
+export function resolveSupabasePublicKey(
+  publishableKeysJson: string | undefined,
+  legacyAnonKey: string | undefined,
+): string | undefined {
+  if (publishableKeysJson) {
+    try {
+      const candidate = JSON.parse(publishableKeysJson) as Record<string, unknown>;
+      if (typeof candidate.default === 'string' && candidate.default.trim()) {
+        return candidate.default;
+      }
+    } catch {
+      // A malformed optional value must not hide a configured legacy key.
+    }
+  }
+  return legacyAnonKey?.trim() || undefined;
+}
+
 function requiredText(
   candidate: Record<string, unknown>,
   key: string,

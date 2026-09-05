@@ -4,6 +4,7 @@ import {
   mapCreateChoirError,
   parseCreateChoirCommand,
   parseCreatedChoir,
+  resolveSupabasePublicKey,
 } from './create-choir-core.ts';
 
 const corsHeaders = {
@@ -26,12 +27,15 @@ Deno.serve(async (request) => {
   if (!bearerMatch) return jsonResponse(401, { error: 'Yetkilendirme eksik.' });
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL');
-  const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
-  if (!supabaseUrl || !supabaseAnonKey) {
+  const supabasePublicKey = resolveSupabasePublicKey(
+    Deno.env.get('SUPABASE_PUBLISHABLE_KEYS'),
+    Deno.env.get('SUPABASE_ANON_KEY'),
+  );
+  if (!supabaseUrl || !supabasePublicKey) {
     return jsonResponse(500, { error: 'Koro oluşturma servisi hazır değil.' });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  const supabase = createClient(supabaseUrl, supabasePublicKey, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: { headers: { Authorization: authorization } },
   });

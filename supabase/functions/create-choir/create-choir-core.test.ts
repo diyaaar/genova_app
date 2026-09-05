@@ -3,6 +3,7 @@ import {
   mapCreateChoirError,
   parseCreateChoirCommand,
   parseCreatedChoir,
+  resolveSupabasePublicKey,
 } from './create-choir-core';
 
 const FOUNDER_ID = '10000000-0000-4000-8000-000000000007';
@@ -10,6 +11,13 @@ const CHOIR_ID = '20000000-0000-4000-8000-000000000007';
 const MEMBER_ID = '30000000-0000-4000-8000-000000000007';
 
 describe('create choir 007 core', () => {
+  it('prefers a rotatable publishable key and safely falls back to legacy anon', () => {
+    expect(resolveSupabasePublicKey('{"default":"sb_publishable_live"}', 'legacy-anon'))
+      .toBe('sb_publishable_live');
+    expect(resolveSupabasePublicKey('{broken', 'legacy-anon')).toBe('legacy-anon');
+    expect(resolveSupabasePublicKey(undefined, undefined)).toBeUndefined();
+  });
+
   it('normalizes the documented command and ignores extra fields', () => {
     expect(parseCreateChoirCommand({
       choirName: ' Yeni Koro ',
