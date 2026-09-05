@@ -129,8 +129,10 @@ parolalarıyla service-role yazısı yaptığı; üyelik/rol ana tablolarında a
 doğrudan DML'in rol ayrımı olmadan açık olduğu doğrulandı. Fonksiyon çağrılmadı.
 [006](docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md) önce bu yolları kapatır;
 eski canlı Edge Function silindi, restrictive DB kilidi canlıya uygulandı ve
-003/005/006 regresyonları geçti. Hesap parola/oturum kurtarması açık etki onayı ve
-custom SMTP bekler.
+003/005/006 regresyonları geçti. Kurtarma ekranı canlı; salt Edge denetimi tam 27
+hesabı ve mevcut SMTP bağlantısını doğruladı. Auth redirect listesi boş olduğu için
+hesap parola/oturum kurtarması başlatılmadı; önce güvenli recovery URL'si izin
+listesine eklenmeli, ardından ayrı açık etki onayı alınmalıdır.
 
 Ardından koro oluşturma (`007`), davet/üyelik (`008`) ve plan-limit işleri ayrı
 brief'lere bölünür; gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan

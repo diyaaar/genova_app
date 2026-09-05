@@ -11,9 +11,11 @@ fonksiyonu canlıdan silindi; authenticated üyelik/rol ana-veri yazıları 15
 restrictive politikayla kapatıldı. Taze yedek/restore, migration geçmişi ve canlı
 003/005/006 `ROLLBACK` testleri geçti. Etkilenen hesapların parola/oturum riski
 sürer. Kurtarma ekranı ve tam 27 hesapta fail-closed çalışan geçici iki anahtarlı
-Edge akışı yerelde hazır, 136 testlik tam kapı geçti; canlı işlev henüz yok.
-Önce canlı salt denetim/SMTP/yönlendirme doğrulanacak, sonra ayrı açık etki onayı
-olmadan kurtarma e-postası veya parola değişimi yapılmayacak.
+Edge akışı 136 testlik tam kapıyı geçti; ekran canlıda 200. Canlı salt denetim tam
+27 hesabı ve Edge SMTP bağlantısını doğruladı, fakat Auth redirect listesi boş ve
+Site URL localhost kaldığı için execute edilmedi. Geçici işlev/anahtarlar yeniden
+kaldırıldı. Önce doğru recovery URL'si izin listesine açık onayla eklenir; ardından
+ayrı etki onayı olmadan kurtarma e-postası veya parola değişimi yapılmaz.
 
 [005 çoklu üyelik ve aktif koro](../docs/briefs/005-coklu-uyelik-aktif-koro.md)
 tamamlandı ve canlıya alındı. DB `20260905003154`, Edge v15, web `0a2b94c`;
