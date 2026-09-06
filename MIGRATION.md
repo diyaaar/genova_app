@@ -24,8 +24,9 @@ Kanıt: `docs/briefs/007-operator-kontrollu-koro-olusturma.md`.
 oturum saklama, sıfır/tek/çok üyelik çözümü, sunucu doğrulamalı koro seçimi, koro
 değişiminde cache temizliği ve çıkış izole testlerle geçti: `npx tsc --noEmit && npm test`
 (4 paket / 35 test). 005 sözleşmesi `lib/choir-context-core.ts` ile iki istemcide ortak;
-web davranışı değişmedi (190 web testi geçti). iOS/Android derlemesi, gerçek telefon
-denemesi ve `pnpm build` çalıştırılmadı; 010 canlı kabulü açık.
+web davranışı değişmedi. Kapılar 6 Eylül'de ürün sahibinin Mac'inde de doğrulandı:
+temiz `npm ci` sonrası 35 native test ve `pnpm check` uçtan uca (190 test + `next build`).
+iOS/Android derlemesi, gerçek telefon denemesi ve CI koşusu yapılmadı; 010 canlı kabulü açık.
 Kanıt ve sınırlar: `docs/briefs/004-rn-kabuk-ve-giris.md`.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 

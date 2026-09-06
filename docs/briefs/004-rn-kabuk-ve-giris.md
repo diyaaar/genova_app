@@ -147,6 +147,10 @@ Environments referenced below:
   root gate against an extracted copy of this same source tree. The device VM cannot run the
   root gate at all, because the repository's checked-in `node_modules` is a macOS install and
   its native bindings do not load on Linux; nothing in the user's `node_modules` was modified.
+- **MACOS** — the product owner's own machine (Ali-MacBook-Air-3, darwin-arm64), macOS shell,
+  commands run by the user on 6 September 2026 around 22:10–22:15 Europe/Istanbul and reported
+  back in full. Node version was not recorded. This is the environment that actually builds and
+  will later run the native app.
 - Revision under test: `main` at `a2659ca` plus this brief's changes, committed as `3009afe`
   (production code). This documentation update is a separate commit.
 
@@ -167,17 +171,18 @@ Environments referenced below:
 | Sign-out clears session, per-user choir hint and tenant caches, including when the network call fails | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` two sign-out cases; identity change case also clears the previous user's hint |
 | Membership list parsing fails closed on a malformed RPC payload | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "fails closed on a malformed membership payload"; shared parser is the same one the web client uses |
 | Web behavior preserved: `lib/choir-context` public API and its existing tests unchanged | yes | PASS | 6 Sep 2026, WEB-LINUX, `pnpm test:coverage` | 32 files / 190 tests passed, including `lib/choir-context.test.ts` unmodified. The module now re-exports the shared core and adds `isChoirId` / `ChoirContextClient`; no export was removed or renamed |
-| Native gate: `npx tsc --noEmit && npm test` in `apps/mobile` | yes | PASS | 6 Sep 2026, NATIVE-VM | Exit 0; 4 suites / 35 tests passed |
-| Web gate: `pnpm lint`, `pnpm typecheck`, `pnpm test:coverage`, `pnpm test:service-worker` | yes | PASS | 6 Sep 2026, WEB-LINUX, each script run separately | All exit 0. Coverage 92.93% statements / 81.77% branches, above the configured thresholds |
-| Web gate: `pnpm build` | yes | NOT RUN | 6 Sep 2026, WEB-LINUX, `pnpm check` reached `build` and failed | The failure is environmental, not a code failure: `next/font` cannot fetch `Manrope` and `Noto Serif` because the session's egress policy blocks `fonts.googleapis.com`. The device VM cannot run it either (macOS `node_modules`). The build remains unverified for this revision |
+| Native gate: `npx tsc --noEmit && npm test` in `apps/mobile` | yes | PASS | 6 Sep 2026, NATIVE-VM and MACOS | 4 suites / 35 tests passed in both environments; on MACOS after `npm ci`, with `npx tsc --noEmit` silent |
+| Web gate: `pnpm lint`, `pnpm typecheck`, `pnpm test:coverage`, `pnpm test:service-worker` | yes | PASS | 6 Sep 2026, WEB-LINUX (scripts run separately) and MACOS (single `pnpm check` run) | All exit 0 in both. 32 files / 190 tests; coverage 92.93% statements / 81.77% branches, above the configured thresholds |
+| Web gate: `pnpm build` | yes | PASS | 6 Sep 2026, MACOS, `pnpm check` run to completion | `next build` compiled successfully in 3.1s; types checked, 17 static pages generated, full route table produced. Earlier WEB-LINUX attempts could not reach this step because the session's egress policy blocks the `next/font` fetch to `fonts.googleapis.com`; that was an environment limit, not a code failure |
 | Native checks integrated into `.github/workflows/ci.yml`; existing web jobs unchanged | yes | PASS | 6 Sep 2026, NATIVE-VM, workflow YAML parsed; `npm install --package-lock-only --dry-run` | New `mobile` job runs `npm ci`, `npx tsc --noEmit`, `npm test` in `apps/mobile`; `quality` and `browser` jobs are untouched; `package.json` and `package-lock.json` verified in sync |
-| CI actually executed for this revision, and `npm ci` verified locally | yes | NOT RUN | no push or remote run is authorized in this session; `npm ci` cannot run in the device VM because it deletes `node_modules` first and the connected folder denies deletion | Configuration alone is not a CI result; branch protection was neither checked nor changed |
+| `npm ci` reproduces the native workspace from the committed lockfile | yes | PASS | 6 Sep 2026, MACOS, `rm -rf node_modules && npm ci` in `apps/mobile` | 1118 packages installed, 1119 audited; the subsequent type and test run passed. This is the exact command the new CI job uses. Limit: deprecation warnings and 10 moderate advisories were reported by npm and are not addressed in this brief |
+| CI actually executed for this revision | yes | NOT RUN | no push or remote run is authorized in this session | Configuration alone is not a CI result; branch protection was neither checked nor changed |
 | iOS development build runs on a device or simulator | yes | NOT RUN | requires macOS/Xcode; the shell available here is a Linux VM | No EAS or local native build was attempted; no spending authority was given |
 | Android development build runs on a device or emulator | yes | NOT RUN | no Android SDK or emulator in this environment | — |
 | Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
 | Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
 
-**Optional progress: 16 passed / 23 required criteria.** Seven required criteria are NOT RUN, so
+**Optional progress: 18 passed / 24 required criteria.** Six required criteria are NOT RUN, so
 004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
 skipped or loosened to reach a green result.
 
@@ -210,8 +215,13 @@ This was a **self-review**, not an independent review; no reviewer agent was inv
 
 - Commits: production code and documentation are separate and carry the `004` id. Nothing was
   pushed; `main` remains ahead of `origin/main` and no deployment was triggered.
-- Remaining risk: the app has never been built for or run on a device, `pnpm build` is unverified
-  for this revision, and the whole native flow depends on 010's live acceptance, which is open.
+- Remaining risk: the app has never been built for or run on a device, and the whole native flow
+  depends on 010's live acceptance, which is open.
+- 6 September follow-up: the product owner ran both gates on MACOS. `pnpm check` passed end to end
+  including `next build`, and `npm ci` plus the native gate passed after a clean reinstall. A first
+  attempt failed only because shell comments appended to the pasted commands were parsed as
+  arguments by zsh, and a second because a Linux-installed `node_modules` was reused on macOS;
+  neither was a defect in this revision's code.
 - Rollback: revert the 004 code and documentation commits; `lib/choir-context.ts` returns to a
   single file and `apps/mobile/` disappears. No live system is involved.
 - Next single step: obtain a device/simulator run of the required native criteria, or, if that

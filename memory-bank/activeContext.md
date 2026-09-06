@@ -43,11 +43,10 @@ Gerçek ikinci üyelik/seçici ile canlı write/delete henüz denenmedi.
 [004 RN kabuk ve native giriş](../docs/briefs/004-rn-kabuk-ve-giris.md) 6 Eylül'de
 yerel olarak uygulandı: `apps/mobile/` Expo SDK 57 ürün alanı, giriş, güvenli oturum
 saklama, sıfır/tek/çok üyelik çözümü, sunucu doğrulamalı koro seçimi, koro değişiminde
-cache temizliği ve çıkış. Kapılar: `apps/mobile` içinde `npx tsc --noEmit && npm test`
-(35 test) ve kökte lint/typecheck/test/service-worker geçti. `pnpm build` bu ortamda
-çalıştırılamadı (egress Google Fonts'u engelliyor); iOS/Android derlemesi ve gerçek
-telefon denemesi yapılmadı. 23 zorunlu kriterin 16'sı geçti, 7'si çalıştırılmadı;
-004 kısmi/bekliyor. 005 sözleşmesi `lib/choir-context-core.ts` ile ortaklaştırıldı;
+cache temizliği ve çıkış. Kapılar ürün sahibinin Mac'inde doğrulandı: temiz `npm ci`
+sonrası `npx tsc --noEmit && npm test` (35 test) ve `pnpm check` uçtan uca
+(190 test + `next build`). iOS/Android derlemesi, gerçek telefon denemesi ve CI koşusu
+yapılmadı. 24 zorunlu kriterin 18'i geçti, 6'sı çalıştırılmadı; 004 kısmi/bekliyor. 005 sözleşmesi `lib/choir-context-core.ts` ile ortaklaştırıldı;
 web davranışı değişmedi. 010 canlı yayın ve kabul hâlâ açık.
 Kalıcı WebView oturum köprüsü, push ve ses ayrı işlerdir.
 
