@@ -22,3 +22,9 @@ spike/*/.expo/
 spike/*/.dart_tool/
 spike/*/package-lock.json
 spike/*/public/canvaskit.wasm
+
+# Native product workspace — generated output only; package-lock.json stays in Git.
+/apps/mobile/.expo/
+/apps/mobile/ios/
+/apps/mobile/android/
+/apps/mobile/dist/

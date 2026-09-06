@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "Genova",
+    "slug": "genova",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "genova",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.genesinovachoir.genova"
+    },
+    "android": {
+      "package": "com.genesinovachoir.genova",
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": ["expo-secure-store"]
+  }
+}
