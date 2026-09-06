@@ -6,6 +6,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | İş | Durum | Kanıt / sınır |
 |---|---|---|
 | 008 minimum davet/üyelik | Yerel paket hazır; canlı kabul bekliyor | [008](../docs/briefs/008-davet-ve-uyelik.md); 155 test, 20 tarayıcı testi, izole DB regresyon/atomiklik/eşzamanlı kabul/down geçti. Gerçek Auth/e-posta, deploy ve canlı DB yok |
+| 009 Auth e-postası ve yanıt aktarımı | Canlı yönlendirme kabulü geçti; eski anahtar temizliği bekliyor | [009](../docs/briefs/009-auth-eposta-ve-yanit.md); SMTP/Site URL düzeltildi, Edge v3 aktif, 190 test/build ve canlı teslim/tekrar kabulü geçti. Gerçek Auth teslimi ayrıca kabul edilmeli |
 | 001 Flutter repertuvar spike | Tarihsel deneme geçti | [001](../docs/briefs/001-repertuvar-spike.md); ürün mimarisi değil |
 | 002 RN PDF/katman spike | Deneme geçti, RN kararı kesin | [002](../docs/briefs/002-rn-pdf-spike.md); ürün kurulumu ve tüm cihazlar değil |
 | 003 kiracı şeması | Tamamlandı ve canlıda | [003 kanıtları](../docs/briefs/003-dogrulama.md); web `3878e1d`, Edge v14, hosted izolasyon ROLLBACK ve oturumlu duman testi geçti |

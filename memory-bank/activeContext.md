@@ -9,14 +9,15 @@ sözleşmesi canlıda.
 odağını onayladı. [Plan](../docs/mobil-teslim-plani.md): minimum 008 davet/üyelik
 ve temel limit → 004 giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
 008 yerel paketi hazır: 155 test, 20 tarayıcı testi ve izole DB regresyonları geçti.
-[Kabul ve sınırlar](../docs/briefs/008-davet-ve-uyelik.md): canlı/provider kabulü
+[Kabul ve sınırlar](../docs/briefs/008-davet-ve-uyelik.md): canlı DB/deploy kabulü
 henüz yok; sıradaki iş canlı preflight ve kontrollü kabul, ardından minimum limit.
-6 Eylül erişim kontrolünde bağlı MCP yalnız Orbiba projesini listeledi; kesin
-Genova proje isteği yetki hatası verdi. Genova bağlantısı yenilenmeden canlı
-işlem ilerletilmez. Ayrıntı 008 brief'inde; yeni canlı yedek/deploy yapılmadı.
-Sonraki Chrome kontrolünde doğru Genova production paneli açıldı; MCP hâlâ yetkisiz.
-Kayıt ve e-posta doğrulaması açık, custom SMTP kapalı; Free planda panel yedeği yok.
-008 için güncel dış yedek/restore ve e-posta sağlayıcısı kabulü bekliyor.
+[009 Auth e-postası](../docs/briefs/009-auth-eposta-ve-yanit.md) kapsamında custom
+SMTP ve production Site URL ayarlandı; `team@mail.genesinovachoir.com` yanıtları
+değiştirilebilir server ayarıyla işletmeci Gmail adresine aktarılıyor. Edge v3 ve
+canlı teslim/idempotency kabulü geçti. MCP hâlâ yetkisiz; CLI yalnız doğrulanan
+Genova ref'iyle kullanıldı. Erişilebilirlik çıktısında görünen ilk Full access
+Resend anahtarının silinmesi bekliyor; kayıtlı ikinci anahtar sır olarak korunuyor.
+Gerçek Supabase Auth doğrulama/recovery teslimi ayrıca kabul edilmeli.
 
 
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)
