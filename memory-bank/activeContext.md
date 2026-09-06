@@ -45,8 +45,13 @@ yerel olarak uygulandı: `apps/mobile/` Expo SDK 57 ürün alanı, giriş, güve
 saklama, sıfır/tek/çok üyelik çözümü, sunucu doğrulamalı koro seçimi, koro değişiminde
 cache temizliği ve çıkış. Kapılar ürün sahibinin Mac'inde doğrulandı: temiz `npm ci`
 sonrası `npx tsc --noEmit && npm test` (35 test) ve `pnpm check` uçtan uca
-(190 test + `next build`). iOS/Android derlemesi, gerçek telefon denemesi ve CI koşusu
-yapılmadı. 24 zorunlu kriterin 18'i geçti, 6'sı çalıştırılmadı; 004 kısmi/bekliyor. 005 sözleşmesi `lib/choir-context-core.ts` ile ortaklaştırıldı;
+(190 test + `next build`). 6 Eylül'de iOS simülatöründe Expo Go ile dört senaryo
+(yanlış parola, tek üyelikte otomatik koro, yeniden açmada oturum, çıkış) elle geçti.
+Metro çözümleme hatası (`disableHierarchicalLookup` yüzünden `expo-asset` bulunamıyordu)
+`dc5f7a6` ile düzeltildi; `npm run bundle:check` CI'a eklendi. Kendi iOS/Android
+derlememiz, gerçek telefon ve CI koşusu yapılmadı. 26 zorunlu kriterin 20'si geçti,
+6'sı çalıştırılmadı; 004 kısmi/bekliyor. `apps/mobile/node_modules` macOS ile ajanın
+Linux VM'i arasında paylaşıldığı için yetkili kurulum macOS'tur; ajan orada `npm install` çalıştırmaz. 005 sözleşmesi `lib/choir-context-core.ts` ile ortaklaştırıldı;
 web davranışı değişmedi. 010 canlı yayın ve kabul hâlâ açık.
 Kalıcı WebView oturum köprüsü, push ve ses ayrı işlerdir.
 
