@@ -11,6 +11,9 @@ ve temel limit → 004 giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
 008 yerel paketi hazır: 155 test, 20 tarayıcı testi ve izole DB regresyonları geçti.
 [Kabul ve sınırlar](../docs/briefs/008-davet-ve-uyelik.md): canlı/provider kabulü
 henüz yok; sıradaki iş canlı preflight ve kontrollü kabul, ardından minimum limit.
+6 Eylül erişim kontrolünde bağlı MCP yalnız Orbiba projesini listeledi; kesin
+Genova proje isteği yetki hatası verdi. Genova bağlantısı yenilenmeden canlı
+işlem ilerletilmez. Ayrıntı 008 brief'inde; yeni canlı yedek/deploy yapılmadı.
 
 
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)

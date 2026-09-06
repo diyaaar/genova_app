@@ -66,6 +66,21 @@ Plan commit'i `9d91152`; kod/test commit'i `eca1bc7`. Belge kaydı ayrı commit'
 
 ## Canlıya geçmeden açık kapılar
 
+### 6 Eylül — canlı erişim ön kontrolü: bekliyor
+
+Kullanıcının sonraki adımla devam isteği üzerine temiz `main` / `f404877` üzerinde
+AGENTS, altı hafıza, geçiş rehberi, çalışma döngüsü, MIGRATION, KARARLAR ve bu brief
+okundu. Hedef 008 canlı ön koşullarını doğrulamaktır; eski kullanıcı parolaları,
+üyelik değişiklikleri ve başka proje kapsam dışıdır.
+
+Bağlı Supabase MCP proje listesi yalnız `Orbiba Website` döndürdü. Kesin Genova
+`hievmwwctjjlhmssoxsu` kimliğiyle proje ayrıntısı isteği de yetki hatası verdi.
+Bu oturumda istenen `supabase-genesinova` erişimi doğrulanamadı. Başka projeye
+sorgu/yazı yapılmadı; CLI veya başka hesapla alternatif DB erişimine geçilmedi.
+Yeni canlı yedek, Auth ayarları, migration/Edge/web yayını ve gerçek kabul testi
+çalıştırılmadı. Genova yetkili bağlantısı yenilenince bu kapıdan devam edilir;
+önceki yerel test sonuçları yeniden koşulmuş veya canlı kabul edilmiş sayılmaz.
+
 Kesin Genova hesabı/projesi, taze backup ve restore, ortak web sitesi Auth
 tetikleyicileri/ayarları ve DB–Edge–web uyumu yeniden kontrol edilir. E-posta
 doğrulaması açık olmalı: otomatik doğrulama alıcı sahipliğini kanıtlamaz.
