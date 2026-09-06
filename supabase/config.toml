@@ -7,3 +7,6 @@ verify_jwt = false
 # Only a verified user JWT may reach the database RPC. The RPC separately checks
 # the private platform-operator allow-list; a choir-level role is insufficient.
 verify_jwt = true
+
+[functions.choir-invitations]
+verify_jwt = true

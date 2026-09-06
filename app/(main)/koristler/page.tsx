@@ -318,6 +318,7 @@ export default function KoristlerPage() {
   return (
     <SwipeBack fallback="/">
     <main className="relative page-shell space-y-6 pb-28 !pt-[calc(1.5rem+env(safe-area-inset-top))]">
+      {isAdmin() && <Link href="/koristler/davetler" className="inline-block rounded border border-[var(--color-border)] px-4 py-2">Korist davet et</Link>}
       <motion.section
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
