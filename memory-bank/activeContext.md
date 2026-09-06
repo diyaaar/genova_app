@@ -1,6 +1,6 @@
 # Aktif bağlam
 
-Güncelleme: 5 Eylül 2026. 003 tenant sınırı ve 005 çoklu üyelik/aktif koro
+Güncelleme: 6 Eylül 2026. 003 tenant sınırı ve 005 çoklu üyelik/aktif koro
 sözleşmesi canlıda.
 
 ## Şimdiki odak
@@ -8,7 +8,9 @@ sözleşmesi canlıda.
 [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md) ile kullanıcı mobil teslim
 odağını onayladı. [Plan](../docs/mobil-teslim-plani.md): minimum 008 davet/üyelik
 ve temel limit → 004 giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
-Sıradaki uygulama işi 008 sözleşmesini mevcut kodla netleştirmektir.
+008 yerel paketi hazır: 155 test, 20 tarayıcı testi ve izole DB regresyonları geçti.
+[Kabul ve sınırlar](../docs/briefs/008-davet-ve-uyelik.md): canlı/provider kabulü
+henüz yok; sıradaki iş canlı preflight ve kontrollü kabul, ardından minimum limit.
 
 
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)

@@ -1,6 +1,6 @@
 # 008 — Minimum davet ve üyelik
 
-6 Eylül 2026. UYGULAMADA; ana ajan tek yazıcı. Başlangıç: temiz main, 45967a7.
+6 Eylül 2026. YEREL PAKET HAZIR; CANLI KABUL BEKLİYOR. Başlangıç: temiz main, 45967a7.
 Kullanıcı uygulama istedi; bu tur yerel kod/test, migration ve geri dönüş hazırlığıdır.
 Canlı DB/Edge/web kesimi, gerçek hesap/üyelik ve e-posta gönderimi yapılmaz.
 
@@ -31,20 +31,53 @@ AGENTS, altı hafıza, çalışma döngüsü, geçiş rehberi, mobil teslim plan
 Supabase Auth/signup, Edge authorization ve Postgres yetki/kilit rehberleri.
 Yeni Auth hesabı akışı deployment öncesi shared-project Auth ayarlarıyla doğrulanır.
 
-İzinli alanlar: bu brief ve durum/hafıza; 008 migration/down/SQL testleri;
+İzinli alanlar: bu brief ve durum/hafıza; 008 migration/down/SQL ve test-support testleri;
 supabase/functions/choir-invitations ve config; lib/choir-invitations.ts/test;
-components/invitations; app/invite ve app/(main)/koristler davet bağlantısı/sayfası.
+components/invitations; app/invite ve app/(main)/koristler davet bağlantısı/sayfası;
+tests/e2e ve vitest.config.ts (mevcut React eklentisini JSX testleri için etkinleştirme).
 UI, sunucu, DB ayrı sorumluluk taşır. Native, plan-limit, toplu davet, ödeme,
 Şef devri, hosting/dosya göçü ve eski hesap kurtarması kapsam dışıdır.
 
 ## Kabul
 
-- [ ] Oluştur/listele/iptal/kabul; yetkisiz rol/koro, yanlış/doğrulanmamış hesap,
+- [x] Oluştur/listele/iptal/kabul; yetkisiz rol/koro, yanlış/doğrulanmamış hesap,
   süre/iptal/tekrar ve atomiklik testleri izole restore üzerinde geçti.
-- [ ] 003/005/006/007 regresyonları ve 008 down tekrar uygulama geçti.
-- [ ] Web yönetim ve kabul ekranı, yeni/mevcut kullanıcı akışı, hata/yoğunluk durumu hazır.
-- [ ] Edge istek/auth/hata sözleşmesi ve web testleri; pnpm check geçti.
-- [ ] Diff ve devir kaydı; canlı/provider/cihaz doğrulanmayan katmanları açık.
+- [x] 003/005/006/007 regresyonları ve 008 down tekrar uygulama geçti.
+- [x] Web yönetim ve kabul ekranı, yeni/mevcut kullanıcı akışı, hata/yoğunluk durumu hazır.
+- [x] Edge istek/auth/hata sözleşmesi ve web testleri; pnpm check geçti.
+- [x] Diff ve devir kaydı; canlı/provider/cihaz doğrulanmayan katmanları açık.
+
+## Yerel kabul kanıtı — 6 Eylül
+
+Plan commit'i `9d91152`; kod/test commit'i `eca1bc7`. Belge kaydı ayrı commit'tir.
+
+- `pnpm check`: 31 dosyada 155 test, lint, TypeScript ve Next üretim derlemesi geçti.
+- `pnpm test:e2e`: masaüstü Chromium ve mobil Chrome toplam 20 test geçti.
+  Auth kayıt/akış testleri mock kullanır; gerçek sağlayıcı/e-posta teslimi kanıtı değildir.
+- 007 öncesi yedeğin ayrı localhost PostgreSQL 17 restore'u üzerinde 007/008 uygulandı;
+  003/005/006/007/008 SQL regresyonları geçti. Canlı DB'ye yazılmadı.
+- `supabase/test-support/008_concurrency.mjs`: iki eşzamanlı kabulden yalnız biri
+  başarılı; gerçek down dosyasından sonra kabul edilmiş üyelik korunuyor. Tekrar
+  migration ve 008 SQL testi geçti; test fixture'ları temizlendi.
+- Yerel security/performance advisor sonuçlarında 008 bulgusu yok. Mevcut iki
+  search_path uyarısı ve diğer eski performans bulguları bu kapsamda değiştirilmedi.
+- `git diff --check` geçti. Yeni bağımlılık yok; mevcut React Vite eklentisi
+  JSX bileşen testlerini çalıştırmak için etkinleştirildi.
+
+## Canlıya geçmeden açık kapılar
+
+Kesin Genova hesabı/projesi, taze backup ve restore, ortak web sitesi Auth
+tetikleyicileri/ayarları ve DB–Edge–web uyumu yeniden kontrol edilir. E-posta
+doğrulaması açık olmalı: otomatik doğrulama alıcı sahipliğini kanıtlamaz.
+Signup izni, SMTP/redirect ve gerçek doğrulama bağlantısı ardından kontrollü
+oturumlu oluştur/kabul/iptal testi gerekir. Hosted Edge/Deno gateway, gerçek
+sağlayıcı ve cihaz katmanları bu yerel kabulde çalıştırılmadı. Gerçek üyelik,
+e-posta, deploy veya push yapılmadı; kabul edilmiş üyelik rollback ile silinmez.
+
+Sonraki adım: bu canlı kapılar ve 008 kabulü → ayrı minimum plan-limit brief'i → 004.
+
+Geçici restore DB'si düşürüldü ve izole PostgreSQL durduruldu; kalan geçici
+cluster klasörü Çöp Sepeti'ne taşındı. Asıl yedeklere dokunulmadı.
 
 Geri dönüş: önce web girişini kaldır, Edge'i geri al, 008 down uygula; kabul edilmiş
 üyelikler silinmez. Canlı kesim öncesi taze backup/restore ve iki proje etkisi gerekir.
