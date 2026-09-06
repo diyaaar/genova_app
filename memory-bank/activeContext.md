@@ -6,11 +6,13 @@ sözleşmesi canlıda.
 ## Şimdiki odak
 
 [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md) ile kullanıcı mobil teslim
-odağını onayladı. [Plan](../docs/mobil-teslim-plani.md): minimum 008 davet/üyelik
-ve temel limit → 004 giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
+odağını onayladı. 6 Eylül [WF-004](../docs/briefs/WF-004-english-agent-handoff.md)
+ve karar #21 ile [plan](../docs/mobil-teslim-plani.md): minimum 008 davet kabulü
+→ 004 giriş/koro seçimi → repertuvar/PDF → cihaz pilotu. Limit mağaza öncesinde;
+somut pilot engeli yoksa native başlangıcını bekletmez.
 008 yerel paketi hazır: 155 test, 20 tarayıcı testi ve izole DB regresyonları geçti.
 [Kabul ve sınırlar](../docs/briefs/008-davet-ve-uyelik.md): canlı DB/deploy kabulü
-henüz yok; sıradaki iş canlı preflight ve kontrollü kabul, ardından minimum limit.
+henüz yok; sıradaki iş 010 canlı preflight ve kontrollü kabul, ardından 004.
 [009 Auth e-postası](../docs/briefs/009-auth-eposta-ve-yanit.md) kapsamında custom
 SMTP ve production Site URL ayarlandı; `team@mail.genesinovachoir.com` yanıtları
 değiştirilebilir server ayarıyla işletmeci Gmail adresine aktarılıyor. Edge v3 ve
@@ -39,8 +41,8 @@ taze restore, hosted 005 + 003 izolasyonu ve tek üyelikli gerçek oturum duman 
 Gerçek ikinci üyelik/seçici ile canlı write/delete henüz denenmedi.
 
 [004 RN kabuk ve native giriş hazırlık brief'i](../docs/briefs/004-rn-kabuk-ve-giris.md)
-ilk native işin sınırını kayda alır; ürün kodu başlamadı. Minimum davet/limit
-kabulünden sonra uygulanır; tüm ticari yönetimin tamamlanması beklenmez.
+ilk native işin sınırını kayda alır; ürün kodu başlamadı. 010 dış erişim/yetkiyle
+beklerse bağımsız, onaylı yerel işler ilerleyebilir; canlı kabul açık kalır.
 Kalıcı WebView oturum köprüsü, push ve ses ayrı işlerdir.
 
 [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md): iki video, kaynak repo ve
@@ -62,16 +64,25 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
   testleri tamamlanmadan eklenmez; altyapının varlığı ürün yönetim ekranı değildir.
 - Şirket adı daha sonra eklenecek; 005 teknik kesimini veya RN kurulumunu engellemez.
   Mağaza/satıcı kimliği gereken adımlarda yeniden ele alınır.
-- Minimum davet/limit sonrası mobil akışa geç; yeni altyapı için somut engeli yaz.
+- Minimum davet kabulü sonrası mobil akışa geç; yeni altyapı için somut engeli yaz.
   Native sınır [004 brief'inde](../docs/briefs/004-rn-kabuk-ve-giris.md) kayıtlıdır.
 - Kullanıcı hosting ve PDF/ses deposu yönünü değerlendirmek istiyor.
   [Altyapı kaydı](../docs/altyapi-2026-09-04.md) staging hazırlığını anlatır;
   Drive'dan çıkış ve production taşıması tamamlanmış değildir.
-- İlk açık ürün işi davet/üyelik (`008`), ardından minimum plan-limit ve 004'tür.
+- İlk açık ürün işi davet/üyelik (`008/010`), ardından 004'tür.
   Dosya sağlayıcısı ayrı iş; ilk cihaz denemesinin otomatik önkoşulu değildir.
   İlk gerçek koro işlemi öncesinde platform operatörü ayrıca seçilip yetkilendirilir;
   bu adımlar ayrı brief/işlem olarak yürütülür. Kendiliğinden DB göçü, DNS değişimi,
   ücretli plan veya push başlatılmaz.
+
+## English session handoff
+
+[agent-handoff.md](../docs/agent-handoff.md) contains the startup message, source
+order, recorded evidence boundaries and first actions. New agent-facing handoff and
+acceptance records use English; user updates remain Turkish (decision #22).
+Use evidence per required criterion, not subjective scoring. Required unrun/failed
+checks keep a brief pending. Existing CI is not a guarantee of model compliance.
+WF-004 is documentation only: no 008 deployment, fixture approval or mobile build.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
 Devirde sadece değişen özet/bağlantıları güncelle; tüm dosyaları yeniden yazma.

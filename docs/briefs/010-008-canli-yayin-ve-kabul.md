@@ -83,5 +83,7 @@ onayıyla alınır. 009 SMTP/yönlendirme bu geri dönüşte değiştirilmez.
 
 ## Sonraki tek adım
 
-010 kabulünden sonra gerçek kullanım sayıları salt okunur ölçülür ve ayrı minimum
-plan-limit brief'i hazırlanır. Onun kabulünden sonra 004 Expo ürün alanı kurulur.
+6 Eylül, karar #21: 010 kabulünden sonra 004 Expo ürün alanı kurulur; ardından
+repertuvar/PDF ve cihaz pilotu gelir. Plan-limit mağaza öncesinde tamamlanır; yalnız
+ölçülmüş pilot engeli gerekli en küçük parçayı öne alabilir. 010 dış erişim/yetki
+nedeniyle beklerse bağımsız, onaylı 004 yerel işleri ilerleyebilir; 010 kapanmış sayılmaz.

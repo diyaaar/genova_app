@@ -43,14 +43,14 @@ mağaza muafiyeti ve süre/maliyet iddiaları yeni brief'te kanıtsız kullanıl
 
 ## 3. Geçiş işi seçme
 
-Güncel sıra [mobil teslim planındadır](mobil-teslim-plani.md), karar #19.
+Güncel sıra [mobil teslim planındadır](mobil-teslim-plani.md), karar #21 (#19'un sıra güncellemesi).
 Aşağıdaki tablo kaynak indeksidir; tamamlanmış 003 yeniden açılmaz.
 
 | İş | Başvurulacak kaynak / önkoşul |
 |---|---|
 | Özellik envanteri ve kapsam | `MIGRATION.md` + mevcut ekran/rol/API/test; her özellik korunacak/paylaşılacak/uyarlanacak olarak kaydedilir |
 | 003'ü kapatmak | [003 brief](briefs/003-kiraci-semasi.md) + [doğrulama](briefs/003-dogrulama.md); canlı önkoşullar yeniden doğrulanır |
-| Çok korolu ürün | `KARARLAR.md` #9–11; koro/davet/plan limitleri ayrı brief'ler, çoklu üyelik açık karar |
+| Çok korolu ürün | `KARARLAR.md` #9–11, #16, #21; 005 üyelik altyapısı canlı, davet kabulü açık; plan-limit pilotu otomatik bekletmez |
 | Dosya/hosting | [Altyapı kaydı](altyapi-2026-09-04.md); sağlayıcı/bölge/maliyet kararı ve ayrı göç/geri dönüş |
 | Mobil temel | [002 sonuç ve kurulum zinciri](briefs/002-rn-pdf-spike.md); spike değil, aynı depoda ürün alanı |
 | Repertuvar → chat → ödevler/ana sayfa | `MIGRATION.md`; her ekran ve gerekirse okuma/yazma yolu ayrı brief |
@@ -101,6 +101,10 @@ Eksik zorunlu kapı varsa görev "kısmi/bekliyor" kalır; test silmek/bastırma
 Rehber veya ajanın "uydum" beyanı teknik güvence değildir; diff/test incelemesi gerekir.
 
 ## 6. Başka oturuma verilecek giriş metni
+
+Current English entry point and copyable startup message:
+[agent-handoff.md](agent-handoff.md). Use it with the current brief and the reading
+order above. The older generic template below remains a template, not authorization.
 
 > Bu depoda `AGENTS.md` ve `docs/gecis-rehberi.md`'yi oku; rehberin kaynak sırasını
 > izle. `memory-bank/activeContext.md`'deki durumu son kullanıcı talebiyle doğrula.

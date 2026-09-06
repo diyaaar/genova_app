@@ -10,14 +10,15 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 001 Flutter repertuvar spike | Tarihsel deneme geçti | [001](../docs/briefs/001-repertuvar-spike.md); ürün mimarisi değil |
 | 002 RN PDF/katman spike | Deneme geçti, RN kararı kesin | [002](../docs/briefs/002-rn-pdf-spike.md); ürün kurulumu ve tüm cihazlar değil |
 | 003 kiracı şeması | Tamamlandı ve canlıda | [003 kanıtları](../docs/briefs/003-dogrulama.md); web `3878e1d`, Edge v14, hosted izolasyon ROLLBACK ve oturumlu duman testi geçti |
-| 004 RN kabuk + native giriş | Hazırlık brief'i tamam; ürün kodu başlamadı | [004](../docs/briefs/004-rn-kabuk-ve-giris.md); önce çok-korolu ürün karar/brief'leri |
+| 004 RN kabuk + native giriş | Hazırlık brief'i tamam; ürün kodu başlamadı | [004](../docs/briefs/004-rn-kabuk-ve-giris.md); karar #21, plan-limit otomatik önkoşul değil; 010 beklerse bağımsız yetkili yerel işler ilerleyebilir |
 | 005 çoklu üyelik + aktif koro | Tamamlandı ve canlıda | [005](../docs/briefs/005-coklu-uyelik-aktif-koro.md); DB `20260905003154`, Edge v15, web `0a2b94c`; taze restore, hosted izolasyon ve oturumlu canlı duman testi geçti |
 | 006 üyelik yönetimi güvenlik kapısı | Kapatıldı; kalan 27 hesap riski ürün sahibi tarafından kabul edildi | [006](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md); eski public bootstrap silindi, 15 restrictive politika ve hosted 003/005/006 testleri geçti. Toplu parola/oturum düzeltmesi ve e-posta bilinçli olarak yapılmadı; bu hesapların güvenli olduğu anlamına gelmez |
 | 007 operatör kontrollü koro oluşturma | Canlı altyapı hazır; gerçek kullanım yok | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); taze backup/restore, DB `20260905160539`, Edge v1 ve hosted 003/005/006/007 geçti. Allow-list boş; gerçek operatör/koro ve authenticated başarı kabulü yok |
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
-| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: minimum 008/limit → 004 giriş/koro seçimi → repertuvar/PDF → pilot; [plan](../docs/mobil-teslim-plani.md). Gerçek operatör ataması ayrı | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: 008/010 kabul → 004 giriş/koro seçimi → repertuvar/PDF → pilot → limit ve yayın işleri; [plan](../docs/mobil-teslim-plani.md). Gerçek operatör ataması ayrı | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+| English agent handoff / pilot priority | Documentation accepted: 16 files / 107 local links, diff and scenario self-review passed | [WF-004](../docs/briefs/WF-004-english-agent-handoff.md), [handoff](../docs/agent-handoff.md); no product, CI configuration or remote changes; receiving model not tested |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).

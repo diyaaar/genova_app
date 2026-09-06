@@ -108,7 +108,10 @@ oturumlu oluştur/kabul/iptal testi gerekir. Hosted Edge/Deno gateway, gerçek
 sağlayıcı ve cihaz katmanları bu yerel kabulde çalıştırılmadı. Gerçek üyelik,
 e-posta, deploy veya push yapılmadı; kabul edilmiş üyelik rollback ile silinmez.
 
-Sonraki adım: bu canlı kapılar ve 008 kabulü → ayrı minimum plan-limit brief'i → 004.
+Sonraki adım (6 Eylül, karar #21): [010](010-008-canli-yayin-ve-kabul.md) canlı
+kapıları ve 008 kabulü → 004 → repertuvar/PDF → pilot. Plan-limit mağaza öncesinde;
+somut pilot engeli yoksa 004'ün önkoşulu değildir. SMTP/yönlendirme için sonraki
+[009 kaydı](009-auth-eposta-ve-yanit.md) geçerlidir; yukarıdaki ön kontroller tarihseldir.
 
 Geçici restore DB'si düşürüldü ve izole PostgreSQL durduruldu; kalan geçici
 cluster klasörü Çöp Sepeti'ne taşındı. Asıl yedeklere dokunulmadı.

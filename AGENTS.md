@@ -1,5 +1,14 @@
 # genovakorist — AI Agent Configuration
 
+## Session handoff and language
+
+- For a new session/model, start with [the English handoff](docs/agent-handoff.md),
+  then follow the existing source-reading order below. Verify recorded state.
+- Write new agent-facing handoff and acceptance records in English; keep user
+  updates and product copy in Turkish. Existing Turkish decisions remain authoritative.
+- Use the evidence table in the brief template. Required FAIL or NOT RUN criteria
+  prevent closure; self-scoring cannot override them. Self-review is not independent review.
+
 ## Başlangıç ve proje hafızası
 
 - Kapsamlı işte önce `memory-bank/` altındaki altı kısa dosyayı, ardından ilgili
@@ -52,7 +61,8 @@
 - **Bir brief'te tek doğrulanabilir sonuç.** Bağlı kullanıcı akışı birden çok modüle
   dokunabilir; izinli alanları brief'te yaz. Oturum sınırı işin bitiş ölçütü değildir.
 - **Teslim önceliği:** [mobil teslim planı](docs/mobil-teslim-plani.md). Minimum
-  davet/limit → native giriş/koro seçimi → repertuvar/PDF → cihaz pilotu.
+  davet kabulü → native giriş/koro seçimi → repertuvar/PDF → cihaz pilotu (karar #21).
+  Plan-limit mağaza öncesinde kalır; somut pilot engeli yoksa native başlangıcını bekletmez.
   Yeni altyapıyı öne almak için hangi akışı engellediğini ve en küçük çözümü yaz.
 - **İki istemci ayrı görünebilir.** Web UI'ını mobile benzetmek için değiştirme; tersi de geçerli. Piksel eşitliği hedef değil.
 - **Anotasyon şeması ortak sözleşmedir.** `lib/repertuvar/annotation-types.ts` tek doğru kaynaktır. RN aynı TypeScript sözleşmesini paylaşır; ayrı Dart aynası üretilmez. Değişiklikte iki istemci ve eski mobil sürümler birlikte değerlendirilir.

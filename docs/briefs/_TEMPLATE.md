@@ -66,3 +66,20 @@ Bağımsız alt iş yoksa tek ajan; gereksiz devir yaratma.
 
 **Teslim:** commit(ler), kalan risk, geri dönüş ve sıradaki tek adım.
 Bir kayıt önceki testten aktarılıyorsa tarihsel olduğunu belirt; yeni sonuç gibi yazma.
+
+## Mandatory acceptance evidence
+
+Fill before implementation; update with actual results. Include required checks
+even when they cannot run. Use one row per criterion, including relevant failure cases.
+
+| Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
+|---|---|---|---|---|
+| <observable criterion> | <yes, or justified N/A> | NOT RUN | <actual execution details when run> | <result reference; historical evidence labeled> |
+
+Review the diff against the brief after testing and record findings/fixes. State
+whether the review was self-review or an actually performed independent review.
+Required FAIL or NOT RUN means partial/pending, not complete. Never weaken a test
+or remove a failed acceptance item just to close the task. Optional progress counts
+passed required criteria divided by all required criteria; this is not a quality score.
+For document-only work, links, consistency and diff review suffice. Do not force
+irrelevant product tests or create placeholder tests that merely mirror implementation.

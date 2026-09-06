@@ -3,6 +3,11 @@
 Hem alt ajan sözleşmesi hem sonraki oturum için kullanılır. Gereksiz alanları çıkar;
 boş şablon, yapılmış iş veya verilmiş izin değildir.
 
+For an actual new-session handoff, write the filled record in English and follow
+[the current handoff](../agent-handoff.md). Include the active brief's acceptance
+table, unresolved gates and existing authorization. Do not copy secrets or assume
+that the receiving model inherits conversation history or independent review.
+
 ## Başlamadan önce
 
 - Ana brief / tek hedef:

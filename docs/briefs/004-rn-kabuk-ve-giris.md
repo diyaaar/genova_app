@@ -1,27 +1,30 @@
 # 004 — RN ürün kurulumu, giriş ve koro seçimi
 
-**Durum:** Hazırlık brief'i; ürün kodu başlamadı. 5 Eylül 2026 güncellemesi.
+**Durum:** Hazırlık brief'i; ürün kodu başlamadı. 6 Eylül 2026 güncellemesi.
 **Amaç:** Aynı depoda telefonda çalıştırılabilir Expo ürününü kurmak; güvenli giriş,
 üyelik çözümü ve koro seçimiyle repertuvar adımına hazır kabuğa ulaşmak.
-Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #19](../../KARARLAR.md).
+Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #21](../../KARARLAR.md).
 
 ## Başlangıç ve önkoşul
 
 4 Eylül kaydındaki “003 canlı değil” engeli güncelliğini yitirdi. 003 ve 005 canlı
 kanıtları kendi brief'lerindedir; 007 altyapısı canlı, allow-list boş.
 002 spike ürün değildir. Expo ürün çalışma alanı henüz yoktur.
-Minimum 008 davet/üyelik ve temel limit kabulü bu işten önce gelir. Gelişmiş
-ticari panel, ödeme, hosting taşıması veya tüm mobil ekranlar önkoşul değildir.
+Minimum 008/010 canlı kabulünden sonra bu iş gelir. 010 dış erişim/yetkiyle
+beklerse bağımsız, onaylı yerel kurulum/uygulama izole testlerle ilerleyebilir;
+canlı kabul açık kalır. Temel limit yalnız somut pilot engelinde öne alınır.
+Ticari panel, ödeme, hosting taşıması veya tüm mobil ekranlar önkoşul değildir.
 
 ## Kaynak ve kapsam
 
 - AGENTS, altı hafıza özeti, çalışma döngüsü ve geçiş rehberi.
-- 002 kurulum/cihaz öğrenimleri; 003/005/007 kanıtları; 008 ve temel limit kabulü.
+- 002 kurulum/cihaz öğrenimleri; 003/005/007 kanıtları; 008/010 kabul durumu.
 - `components/AuthProvider.tsx`: oturum/üyelik/rol ve çıkış davranışı.
 - `components/BottomNav.tsx`, `components/AppProviders.tsx`: mevcut gezinme/tema niyeti.
 - 005 aktif-koro sözleşmesi; tarayıcı bileşeni veya DOM kodu doğrudan taşınmaz.
 
-Önerilen alan `apps/mobile/`, testleri ve gerekli kök workspace/lockfile ayarıdır.
+Önerilen alan `apps/mobile/`, testleri, gerekli kök workspace/lockfile ayarı ve
+ürün testlerinin mevcut `.github/workflows/ci.yml` ile uygun entegrasyonudur.
 Kesin yol, paket yöneticisi, komutlar ve güncel Expo sürümleri uygulama başında
 doğrulanır. Ortak TS sözleşmesi gerekirse dar kapsamla paylaşılır; sırlar istemciye girmez.
 Web ekranları, DB migration, Capacitor ve spike değişikliği kapsam dışıdır.
@@ -43,6 +46,11 @@ Bu belge tek başına hesap atama, yayın, e-posta veya harcama yetkisi vermez.
 4. Repertuvar akışına hazırlanacak küçük kabuğu ve temayı kur. Çalışmayan beş
    sekme eklemek kabul şartı değildir; PDF/listenin veri uygulaması sonraki brief'tir.
 5. Test ve gerçek telefon denemesini kaydet; 004 bitince repertuvar okuma işine geç.
+
+Implementation record: use the mandatory acceptance-evidence table from the brief
+template. Define reproducible native checks and integrate appropriate automated
+checks into existing CI with the workspace setup. Verify that existing web CI remains
+valid. Do not claim CI execution, device acceptance or branch protection from config alone.
 
 ## Kabul ve test
 
@@ -68,3 +76,7 @@ DB/harici dosya göçü bu işin parçası değildir.
 4 Eylül: ilk kapsam envanteri hazırlandı.
 5 Eylül, WF-003: eski 003 engeli kaldırıldı; minimum davet/limit sonrası çalışan
 giriş/koro seçimi odağıyla brief güncellendi. Ürün kurulumu ve cihaz testi yapılmadı.
+
+6 September, WF-004: decision #21 removes the automatic limit prerequisite and
+allows independent authorized local work while 010 is externally blocked. No product
+implementation or new tests were performed in this documentation revision.

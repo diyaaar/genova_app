@@ -2,7 +2,7 @@
 
 > Bu dosya geçişin tek doğru kaynağıdır. Yeni bir oturum önce burayı okur.
 > Durum değişikliği, koddan ayrı ama birlikte devredilen belge commit'ine işlenir.
-> Güncel teslim sırası: [mobil teslim planı](docs/mobil-teslim-plani.md), karar #19.
+> Güncel teslim sırası: [mobil teslim planı](docs/mobil-teslim-plani.md), karar #21.
 
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
@@ -83,7 +83,7 @@ Karar 2 Eyl'de verildi, 3 Eyl'de spike ile doğrulandı. Karşılaştırma kayı
 
 Bu tarihsel karşılaştırmadaki satır sayıları, aynen taşınabilirlik, araç kolaylığı
 ve süre ifadeleri güncel garanti değildir. Gerçek platform bağımlılığı ve kabul
-ilgili brief'te doğrulanır; güncel teslim sırası karar #19'dur.
+ilgili brief'te doğrulanır; güncel teslim sırası karar #21'dir.
 
 | | React Native + Expo | Flutter |
 |---|---|---|
@@ -116,8 +116,10 @@ Kullanıcı çok korolu mimariyi mağazadan **önce** istiyor. Doğru içgüdü 
 - **Otomatik faturalama: v1'de YOK.** İlk korolara elle fatura kesilir, plan bayrağı elle çevrilir.
   Mağaza uygunluğu bu tercihten otomatik çıkmaz; yayın brief'inde güncel koşullar doğrulanır.
 
-Güncel sıra (#19): **minimum davet/üyelik → temel plan-limit → native giriş/koro
-seçimi → repertuvar/PDF okuma → cihaz pilotu → yayın için gereken diğer akışlar → mağaza.**
+Güncel sıra (#21): **minimum davet/üyelik kabulü → native giriş/koro seçimi →
+repertuvar/PDF okuma → cihaz pilotu → plan-limit ve yayın için gereken diğer akışlar → mağaza.**
+Limitler yalnız kanıtlanmış pilot engelinde öne alınır. 010 dış erişim/yetkiyle
+beklerse bağımsız, yetkili 004 yerel çalışması ilerleyebilir; canlı kabul açık kalır.
 Önceki 6–8 hafta / 4–5 ay tahminleri tarihsel; güncel teslim taahhüdü değildir.
 
 ## Ürün yönü ve maliyet
@@ -138,7 +140,7 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 [008 brief'i](docs/briefs/008-davet-ve-uyelik.md): 155 birim/bileşen ve 20 tarayıcı
 testi, izole restore regresyonları ve eşzamanlı kabul/rollback geçti. Sıradaki
 kapı [010 canlı yayın/kabul](docs/briefs/010-008-canli-yayin-ve-kabul.md), gerçek
-Auth doğrulaması ve kontrollü kabul; sonra minimum limit ve 004.
+Auth doğrulaması ve kontrollü kabul; sonra 004. Plan-limit pilotu otomatik bekletmez.
 
 **007 koro oluşturma: CANLI ALTYAPI HAZIR, GERÇEK KULLANIM YOK.** İlk sürüm herkese açık
 self-servis olmayacak: manuel
@@ -164,7 +166,7 @@ kapsamdan çıkardı; bu karar parolaların güvenli hâle getirildiği anlamın
 Ardından davet/üyelik (`008`) ve plan-limit işleri ayrı brief'lere bölünür;
 gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan eklenmez. İlk gerçek
 koro işlemi için platform operatörü ayrıca seçilip yetkilendirilir. `004` RN kabuk
-brief'i minimum davet/limit kabulünden sonra uygulanır; gelişmiş ticari yönetim beklenmez. Şirket adının
+brief'i karar #21'e göre sıradaki mobil iştir; temel limit geliştirmesini beklemez. Şirket adının
 henüz kesinleşmemesi bu teknik işi engellemez.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.

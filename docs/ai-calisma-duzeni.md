@@ -121,3 +121,14 @@ Bir brief tek doğrulanabilir sonuç taşır; bağlı akış birden fazla modül
 Kabul için gerekli dar refactor brief'e yazılır. Her altyapı işi kullanıcı akışındaki
 somut bir engeli kapatmalı. Genova önceliği [teslim planındadır](mobil-teslim-plani.md).
 Kaynak yönergelere sayısal uyum, dosya sayısı veya ajan sayısı başarı ölçütü değildir.
+
+## English handoff and evidence records — WF-004
+
+New sessions use [the English handoff](agent-handoff.md) as a source index, not a
+replacement for AGENTS, decisions or actual test evidence. New agent-facing handoffs
+and acceptance records use English; user updates and product language remain Turkish.
+Use the mandatory evidence table in the existing brief template. Required checks
+remain open when failed or unrun; a numerical self-score cannot close them.
+Existing CI covers only its configured checks, not every instruction or live/device
+acceptance. Add relevant automated checks with the product change that needs them;
+do not create a separate compliance platform before the first mobile flow.
