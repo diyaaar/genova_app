@@ -19,7 +19,8 @@ yönetimin tüm ayrıntıları ilk cihaz denemesinin önkoşulu değildir.
 - 006 eski yetkisiz oluşturma/yazı yollarını kapattı. 27 hesabın kabul edilmiş
   parola riski giderilmiş sayılmaz; yeni davetlerde ortak başlangıç parolası kullanılmaz.
 - 007 DB ve Edge canlı; allow-list boş, authenticated Edge başarı kabulü açık.
-- 008 davet/üyelik ve temel plan-limit uygulaması başlamadı.
+- 008 davet/üyelik yerel paketi hazır; canlı kabul bekliyor. 009 ile Auth SMTP,
+  production dönüş adresi ve yanıt aktarımı canlıda kabul edildi. Temel plan-limit başlamadı.
 - Railway ayrı hazırlık ortamı; Drive dosyaları production'dan taşınmış değil.
 
 ## Sıra, sınır ve kabul

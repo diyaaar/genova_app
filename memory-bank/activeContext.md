@@ -16,7 +16,8 @@ SMTP ve production Site URL ayarlandı; `team@mail.genesinovachoir.com` yanıtla
 değiştirilebilir server ayarıyla işletmeci Gmail adresine aktarılıyor. Edge v3 ve
 canlı teslim/idempotency kabulü geçti. MCP hâlâ yetkisiz; CLI yalnız doğrulanan
 Genova ref'iyle kullanıldı. Erişilebilirlik çıktısında görünen ilk Full access
-Resend anahtarının silinmesi bekliyor; kayıtlı ikinci anahtar sır olarak korunuyor.
+Resend anahtarı silindi; kayıtlı ikinci anahtar sır olarak korunuyor ve silme
+sonrası Gmail gelen kutusu testi geçti.
 Gerçek Supabase Auth doğrulama/recovery teslimi ayrıca kabul edilmeli.
 
 

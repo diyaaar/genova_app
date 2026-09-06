@@ -1,6 +1,6 @@
 # 009 — Auth e-postası ve değiştirilebilir yanıt hedefi
 
-6 Eylül 2026. Durum: canlı yönlendirme kabulü geçti; eski anahtar temizliği bekliyor.
+6 Eylül 2026. Durum: tamamlandı; canlı yönlendirme kabulü ve anahtar temizliği geçti.
 Ana ajan tek yazıcı.
 Başlangıç: temiz `main`, `f365216`. Kullanıcı kalan Resend/Supabase ayarlarını
 tamamlama ve masaüstündeki Resend anahtarını kullanma yetkisini verdi;
@@ -27,7 +27,7 @@ bu adrese gelen yanıtlar sonradan değiştirilebilir tek hedefe yönlendirilsin
 - Masaüstündeki Resend anahtarı yalnız göndermeye yetkiliydi; gelen içerik okumaya
   yetmedi. Kullanıcı onayıyla ayrı Full access anahtar oluşturuldu. Panelin
   erişilebilirlik çıktısında ilk anahtar açık göründüğü için Supabase'e kaydedilmeden
-  bırakıldı; yerine ikinci anahtar üretildi. İlk anahtar silinmeyi bekler.
+  bırakıldı; yerine ikinci anahtar üretildi ve ilk anahtar kullanıcı onayıyla silindi.
 - İzinli alanlar: bu brief, 008 kanıt bağlantısı, activeContext/progress;
   `supabase/functions/resend-inbound/`, ilgili testler ve config bölümü;
   gerekirse `scripts/` altında bu işe özgü işletim aracı. Kod ve belge ayrı commit.
@@ -84,6 +84,9 @@ bu adrese gelen yanıtlar sonradan değiştirilebilir tek hedefe yönlendirilsin
 - İkinci test iletisi alındı, sabit hedef `genesinova.choir@gmail.com` için
   oluşturulan yönlendirme Resend'de `delivered` oldu. Aynı olayın imzalı tekrarı
   HTTP 200 döndü ve konuya ait gönderim sayısı bir kaldı.
+- İlk Full access anahtar silindikten sonra yalnız `v2` anahtarı kaldı. Ayrı
+  gönderim anahtarıyla yeni bir test üretildi; yönlendirme Gmail gelen kutusunda
+  görünür biçimde doğrulandı. Aktif sır silinen anahtara bağlı değildir.
 
 ## İşletim
 

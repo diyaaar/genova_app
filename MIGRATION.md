@@ -137,7 +137,8 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 **008 davet/üyelik: YEREL PAKET HAZIR, CANLI DEĞİL.**
 [008 brief'i](docs/briefs/008-davet-ve-uyelik.md): 155 birim/bileşen ve 20 tarayıcı
 testi, izole restore regresyonları ve eşzamanlı kabul/rollback geçti. Sıradaki
-kapı canlı preflight, gerçek Auth doğrulaması ve kontrollü kabul; sonra minimum limit ve 004.
+kapı [010 canlı yayın/kabul](docs/briefs/010-008-canli-yayin-ve-kabul.md), gerçek
+Auth doğrulaması ve kontrollü kabul; sonra minimum limit ve 004.
 
 **007 koro oluşturma: CANLI ALTYAPI HAZIR, GERÇEK KULLANIM YOK.** İlk sürüm herkese açık
 self-servis olmayacak: manuel
