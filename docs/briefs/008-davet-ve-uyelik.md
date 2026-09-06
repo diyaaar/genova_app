@@ -81,6 +81,25 @@ Yeni canlı yedek, Auth ayarları, migration/Edge/web yayını ve gerçek kabul 
 çalıştırılmadı. Genova yetkili bağlantısı yenilenince bu kapıdan devam edilir;
 önceki yerel test sonuçları yeniden koşulmuş veya canlı kabul edilmiş sayılmaz.
 
+### 6 Eylül — Chrome üzerinden ön kontrol
+
+Kullanıcı Chrome üzerinden işlem veya ilgili yetkilendirmeyi açıkça istedi.
+MCP kesin proje isteği tekrar yetki hatası verdi; Chrome Genesi Nova profilinde
+`genesinovachoir` organizasyonu ve `hievmwwctjjlhmssoxsu` main PRODUCTION paneli
+başarıyla açıldı. Panel erişimi doğrulandı; MCP yetkisi düzeltilmiş değildir.
+
+- Sign In / Providers: yeni kayıt açık, Confirm email açık, anonymous sign-in kapalı.
+- Emails / SMTP: custom SMTP anahtarı kapalı; yerleşik e-posta servisi kullanılıyor.
+  006 ayrıntılı kanıt tablosu da bunu belirtir; özetlerdeki “SMTP doğrulandı”
+  ifadesi özel SMTP veya gerçek e-posta teslimatı kanıtı olarak okunmamalıdır.
+- Database / Backups: Free Plan proje yedeklerini içermiyor; panel yükseltme sunuyor.
+  Ücretli plan alınmadı, yeni erişim verilmedi, Auth ayarı değiştirilmedi.
+
+Canlı yayın hâlâ bekliyor: güncel dış mantıksal yedek/restore ve üretim e-posta
+sağlayıcısı kurulumu/teslim kabulü gerekli. Tarayıcı erişimi bunların yerine geçmez.
+
+### Kalan yayın kapıları
+
 Kesin Genova hesabı/projesi, taze backup ve restore, ortak web sitesi Auth
 tetikleyicileri/ayarları ve DB–Edge–web uyumu yeniden kontrol edilir. E-posta
 doğrulaması açık olmalı: otomatik doğrulama alıcı sahipliğini kanıtlamaz.

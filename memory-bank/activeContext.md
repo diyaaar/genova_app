@@ -14,6 +14,9 @@ henüz yok; sıradaki iş canlı preflight ve kontrollü kabul, ardından minimu
 6 Eylül erişim kontrolünde bağlı MCP yalnız Orbiba projesini listeledi; kesin
 Genova proje isteği yetki hatası verdi. Genova bağlantısı yenilenmeden canlı
 işlem ilerletilmez. Ayrıntı 008 brief'inde; yeni canlı yedek/deploy yapılmadı.
+Sonraki Chrome kontrolünde doğru Genova production paneli açıldı; MCP hâlâ yetkisiz.
+Kayıt ve e-posta doğrulaması açık, custom SMTP kapalı; Free planda panel yedeği yok.
+008 için güncel dış yedek/restore ve e-posta sağlayıcısı kabulü bekliyor.
 
 
 [007 koro oluşturma](../docs/briefs/007-operator-kontrollu-koro-olusturma.md)
