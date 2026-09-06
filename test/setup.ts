@@ -3,12 +3,13 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
 
 afterEach(() => {
+  if (typeof window === 'undefined') return;
   cleanup();
   window.localStorage.clear();
   window.sessionStorage.clear();
 });
 
-Object.defineProperty(window, 'matchMedia', {
+if (typeof window !== 'undefined') Object.defineProperty(window, 'matchMedia', {
   configurable: true,
   value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
