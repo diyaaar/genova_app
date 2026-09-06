@@ -19,6 +19,14 @@ Kanıt: `docs/briefs/005-coklu-uyelik-aktif-koro.md`.
 DB `20260905160539`, `create-choir` Edge v1 ve hosted 003/005/006/007 testleri
 geçti. Allow-list boş; gerçek operatör veya yeni koro yok.
 Kanıt: `docs/briefs/007-operator-kontrollu-koro-olusturma.md`.
+**004 — Expo ürün alanı, native giriş ve koro seçimi: YEREL UYGULAMA HAZIR, CİHAZ KABULÜ YOK (6 Eyl).**
+`apps/mobile/` kuruldu (Expo SDK 57, kendi npm lockfile'ı ve test kapısı). Giriş, güvenli
+oturum saklama, sıfır/tek/çok üyelik çözümü, sunucu doğrulamalı koro seçimi, koro
+değişiminde cache temizliği ve çıkış izole testlerle geçti: `npx tsc --noEmit && npm test`
+(4 paket / 35 test). 005 sözleşmesi `lib/choir-context-core.ts` ile iki istemcide ortak;
+web davranışı değişmedi (190 web testi geçti). iOS/Android derlemesi, gerçek telefon
+denemesi ve `pnpm build` çalıştırılmadı; 010 canlı kabulü açık.
+Kanıt ve sınırlar: `docs/briefs/004-rn-kabuk-ve-giris.md`.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 
 ---
@@ -29,8 +37,8 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 
 | Ekran | ≈ satır | Hedef | Durum | Faz |
 |---|---:|---|---|---|
-| Giriş | 164 | native | bekliyor | 1 |
-| Kabuk (nav, tema, push, mini player) | ~1.000 | native | bekliyor | 1 |
+| Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
+| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |

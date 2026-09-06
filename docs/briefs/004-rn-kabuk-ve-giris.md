@@ -80,3 +80,140 @@ giriş/koro seçimi odağıyla brief güncellendi. Ürün kurulumu ve cihaz test
 6 September, WF-004: decision #21 removes the automatic limit prerequisite and
 allows independent authorized local work while 010 is externally blocked. No product
 implementation or new tests were performed in this documentation revision.
+
+## Implementation start-check — 6 September 2026
+
+Filled before implementation, per the migration guide and the brief template.
+
+- **Sources read:** `AGENTS.md`; `docs/gecis-rehberi.md`; `docs/agent-handoff.md`; the six
+  `memory-bank/` records; `docs/mobil-teslim-plani.md`; `KARARLAR.md` (#7, #8, #16, #18, #21, #22);
+  `MIGRATION.md`; `docs/briefs/010-008-canli-yayin-ve-kabul.md`; `docs/briefs/_TEMPLATE.md`;
+  code: `components/AuthProvider.tsx`, `lib/choir-context.ts`, `lib/choir-context.test.ts`,
+  `lib/supabase.ts`, root `tsconfig.json` / `eslint.config.mjs` / `vitest.config.ts`,
+  `pnpm-workspace.yaml`, `package.json`, `.github/workflows/ci.yml`.
+- **Checkout:** branch `main`, commit `a2659ca`, clean working tree, single writer (main agent).
+  `main` is 11 commits ahead of `origin/main`; no push is part of this work.
+- **Single verifiable outcome:** an Expo product workspace at `apps/mobile/` in which sign-in,
+  session persistence/refresh, membership resolution (zero/single/multi), server-verified choir
+  selection, per-choir cache clearing and sign-out are implemented and covered by isolated,
+  reproducible type and unit checks. Device builds and phone acceptance are not part of this run.
+- **Boundary:** native client only. No WebView screen is written or replaced, no PDF/repertoire
+  data flow, no push, no player, no chat/assignments/home. No Next.js API route is added; no new
+  server logic is introduced at all, so no Edge Function change is required. No DB migration.
+- **Preserved behavior:** the web client is unchanged in behavior. `lib/choir-context.ts` keeps its
+  exact public API and its existing tests; only its platform-free core is extracted so both clients
+  share one 005 active-choir contract (`list_my_choirs`, `set_active_choir`, fail-closed parsing,
+  single-`is_current` rule, preference-is-a-hint rule). `lib/repertuvar/annotation-types.ts` is not
+  touched. No DOM, `window`, Next or Service Worker code enters the native package.
+- **Allowed paths:** `apps/mobile/**` (new); `lib/choir-context-core.ts` (new) and
+  `lib/choir-context.ts` (re-export only); root `tsconfig.json`, `eslint.config.mjs`,
+  `vitest.config.ts`, `.gitignore` (exclude the native workspace from web tooling);
+  `.github/workflows/ci.yml` (add a native job); this brief, `MIGRATION.md` and the affected
+  `memory-bank/` records. Everything else is out of scope.
+- **Authority for this run:** the user authorized local implementation, local testing and the
+  required local commits for the documented mobile plan, one brief at a time. The same message
+  withheld production deployment, real-account/real-data, email and spending authority. Therefore:
+  no push, no deploy, no live Supabase call, no fixture account, no paid service, no EAS build.
+- **Required tests and environments:** `apps/mobile` — `npx tsc --noEmit && npm test` (local
+  Linux dev VM, isolated test doubles, no network calls); root — `pnpm check` (local), because
+  shared `lib/` code and root tooling settings change. iOS/Android development builds and the real
+  phone scenario require macOS/Xcode/Android SDK and a device, none of which exist in this
+  environment; they are recorded as NOT RUN, not as N/A, and keep the brief pending.
+- **Rollback:** code and documentation commits are separate; reverting them removes the native
+  workspace and restores `lib/choir-context.ts` to a single file. Nothing outside the repository
+  changes, so no data or release rollback applies.
+- **Unresolved:** 010 stays pending (no live authority or Supabase access in this session), so
+  live acceptance of invitation/membership remains open and is not implied by anything here.
+
+### Setup decisions verified at implementation start
+
+- Path `apps/mobile/` confirmed. Expo SDK 57 pins taken from a scaffold probe on 6 September 2026:
+  `expo ~57.0.20`, `react 19.2.3`, `react-native 0.86.3`, `typescript ~6.0.3`, `@types/react ~19.2.2`.
+- Package manager for the native workspace is **npm with its own lockfile**, and the workspace is
+  kept out of the root pnpm workspace. Reasons: the documented RN gate is literally
+  `npx tsc --noEmit && npm test`; the live web `pnpm-lock.yaml` is not re-resolved, so this brief
+  cannot change the production web build; and React Native tooling avoids pnpm's isolated layout.
+  The necessary root setting is therefore exclusion from web lint/typecheck/test globs rather than
+  workspace inclusion. Revisit only if a later brief needs real cross-package linking.
+
+## Mandatory acceptance evidence
+
+Filled before implementation, updated with the results of the 6 September 2026 run.
+
+Environments referenced below:
+- **NATIVE-VM** — local Linux dev VM on the user's machine (linux-arm64), Node v22.23.2,
+  npm 10.9.8, working directory `apps/mobile`.
+- **WEB-LINUX** — cloud Linux container (linux-x64), Node v22.22.2, pnpm 11.9.0, running the
+  root gate against an extracted copy of this same source tree. The device VM cannot run the
+  root gate at all, because the repository's checked-in `node_modules` is a macOS install and
+  its native bindings do not load on Linux; nothing in the user's `node_modules` was modified.
+- Revision under test: `main` at `a2659ca` plus this brief's changes, committed as `3009afe`
+  (production code). This documentation update is a separate commit.
+
+| Criterion / expected behavior | Required? / N/A reason | Status | Date, revision, environment, command or scenario | Evidence and limits |
+|---|---|---|---|---|
+| Product workspace exists at `apps/mobile/`, independent of `spike/`, with recorded versions and reproducible install/type/test commands | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm install` then `npx tsc --noEmit && npm test` | Expo SDK 57 pins in `apps/mobile/package.json` and `package-lock.json` (`expo ~57.0.20`, `react 19.2.3`, `react-native 0.86.3`, `typescript ~6.0.3`). No import from `spike/`. Limit: the lockfile was materialized on linux-arm64; a macOS contributor reinstalls to get their own binaries |
+| Wrong credentials produce a visible, non-crashing error and no session | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "reports wrong credentials without starting a session"; `AppRoot.test.tsx` "shows the reason when sign-in is rejected". Isolated doubles; no live Auth was contacted |
+| A stored session is restored on app relaunch, and a refresh that yields no session signs out fail-closed | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "restores a stored session on relaunch…" and "signs out fail-closed when a token refresh yields no session". Limit: the refresh itself is supabase-js behavior driven through an auth-state event, not a real expired token |
+| Session storage adapter chunks large tokens, drops stale chunks and wipes a damaged entry instead of returning half a token | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `secure-storage.test.ts`, six cases including missing-chunk wipe and legacy value |
+| Tokens are actually written to the device keychain/keystore and appear in no plain storage or log | yes | NOT RUN | requires a real iOS/Android device or emulator; none available in this environment | Code wires `expo-secure-store` in `src/auth/supabase-client.ts`; unit coverage uses an in-memory double, which is not device evidence |
+| Zero membership shows an understandable state and opens no data screen | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "shows an explicit state and opens no data screen without a membership"; `AppRoot.test.tsx` asserts the shell is absent |
+| Single membership is activated automatically through the server RPC | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "activates a single membership through the server"; asserts `set_active_choir` was called |
+| Multiple memberships require an explicit choice; without a confirmed selection no data screen opens | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "requires an explicit choice…" (no `set_active_choir` call) and `AppRoot.test.tsx` "requires a choice for multiple memberships before any data screen" |
+| Active choir is accepted only when the database confirms it; a mismatched activation response is rejected | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "rejects an activation the database did not confirm" and "trusts the server-confirmed choir without asking again" |
+| A stored hint or requested choir outside the account's memberships is refused, before any server call | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "ignores a hint that does not belong to the account" and "refuses a choir the account is not a member of, before any server call" (asserts zero RPC calls) |
+| Choir switch clears the previous choir's private cache before new data is requested | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "clears the previous choir cache before requesting the switch" asserts call order `clear-caches` then `rpc:set_active_choir`. Limit: the shell has no tenant cache yet; this proves the seam, not a real cached PDF |
+| A refused switch leaves no active choir | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "keeps no active choir when the switch is refused" |
+| Sign-out clears session, per-user choir hint and tenant caches, including when the network call fails | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` two sign-out cases; identity change case also clears the previous user's hint |
+| Membership list parsing fails closed on a malformed RPC payload | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "fails closed on a malformed membership payload"; shared parser is the same one the web client uses |
+| Web behavior preserved: `lib/choir-context` public API and its existing tests unchanged | yes | PASS | 6 Sep 2026, WEB-LINUX, `pnpm test:coverage` | 32 files / 190 tests passed, including `lib/choir-context.test.ts` unmodified. The module now re-exports the shared core and adds `isChoirId` / `ChoirContextClient`; no export was removed or renamed |
+| Native gate: `npx tsc --noEmit && npm test` in `apps/mobile` | yes | PASS | 6 Sep 2026, NATIVE-VM | Exit 0; 4 suites / 35 tests passed |
+| Web gate: `pnpm lint`, `pnpm typecheck`, `pnpm test:coverage`, `pnpm test:service-worker` | yes | PASS | 6 Sep 2026, WEB-LINUX, each script run separately | All exit 0. Coverage 92.93% statements / 81.77% branches, above the configured thresholds |
+| Web gate: `pnpm build` | yes | NOT RUN | 6 Sep 2026, WEB-LINUX, `pnpm check` reached `build` and failed | The failure is environmental, not a code failure: `next/font` cannot fetch `Manrope` and `Noto Serif` because the session's egress policy blocks `fonts.googleapis.com`. The device VM cannot run it either (macOS `node_modules`). The build remains unverified for this revision |
+| Native checks integrated into `.github/workflows/ci.yml`; existing web jobs unchanged | yes | PASS | 6 Sep 2026, NATIVE-VM, workflow YAML parsed; `npm install --package-lock-only --dry-run` | New `mobile` job runs `npm ci`, `npx tsc --noEmit`, `npm test` in `apps/mobile`; `quality` and `browser` jobs are untouched; `package.json` and `package-lock.json` verified in sync |
+| CI actually executed for this revision, and `npm ci` verified locally | yes | NOT RUN | no push or remote run is authorized in this session; `npm ci` cannot run in the device VM because it deletes `node_modules` first and the connected folder denies deletion | Configuration alone is not a CI result; branch protection was neither checked nor changed |
+| iOS development build runs on a device or simulator | yes | NOT RUN | requires macOS/Xcode; the shell available here is a Linux VM | No EAS or local native build was attempted; no spending authority was given |
+| Android development build runs on a device or emulator | yes | NOT RUN | no Android SDK or emulator in this environment | — |
+| Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
+| Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
+
+**Optional progress: 16 passed / 23 required criteria.** Seven required criteria are NOT RUN, so
+004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
+skipped or loosened to reach a green result.
+
+### Diff self-review — 6 September 2026
+
+This was a **self-review**, not an independent review; no reviewer agent was involved.
+
+- `git status`/`git diff --stat` show changes only in the allowed paths: `apps/mobile/**` (new),
+  `lib/choir-context-core.ts` (new), `lib/choir-context.ts`, `tsconfig.json`, `eslint.config.mjs`,
+  `vitest.config.ts`, `.gitignore`, `.github/workflows/ci.yml` and this brief. `git diff --check`
+  is clean. No web screen, API route, migration, Edge function or `spike/` file was touched.
+- The shared extraction was reviewed against the 005 contract: parsing rules, the single
+  `is_current` requirement, the `set_active_choir` echo check and the "preference is only a hint"
+  rule are byte-identical to the previous implementation; only the client parameter type became
+  structural (`ChoirContextClient`), which was necessary because the two workspaces resolve
+  different `@supabase/supabase-js` builds and the nominal `SupabaseClient` types are not
+  interchangeable. Every previous export still exists.
+- One deliberate difference from the web client: the native store clears tenant caches *before*
+  requesting the switch, where the web provider clears them after `activateChoir` succeeds. Both
+  clear before any new-choir data is read; the native order is the stricter one. Pixel or
+  code-path parity between clients is not a goal (decision #2), but this difference is recorded
+  rather than left implicit.
+- `AuthProvider` deliberately holds no rules; if a later brief adds screens, the acceptance
+  behavior stays in `auth-store.ts` where it is testable without a device.
+- Known gap accepted for this brief: member record and role resolution (`Şef` / `Partisyon Şefi` /
+  `Korist`) are not loaded natively yet. The shell needs only the server-confirmed choir; role-aware
+  screens belong to the repertoire brief and must not be assumed to exist.
+
+### Delivery — 6 September 2026
+
+- Commits: production code and documentation are separate and carry the `004` id. Nothing was
+  pushed; `main` remains ahead of `origin/main` and no deployment was triggered.
+- Remaining risk: the app has never been built for or run on a device, `pnpm build` is unverified
+  for this revision, and the whole native flow depends on 010's live acceptance, which is open.
+- Rollback: revert the 004 code and documentation commits; `lib/choir-context.ts` returns to a
+  single file and `apps/mobile/` disappears. No live system is involved.
+- Next single step: obtain a device/simulator run of the required native criteria, or, if that
+  environment is not available to the agent, hand the reproducible commands to the user and
+  proceed to the repertoire/PDF reading brief only after 004's device criteria are met.
