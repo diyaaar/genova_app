@@ -147,7 +147,7 @@ Environments referenced below:
   root gate against an extracted copy of this same source tree. The device VM cannot run the
   root gate at all, because the repository's checked-in `node_modules` is a macOS install and
   its native bindings do not load on Linux; nothing in the user's `node_modules` was modified.
-- **MACOS** — the product owner's own machine (Ali-MacBook-Air-3, darwin-arm64), macOS shell,
+- **MACOS** — the product owner's own machine (darwin-arm64), macOS shell,
   commands run by the user on 6 September 2026 around 22:10–22:15 Europe/Istanbul and reported
   back in full. Node version was not recorded. This is the environment that actually builds and
   will later run the native app.
@@ -240,6 +240,9 @@ This was a **self-review**, not an independent review; no reviewer agent was inv
   own choice, not for lack of a decision.
 - Rollback: revert the 004 code and documentation commits; `lib/choir-context.ts` returns to a
   single file and `apps/mobile/` disappears. No live system is involved.
-- Next single step: obtain a device/simulator run of the required native criteria, or, if that
-  environment is not available to the agent, hand the reproducible commands to the user and
-  proceed to the repertoire/PDF reading brief only after 004's device criteria are met.
+- Next single step: re-run `npx tsc --noEmit && npm test && npm run bundle:check` in
+  `apps/mobile` on macOS at the current HEAD and record the result here; the last successful
+  run of that gate was at `3009afe`, before the `metro.config.js` fix. After that the brief
+  can only advance with the owner present, through the Android development build, the real
+  phone and the device keychain check. The repertoire/PDF reading brief is not started
+  before 004 is accepted. Entry point for a new session: [agent handoff](../agent-handoff.md).

@@ -91,12 +91,15 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 
 ## English session handoff
 
-[agent-handoff.md](../docs/agent-handoff.md) contains the startup message, source
-order, recorded evidence boundaries and first actions. New agent-facing handoff and
-acceptance records use English; user updates remain Turkish (decision #22).
-Use evidence per required criterion, not subjective scoring. Required unrun/failed
-checks keep a brief pending. Existing CI is not a guarantee of model compliance.
-WF-004 is documentation only: no 008 deployment, fixture approval or mobile build.
+[agent-handoff.md](../docs/agent-handoff.md) is the entry point and was refreshed on
+6 September 2026 at `020e571`. It carries the startup message, the source order, the
+separation of deployed / locally verified / unverified work, the tests actually run with
+their environments and limits, the open blockers, the authorization boundary and the next
+bounded task. Read it there rather than duplicating it here.
+New agent-facing handoff and acceptance records use English; user updates remain Turkish
+(decision #22). Use evidence per required criterion, not subjective scoring. Required
+unrun/failed checks keep a brief pending. Existing CI is not a guarantee of model
+compliance, and it has never executed for the current revision.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
 Devirde sadece değişen özet/bağlantıları güncelle; tüm dosyaları yeniden yazma.
