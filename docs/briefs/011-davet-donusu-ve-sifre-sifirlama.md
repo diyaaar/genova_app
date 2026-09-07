@@ -1,6 +1,6 @@
 # 011 — davet dönüşü ve kendi kendine şifre sıfırlama
 
-**Durum / tarih / sorumlu yazıcı:** Kısmî (8/12 zorunlu ölçüt geçti) — 7 Eylül 2026 — tek yazıcı: bu ajan.
+**Durum / tarih / sorumlu yazıcı:** Kısmî (9/13 zorunlu ölçüt geçti) — 7 Eylül 2026 — tek yazıcı: bu ajan.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Davet edilen koristin e-posta doğrulamasından
 sonra davetine geri dönebilmesi ve şifresini kendi sıfırlayabilmesi.
@@ -120,7 +120,8 @@ kendi oturum deposuyla taşınır.
 - [x] Sıfırlama isteği hesabın varlığını açık etmiyor — birim + inceleme; gerçek gönderim koşulmadı.
 - [ ] Kurtarma oturumuyla gelen kullanıcının mevcut yolu bozulmadı.
 - [ ] Geçiş işi başlangıç kontrolü ve rehberin teslim kontrolleri kanıtlandı.
-- [ ] Proje kapısı: `pnpm check` (depo kökü).
+- [x] Proje kapısı: `pnpm check`'in ilk dört adımı (lint, typecheck, 206 test, service worker).
+- [ ] Proje kapısı: `pnpm build` — ajan ortamında yazı tipi egress'i yüzünden değerlendirilemedi.
 - [ ] Diff incelendi; kapsam dışı değişiklik yok; kanıt bağlantıları güncel.
 
 **Sonuç kaydı:**
@@ -129,17 +130,29 @@ kendi oturum deposuyla taşınır.
 |---|---|---|---|---|
 | 7 Eylül 2026 | Bulguların koddan doğrulanması | yerel okuma | geçti | Satır numaraları yukarıda |
 | 7 Eylül 2026 | `vitest run --environment node` — `lib/invite-token-store.test.ts`, `lib/auth-recovery.test.ts` | yalıtılmış konteyner | **19/19 geçti** | Sınır: depo kendi vitest 4.1.11'iyle değil, ayrı bir konteynerde vitest 5.0.0 ile koşuldu; depo kapısı değildir |
-| 7 Eylül 2026 | `pnpm check` (kök kapı) | — | **çalıştırılmadı** | Ajan ortam sınırı, aşağıda |
+| 7 Eylül 2026 | `pnpm lint` | temiz Linux kurulumu (`pnpm install --frozen-lockfile`, pnpm 11.9.0, Node 22.23.2) | **geçti** | `eslint . --max-warnings=0`, çıkış 0 |
+| 7 Eylül 2026 | `pnpm typecheck` | aynı | **geçti** | `tsc --noEmit`, çıkış 0 — 011'in TSX değişikliklerini de kapsar |
+| 7 Eylül 2026 | `pnpm test:coverage` | aynı | **geçti** | **33 dosya / 206 test**, kapsam eşikleri dahil çıkış 0 |
+| 7 Eylül 2026 | `pnpm test:service-worker` | aynı | **geçti** | `node --check public/sw.js`, çıkış 0 |
+| 7 Eylül 2026 | `pnpm build` | aynı | **değerlendirilemedi** | Ağ engeli, kod sonucu değil: `next/font` Google Fonts'a çıkamıyor — `Failed to fetch font 'Noto Serif' … 'Manrope'`. Her iki ajan ortamında da `fonts.googleapis.com` ve `fonts.gstatic.com` proxy tarafından 403 ile kesiliyor |
 | 7 Eylül 2026 | Diff incelemesi | yerel | yapıldı — **öz-inceleme**, bağımsız inceleme değil | Kapsam dışı değişiklik yok; `supabase/.temp/cli-latest` bilerek commit'e alınmadı |
 
-### Ajan neden kök kapısını koşamadı
+### Kapının dördü koşuldu, biri ortam yüzünden koşulamadı
 
-Depo kökündeki `node_modules` macOS için kurulu; ajanın eriştiği kabuk ayrı bir Linux
-VM'inde çalışıyor. Orada `pnpm check` koşmak ya native ikililer yüzünden başarısız olur ya
-da yeniden kurulum ürün sahibinin macOS kurulumunu geçersiz kılar. Bu, oturum boyunca
-zaten bilinen ve kayıtlı bir sınır. Bulut konteynerinde depo kopyası yok ve uzak git oradan
-erişilebilir değil. Bu yüzden saf mantık, dosyaları taşıyıp yalıtılmış bir konteynerde
-koşuldu; TSX değişiklikleri yalnız incelendi, derlenmedi.
+İlk kayıt "ajan kapıyı hiç koşamaz" diyordu; bu fazla geniş bir ifadeydi ve düzeltildi.
+Ürün sahibinin macOS `node_modules`'una dokunmamak için depo, cihazın Linux VM'inde
+**bağlı klasörün dışına** kopyalandı (`$HOME/work`), orada sıfırdan
+`pnpm install --frozen-lockfile` yapıldı ve kapı adımları CI'ın kullandığı sentetik
+ortam değişkenleriyle koşuldu. Beş adımın **dördü geçti**.
+
+Beşinci adım `next build`, kodla ilgisiz bir sebeple duruyor: `app/layout.tsx`
+`next/font/google` ile `Manrope` ve `Noto Serif` yazı tiplerini derleme anında indiriyor
+ve her iki ajan ortamının egress proxy'si de `fonts.googleapis.com` ile
+`fonts.gstatic.com`'u 403 ile kesiyor. Bu, 6 Eylül'de de kaydedilmiş aynı engeldir ve
+o gün derleme ürün sahibinin macOS'unda geçmişti. Dolayısıyla bu satır **başarısız değil,
+değerlendirilemedi**; sonucu ancak macOS'ta ya da CI'da alınabilir. Kalan tek komut:
+
+    cd /Users/alidiyarduran/Antigravity/genovakorist && pnpm build
 
 ### Uygulanmadan önce gereken canlı yapılandırma — kod değil, panel ayarı
 
@@ -174,10 +187,11 @@ koşulmadı; canlı yönlendirme listesi henüz ayarlanmadı. Sıradaki tek adı
 | Reset request reveals nothing about account existence | yes | **PASS** | 7 Sep 2026, unit + diff review | One notice constant for every outcome; only a 429 differs, which is about rate, not existence |
 | Existing recovery-session path still reaches the new-password form | yes | **NOT RUN** | — | No component test was executed. The `PASSWORD_RECOVERY` and `?recovery=1` branches are untouched and the late-resolution guard only refuses to overwrite a state the reader has moved past |
 | Supabase Auth redirect allow-list contains `/invite` and `/auth/recovery` | yes | **NOT RUN** | — | Dashboard setting, not in `supabase/config.toml`. Without it the redirect silently falls back to the site root and the fix has no effect. Owner action |
-| Repository gate `pnpm check` | yes | **NOT RUN** | — | Agent cannot run it; see the environment limit above. Owner action |
+| Repository gate, steps 1-4: `lint`, `typecheck`, `test:coverage`, `test:service-worker` | yes | **PASS** | 7 Sep 2026, `3986f35`, clean Linux install outside the connected folder, CI's synthetic environment | All four exited 0; 33 test files / 206 tests. The owner's macOS install was not touched |
+| Repository gate, step 5: `pnpm build` | yes | **NOT RUN** | 7 Sep 2026, same environment | Aborts before compiling the app: `next/font` cannot reach Google Fonts, blocked by egress in both agent environments. Not a verdict on the code. Owner action: `pnpm build` on macOS |
 | Real email round trip through the live project | N/A — this brief grants no live or email authority | N/A | — | Live acceptance belongs to 010 |
 
-Required criteria: 12. Passed: 8. Not run: 4. This is a count of required criteria that
+Required criteria: 13. Passed: 9. Not run: 4. This is a count of required criteria that
 actually passed, not a quality score; the task stays **partial** until the four run.
 
 Review the diff against the brief after testing and record whether the review was
