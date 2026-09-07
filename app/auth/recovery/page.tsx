@@ -7,10 +7,19 @@ import { supabase } from '@/lib/supabase';
 import {
   RECOVERY_PASSWORD_MAX_LENGTH,
   RECOVERY_PASSWORD_MIN_LENGTH,
+  RECOVERY_REQUEST_NOTICE,
+  validateRecoveryEmail,
   validateRecoveryPassword,
 } from '@/lib/auth-recovery';
 
-type RecoveryState = 'checking' | 'ready' | 'saving' | 'complete' | 'invalid';
+type RecoveryState =
+  | 'checking'
+  | 'ready'
+  | 'saving'
+  | 'complete'
+  | 'invalid'
+  | 'requesting'
+  | 'requested';
 
 export default function PasswordRecoveryPage() {
   const [state, setState] = useState<RecoveryState>('checking');
@@ -18,6 +27,7 @@ export default function PasswordRecoveryPage() {
   const [confirmation, setConfirmation] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [requestEmail, setRequestEmail] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -37,7 +47,9 @@ export default function PasswordRecoveryPage() {
       if (!sessionError && hasRecoveryMarker && data.session) {
         setState('ready');
       } else if (!recoveryObserved) {
-        setState('invalid');
+        // Only the first resolution may fall back; a late answer must not undo
+        // a reset request the reader has already sent.
+        setState((current) => (current === 'checking' ? 'invalid' : current));
       }
     });
 
@@ -46,6 +58,39 @@ export default function PasswordRecoveryPage() {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Arriving here without a recovery session is the ordinary case: the page is
+  // also the only place that can start a reset. Sending the link back to this
+  // same URL with the marker is what makes the form below reachable at all.
+  const handleRequest = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError(null);
+
+    const validation = validateRecoveryEmail(requestEmail);
+    if (!validation.ok) {
+      setError(validation.message);
+      return;
+    }
+
+    setState('requesting');
+    try {
+      const { error: requestError } = await supabase.auth.resetPasswordForEmail(validation.email, {
+        redirectTo: `${window.location.origin}/auth/recovery?recovery=1`,
+      });
+      if (requestError?.status === 429) {
+        setError('Çok fazla deneme yapıldı. Birkaç dakika sonra yeniden deneyin.');
+        setState('invalid');
+        return;
+      }
+    } catch {
+      setError('İstek gönderilemedi. Bağlantınızı kontrol edip yeniden deneyin.');
+      setState('invalid');
+      return;
+    }
+    // Everything else answers the same way, including an unknown address.
+    setRequestEmail('');
+    setState('requested');
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -71,16 +116,22 @@ export default function PasswordRecoveryPage() {
     setState('complete');
   };
 
+  // The page answers two different questions depending on how the reader
+  // arrived, so the heading follows the state rather than assuming a link.
+  const requestMode = state === 'invalid' || state === 'requesting' || state === 'requested';
+
   return (
     <main className="relative flex min-h-screen items-center justify-center bg-[var(--color-background)] px-5 py-10">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(75%_55%_at_50%_0%,var(--color-accent-soft),transparent_70%)]" />
       <section className="glass-panel relative z-10 w-full max-w-sm space-y-5 p-6">
         <div className="text-center">
           <h1 className="font-serif text-2xl tracking-tight text-[var(--color-text-high)]">
-            Yeni şifre belirle
+            {requestMode ? 'Şifre sıfırlama' : 'Yeni şifre belirle'}
           </h1>
           <p className="mt-2 text-sm text-[var(--color-text-medium)]">
-            Genova hesabın için yalnız sana ait yeni bir şifre oluştur.
+            {requestMode
+              ? 'Hesabına yeni bir şifre belirlemek için sıfırlama bağlantısı iste.'
+              : 'Genova hesabın için yalnız sana ait yeni bir şifre oluştur.'}
           </p>
         </div>
 
@@ -90,10 +141,50 @@ export default function PasswordRecoveryPage() {
           </div>
         )}
 
-        {state === 'invalid' && (
+        {(state === 'invalid' || state === 'requesting') && (
+          <form onSubmit={handleRequest} className="space-y-4">
+            <p className="rounded-lg border border-[var(--color-border)] px-4 py-3 text-sm text-[var(--color-text-medium)]">
+              Geçerli bir kurtarma bağlantısı bulunamadı. E-posta adresinizi yazın, size
+              yeni bir sıfırlama bağlantısı gönderelim.
+            </p>
+            <div className="space-y-2">
+              <label htmlFor="recovery-email" className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-text-medium)]">
+                E-posta
+              </label>
+              <input
+                id="recovery-email"
+                type="email"
+                autoComplete="email"
+                required
+                value={requestEmail}
+                onChange={(event) => setRequestEmail(event.target.value)}
+                className="editorial-input"
+              />
+            </div>
+
+            {error && (
+              <p role="alert" className="rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-sm text-rose-400">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={state === 'requesting'}
+              className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-accent)] py-3.5 text-sm font-bold text-[#1f170b] disabled:opacity-60"
+            >
+              {state === 'requesting' ? <><Loader2 className="animate-spin" size={17} /> Gönderiliyor…</> : 'Sıfırlama bağlantısı gönder'}
+            </button>
+            <Link href="/login" className="inline-flex text-sm font-semibold text-[var(--color-accent)]">
+              Giriş sayfasına dön
+            </Link>
+          </form>
+        )}
+
+        {state === 'requested' && (
           <div className="space-y-4 text-center">
-            <p className="rounded-lg border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
-              Bu kurtarma bağlantısı geçersiz veya süresi dolmuş.
+            <p role="status" className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+              {RECOVERY_REQUEST_NOTICE}
             </p>
             <Link href="/login" className="inline-flex text-sm font-semibold text-[var(--color-accent)]">
               Giriş sayfasına dön

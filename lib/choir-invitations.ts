@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { INVITE_TOKEN_PATTERN } from '@/lib/invite-token-store';
 
 export interface ChoirInvitation {
   id: string; email: string; first_name: string; last_name: string; voice_group: string;
@@ -22,7 +23,7 @@ export async function invitationCommand<T>(body: Record<string, string>): Promis
 export function invitationTokenFromHash(hash: string): string | null {
   if (!hash.startsWith('#')) return null;
   const token = new URLSearchParams(hash.replace(/^#/, '')).get('invite');
-  return token && /^[a-f0-9]{64}$/.test(token) ? token : null;
+  return token && INVITE_TOKEN_PATTERN.test(token) ? token : null;
 }
 
 export function invitationStatus(invitation: ChoirInvitation, now = Date.now()) {

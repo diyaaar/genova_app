@@ -5,6 +5,12 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { invitationCommand, invitationTokenFromHash } from '@/lib/choir-invitations';
+import {
+  browserInviteTokenStorage,
+  forgetInviteToken,
+  readInviteToken,
+  rememberInviteToken,
+} from '@/lib/invite-token-store';
 
 export default function AcceptInvitationPage() {
   const { user, isLoading, signIn, signOut } = useAuth();
@@ -14,7 +20,15 @@ export default function AcceptInvitationPage() {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   useEffect(() => {
-    const read = () => { setToken(invitationTokenFromHash(window.location.hash)); setReady(true); };
+    const read = () => {
+      const storage = browserInviteTokenStorage();
+      const fromLink = invitationTokenFromHash(window.location.hash);
+      // The link is authoritative; storage only carries it across the
+      // verification round trip, whose redirect cannot keep the fragment.
+      if (fromLink) rememberInviteToken(storage, fromLink);
+      setToken(fromLink ?? readInviteToken(storage));
+      setReady(true);
+    };
     read(); window.addEventListener('hashchange', read);
     return () => window.removeEventListener('hashchange', read);
   }, []);
@@ -27,9 +41,16 @@ export default function AcceptInvitationPage() {
     setBusy(true); setMessage('');
     try {
       if (register) {
-        const result = await supabase.auth.signUp({ email, password });
+        const result = await supabase.auth.signUp({
+          email,
+          password,
+          // Without this the provider returns to the site root, where a member
+          // without a choir is stopped by the membership gate and the invitation
+          // is lost. The token itself stays out of the URL and waits in storage.
+          options: { emailRedirectTo: `${window.location.origin}/invite` },
+        });
         if (result.error) throw new Error('Kayıt tamamlanamadı. Bilgilerinizi kontrol edin veya giriş yapmayı deneyin.');
-        setMessage('Doğrulama e-postanızı kontrol edin. Doğrulamadan sonra bu davet bağlantısını yeniden açıp giriş yapın.');
+        setMessage('Doğrulama e-postanızı kontrol edin. Doğruladıktan sonra bu sayfaya geri döneceksiniz; dönmezseniz size gönderilen davet bağlantısını yeniden açın.');
       } else {
         const result = await signIn(email, password);
         if (result.error) throw new Error('E-posta veya şifre hatalı; e-posta doğrulamanızı da kontrol edin.');
@@ -42,6 +63,7 @@ export default function AcceptInvitationPage() {
     setBusy(true); setMessage('');
     try {
       await invitationCommand({ action: 'accept', token });
+      forgetInviteToken(browserInviteTokenStorage());
       // Full reload rebuilds membership/tenant caches; multi-choir users select explicitly.
       window.location.replace('/');
     } catch (error) {
