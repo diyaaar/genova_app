@@ -1,6 +1,6 @@
 # 012 — çoklu üyelikte koro seçim kilidi
 
-**Durum / tarih / sorumlu yazıcı:** Kapandı — 7 Eylül 2026 — tek yazıcı: bu ajan.
+**Durum / tarih / sorumlu yazıcı:** Kısmî (9/10; kalan tek satır regresyon testi dosyasının koşulması) — 7-8 Eylül 2026 — tek yazıcı: bu ajan.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Birden fazla koroya üye olan hesabın, oturum
 başında koro seçim ekranını görebilmesi.
@@ -127,11 +127,12 @@ ve `set_active_choir` çağrısı da aynı transaction'da geri alındı.
 | No schema, data, grant or policy changed | yes | **PASS** | 7 Sep 2026 | Function body only; `revoke`/`grant` re-asserted unchanged |
 | A rollback exists | yes | **PASS** | 7 Sep 2026 | `supabase/rollback/012_list_my_choirs_is_current_not_null_down.sql` restores the old body |
 | Regression test file runs green | yes | **NOT RUN** | — | `supabase/tests/012_list_my_choirs_is_current.sql` is written but not executed: it needs `psql -f` against a database neither agent shell can reach. Its assertions were each verified live by hand, which is not the same as running the file |
-| The affected member can reach the choir picker in the live product | yes | **NOT RUN** | — | Needs a real session; the owner has no password for that account at the moment. The database now returns exactly what the gate needs |
+| The affected member can reach the choir picker in the live product | yes | **PASS** | 8 Sep 2026 00:16 (+03), live product, owner's own session | `genova_005.active_choir_sessions` gained a row for session `c45ce20e-…` selecting `genesi-nova`. A selection can only be written after `loadMyChoirs` succeeds — the exact call that used to throw — so the client parsed the list and the server-verified switch went through. The owner reports the app now opens instead of stopping at the gate. Limit: the picker screen itself was not observed by the agent; the evidence is the selection it produces |
 
-Required criteria: 10. Passed: 8. Not run: 2. Self-review; no independent review.
+Required criteria: 10. Passed: 9. Not run: 1. Self-review; no independent review.
 
-**Teslim:** kusur canlıda kapandı, web yayını gerektirmedi. Kalan iki satır ürün sahibinin
-oturumuna bağlı. Sıradaki tek adım: sahip yeniden oturum açtığında koro seçim ekranını
-görmeli; ardından 010'un temizliği gelir ve temizlik ikinci üyeliği kaldırdığı için hesap
-yeniden tek üyeliğe döner.
+**Teslim:** kusur canlıda kapandı, web yayını gerektirmedi ve ürün üzerinde doğrulandı —
+ürün sahibi 8 Eylül 00:16'da yeniden girip koro seçti. Kalan tek satır regresyon testi
+dosyasının `psql -f` ile koşulması; ajanın erişimi yok, ürün sahibinde ya da CI'da koşulmalı.
+Sıradaki adım 010'un temizliği; temizlik ikinci üyeliği kaldıracağı için hesap yeniden tek
+üyeliğe döner ve bu kusurun canlı tekrar üretilebileceği tek ortam da kapanır.
