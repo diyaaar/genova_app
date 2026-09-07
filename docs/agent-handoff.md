@@ -1,7 +1,7 @@
 # Genova — agent handoff
 
-Snapshot: 7 September 2026, verified from `main` at
-`01ce1f1412f89427e8026c68455bd756709b3b77`. This handoff is a documentation-only
+Snapshot: 7 September 2026, re-verified from `main` at `d9ab194` by the session that
+prepared the CI execution-readiness proposal. This handoff is a documentation-only
 follow-up commit. Verify the receiving checkout; conversation history is not required.
 This file is an entry point and source index, not a second roadmap or authorization grant.
 
@@ -147,17 +147,25 @@ assumption that it is now due. A proposal in a document is not permission to exe
 
 ## Next bounded task
 
-**Recommendation:** stay in brief **004** and prepare **CI execution readiness**, as specified
-in the [next-task contract](briefs/004-rn-kabuk-ve-giris.md#next-bounded-task-004-ci-execution-readiness-recommendation-not-execution-authority).
-This is a local/read-only proposal, not permission to execute remote CI. It advances a remaining
-non-hardware gate without re-scoping 004 or starting unrelated infrastructure.
+**Done, awaiting the owner's decision:** the CI execution-readiness preparation asked for by
+the [next-task contract](briefs/004-rn-kabuk-ve-giris.md#next-bounded-task-004-ci-execution-readiness-recommendation-not-execution-authority)
+was completed on 7 September at `d9ab194`. The result is the
+[CI execution-readiness proposal](briefs/004-rn-kabuk-ve-giris.md#ci-execution-readiness-proposal--7-september-2026),
+which is the authoritative record; do not restate or redo it. No remote operation was
+performed and no criterion changed.
 
-**First action:** after startup verification, inspect [ci.yml](../.github/workflows/ci.yml)
-and the `origin/main...HEAD` release-impact diff; reuse the local findings in 004 and verify
-what changed. Prepare one exact revision/ref/trigger/jobs proposal, identify hosting effects
-and unknown remote settings, and request only the concrete remote authorization needed.
-A non-main push alone does not match the current push trigger; a PR/dispatch route must be
-validated. Never assume it cannot create hosting previews. Do not modify hosting or push.
+Its findings in one line each: every route to a remote run needs at least one push, so there
+is no zero-write option; a `main` push would publish the 008 invitation UI ahead of its
+undeployed migration and Edge function, inverting 010's order; and the `quality` job is
+predicted — by analysis, not by a test — to fail at `next build`, because it supplies none of
+the Supabase environment that `playwright.config.ts` deliberately supplies to its own build.
+Six remote facts stay unknown, the Vercel preview settings among them.
+
+**Next action:** none that an agent may take alone. The proposal ends in a four-step approval
+request, the first two steps of which write nothing: a `git fetch` to replace the two-day-old
+cached `origin/main`, and an owner-side report of the Vercel and branch-protection settings.
+Until the owner answers, this brief is paused with the preparation complete. Do not push,
+open a branch or pull request, dispatch a run, or modify hosting.
 
 Acceptance for that preparation, exact relevant files, stop conditions and the actual remote-CI
 proof required are in 004. Successful proposal preparation does not change the product table.
@@ -172,11 +180,13 @@ repertoire/PDF still waits for all required acceptance evidence.
 > `docs/agent-handoff.md` as the entry point. Do not assume access to earlier conversations.
 > Verify branch, HEAD, worktree ownership and applicable evidence. Follow decision #21 and
 > preserve MIGRATION's native/WebView boundaries. Brief 004 remains open at 23/27 PASS;
-> real-device testing was postponed again. Keep its four unrun criteria intact, keep 010
-> pending and do not start repertoire/PDF. Prepare the bounded 004 CI execution-readiness
-> proposal described in the handoff: inspect the workflow and outgoing commit range, identify
-> exact revision/trigger/jobs and hosting effects or unknowns, and produce a concrete approval
-> request. This prompt grants no push, remote PR/run dispatch, deployment, production/account/
+> real-device testing was postponed and must not be raised again as the next action. Keep its
+> four unrun criteria intact, keep 010 pending and do not start repertoire/PDF.
+> The 004 CI execution-readiness proposal is already prepared and is authoritative — read it,
+> do not redo or restate it. Brief 004 is paused on my answer to its four-step approval
+> request, so unless I have answered in this conversation, take no action on it: report the
+> pending request and stop.
+> This prompt grants no push, fetch, remote PR/run dispatch, deployment, production/account/
 > data action, email, spending or hardware-test authority. Respect the recorded local-work
 > authorization and its limits; do not infer additional permissions. Keep dated evidence and
 > self-review honest, update only relevant records, and use Turkish user updates and English

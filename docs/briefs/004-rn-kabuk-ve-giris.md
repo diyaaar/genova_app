@@ -444,3 +444,134 @@ product gates; historical simulator/Android evidence never becomes live or hardw
 All five edited files are documentation/index records; original test transcripts and
 screenshots are unchanged. No new product tests, remote checks, fixture access or deployments
 ran for this handoff. Documentation acceptance is complete; underlying 004 is not.
+
+## CI execution-readiness proposal — 7 September 2026
+
+Prepared under the [next-task contract](#next-bounded-task-004-ci-execution-readiness-recommendation-not-execution-authority).
+**This is preparation, not execution.** No remote operation was performed: no fetch, push,
+branch, pull request, run dispatch, hosting change or account access. The 27-row product
+table above is untouched and still reads 23 PASS / four NOT RUN; preparing a proposal
+changes no criterion, and remote CI stays NOT RUN.
+
+### What was actually inspected
+
+All checks below are local and read-only, run on 7 September 2026 against `main` at
+`d9ab194` in the agent's Linux VM on the owner's machine.
+
+| Check | Command or source | Result |
+|---|---|---|
+| Checkout | `git rev-parse`, `git status`, `git worktree list` | `main` at `d9ab194`, clean tree, one worktree, no inherited edits |
+| Workflow content | `.github/workflows/ci.yml` at HEAD | Unchanged since `dc5f7a6`; three jobs, triggers `push:[main]`, `pull_request`, `workflow_dispatch` |
+| Cached remote workflow | `git show origin/main:.github/workflows/ci.yml` | Same three triggers, **no `mobile` job** — the native job exists only in unpushed commits |
+| Outgoing range | `git rev-list --count origin/main..HEAD` | 22 commits, from a **cached** `origin/main` ref last written 5 Sep 20:31 pointing at `0389242` |
+| Range content | `git diff --name-status origin/main..HEAD` | Adds `/invite` and `/koristler/davetler` pages, `InvitationManager`, `lib/choir-invitations`, the 008 migration and two Edge functions; root `package.json`, `pnpm-lock.yaml` and `next.config.ts` are unchanged |
+| Audit step | `pnpm audit --prod --audit-level high` | Exit 0, one low advisory. Point-in-time: the advisory database changes over time |
+| Build-time env dependency | `node -e` calling `createClient(undefined, undefined)` from the repository's own `@supabase/supabase-js` | Throws `supabaseUrl is required.` |
+| Import chain | `app/layout.tsx` → `components/AuthProvider.tsx` → `lib/supabase.ts` | The client is constructed at module scope from `process.env.NEXT_PUBLIC_SUPABASE_*` |
+| Remote branch inventory | `git branch -r` (cached) | Six open `dependabot/*` branches and `codex/003-tenant-cutover` exist besides `main` |
+
+### Predicted blocker: the `quality` job has no Supabase environment
+
+This is **analysis, not a test result.** It has not been reproduced end to end, because
+neither available environment can run `next build` for this repository: the owner's
+`node_modules` is macOS-only and the sandboxed Linux copy fails earlier, at the
+`next/font` fetch its egress policy blocks.
+
+The reasoning: `pnpm check` ends in `next build`; `app/layout.tsx` wraps every route in
+`AuthProvider`, which imports `lib/supabase.ts`, which calls `createClient` at module scope;
+17 routes prerender, so that module executes during the build; and `createClient` throws
+without a URL, as the command above shows. The workflow's `quality` job sets no `env:`
+block and references no secret or variable, and GitHub does not inject either implicitly.
+
+The same repository treats this as a known requirement elsewhere: `playwright.config.ts`
+gives its `webServer` synthetic `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+`SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY` and `APP_URL` values, and that server runs
+`pnpm build` itself. So the `browser` job supplies what it needs and the `quality` job does
+not. Locally the build only passes because `.env.local` exists and is gitignored.
+
+Consequence to expect from any run of the current workflow: `browser` and `mobile` should be
+self-sufficient, and `quality` should fail at its build step. Fixing that is a workflow change
+with its own scope, review and commit — not something to slip into this preparation.
+
+### Routes to a real CI run, and what each would actually do
+
+**Route A — push `main`.** Triggers CI, and also publishes to production. The outgoing range
+adds the 008 invitation UI while its migration `20260905210953_choir_invitations_008.sql` and
+the `choir-invitations` Edge function are **not deployed**. That inverts the DB → Edge → web
+order [010](010-008-canli-yayin-ve-kabul.md) requires and would expose real users to a feature
+whose backend does not exist. **Not recommended, and out of the current authority.**
+
+**Route B — push a side branch, open a pull request into `main`.** `push` is filtered to
+`main`, so the branch push alone triggers no run; the pull request triggers CI on the merge
+ref, exercising the workflow version from the branch, which is the one containing the `mobile`
+job. Nothing merges. The open caveat is hosting: a branch push can still produce a Vercel
+preview deployment, and a preview's environment values are a remote setting nobody has
+checked. This must not be assumed harmless.
+
+**Route C — `workflow_dispatch`.** It does not avoid a write: dispatch runs a ref that has to
+exist on the remote, so the branch must be pushed first, and dispatching against the current
+`origin/main` would run the older workflow that has no `mobile` job.
+
+**There is therefore no zero-write route to remote CI evidence.** Every route needs at least
+one push, which is exactly the authority this session does not hold.
+
+### Remote facts that remain unknown
+
+Named rather than guessed, as the contract requires; none of these was checked, because doing
+so needs either network access to the remote or account access that was not granted.
+
+1. The real `origin/main` head. The local ref is a two-day-old cache, so "22 commits" is a
+   local figure. A `git fetch` would settle it and was deliberately not run.
+2. Whether GitHub Actions is enabled and whether this workflow has ever completed. Six
+   dependabot branches exist, which suggests pull requests have been opened, but an opened
+   pull request is not a passing run.
+3. Whether repository secrets or variables exist. Even if they do, the workflow references
+   none, so they cannot reach the `quality` build without a workflow change.
+4. Branch protection and required checks on `main`.
+5. The Vercel Git integration: which branch is production, whether preview deployments are
+   enabled, what environment values previews receive, and whether an ignored-build-step rule
+   exists. If previews carry production Supabase credentials, a preview is a production data
+   risk, not a safe sandbox.
+6. Whether any deploy hook or third-party integration reacts to branch pushes.
+
+### What would actually close the CI criterion
+
+A completed run on the remote, tied to a specific commit SHA in this repository, with the run
+reference recorded here and all three jobs green — `quality`, `browser` and `mobile`. A local
+reproduction, a passing configuration review, or a run on a different revision is not that
+evidence. If `quality` fails for the environment reason above, the criterion stays NOT RUN
+until the workflow is corrected and re-run.
+
+### Concrete approval request
+
+Nothing below has been done. Each step is separable, and the first two involve no write.
+
+1. **Refresh the remote ref.** Permission to run `git fetch origin` — read-only, changes no
+   remote state — so the outgoing range and the real `origin/main` are facts rather than a
+   two-day-old cache.
+2. **Owner-side settings check.** Please report, from the Vercel project and the GitHub
+   repository settings: the production branch; whether preview deployments are enabled for
+   non-production branches; which environment values previews receive; and whether `main` has
+   branch protection. No agent access to those accounts is requested.
+3. **Then, if you choose Route B**, authorize exactly this and nothing more: push the current
+   `d9ab194` to a new remote branch `ci/004-native-check`, and open a draft pull request into
+   `main` that is not merged. Explicitly excluded: pushing `main`, merging, dispatching runs
+   on other refs, and any hosting change.
+4. **If the `quality` build fails as predicted**, authorize a separate, scoped workflow change
+   adding the needed environment to that job, as its own 004 code commit with its own gates.
+   Whether those values are synthetic, as in the Playwright config, or real repository
+   secrets is a decision for you, not an implementation detail to pick silently.
+
+If none of these is authorized, this preparation is complete and 004 stops here: no local-only
+path closes the CI criterion, hardware stays deferred by the owner's earlier choice, and
+[010](010-008-canli-yayin-ve-kabul.md) remains the separate live route rather than a follow-on.
+
+### Preparation self-review
+
+Self-review by the main agent; no independent review, and no receiving-agent execution is
+claimed. The diff for this work touches documentation only. Checked against the contract: the
+proposal names an exact repository, revision, branch, trigger and job set; it states the
+production and preview effects instead of assuming a non-`main` ref is safe; it lists the
+unknown remote settings rather than guessing them; it separates a predicted failure from a
+measured one; and it requests only the narrow remote operation needed. No required criterion
+was added, removed, reworded or re-scored, and the phone test is not raised again.

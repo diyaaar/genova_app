@@ -16,10 +16,16 @@ ran on an isolated emulator at `6d64d16`. Detailed commands, screenshots and lim
 004's linked evidence. The earlier absent-Android and 21/26 or 22/27 summaries are historical.
 Hardware keychain, real-phone account flow, remote CI and live 010 remain unrun.
 
-Recommended next bounded work is 004's **CI execution-readiness proposal**; exact scope,
-first action and acceptance are in the [004 next-task contract](../docs/briefs/004-rn-kabuk-ve-giris.md#next-bounded-task-004-ci-execution-readiness-recommendation-not-execution-authority).
-Prepare the concrete revision/trigger/jobs and publication-impact review; do not execute a
-push or remote run. The pending main history includes undeployed 008 dependencies.
+004's **CI execution-readiness proposal** was prepared on 7 September at `d9ab194` and is
+recorded in the [brief](../docs/briefs/004-rn-kabuk-ve-giris.md#ci-execution-readiness-proposal--7-september-2026),
+which stays authoritative; do not redo or restate it. Local read-only inspection only, no
+remote operation, and no criterion changed. It concludes that every route to a remote run
+needs at least one push, that a `main` push would publish the 008 invitation UI ahead of its
+undeployed migration and Edge function, and that the `quality` job is predicted — by analysis,
+not a test — to fail at `next build` for missing Supabase environment. Six remote facts stay
+unknown. Work is paused on the owner's answer to a four-step approval request whose first two
+steps write nothing: a `git fetch`, and an owner-side report of Vercel and branch-protection
+settings. Do not push, branch, open a pull request, dispatch a run or change hosting.
 
 ## Preserved order and boundaries
 
