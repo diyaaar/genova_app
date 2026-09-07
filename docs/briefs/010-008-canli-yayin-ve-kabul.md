@@ -567,13 +567,21 @@ davranışı doğru — `app/(main)/layout.tsx` üyeliksiz hesabı veri ekranlar
 bağlantısını elle yeniden açmak zorunda kalıyor. Gerçek bir korist için çıkmaz gibi görünür.
 Düzeltme, doğrulama dönüş adresine davet parametresini taşımaktır ve ayrı bir iştir.
 
-**2. Kurtarma bağlantısı yeni parola sormadan oturum açıyor.** Supabase'in kurtarma oturumu
-davranışı beklenen bir şey, ancak `/auth/recovery` sayfası yeni parola belirlemeye zorlamadığı
-için parola fiilen sıfırlanmıyor; bağlantı tek kullanımlık bir giriş yoluna dönüşüyor. Açık
-değil, ama tamamlanmamış bir akış.
+**2. Kurtarma bağlantısı yeni parola sormadan oturum açıyor.**
 
-Bunlar 008'in kabul ölçütlerini düşürmez; ikisi de akışın etrafındaki yönlendirme sorunlarıdır
-ve kendi brief'lerini gerektirir.
+> **Düzeltme — 7 Eylül 2026.** Bu bulgunun ilk yazımı yanlıştı ve kaynak kodu okunarak
+> düzeltildi. Suç `/auth/recovery` sayfasında değil: sayfa yeni parolayı zaten zorunlu
+> tutuyor ve `updateUser` sonrası `signOut({ scope: 'global' })` çağırıyor. Gerçek kusur,
+> o sayfaya giden yolun hiç var olmamasıydı — depoda hiçbir yerde `resetPasswordForEmail`
+> çağrılmıyordu, dolayısıyla yönetici tarafından üretilen bağlantı uygulamanın kurtarma
+> sayfasına değil kök adrese dönüyordu. Yanlış teşhis burada tarihsel kayıt olarak
+> bırakıldı; doğrusu 011'dedir.
+
+Bunlar 008'in kabul ölçütlerini düşürmez; ikisi de akışın etrafındaki yönlendirme
+sorunlarıdır. İkisi de [011 — davet dönüşü ve kendi kendine şifre
+sıfırlama](011-davet-donusu-ve-sifre-sifirlama.md) brief'inde ele alındı ve yerel olarak
+düzeltildi (commit `3986f35`); yayına girmesi için depo kapısı ve Auth yönlendirme izin
+listesi gerekiyor, ikisi de ürün sahibinde.
 
 ### Tek kullanımlık davet — canlı olumsuz yol (7 Eylül 2026)
 
