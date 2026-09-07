@@ -47,14 +47,16 @@ not to re-scope 004 stands; required hardware criteria stay NOT RUN, not moved t
 
 ## Current state by verification layer
 
-**004 native product area — partial, 24 of 27 required criteria PASS.** Expo workspace at
+**004 native product area — partial, 25 of 27 required criteria PASS.** Expo workspace at
 `apps/mobile/`, sign-in/session adapter, zero/single/multiple membership handling,
 server-verified selection, cache clearing and sign-out. Shared 005 logic lives in
 [choir-context-core.ts](../lib/choir-context-core.ts); the web module keeps its public
 exports. Native gate, iOS simulator, Android emulator and a green remote CI run are recorded.
 The [mandatory table](briefs/004-rn-kabuk-ve-giris.md#mandatory-acceptance-evidence) is
-authoritative. Three criteria stay NOT RUN: hardware keychain, the real-phone real-account
-flow (**deferred by the owner — do not raise it as the next action**), and live 010 acceptance.
+authoritative. Two criteria stay NOT RUN and both were deferred by the owner: hardware keychain
+and the real-phone real-account flow — **do not raise either as the next action**. The live 010
+acceptance criterion passed on 8 September: 008 is deployed and was accepted end to end on the
+live product, so the backend the native flow signs in against is live.
 
 **Live as of 7 September 2026.** 010 took 008 to production in the required DB → Edge → web
 order and the [step-by-step record](briefs/010-008-canli-yayin-ve-kabul.md) carries the
@@ -160,11 +162,14 @@ test is claimed.
 
 ## Checkout and ownership
 
-Branch `main`, HEAD `3986f35` after this update, worktree otherwise clean apart from
-`supabase/.temp/cli-latest`, a CLI cache artifact left unstaged on purpose. This agent owns
-every edit recorded here. `main` was pushed once during 010 step 6 (`0389242..6b6d9a4`) with
-explicit standing authorization and in the required order; the commits after `6b6d9a4` are
-evidence records and the local 011 fix, and they are **not pushed**.
+Branch `main`, worktree clean apart from `supabase/.temp/cli-latest`, a CLI cache artifact
+left unstaged on purpose. This agent owns every edit recorded here. `main` and `origin/main`
+are in step: the 010 step 6 release (`0389242..6b6d9a4`) and the 011 release
+(`6b6d9a4..604922e`, then documentation) were both pushed with explicit owner authorization,
+each after CI went green.
+
+Pushes go over HTTPS with the token in `.env.local.github`; the configured `origin` is an SSH
+alias the agent's shell has no key for.
 
 A practical repository quirk: this checkout sits in a folder that denies file deletion to the
 agent's shell, so git cannot clear its own `HEAD.lock`/`index.lock`. Move them into
@@ -178,40 +183,42 @@ provided the rules are followed and results are reported honestly with evidence.
 local implementation, local commits, reading live state, and the live 010 steps already
 carried out.
 
-Still requiring explicit confirmation at execution time: **the 010 step 8 cleanup**, because it
-deletes rows; any spending; and anything touching the real choir `Genesi Nova`. Hardware/real-phone
-testing was postponed by the owner — do not raise it as the next action. A proposal in a
-document is not permission to execute it, and no unrun test may be recorded as passed.
+Still requiring explicit confirmation at execution time: **any deletion of live rows**; any
+spending; anything touching the real choir `Genesi Nova`; and any further production release.
+Hardware/real-phone testing was postponed by the owner — do not raise it as the next action. A
+proposal in a document is not permission to execute it, and no unrun test may be recorded as
+passed.
 
 Housekeeping the owner should do when this work ends: revoke the GitHub token in
 `.env.local.github`.
 
 ## Next bounded task
 
-Three things are open, in the order they can be done.
+Nothing is blocked on evidence any more, and nothing is half-finished. The acceptance work
+that ran from 003 through 012 is closed except for items that are deliberately open:
 
-**1. Owner-only, short.** Run `pnpm check` at the repository root for 011, and add
-`https://app.genesinovachoir.com/invite` and `https://app.genesinovachoir.com/auth/recovery`
-to the Supabase Auth redirect allow-list. Without the second, 011's fix silently does nothing.
-Also open the live domain once and confirm it serves `6b6d9a4`, which closes 010's fifth
-criterion.
+- **004** — hardware keychain and the real-phone flow, both postponed by the owner. Do not
+  raise them.
+- **010, sixth criterion** — the revoked-link and wrong-account refusals through the live
+  product. Proven on the live database and in isolation, never through the product, and the
+  fixture is gone. Finishing it means standing up a new test choir, which is a decision for
+  the owner, not a leftover chore.
+- **012's regression test** — `supabase/tests/012_list_my_choirs_is_current.sql` has never
+  been executed. It needs `psql -f` against a database no agent shell can reach. Running it,
+  or wiring the SQL tests into CI against a throwaway database, is the single highest-value
+  small task left, because after the cleanup that file is the only guard on a fault that
+  locked a real member out of the product.
 
-**2. The two remaining live negative paths.** A revoked invitation and a wrong-account
-acceptance, both refused through the live product. Each needs a chief session and a recipient
-session; the tokens used in the first round lived in temporary files that no longer exist, so
-they must be obtained again. The database logic behind both is already proven live by the
-hosted SQL test, so what these add is the product path.
+**The next feature is repertoire/PDF**, which decision #21 put behind 004's acceptance. That
+gate is now open. Nothing else is pending.
 
-**3. 010 step 8 — cleanup, on explicit confirmation.** Delete the test choir's
-`choir_member_roles`, `choir_members`, `roles` and `choirs` rows, the
-`genova_007.choir_creation_audit` row, the 008 invitation row, and the
-`ali.duran@orbibarobotics.com` Auth user. **Preserve** the real choir `genesi-nova` and its 29
-members, the `alidiyarduran35@gmail.com` membership `ff249bd2-…` with its `Partisyon Şefi`
-role, and that Auth user, who is both a real member and the platform operator. Re-verify the
-counts and the invitation endpoint afterwards and record the result in 008 and 010.
+**Housekeeping:** the GitHub token in `.env.local.github` should be revoked; it was created
+for this work and its job is done. `.git/_stale_locks/` holds quarantined lock files and can
+be deleted.
 
-Only after 010 closes does 004 reach 25 of 27, with the two owner-deferred criteria remaining.
-Repertoire/PDF still waits for that.
+004 now stands at 25 of 27 with only the two owner-deferred criteria left, so **repertoire/PDF
+is no longer blocked by acceptance evidence** — it is the next feature work whenever the owner
+wants it. Nothing else is pending that an agent can close alone.
 
 ## Copyable startup prompt
 
@@ -223,7 +230,7 @@ Repertoire/PDF still waits for that.
 >
 > Current state: 008 is live and 010 carried it there, but 010 is **not closed** — read its
 > acceptance evidence table and treat its three open criteria as the live work. 004 stands at
-> 24 of 27; its three unrun criteria stay unrun. Brief 011 is local and partial and needs the
+> 25 of 27; its two unrun criteria stay unrun. Brief 011 is local and partial and needs the
 > repository gate plus two Auth redirect URLs before it means anything in production.
 > Real-device testing was postponed by me and must not be raised as the next action.
 > Do not start repertoire/PDF.

@@ -1,7 +1,7 @@
 # 004 — RN ürün kurulumu, giriş ve koro seçimi
 
 **Status:** Local implementation exists; partial/pending acceptance. Updated 7 September 2026.
-23 of 27 required criteria PASS; four remain NOT RUN. See the mandatory evidence table.
+25 of 27 required criteria PASS; two remain NOT RUN, both deferred by the owner. See the mandatory evidence table.
 **Amaç:** Aynı depoda telefonda çalıştırılabilir Expo ürününü kurmak; güvenli giriş,
 üyelik çözümü ve koro seçimiyle repertuvar adımına hazır kabuğa ulaşmak.
 Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #21](../../KARARLAR.md).
@@ -222,9 +222,9 @@ Environments referenced below:
 | iOS development build runs on a device or simulator | yes | PASS | 6 Sep 2026, MACOS, `npx expo run:ios` | The project's own native iOS build was generated and launched on the iOS Simulator (iPhone 17 Pro, iOS 26.5); the app runs as Genova rather than inside Expo Go. Built locally with Xcode, no EAS and no spending. Limit: simulator only, no hardware |
 | Android development build runs on a device or emulator | yes | PASS | 7 Sep 2026, `6d64d16`, direct macOS; Expo Android prebuild, Gradle ARM64 `assembleDebug`, adb install/launch on dedicated API 36 emulator | [Build, launch and UI evidence](004-android-build-2026-09-07.md): 160 tasks, own debug APK installed; signed-out screen and empty-form validation visually/XML verified. Synthetic loopback configuration, no real account/device. Initial disk/Metro connection failures resolved before acceptance |
 | Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
-| Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
+| Live invitation/membership acceptance (010) available for the native flow | yes | **PASS** | 7-8 Sep 2026, live project `hievmwwctjjlhmssoxsu` and the live domain | 008 is deployed in the required DB → Edge → web order and was accepted end to end on the live product: operator-created choir, invitation, real verification email, acceptance, and a refused second use of the same link. So the backend the native flow signs in against is live and accepted. Limit: 010 itself is not fully closed — the revoked-link and wrong-account refusals were never exercised through the live product, and the fixture that would do so has been cleaned up. That gap is about 008's negative paths, not about the native flow having a live backend |
 
-**Optional progress: 24 passed / 27 required criteria.** Three are NOT RUN, none fail, so
+**Optional progress: 25 passed / 27 required criteria.** Two are NOT RUN, none fail, so
 004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
 skipped or loosened to reach a green result.
 
