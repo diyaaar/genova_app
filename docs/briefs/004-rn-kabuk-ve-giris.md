@@ -657,3 +657,41 @@ v19. `resend-inbound` v3 matches the 009 record. These are observations, not def
 version counters increment per deploy, and no record claims exclusive ownership of those numbers.
 Do not treat any of them as evidence of an undocumented deployment without checking the function's
 history first.
+
+### Vercel settings resolved — 7 September 2026 (read-only)
+
+The owner pointed the Vercel connector at the right account. `list_teams` still returns an empty
+list, but the account slug works as the team parameter, so the project is reachable. Read-only
+calls only: `list_projects`, `get_project`, `list_deployments`, `get_project_deployment_protection`.
+Nothing was deployed, promoted, rolled back, paused or reconfigured, and no environment variable
+value was read.
+
+| Question (CI proposal unknown 5) | Answer | How it was established |
+|---|---|---|
+| Which project serves the live web | `genova-app` (`prj_dhboa…`), Next.js, Node 24.x, domains include `app.genesinovachoir.com`, linked to GitHub `genesinovachoir/genova_app` | `list_projects`, `get_project` |
+| Production branch | **`main`** | Every `target: production` deployment carries `githubCommitRef: main`, and the `…-git-main-…` branch alias exists |
+| Current production revision | `0389242` — "007: canlı kanitlari kaydet" | Latest READY production deployment; it matches `origin/main` exactly, so production and the remote are in step and nothing newer has shipped |
+| Are preview deployments enabled | **Yes** | Six deployments with `target: null` exist for `dependabot/*` branches and for `codex/003-tenant-cutover`. A branch push does build a preview |
+| Are previews publicly reachable | **No** | `ssoProtection` is enabled with `all_except_custom_domains`, so previews sit behind Vercel Authentication while the custom production domain stays public. Password protection and trusted-IP rules are off |
+| Preview environment values | **Still unread** | Reading variable values was neither needed nor attempted. A preview presumably receives the project's configured environment, so a preview of the 008 UI would talk to the live Supabase project |
+
+**Effect on the routes.** Route B — branch push plus a draft pull request — now has an evidenced
+risk profile rather than an assumed one: it triggers CI through `pull_request`, it does build a
+Vercel preview, that preview is not publicly reachable, and production stays on `main` untouched.
+Route A is unchanged and still wrong: pushing `main` would deploy the 008 UI to the public custom
+domain with no migration or Edge function behind it.
+
+**One caveat that survives.** A preview would still run against the live Supabase project, so no
+preview should be used to exercise invitation flows before 010 deploys the backend. Reading a
+preview page is safe; driving it is not.
+
+**Side observations, not defects.** The dependabot preview for the grouped development-dependency
+bump is in `ERROR` state, while the other five previews are `READY`; that is a dependency problem
+in an unrelated open pull request, not something this brief touches. The successful Vercel builds
+also confirm that Vercel supplies the environment `next build` needs — which is precisely what the
+GitHub Actions `quality` job does **not** do, so the predicted CI build failure above still stands
+and is not contradicted by Vercel's green builds.
+
+**Remaining unknowns after this check:** whether GitHub Actions is enabled and whether any run has
+ever passed, whether repository secrets exist, and whether `main` is branch-protected. Those live
+in GitHub settings, which no connected connector exposes.

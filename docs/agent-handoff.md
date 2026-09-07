@@ -170,8 +170,12 @@ the connectors, and a second
 found Supabase and Railway now on the correct `genesinovachoir` account. Read-only listings
 confirmed on the live project that the 008 migration and the `choir-invitations` Edge function are
 **absent**, so 010's preconditions are now observed rather than assumed, and the owner's own
-`git fetch` showed `origin/main` unmoved with `main` 24 ahead. Vercel still does not expose the
-live web project, so the hosting unknowns stand. Access improving does not grant deployment:
+`git fetch` showed `origin/main` unmoved with `main` 24 ahead. The owner then fixed Vercel too, and a
+[settings check](briefs/004-rn-kabuk-ve-giris.md#vercel-settings-resolved--7-september-2026-read-only)
+resolved the hosting unknowns: production is `main`, production currently sits on `0389242` in
+step with `origin/main`, preview deployments are enabled but protected by Vercel Authentication
+except on the custom domain, and previews still talk to the live Supabase project. Only the GitHub
+settings — Actions enablement, secrets and branch protection — remain unknown. Access improving does not grant deployment:
 010 remains pending and needs its own authorization and backup evidence.
 
 **Next action:** none that an agent may take alone. The proposal ends in a four-step approval
