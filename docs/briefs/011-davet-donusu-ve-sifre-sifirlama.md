@@ -1,6 +1,6 @@
 # 011 — davet dönüşü ve kendi kendine şifre sıfırlama
 
-**Durum / tarih / sorumlu yazıcı:** Kısmî (11/13 zorunlu ölçüt geçti) — 7 Eylül 2026 — tek yazıcı: bu ajan.
+**Durum / tarih / sorumlu yazıcı:** **Kapandı** (13/13 zorunlu ölçüt geçti), yayında — 7-8 Eylül 2026 — 7 Eylül 2026 — tek yazıcı: bu ajan.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Davet edilen koristin e-posta doğrulamasından
 sonra davetine geri dönebilmesi ve şifresini kendi sıfırlayabilmesi.
@@ -204,6 +204,24 @@ yanıtı ve geçersiz adresin ağ çağrısından önce reddi.
 Kayıt notu: CI günlüklerinin barındığı sunucuya ajan ortamından çıkılamıyor; hata
 GitHub API'sinin **annotation** uçundan okundu, günlük dosyasından değil.
 
+### Yayın kapandı — 8 Eylül 2026
+
+Üç koşu sürdü ve ikisi kırmızıydı; ikisinin de sebebi ürün değil testin kendisiydi.
+
+| Koşu | Commit | Sonuç | Sebep |
+|---|---|---|---|
+| [34162690120](https://github.com/genesinovachoir/genova_app/actions/runs/34162690120) | `a912089` | Browser **kırmızı** | Taklit kalıbı sorgu dizesine uymuyordu; yukarıda anlatıldı |
+| [34163150768](https://github.com/genesinovachoir/genova_app/actions/runs/34163150768) | `4d56e04` | Browser **kırmızı**, 26/28 geçti | Yeni testimdeki `getByRole('alert')` belirsizdi: Next gövdeye kendi `role="alert"` rota duyurucusunu koyuyor. Mevcut testler zaten `main` içine daraltıyordu, bu da öyle yapıldı |
+| [34163416900](https://github.com/genesinovachoir/genova_app/actions/runs/34163416900) | `4ad9bf9` | **üç iş de yeşil** | — |
+| [34163714428](https://github.com/genesinovachoir/genova_app/actions/runs/34163714428) | `f661ab2` | **üç iş de yeşil**, 30 tarayıcı testi | Kurtarma oturumu yolunun testi eklendikten sonra |
+
+Hiçbir testin iddiası zayıflatılmadı; iki düzeltme de kalıp/seçici düzeyindeydi ve testler
+net şekilde genişletildi.
+
+**Canlıda doğrulandı:** `https://app.genesinovachoir.com/auth/recovery` artık "Şifre
+sıfırlama" başlığını ve e-posta formunu gösteriyor. Ürün sahibinin makinesindeki tarayıcı
+bölmesinden okundu. Yani parolasını unutmuş bir kullanıcı için akış ilk kez uçtan uca var.
+
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date, revision, environment, command or scenario | Evidence and limits |
@@ -217,13 +235,13 @@ GitHub API'sinin **annotation** uçundan okundu, günlük dosyasından değil.
 | `signUp` returns the reader to `/invite` rather than the site root | yes | **NOT RUN** | — | Code changed and reviewed; proving it needs a real verification round trip, which belongs to 010 and to the owner |
 | Reset request accepts a valid address and rejects an undeliverable one before any network call | yes | **PASS** | 7 Sep 2026, isolated container, `vitest run` | `validateRecoveryEmail`: trimming, empty, five invalid shapes, over-long address |
 | Reset request reveals nothing about account existence | yes | **PASS** | 7 Sep 2026, unit + diff review | One notice constant for every outcome; only a 429 differs, which is about rate, not existence |
-| Existing recovery-session path still reaches the new-password form | yes | **NOT RUN** | — | No component test was executed. The `PASSWORD_RECOVERY` and `?recovery=1` branches are untouched and the late-resolution guard only refuses to overwrite a state the reader has moved past |
+| Existing recovery-session path still reaches the new-password form | yes | **PASS** | 8 Sep 2026, same CI run | With a stored session and `?recovery=1` the page shows the new-password heading, the password field and the update button, and no email field |
 | Repository gate, steps 1-4: `lint`, `typecheck`, `test:coverage`, `test:service-worker` | yes | **PASS** | 7 Sep 2026, `3986f35`, clean Linux install outside the connected folder, CI's synthetic environment | All four exited 0; 33 test files / 206 tests. The owner's macOS install was not touched |
 | Repository gate, step 5: `pnpm build` | yes | **PASS** | 7 Sep 2026, owner's macOS, `pnpm build` at the repository root | Output ends with the complete route table and returns to a clean prompt, which only happens on a successful build. Owner-run and owner-pasted; the exit code itself was not read. In the agent environment the same command stops at the Google Fonts fetch, and a font-stubbed run there compiled and prerendered all 17 pages |
 | Supabase Auth redirect allow-list contains `/invite` and `/auth/recovery` | yes | **PASS (owner-reported)** | 7 Sep 2026, Supabase dashboard | Owner states both URLs were added. Not agent-verifiable: GoTrue silently falls back to the site URL for a disallowed `redirect_to` rather than erroring, so the setting cannot be observed from outside |
 | Real email round trip through the live project | N/A — this brief grants no live or email authority | N/A | — | Live acceptance belongs to 010 |
 
-Required criteria: 13. Passed: 11. Not run: 2. This is a count of required criteria that
+Required criteria: 13. Passed: 13. Not run: 0. This is a count of required criteria that
 actually passed, not a quality score; the task stays **partial** until the four run.
 
 Review the diff against the brief after testing and record whether the review was

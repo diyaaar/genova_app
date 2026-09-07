@@ -89,11 +89,12 @@ choirs was shown "no accessible choir membership" instead of the picker. Functio
 verified live before and after; no redeploy was needed. Its regression test file is written
 but has not been executed.
 
-**Local, not deployed:** [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) fixes two dead
-ends the live round exposed — the verification round trip losing the invitation, and a
-"forgot password" link leading to a page nothing could ever reach. Partial at 8 of 12 required
-criteria: 19 unit tests pass, but the repository gate was not run here and two redirect URLs
-must be allowed in the Auth settings before the fix has any effect in production.
+**Deployed and complete:** [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) closed the two
+dead ends the live round exposed — the verification round trip losing the invitation, and a
+"forgot password" link leading to a page nothing could ever reach. 13 of 13 required criteria
+pass. Released on 8 September as `f661ab2` with all three CI jobs green and 30 browser tests;
+`/auth/recovery` on the live domain now offers a self-service reset. Two of the three runs
+were red first, both because of the tests rather than the product; the record explains each.
 
 **Not started:** repertoire/PDF, which waits on 004 acceptance. Hosting/Drive exit is
 [separate preparation](altyapi-2026-09-04.md); Vercel remains the verified live host and
