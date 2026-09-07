@@ -149,18 +149,9 @@ değiştirir; bu iş için gereksiz bir yan etki olur.
 
 Bağlantı parolası Supabase panelinden alınır ve hiçbir yere yapıştırılmaz.
 
-```
-cd ~/Antigravity/genovakorist
-supabase --version
-supabase link --project-ref hievmwwctjjlhmssoxsu
-
-D=$(date +%F)
-supabase db dump --linked --role-only -f backup_roles_$D.sql
-supabase db dump --linked            -f backup_schema_$D.sql
-supabase db dump --linked --data-only -f backup_data_$D.sql
-
-shasum -a 256 backup_roles_$D.sql backup_schema_$D.sql backup_data_$D.sql
-```
+Superseded on the same day — see the result section below. `supabase db dump` runs pg_dump inside
+Docker, which is not installed on the owner's machine, so the working route is Homebrew
+`postgresql@17` and `pg_dump` directly. The dump must also cover more than `public`.
 
 `backup_*.sql` kökte `.gitignore` kapsamındadır, Git'e girmez. Depodaki `backup_*_2026-09-04.sql`
 dosyaları boş yer tutuculardır, kanıt değildir.
@@ -230,3 +221,69 @@ Yedek ve restore kanıtı geldiğinde 010'un 3. adımı (taze restore üzerinde 
 down roundtrip) çalıştırılabilir. 7. adım için hâlâ **sizin** belirlemeniz gereken şey duruyor:
 test korosu/şefinin adı, işletmeciye ait davet alıcısı ve test sonunda silinecek kayıtların
 listesi. Bu, brief'in kendi şartı; genel yetkiden türetilmez.
+
+
+## Adım 2 sonucu — yedek ve geri yükleme kanıtlandı (7 Eylül 2026)
+
+Yedek ürün sahibinin Mac'inde alındı, taze bir PostgreSQL 17'ye geri yüklendi ve satır sayıları
+canlıyla birebir eşleşti. Canlı ortamda hiçbir değişiklik yapılmadı; tüm canlı erişim salt okunur.
+
+### İki düzeltilmiş varsayım
+
+**`supabase db dump` kullanılamadı.** CLI 2.107.0 kurulu ve `link` çalıştı, ama `db dump`
+pg_dump'ı Docker konteynerinde çalıştırıyor ve makinede Docker yok. İlk üç deneme sessizce
+**boş dosya** üretti; hash'leri boş dosyanın SHA-256'sıydı. Çalışan yol: Homebrew
+`postgresql@17` (pg_dump 17.11) ile doğrudan `pg_dump`.
+
+**Yalnız `public` yedeklemek bu proje için geçersiz bir yedek.** Restore denemeleri sırayla
+`schema "genova_003" does not exist` ve `schema "auth" does not exist` hatalarıyla durdu. Canlı
+şema listesi (salt okunur) proje şemalarının `public` dışında da olduğunu gösterdi:
+`genova_003`, `genova_005`, `genova_007` — 003/005/007 kiracı işlerinin bıraktığı şemalar — artı
+migration defteri `supabase_migrations` ve `public`'in yabancı anahtarla bağlı olduğu `auth`.
+Geçerli kapsam bu beşi içerir; `storage`, `realtime`, `vault`, `graphql`, `net` ve `extensions`
+Supabase tarafından yönetilir ve bilinçli olarak dışarıda bırakıldı.
+
+### Çalışan komutlar
+
+```
+pg_dump "$DB_URL" --schema=auth --schema=public --schema=genova_003 \
+        --schema=genova_005 --schema=genova_007 --schema=supabase_migrations \
+        -f backup_full_$D.sql
+```
+
+Geri yükleme öncesi hedef veritabanı [supabase/test-support/restore-prep.sql](../../supabase/test-support/restore-prep.sql)
+ile hazırlanır: dump'ın atıfta bulunduğu rol adları ve `extensions` şeması + `pgcrypto`,
+`uuid-ossp`. Homebrew Postgres rolleri makine kullanıcısıyla açtığı için `postgres` rolü yoktur;
+bu dosya olmadan restore `role "postgres" does not exist` ile durur. Ayrıca yeni veritabanında
+`public` şeması hazır geldiğinden dump'tan önce `drop schema public cascade` gerekir.
+
+### Kanıt
+
+| Öğe | Değer |
+|---|---|
+| Yedek dosyası | `backup_full_2026-09-07.sql`, 1.288.602 bayt, 12.540 satır |
+| SHA-256 | `11b90c417ad2536ade3d5a07c684c56ab7282a59c3c705d766e54d325f406a8d` |
+| Konum | Ürün sahibinin makinesi, `.gitignore` kapsamında. Depoya girmedi, ajan ortamlarına taşınmadı, içeriği okunmadı |
+| Geri yükleme hedefi | Yerel PostgreSQL 17.11 (Homebrew), `genova_restore` veritabanı |
+| Geri yükleme sonucu | `psql -v ON_ERROR_STOP=1` çıkış kodu **0** |
+| Sayım karşılaştırması | `public` şemasında **38 tablo, 1.726 satır**; canlı ile **tam eşleşme**, fark yok |
+
+Sayım her iki tarafta aynı `query_to_xml` sorgusuyla alındı. Canlı sayım geri yüklemeden hemen
+sonra tekrarlandı, yani karşılaştırma yedek anına yakın; aradaki sürede uygulama kullanılmış olsaydı
+fark görülürdü, görülmedi.
+
+### Sınırlar
+
+Bu, `pg_dump` kapsamındaki şemaların mantıksal yedeğidir. Auth kullanıcıları dahildir, ancak
+Storage nesneleri, Drive'daki dosyalar, Edge Function kaynakları ve proje ayarları **dahil
+değildir**; bunların geri dönüşü ayrı işlerdir. Geri yükleme temiz bir veritabanına yapıldı, canlı
+projeye değil — canlı geri yükleme hâlâ ayrı bir karar ve ayrı bir onay ister.
+
+### Sırada ne var
+
+3. adım artık çalıştırılabilir: taze restore üzerinde 008 migration'ını uygulayıp 003–008
+regresyonlarını, concurrency kabulünü ve gerçek down roundtrip'ini koşmak. Bu tamamen yerel bir
+kopyada olacağı için canlı etkisi yoktur.
+
+7. adım için hâlâ ürün sahibinin belirlemesi gereken şey duruyor: test korosu/şefinin adı,
+işletmeciye ait davet alıcısı ve test sonunda silinecek kayıtlar.
