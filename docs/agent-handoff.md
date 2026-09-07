@@ -159,7 +159,12 @@ is no zero-write option; a `main` push would publish the 008 invitation UI ahead
 undeployed migration and Edge function, inverting 010's order; and the `quality` job is
 predicted — by analysis, not by a test — to fail at `next build`, because it supplies none of
 the Supabase environment that `playwright.config.ts` deliberately supplies to its own build.
-Six remote facts stay unknown, the Vercel preview settings among them.
+Six remote facts stay unknown, the Vercel preview settings among them. A 7 September
+[connector access check](briefs/004-rn-kabuk-ve-giris.md#connector-access-check--7-september-2026-read-only)
+then established why they stay unknown: the connected Supabase and Vercel connectors are
+authenticated to an account that owns neither `hievmwwctjjlhmssoxsu` nor the live web project,
+and the agent sandbox has no SSH key or SSH transport to the GitHub remote, so remote git steps
+belong to the owner as a matter of capability rather than permission.
 
 **Next action:** none that an agent may take alone. The proposal ends in a four-step approval
 request, the first two steps of which write nothing: a `git fetch` to replace the two-day-old

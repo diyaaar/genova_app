@@ -575,3 +575,46 @@ production and preview effects instead of assuming a non-`main` ref is safe; it 
 unknown remote settings rather than guessing them; it separates a predicted failure from a
 measured one; and it requests only the narrow remote operation needed. No required criterion
 was added, removed, reworded or re-scored, and the phone test is not raised again.
+
+### Connector access check — 7 September 2026 (read-only)
+
+The owner asked the agent to use the connected Supabase and Vercel connectors. Two read-only
+listings were run and both returned a decisive negative result, so the connectors were used
+no further and nothing was created, changed, deployed or paused.
+
+| Check | Command | Result |
+|---|---|---|
+| Supabase account contents | `list_projects` | One project only, belonging to an unrelated site in a different organization. **Genova's `hievmwwctjjlhmssoxsu` is not in the connected account** |
+| Vercel account contents | `list_teams`, then `list_projects` | A single hobby-plan team with **zero projects**, so the live web project behind `app.genesinovachoir.com` is not in the connected account either |
+
+**Conclusion:** both connectors are authenticated to an account that does not own the Genova
+resources. This explains, rather than removes, the long-recorded "MCP unauthorized" state: the
+problem was never a missing grant on the right account but a connection to the wrong one.
+
+Consequences for the [CI proposal](#ci-execution-readiness-proposal--7-september-2026): its
+unknown remote fact 5, the Vercel production branch and preview settings, **cannot** be answered
+through the connected Vercel connector and still needs the owner. For
+[010](010-008-canli-yayin-ve-kabul.md), the connected Supabase connector is not a usable route
+to the shared project and must not be substituted for one; per AGENTS the only permitted project
+is `hievmwwctjjlhmssoxsu`, and switching to another organization's database is forbidden.
+
+No write, migration, function deploy, cost confirmation or project mutation was attempted on
+either account, and the unrelated project found in the Supabase account was not read or touched.
+
+### Remote git reachability from the agent sandbox — 7 September 2026
+
+Checked because the owner asked the agent to run the remote steps itself.
+
+| Check | Result |
+|---|---|
+| `ls ~/.ssh` in the agent VM | Absent; no key material of any kind |
+| `ssh -T git@github.com` | `Could not resolve hostname` — no SSH transport |
+| `curl https://github.com` | 200; HTTPS reaches GitHub through the egress proxy |
+| Connector registry search for GitHub | No GitHub connector available to install |
+
+The remote is configured as SSH (`git@github-genesinova:...`), whose alias and key live in the
+owner's macOS `~/.ssh`, outside the single connected folder. So `git fetch`, `git push`, branch
+creation and pull requests **cannot** run from the agent sandbox regardless of authorization.
+Copying a private key into the sandbox is not an option: AGENTS forbids secrets in prompts,
+command output or records. These steps stay with the owner, who runs the commands the agent
+prepares. This is a capability limit, not a missing permission.
