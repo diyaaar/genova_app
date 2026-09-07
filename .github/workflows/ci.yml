@@ -18,6 +18,18 @@ jobs:
     name: Quality and security
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    # `pnpm check` ends in `next build`, which prerenders every static route. The root layout
+    # wraps them in AuthProvider, so `lib/supabase.ts` constructs its client at module scope and
+    # the build fails with "supabaseUrl is required" when these are absent. The values are
+    # deliberately synthetic: nothing is fetched during the build, CI never deploys this output,
+    # and repository secrets would not reach Dependabot pull requests anyway. This mirrors the
+    # convention already used by playwright.config.ts for its own build server.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: test-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: test-service-role-key
+      GEMINI_API_KEY: test-gemini-key
+      APP_URL: http://127.0.0.1:3000
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@f520eceda224fe1a4aed5a2a27a194379a409996 # v6
