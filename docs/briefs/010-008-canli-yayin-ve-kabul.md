@@ -296,17 +296,30 @@ belirlediği kimlikler ve canlı durumları:
 | Rol | Adres | Auth durumu (7 Eylül, salt okunur kontrol) |
 |---|---|---|
 | Platform operatörü | `alidiyarduran35@gmail.com` | **Var**, doğrulanmış. Allow-list'e eklendi; kanıt [007](007-operator-kontrollu-koro-olusturma.md#i̇lk-platform-operatörü-atandı--7-eylül-2026) |
-| Test Şefi | `diyarinhesaplari@gmail.com` | **Auth'ta yok** |
+| Test Şefi | `alidiyarduran35@gmail.com` — 7 Eylül'de operatörle aynı hesap olarak değiştirildi | **Var**, doğrulanmış. Önceki seçim `diyarinhesaplari@gmail.com` idi ve Auth'ta olmadığı için önkoşul yaratıyordu |
 | Davet alıcısı | `ali.duran@orbibarobotics.com` | **Auth'ta yok** |
 
 **Alıcının bulunmaması sorun değil, tam tersi.** 008 yeni Auth kullanıcısı yolunu açıkça
 kapsıyor; davetin gerçek değeri de orada. Alıcı hesabı önceden açılmamalı.
 
-**Şefin bulunmaması ise bir önkoşul.** `public.create_operator_choir` kurucu olarak **var olan**
-bir Auth kullanıcısının kimliğini ister (`p_founder_auth_user_id`). Yani test korosu
-oluşturulmadan önce `diyarinhesaplari@gmail.com` canlı uygulamadan kayıt olup e-postasını
-doğrulamalıdır. Bu adım ürün sahibine aittir; ajan Auth kullanıcısı oluşturamaz ve
-oluşturmamalıdır.
+**Şef artık operatörle aynı hesap.** Bu, `create_operator_choir`'ın var olan kurucu şartını
+karşıladığı için yeni hesap açma önkoşulunu kaldırır. Ancak kayda geçmesi gereken bir sonucu var:
+
+`alidiyarduran35@gmail.com` **hâlihazırda gerçek koronun aktif üyesidir** — `Genesi Nova`,
+üyelik `ff249bd2-…`, rol `Partisyon Şefi`. Test korosunun kurucu Şefi yapılması bu hesaba
+**ikinci bir üyelik** ekler. İki etkisi olur:
+
+1. **Gerçek kullanım değişir.** 005 sözleşmesi gereği çok üyelikli hesapta koro seçimi zorunlu
+   hâle gelir. Bu hesapla girişte artık doğrudan koroya değil, seçim ekranına düşülür. Test
+   korosu silindiğinde eski davranışa döner.
+2. **İstenen bir yan fayda.** [005](005-coklu-uyelik-aktif-koro.md) kaydı "gerçek ikinci üyelik ve
+   seçiciyle canlı deneme yapılmadı" diyor. Bu kurulum tam olarak o boşluğu, gerçek bir hesapla ve
+   üretim verisine dokunmadan doldurur.
+
+Temizlikte dikkat: silinecek olan **yalnız test korosuna ait** üyelik ve rol satırlarıdır.
+`Genesi Nova` üyeliği `ff249bd2-…` ve `Partisyon Şefi` rolü kesinlikle korunur. Bu hesap
+operatör olduğu için Auth kullanıcısı da **silinmez**; temizlik listesinin 4. maddesi yalnız
+davet alıcısı için geçerlidir.
 
 ### Temizlik listesi — önerilen, uygulanmadan önce ayrıca onaylanacak
 
@@ -315,7 +328,8 @@ Test bittiğinde silinecekler, dar kapsamlı:
 1. Test korosuna ait `choir_member_roles`, `choir_members`, `roles` satırları
 2. Test korosunun `choirs` satırı ve `genova_007.choir_creation_audit` kaydı
 3. Test korosuna ait davet satırları (008 tablosu)
-4. `diyarinhesaplari@gmail.com` ve `ali.duran@orbibarobotics.com` Auth kullanıcıları
+4. `ali.duran@orbibarobotics.com` Auth kullanıcısı. `alidiyarduran35@gmail.com` **silinmez** —
+   gerçek koro üyesi ve platform operatörüdür
 5. Operatör kaydı, artık gerekmiyorsa: `genova_007.platform_operators` tek satırı
 
 Kapsam dışı ve **kesinlikle dokunulmayacak**: mevcut gerçek koro, 29 üyesi ve karar #17
