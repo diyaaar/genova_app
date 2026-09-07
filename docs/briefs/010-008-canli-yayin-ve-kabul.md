@@ -483,3 +483,37 @@ altında üst kaydı göremediği için sessizce geçmişti.
 ile dağıtımı. `supabase/config.toml` bu ayarı zaten taşıyor. Dağıtım CLI ile depodaki dosyalardan
 yapılacak, çünkü `index.ts` başka bir fonksiyon klasöründeki `create-choir-core.ts` dosyasını da
 import ediyor; MCP'ye elle dosya yapıştırmak bu bağımlılık zincirini eksik bırakırdı.
+
+## Adım 5 — Edge fonksiyonu dağıtıldı ve canlı güvenlik kontrolleri geçti (7 Eylül 2026)
+
+`supabase functions deploy choir-invitations` ile depodaki dosyalardan dağıtıldı. Dosyalar MCP'ye
+elle yapıştırılmadı: `index.ts`, başka bir fonksiyon klasöründeki `create-choir-core.ts`'i import
+ediyor ve elle yapıştırma bu bağımlılığı eksik bırakırdı. CLI çıktısı üç dosyanın da
+yüklendiğini gösterdi, `create-choir-core.ts` dahil.
+
+| Doğrulama | Sonuç |
+|---|---|
+| Fonksiyon durumu | `choir-invitations`, ACTIVE, sürüm 1 |
+| `verify_jwt` | **true** — `config.toml`'daki bildirimle uyumlu |
+| Diğer fonksiyonlara etki | Yok. Sürüm sayaçları arttı ama `updated_at` ve `ezbr_sha256` değerlerinin tamamı değişmedi; bundle'lara dokunulmadı |
+
+### Canlı güvenlik kontrolleri
+
+Beklentiler ölçümden **önce** yazıldı; dördü de birebir tuttu.
+
+| Kontrol | Beklenen | Gerçekleşen |
+|---|---|---|
+| Authorization başlığı yok | 401, gateway keser | **401** |
+| Anon anahtarıyla POST | 401, `getUser` kullanıcı bulamaz | **401** |
+| OPTIONS preflight | 200 + CORS başlıkları | **200** |
+| GET | 405 | **405** |
+
+CORS başlıkları: `allow-origin: *`, `allow-headers: authorization, apikey, content-type,
+x-client-info`, `allow-methods: POST, OPTIONS`. Preflight'ın 401 dönmemesi önemliydi; dönseydi
+tarayıcı istemcisi CORS aşamasında patlardı.
+
+"Yanlış koro" ve gövde doğrulama yolları gerçek kullanıcı JWT'si gerektirir ve 7. adımda
+kontrol edilir; anon anahtarıyla istek zaten kimlik aşamasında durduğu için oraya ulaşmıyor.
+
+**Adım 5 tamamlandı.** DB ve Edge hazır olduğuna göre 6. adım (web yayını) artık
+DB → Edge → web sırasına uygun.
