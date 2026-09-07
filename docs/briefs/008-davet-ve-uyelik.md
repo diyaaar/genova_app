@@ -119,3 +119,15 @@ cluster klasörü Çöp Sepeti'ne taşındı. Asıl yedeklere dokunulmadı.
 Geri dönüş: önce web girişini kaldır, Edge'i geri al, 008 down uygula; kabul edilmiş
 üyelikler silinmez. Canlı kesim öncesi taze backup/restore ve iki proje etkisi gerekir.
 Sıra: DB → Edge → web; önceki sürümler yeni akışa bağımlı değildir.
+
+## Canlı kabul fikstürü kaldırıldı — 8 Eylül 2026
+
+008'in canlı kabulünde kullanılan davet, test korosu ve alıcı hesap 010'un 8. adımında
+silindi; `genova_008.invitations` yeniden **0 satır**. Kabul kayıtları
+[010](010-008-canli-yayin-ve-kabul.md#adım-7--kontrollü-ürün-kabulü-ilk-tur-7-eylül-2026)
+ve bu brief'te duruyor.
+
+Silme, tek açık ölçütü de kalıcı olarak açık bıraktı: **iptal edilmiş bağlantı** ve **yanlış
+hesap** yolları canlı üründe denenmemişti ve artık o fikstür yok. İkisi de canlı veritabanında
+hosted SQL testiyle ve izole ortamda kanıtlı; eksik olan yalnız ürün yolu. Yeni bir tur
+gerekirse yeni bir test korosu kurulmalıdır.

@@ -192,3 +192,12 @@ bu çağrıyı mümkün kılan şey allow-list kaydıydı, kullanıcının mevcu
 **007 artık tamamlandı.** Koro `010` test verisidir; temizlik listesi
 [010](010-008-canli-yayin-ve-kabul.md#temizlik-listesi--önerilen-uygulanmadan-önce-ayrıca-onaylanacak)
 içindedir ve gerçek koroya dokunmaz.
+
+## Fikstür kaldırıldı — 8 Eylül 2026
+
+Bu brief'in kabulünü sağlayan `genova-008-test` korosu, 010'un 8. adımında planlandığı gibi
+silindi. Kabulün kendisi değişmiyor: RPC canlıda gerçek bir operatör JWT'siyle çalıştı,
+koroyu ve üç varsayılan rolü oluşturdu, kurucuyu Şef yaptı ve denetim satırını yazdı; bunların
+hepsi o gün ölçüldü ve yukarıda kayıtlı. Silinen, kanıt değil kanıtın bıraktığı veridir; satır
+içerikleri [`supabase/test-support/010_step8_pre_cleanup_snapshot.json`](../../supabase/test-support/010_step8_pre_cleanup_snapshot.json)
+dosyasında duruyor. Operatör izin listesi silinmedi ve hâlâ tek kayıt taşıyor.

@@ -65,11 +65,15 @@ production deployment. A controlled product acceptance then created a test choir
 test account, delivered a real verification email, accepted the invitation and refused a
 second acceptance of the same link.
 
-**010 is not closed.** Its
-[acceptance evidence table](briefs/010-008-canli-yayin-ve-kabul.md#kabul-kanıt-tablosu--7-eylül-2026)
-lists three open criteria: live domain verification (neither agent environment can reach
-`app.genesinovachoir.com`), the revoked-link and wrong-account negative paths live, and
-cleanup of the test data. Cleanup needs its own confirmation at execution time.
+**010 has one criterion left, and it will stay open.** Six of seven passed, cleanup included:
+the test choir, its roles, memberships, invitation, audit row and the recipient Auth account
+were removed on 8 September with the owner's confirmation, and every count returned to the
+pre-010 baseline. What remains unproven is the sixth criterion's last part — the revoked-link
+and wrong-account refusals **through the live product**. Both are proven on the live database
+by the hosted SQL test and in isolation; only the product path is missing, and the fixture that
+would exercise it no longer exists. Closing it honestly means standing up a new test choir, not
+reinterpreting the evidence. See the
+[acceptance evidence table](briefs/010-008-canli-yayin-ve-kabul.md#kabul-kanıt-tablosu--7-eylül-2026).
 
 **Historically deployed, revisited here:**
 

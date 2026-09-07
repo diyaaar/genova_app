@@ -79,7 +79,7 @@ onayıyla alınır. 009 SMTP/yönlendirme bu geri dönüşte değiştirilmez.
 - [x] Edge canlı güvenlik/CORS kontrolleri geçti.
 - [x] GitHub CI, Vercel deployment ve canlı domain aynı commit'i gösterdi.
 - [ ] Gerçek Auth doğrulaması ile oluştur/iptal/kabul ve olumsuz yollar geçti.
-- [ ] Onaylı test verisi temizlendi; kapsam dışı üretim verisi değişmedi.
+- [x] Onaylı test verisi temizlendi; kapsam dışı üretim verisi değişmedi.
 
 ## Sonraki tek adım
 
@@ -659,8 +659,63 @@ Yedi ölçüt için tek tablo. Kural: koşulmamış hiçbir kontrol geçmiş say
 | 4 | Edge canlı güvenlik ve CORS kontrolleri | **PASS** | [Adım 5](#adım-5--edge-fonksiyonu-dağıtıldı-ve-canlı-güvenlik-kontrolleri-geçti-7-eylül-2026), dört kontrol de önceden yazılmış beklentiyle eşleşti |
 | 5 | CI, Vercel ve canlı domain aynı commit'i gösterdi | **PASS** | CI koşu #21 ve Vercel `dpl_AsrMsn…` ikisi de `6b6d9a4`. Canlı domain 7 Eylül'de tarayıcı bölmesinden okundu ve 011 öncesi sürümü sunuyor ([ayrıntı](#canlı-alan-adı-doğrulaması--7-eylül-2026)). Sınır: commit özeti istemciden okunamıyor, bağ davranış üzerinden kuruldu |
 | 6 | Gerçek Auth ile oluştur / iptal / kabul ve olumsuz yollar | **KISMÎ** | Oluşturma, kabul ve tek kullanımlık reddi **PASS** ([Adım 7](#adım-7--kontrollü-ürün-kabulü-ilk-tur-7-eylül-2026) ve tek kullanımlık bölümü). İptal edilmiş bağlantı ve yanlış hesap **NOT RUN** — canlıda hiç denenmedi |
-| 7 | Onaylı test verisi temizlendi, kapsam dışı üretim verisi değişmedi | **NOT RUN** | Temizlik listesi [hazır](#temizlik-listesi--önerilen-uygulanmadan-önce-ayrıca-onaylanacak); uygulanmadı. Kapsam dışı veri şu ana kadar değişmedi: `genesi-nova` her ölçümde 29 üye |
+| 7 | Onaylı test verisi temizlendi, kapsam dışı üretim verisi değişmedi | **PASS** | 8 Eylül 2026, sahip onayıyla. [Adım 8](#adım-8--temizlik-yapıldı-8-eylül-2026): 12 satır silindi, sayımlar 010 öncesi temele döndü, korunacaklar tek tek doğrulandı, silme öncesi anlık görüntü dosyaya yazıldı |
 
-**010 kapanmadı.** İki ölçüt eksik kaldı: iki olumsuz yol (oturum belirteci gerekiyor) ve
-temizlik (ayrı onay gerekiyor). Canlı domain 7 Eylül'de doğrulandı. Bu tablo, 004'ün "canlı
-010 kabulü" satırının da neden hâlâ NOT RUN olduğunu açıklar.
+**010'da tek ölçüt açık kaldı: altıncı.** İptal edilmiş bağlantı ve yanlış hesap yolları
+canlı üründe hiç denenmedi ve artık denenemez — temizlik, bunun için gereken test korosunu
+ve davetini kaldırdı. İkisi de canlı veritabanında hosted SQL testiyle ve izole ortamda
+kanıtlanmış durumda; eksik olan yalnız ürün yolu. Diğer altı ölçüt geçti.
+
+## Adım 8 — temizlik yapıldı (8 Eylül 2026)
+
+Ürün sahibi, uygulamaya girebildiğini teyit ettikten sonra temizliği açıkça onayladı.
+
+**Silmeden önce geri dönüş hazırlandı.** Silinecek her satır, silinmeden hemen önce
+[`supabase/test-support/010_step8_pre_cleanup_snapshot.json`](../../supabase/test-support/010_step8_pre_cleanup_snapshot.json)
+dosyasına yazıldı; fikstür gerekirse yeniden kurulabilir. Dosyada parola yok, ham davet
+token'ı yok; `token_hash` zaten kullanılmış bir davetin tek yönlü özeti.
+
+**Önce kapsam ölçüldü, tahmin edilmedi.** `public.choirs`'a bakan 36 yabancı anahtarın
+tamamı tek tek sayıldı; test korosuna bağlı satır yalnız beş tabloda vardı. Otuz bir tablo
+boştu, yani silme kapsamı belgede yazandan ne fazla ne eksikti.
+
+| Tablo | Silinen |
+|---|---:|
+| `genova_005.active_choir_sessions` | 1 |
+| `genova_008.invitations` | 1 |
+| `public.choir_member_roles` | 2 |
+| `public.choir_members` | 2 |
+| `public.roles` | 3 |
+| `genova_007.choir_creation_audit` | 1 |
+| `public.choirs` | 1 |
+| `auth.users` (yalnız `ali.duran@orbibarobotics.com`) | 1 |
+
+Hepsi tek transaction'da, ebeveyn-çocuk sırasına uyarak. `active_choir_sessions` satırı
+listede yer aldı çünkü o tablonun `choirs`'a yabancı anahtarı yok; silinmeseydi artık var
+olmayan bir koroyu gösteren bir oturum kaydı kalırdı.
+
+### Silme sonrası — sayımlar 010 öncesi temele döndü
+
+| Sayaç | 010 öncesi temel | Şimdi |
+|---|---:|---:|
+| `choirs` | 1 | **1** |
+| `choir_members` | 29 | **29** |
+| `choir_member_roles` | 28 | **28** |
+| `roles` | 3 | **3** |
+| `auth.users` | 28 | **28** |
+| `genova_008.invitations` | 0 | **0** |
+| `genova_007.choir_creation_audit` | 0 | **0** |
+
+Kasten korunanlar ayrıca tek tek doğrulandı: `genesi-nova` **29 üye**; ürün sahibinin
+üyeliği `ff249bd2-…` duruyor; Auth kullanıcısı `70a75f7c-…` duruyor; operatör izin
+listesi hâlâ **1 kayıt**.
+
+Son olarak hesabın tek üyeliğe döndüğü, gerçek çağrıyla doğrulandı: `list_my_choirs()`
+tek satır ve `is_current = true` döndürüyor — yani `current_choir_id()` yine tek-üyelik
+kademesinden çözüyor ve koro seçim ekranı bir daha çıkmayacak.
+
+**Sınır:** bu, 012'nin canlıda tekrar üretilebileceği tek ortamı da kapattı. Kusurun
+regresyon koruması artık yalnız `supabase/tests/012_list_my_choirs_is_current.sql`
+dosyasında ve o dosya henüz koşulmadı.
+
+**Adım 8 tamamlandı; 010'un yedinci ölçütü geçti.**

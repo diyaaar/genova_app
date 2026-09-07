@@ -1,0 +1,33 @@
+{
+  "note": "Every row deleted by 010 step 8, captured immediately before the delete so the fixture can be recreated if it is ever needed again. Test data only: the choir, roles, memberships, invitation and audit row created during the 8 September controlled acceptance, plus the pointer row in active_choir_sessions and the identity of the recipient test account. No password, no raw invitation token; token_hash is the one-way hash of an invitation that was already consumed.",
+  "captured_at": "2026-09-08T01:07:12.687196+03:00",
+  "choir": {"id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "name": "Genova 008 Test", "slug": "genova-008-test", "created_at": "2026-09-07T18:25:54.134371+03:00"},
+  "roles": [
+    {"id": "05054722-31ff-44d5-9b94-1ae060a48c2a", "name": "Korist", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "created_at": "2026-09-07T18:25:54.134371+03:00"},
+    {"id": "35dd020f-8260-47aa-a9f2-51d2c7b2dc96", "name": "Partisyon Şefi", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "created_at": "2026-09-07T18:25:54.134371+03:00"},
+    {"id": "a221e368-1310-4824-95b8-e75046e3d379", "name": "Şef", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "created_at": "2026-09-07T18:25:54.134371+03:00"}
+  ],
+  "choir_members": [
+    {"id": "08b1e657-8476-4017-b554-340f236c78c0", "email": "ali.duran@orbibarobotics.com", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "is_active": true, "join_date": "2026-09-07", "first_name": "Ali", "last_name": "Duran", "voice_group": "Bass", "auth_user_id": "26648117-f840-4c1d-8747-e7195b4f286d", "created_at": "2026-09-07T18:34:01.143653+03:00"},
+    {"id": "95e8aafd-02cc-414c-bf1b-483406895196", "email": "alidiyarduran35@gmail.com", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "is_active": true, "join_date": "2026-09-07", "first_name": "Ali Diyar", "last_name": "Duran", "voice_group": "Şef", "auth_user_id": "70a75f7c-ca85-4cab-9a8a-b92bbc79677b", "created_at": "2026-09-07T18:25:54.134371+03:00"}
+  ],
+  "choir_member_roles": [
+    {"id": "99d81c4c-1d8e-40f8-b421-e09852264312", "role_id": "a221e368-1310-4824-95b8-e75046e3d379", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "member_id": "95e8aafd-02cc-414c-bf1b-483406895196", "assigned_at": "2026-09-07T18:25:54.134371+03:00"},
+    {"id": "afc9bc83-453e-4a18-86bc-6e462f12535d", "role_id": "05054722-31ff-44d5-9b94-1ae060a48c2a", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "member_id": "08b1e657-8476-4017-b554-340f236c78c0", "assigned_at": "2026-09-07T18:34:01.143653+03:00"}
+  ],
+  "creation_audit": [
+    {"choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "created_at": "2026-09-07T18:25:54.134371+03:00", "founder_auth_user_id": "70a75f7c-ca85-4cab-9a8a-b92bbc79677b", "operator_auth_user_id": "70a75f7c-ca85-4cab-9a8a-b92bbc79677b"}
+  ],
+  "invitations": [
+    {"id": "1d87a4b8-84f2-44df-879e-e23203ae0bd8", "email": "ali.duran@orbibarobotics.com", "choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "first_name": "Ali", "last_name": "Duran", "voice_group": "Bass", "created_at": "2026-09-07T18:27:59.826428+03:00", "created_by": "70a75f7c-ca85-4cab-9a8a-b92bbc79677b", "expires_at": "2026-09-14T18:27:59.826428+03:00", "revoked_at": null, "token_hash": "2971a319565f893d54e57808951ffcc7f5543b975ac19fd9a180026683ce8ad5", "accepted_at": "2026-09-07T18:34:01.143653+03:00", "accepted_by": "26648117-f840-4c1d-8747-e7195b4f286d"}
+  ],
+  "active_choir_sessions": [
+    {"choir_id": "37d0a21f-1970-425b-931c-ed1cfcf9a254", "session_id": "db8e26e9-0a9b-43d3-86d4-927290e1602a", "selected_at": "2026-09-07T18:27:57.90536+03:00", "auth_user_id": "70a75f7c-ca85-4cab-9a8a-b92bbc79677b"}
+  ],
+  "auth_user_deleted": {"id": "26648117-f840-4c1d-8747-e7195b4f286d", "email": "ali.duran@orbibarobotics.com", "created_at": "2026-09-07T18:32:09.985239+03:00", "email_confirmed_at": "2026-09-07T18:32:32.36172+03:00"},
+  "preserved_deliberately": {
+    "choir": {"id": "b596e85e-6dfe-4bd4-8ecc-61ff3b925d40", "slug": "genesi-nova", "members": 29},
+    "membership": {"id": "ff249bd2-18d0-42e7-bf59-673f80427ae6", "email": "alidiyarduran35@gmail.com", "role": "Partisyon Şefi"},
+    "auth_user": {"id": "70a75f7c-ca85-4cab-9a8a-b92bbc79677b", "why": "real member and the platform operator"}
+  }
+}
