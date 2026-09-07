@@ -77,7 +77,7 @@ onayıyla alınır. 009 SMTP/yönlendirme bu geri dönüşte değiştirilmez.
 - [x] Taze restore 003–008, concurrency ve down roundtrip geçti.
 - [x] Kesin 008 canlı migration, hosted rollback testleri ve DB yetkileri geçti.
 - [x] Edge canlı güvenlik/CORS kontrolleri geçti.
-- [ ] GitHub CI, Vercel deployment ve canlı domain aynı commit'i gösterdi.
+- [x] GitHub CI, Vercel deployment ve canlı domain aynı commit'i gösterdi.
 - [ ] Gerçek Auth doğrulaması ile oluştur/iptal/kabul ve olumsuz yollar geçti.
 - [ ] Onaylı test verisi temizlendi; kapsam dışı üretim verisi değişmedi.
 
@@ -528,12 +528,30 @@ DB ve Edge hazır olduktan sonra, sırayı bozmadan `main` `origin`'e gönderild
 |---|---|
 | GitHub CI | Koşu [#21](https://github.com/genesinovachoir/genova_app/actions/runs/34135147638), `push` olayı, `6b6d9a4` — **üç iş de yeşil**: Quality and security, Browser regression, Native product checks |
 | Vercel production | `dpl_AsrMsnYPgcT98CbSH3AatR469poj`, hedef `production`, durum **READY**, commit `6b6d9a4` |
-| Canlı alan adı | **Ajan doğrulayamadı.** Ne bulut konteyneri ne cihaz VM'i `app.genesinovachoir.com`'a çıkabiliyor; ikisinde de bağlantı kurulamıyor. Ürün sahibinin doğrulaması gerekiyor |
+| Canlı alan adı | **Doğrulandı — 7 Eylül 2026, ürün sahibinin makinesindeki tarayıcı bölmesinden.** Ayrıntı aşağıda |
 
 CI'ın `push` olayıyla ve `main` üzerinde yeşil geçmesi, 004'ün CI kriterinin daha önce
 yalnız `pull_request` ref'inde kanıtlanmış olmasındaki sınırı da kapatır.
 
 Commit/push/deploy birbirinin kanıtı sayılmadı: üçü ayrı ayrı okundu.
+
+### Canlı alan adı doğrulaması — 7 Eylül 2026
+
+İki ajan kabuğu da hâlâ `app.genesinovachoir.com`'a çıkamıyor (proxy 403). Bunun yerine
+ürün sahibinin bilgisayarındaki tarayıcı bölmesi kullanıldı; oradan alan adı normal
+şekilde açılıyor. Sayfa metinleri ajan tarafından okundu:
+
+| Adres | Görülen |
+|---|---|
+| `/invite` | "Koro daveti — Davet bağlantısı eksik veya geçersiz. Size gönderilen bağlantıyı yeniden açın." Yani 008 davet arayüzü canlıda ve token'sız girişi doğru reddediyor |
+| `/auth/recovery` | "Yeni şifre belirle … Bu kurtarma bağlantısı geçersiz veya süresi dolmuş." |
+
+İkinci satır ayrıca **hangi sürümün yayında olduğunu** ayırt ediyor: 011'in yerel
+düzeltmesi bu ekranı sıfırlama isteği formuna çeviriyor. Eski metnin görünmesi, canlının
+beklendiği gibi 011 **öncesi** durumda — yani `6b6d9a4`'te — olduğunu gösteriyor.
+
+**Sınır:** commit özeti istemci tarafından okunamıyor. Bağ, davranış üzerinden kuruldu:
+`/invite` rotası yalnız push edilen aralıkta var ve `/auth/recovery` metni 011 öncesine ait.
 
 ## Adım 7 — kontrollü ürün kabulü, ilk tur (7 Eylül 2026)
 
@@ -633,10 +651,10 @@ Yedi ölçüt için tek tablo. Kural: koşulmamış hiçbir kontrol geçmiş say
 | 2 | Taze restore üzerinde 003–008, concurrency, down roundtrip | **PASS** | [Adım 3 sonucu](#adım-3-sonucu--taze-restore-kabulü-geçti-7-eylül-2026); ilk koşu FAIL'i ve kök nedeni aynı bölümde |
 | 3 | Canlı 008 migration'ı, hosted rollback testleri, DB yetkileri | **PASS** | [Adım 4](#adım-4--canlı-db-migrationı-uygulandı-7-eylül-2026) |
 | 4 | Edge canlı güvenlik ve CORS kontrolleri | **PASS** | [Adım 5](#adım-5--edge-fonksiyonu-dağıtıldı-ve-canlı-güvenlik-kontrolleri-geçti-7-eylül-2026), dört kontrol de önceden yazılmış beklentiyle eşleşti |
-| 5 | CI, Vercel ve canlı domain aynı commit'i gösterdi | **KISMÎ** | CI koşu #21 ve Vercel `dpl_AsrMsn…` ikisi de `6b6d9a4` — **PASS**. Canlı domain **NOT RUN**: iki ajan ortamı da `app.genesinovachoir.com`'a çıkamıyor; ürün sahibi doğrulaması gerekiyor |
+| 5 | CI, Vercel ve canlı domain aynı commit'i gösterdi | **PASS** | CI koşu #21 ve Vercel `dpl_AsrMsn…` ikisi de `6b6d9a4`. Canlı domain 7 Eylül'de tarayıcı bölmesinden okundu ve 011 öncesi sürümü sunuyor ([ayrıntı](#canlı-alan-adı-doğrulaması--7-eylül-2026)). Sınır: commit özeti istemciden okunamıyor, bağ davranış üzerinden kuruldu |
 | 6 | Gerçek Auth ile oluştur / iptal / kabul ve olumsuz yollar | **KISMÎ** | Oluşturma, kabul ve tek kullanımlık reddi **PASS** ([Adım 7](#adım-7--kontrollü-ürün-kabulü-ilk-tur-7-eylül-2026) ve tek kullanımlık bölümü). İptal edilmiş bağlantı ve yanlış hesap **NOT RUN** — canlıda hiç denenmedi |
 | 7 | Onaylı test verisi temizlendi, kapsam dışı üretim verisi değişmedi | **NOT RUN** | Temizlik listesi [hazır](#temizlik-listesi--önerilen-uygulanmadan-önce-ayrıca-onaylanacak); uygulanmadı. Kapsam dışı veri şu ana kadar değişmedi: `genesi-nova` her ölçümde 29 üye |
 
-**010 kapanmadı.** Üç ölçüt eksik: canlı domain doğrulaması (sahip), iki olumsuz yol
-(oturum belirteci gerekiyor), temizlik (ayrı onay gerekiyor). Bu tablo, 004'ün "canlı 010
-kabulü" satırının da neden hâlâ NOT RUN olduğunu açıklar.
+**010 kapanmadı.** İki ölçüt eksik kaldı: iki olumsuz yol (oturum belirteci gerekiyor) ve
+temizlik (ayrı onay gerekiyor). Canlı domain 7 Eylül'de doğrulandı. Bu tablo, 004'ün "canlı
+010 kabulü" satırının da neden hâlâ NOT RUN olduğunu açıklar.

@@ -1,6 +1,6 @@
 # 011 — davet dönüşü ve kendi kendine şifre sıfırlama
 
-**Durum / tarih / sorumlu yazıcı:** Kısmî (9/13 zorunlu ölçüt geçti) — 7 Eylül 2026 — tek yazıcı: bu ajan.
+**Durum / tarih / sorumlu yazıcı:** Kısmî (10/13 zorunlu ölçüt geçti) — 7 Eylül 2026 — tek yazıcı: bu ajan.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Davet edilen koristin e-posta doğrulamasından
 sonra davetine geri dönebilmesi ve şifresini kendi sıfırlayabilmesi.
@@ -135,6 +135,9 @@ kendi oturum deposuyla taşınır.
 | 7 Eylül 2026 | `pnpm test:coverage` | aynı | **geçti** | **33 dosya / 206 test**, kapsam eşikleri dahil çıkış 0 |
 | 7 Eylül 2026 | `pnpm test:service-worker` | aynı | **geçti** | `node --check public/sw.js`, çıkış 0 |
 | 7 Eylül 2026 | `pnpm build` | aynı | **değerlendirilemedi** | Ağ engeli, kod sonucu değil: `next/font` Google Fonts'a çıkamıyor — `Failed to fetch font 'Noto Serif' … 'Manrope'`. Her iki ajan ortamında da `fonts.googleapis.com` ve `fonts.gstatic.com` proxy tarafından 403 ile kesiliyor |
+| 7 Eylül 2026 | `pnpm build`, kopyada yazı tipleri saplama ile | aynı kopya, depoya dokunulmadı | **derlendi ve prerender etti** | **Kapı değildir.** Yalnız yazı tipi çağrıları saplandı; `✓ Compiled successfully`, `✓ Generating static pages (17/17)`, listede `○ /invite` ve `○ /auth/recovery`. Yani font indirmesi dışında derlemeyi bozan bir şey yok — CI'da `/auth/recovery` prerender'ında patlayan türden bir hata bu koşuda çıkmadı |
+| 7 Eylül 2026 | `pnpm build` (gerçek kapı) | ürün sahibinin macOS'u | **sonuç bildirilmedi** | Ürün sahibi komutu çalıştırdığını söyledi, çıktı paylaşılmadı. Söylenen bir şey koşulmuş test yerine geçmez; satır bu yüzden hâlâ açık |
+| 7 Eylül 2026 | Auth yönlendirme izin listesine iki adres eklendi | Supabase paneli | **ürün sahibi beyanı** | Ajan doğrulayamaz: GoTrue izinli olmayan bir `redirect_to`'yu hata vermeden Site URL'e düşürür, yani ayar dışarıdan gözlenemiyor. Kanıt, sahibin bildirimidir |
 | 7 Eylül 2026 | Diff incelemesi | yerel | yapıldı — **öz-inceleme**, bağımsız inceleme değil | Kapsam dışı değişiklik yok; `supabase/.temp/cli-latest` bilerek commit'e alınmadı |
 
 ### Kapının dördü koşuldu, biri ortam yüzünden koşulamadı
@@ -186,12 +189,12 @@ koşulmadı; canlı yönlendirme listesi henüz ayarlanmadı. Sıradaki tek adı
 | Reset request accepts a valid address and rejects an undeliverable one before any network call | yes | **PASS** | 7 Sep 2026, isolated container, `vitest run` | `validateRecoveryEmail`: trimming, empty, five invalid shapes, over-long address |
 | Reset request reveals nothing about account existence | yes | **PASS** | 7 Sep 2026, unit + diff review | One notice constant for every outcome; only a 429 differs, which is about rate, not existence |
 | Existing recovery-session path still reaches the new-password form | yes | **NOT RUN** | — | No component test was executed. The `PASSWORD_RECOVERY` and `?recovery=1` branches are untouched and the late-resolution guard only refuses to overwrite a state the reader has moved past |
-| Supabase Auth redirect allow-list contains `/invite` and `/auth/recovery` | yes | **NOT RUN** | — | Dashboard setting, not in `supabase/config.toml`. Without it the redirect silently falls back to the site root and the fix has no effect. Owner action |
 | Repository gate, steps 1-4: `lint`, `typecheck`, `test:coverage`, `test:service-worker` | yes | **PASS** | 7 Sep 2026, `3986f35`, clean Linux install outside the connected folder, CI's synthetic environment | All four exited 0; 33 test files / 206 tests. The owner's macOS install was not touched |
-| Repository gate, step 5: `pnpm build` | yes | **NOT RUN** | 7 Sep 2026, same environment | Aborts before compiling the app: `next/font` cannot reach Google Fonts, blocked by egress in both agent environments. Not a verdict on the code. Owner action: `pnpm build` on macOS |
+| Repository gate, step 5: `pnpm build` | yes | **NOT RUN** | 7 Sep 2026, same environment | Aborts before compiling the app: `next/font` cannot reach Google Fonts, blocked by egress in both agent environments. A separate run with the font calls stubbed out did compile and prerender all 17 pages, `/invite` and `/auth/recovery` among them, so nothing but the font fetch stands in the way — but that run is not the gate. The owner says they ran the real command and did not report its output, so this stays open |
+| Supabase Auth redirect allow-list contains `/invite` and `/auth/recovery` | yes | **PASS (owner-reported)** | 7 Sep 2026, Supabase dashboard | Owner states both URLs were added. Not agent-verifiable: GoTrue silently falls back to the site URL for a disallowed `redirect_to` rather than erroring, so the setting cannot be observed from outside |
 | Real email round trip through the live project | N/A — this brief grants no live or email authority | N/A | — | Live acceptance belongs to 010 |
 
-Required criteria: 13. Passed: 9. Not run: 4. This is a count of required criteria that
+Required criteria: 13. Passed: 10. Not run: 3. This is a count of required criteria that
 actually passed, not a quality score; the task stays **partial** until the four run.
 
 Review the diff against the brief after testing and record whether the review was
