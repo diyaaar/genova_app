@@ -1,6 +1,7 @@
 # Genova — agent handoff
 
-Snapshot: 6 September 2026, prepared from repository records at `020e571` on `main`.
+Snapshot: 7 September 2026, direct macOS verification at `10b6f9f` on `main`.
+This follow-up changes documentation only; historical device/live evidence retains its date.
 Recheck the current checkout and applicable evidence before acting. This file is an
 entry point and a source index, not a second roadmap, an authorization grant, or proof
 of live state. Where it summarizes another record, that record wins.
@@ -83,7 +84,7 @@ move. Drive migration is not complete.
 | Area | State | Source |
 |---|---|---|
 | 008 invitations/membership | Local package: 155 tests, 20 browser tests, isolated SQL/concurrency/down evidence. Browser Auth is mocked | [008](briefs/008-davet-ve-uyelik.md) |
-| 004 native shell | `apps/mobile/` Expo SDK 57 workspace with sign-in, secure chunked session storage, zero/single/multi membership resolution, server-verified choir selection, per-choir cache clearing and sign-out. **21 of 26 required criteria PASS, 5 NOT RUN, so 004 is partial/pending** | [004](briefs/004-rn-kabuk-ve-giris.md) |
+| 004 native shell | `apps/mobile/` Expo SDK 57 workspace with sign-in, secure chunked session storage, zero/single/multi membership resolution, server-verified choir selection, per-choir cache clearing and sign-out. **22 of 27 required criteria PASS, 5 NOT RUN, so 004 is partial/pending** | [004](briefs/004-rn-kabuk-ve-giris.md) |
 
 The 005 active-choir contract now lives in [`lib/choir-context-core.ts`](../lib/choir-context-core.ts)
 and is imported by both clients. [`lib/choir-context.ts`](../lib/choir-context.ts) keeps its
@@ -99,7 +100,21 @@ and the web behavior is unchanged.
 | Android build | Never attempted. `apps/mobile/android/` does not exist | [004](briefs/004-rn-kabuk-ve-giris.md) |
 | Hosting / Drive exit | Research and separate staging preparation only | [infrastructure record](altyapi-2026-09-04.md) |
 
-## Tests actually run on 6 September 2026
+## Latest local verification — 7 September 2026
+
+At `10b6f9f`, the main agent directly ran `npx tsc --noEmit && npm test && npm run bundle:check`
+in `apps/mobile` on macOS 26.5.1 arm64, Node v24.13.1 / npm 11.8.0. All passed: silent
+TypeScript, 4 suites / 35 tests, 660-module iOS Hermes bytecode export. Existing dependencies
+were reused with `CI=1 EXPO_NO_DOTENV=1 EXPO_OFFLINE=1`; no app launch or live environment
+values were used. Evidence and limits are in the [004 table](briefs/004-rn-kabuk-ve-giris.md)
+and [captured output](briefs/004-native-gate-2026-09-07.md).
+
+The old 21/26 summary was a counting error: the committed table already held 22 PASS and
+five NOT RUN rows. No criterion or required flag changed. The rerun refreshes existing PASS
+evidence and does not close 004. The current read-only prerequisite check found no generated
+Android project, Android Studio at its conventional application path or default Android SDK.
+
+## Historical tests actually run on 6 September 2026
 
 Full per-criterion evidence is in the [004 brief](briefs/004-rn-kabuk-ve-giris.md); this is
 the index. Environments: **MACOS** = the owner's machine (darwin-arm64), **NATIVE-VM** =
@@ -126,8 +141,9 @@ live 010 action.
 
 ## Open blockers and risks
 
-- **004 cannot close on local work alone.** The five open criteria need hardware, a push,
-  or live access. Do not start the repertoire/PDF brief before 004 is accepted.
+- **004 cannot close on the current authority and prerequisites.** The five open criteria
+  include an Android build, hardware, a remote CI run and live acceptance. Do not start
+  the repertoire/PDF brief before 004 is accepted.
 - **010 is blocked twice over:** the session that prepared this handoff had no live
   deployment authority, and Supabase MCP was unauthorized with no CLI installed. At the
   last check direct DB IPv6 reached a timeout; revalidate the supported access route and
@@ -139,10 +155,14 @@ live 010 action.
   same folder, and each platform's install invalidates the other's. macOS is the
   authoritative install; an agent must not run `npm install` there. A jest "preset not
   found" error in the Linux VM is this collision, not a code defect.
-- **The connected folder denies deletion.** `pnpm` and `git` cannot remove their own lock
+- **Historical Linux VM limitation: the connected folder denied deletion.** `pnpm` and
+  `git` cannot remove their own lock
   and temp files, so `pnpm check` fails in that VM and git leaves stale `.lock` files. The
   workaround in use is renaming them into `.git/_stale_locks/`, which is untracked. A
-  future session should ask the user for delete permission rather than rediscovering this.
+  session using that VM should recheck its permission boundary. The 7 September run is
+  directly on macOS; no Linux install was needed. Its commit encountered an empty
+  `HEAD.lock` dating from 6 September 22:52. After checking that no Git process was
+  active, the main agent quarantined it under `.git/_stale_locks/` and retried.
 - **Unit tests could not catch a resolver misconfiguration.** `metro.config.js` once
   disabled hierarchical lookup and broke `expo-asset`; `npm run bundle:check` now guards
   that class of bug in CI. Assume other native-only failure modes exist that the current
@@ -175,15 +195,17 @@ Authorization does not transfer through a planning document, a model change, or 
 
 ## Unfinished changes and ownership
 
-The working tree at `020e571` is clean and there is a single worktree, owned by the main
-agent; no unfinished edits are being handed over. Seven commits were made in this session,
-all prefixed `004`, with production code and documentation in separate commits.
+The working tree at entry (`10b6f9f`) was clean, with one `main` worktree and no inherited
+edits. The main agent is the only writer. The 7 September follow-up is a local documentation
+commit (native evidence and affected status indexes), with no production-code change or push.
+The local `origin/main` reference was 19 commits behind at entry; this is not a fetched remote
+snapshot. Verify the current status and commit rather than inferring them from this record.
 
 Untracked but present on the owner's machine, all correctly gitignored, all owned by the
 owner rather than by any agent:
 
 - `apps/mobile/.env` — the two public `EXPO_PUBLIC_*` Supabase values, created by the owner.
-  Never read, printed or committed; recreate it from `apps/mobile/.env.example` if missing.
+  Not read, printed or committed in this follow-up; ask the owner for configuration if missing.
 - `apps/mobile/node_modules`, `apps/mobile/ios/`, `apps/mobile/.expo/` — generated output.
 - `.git/_stale_locks/` — quarantined git lock files, safe to delete.
 
@@ -192,26 +214,19 @@ owner rather than by any agent:
 **Brief:** [004](briefs/004-rn-kabuk-ve-giris.md), which stays open. Do not write the
 repertoire/PDF brief yet; the delivery plan puts it after 004 acceptance.
 
-**First concrete action, needing no new authority:** re-run the native gate at the current
-HEAD and record the result in the 004 evidence table. The last successful run of that gate
-was at `3009afe` (NATIVE-VM) and on MACOS after `npm ci`; the only later production change
-is `apps/mobile/metro.config.js` plus a `bundle:check` script entry in
-`apps/mobile/package.json`, neither of which jest or tsc reads, so this is expected to pass
-but has not been demonstrated at `020e571`.
+**Completed first action:** the native gate and `bundle:check` passed at `10b6f9f` on
+7 September, with direct macOS output in the brief. Do not rerun it simply because a new
+session begins; rerun when product/configuration changes or an unresolved failure warrants it.
 
-```
-cd apps/mobile && npx tsc --noEmit && npm test && npm run bundle:check
-```
+**Next bounded action:** coordinate the owner-assisted Android development-build setup.
+The conventional Android Studio and SDK paths and `apps/mobile/android/` were absent in the
+7 September check; a custom installation has not been ruled out. Identify/install the local
+prerequisites and run the project's own Android build when the owner is participating.
 
-Run it on macOS, not in a Linux VM sharing the same `node_modules`.
-
-**Then, and only with the owner participating**, close the remaining 004 criteria:
-
-1. Android development build — `npx expo run:android` with Android Studio, which also
-   creates `apps/mobile/android/`.
-2. The real-phone scenario on the owner's Android phone, which the owner has postponed;
-   ask before assuming it is due.
-3. Device keychain verification on that hardware.
+The real-phone and keychain checks remain postponed. Ask before treating them as due and
+obtain explicit authorization for any real-account/data scenario. A successful emulator build
+would address only the Android-build criterion; it would not prove the phone/keychain criteria.
+CI still needs separately authorized push, and 010 remains pending. Do not start repertoire/PDF.
 
 **Relevant files:** `apps/mobile/src/auth/auth-store.ts` holds every acceptance rule and is
 where behavior changes belong; `apps/mobile/src/auth/AuthProvider.tsx` is a thin React
@@ -282,9 +297,11 @@ Use this from the Genova project checkout:
 > `docs/agent-handoff.md` as the entry point. Follow decision #21 and the current delivery
 > plan. Verify the checkout, recorded state and applicable evidence yourself; do not assume
 > access to any previous conversation.
-> Brief 004 is open with 21 of 26 required criteria passed. Start with its first concrete
-> action: re-run the native gate at HEAD on macOS and record the result in the 004 evidence
-> table. Do not begin the repertoire/PDF brief before 004 is accepted, and keep 010 pending.
+> Brief 004 is open with 22 of 27 required criteria passed (the previous 21/26 summary
+> was a counting error). The native gate and bundle check passed on macOS at `10b6f9f`
+> on 7 September; verify the evidence and source changes before deciding to rerun. Next,
+> coordinate the owner-assisted Android development-build prerequisites. Do not begin
+> the repertoire/PDF brief before 004 is accepted, and keep 010 pending.
 > I authorize local implementation, local testing and the required local commits for the
 > documented mobile plan, one brief at a time. This message grants no production
 > deployment, push, real-account or real-data, email or spending authority; ask me before

@@ -1,6 +1,7 @@
 # 004 — RN ürün kurulumu, giriş ve koro seçimi
 
-**Durum:** Hazırlık brief'i; ürün kodu başlamadı. 6 Eylül 2026 güncellemesi.
+**Status:** Local implementation exists; partial/pending acceptance. Updated 7 September 2026.
+22 of 27 required criteria PASS; five remain NOT RUN. See the mandatory evidence table.
 **Amaç:** Aynı depoda telefonda çalıştırılabilir Expo ürününü kurmak; güvenli giriş,
 üyelik çözümü ve koro seçimiyle repertuvar adımına hazır kabuğa ulaşmak.
 Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #21](../../KARARLAR.md).
@@ -9,7 +10,9 @@ Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #21](..
 
 4 Eylül kaydındaki “003 canlı değil” engeli güncelliğini yitirdi. 003 ve 005 canlı
 kanıtları kendi brief'lerindedir; 007 altyapısı canlı, allow-list boş.
-002 spike ürün değildir. Expo ürün çalışma alanı henüz yoktur.
+002 spike ürün değildir.
+The product workspace now exists at `apps/mobile/`; setup was implemented on 6 September.
+The preparation text below is retained as scope history, not a claim that setup is still absent.
 Minimum 008/010 canlı kabulünden sonra bu iş gelir. 010 dış erişim/yetkiyle
 beklerse bağımsız, onaylı yerel kurulum/uygulama izole testlerle ilerleyebilir;
 canlı kabul açık kalır. Temel limit yalnız somut pilot engelinde öne alınır.
@@ -136,9 +139,42 @@ Filled before implementation, per the migration guide and the brief template.
   The necessary root setting is therefore exclusion from web lint/typecheck/test globs rather than
   workspace inclusion. Revisit only if a later brief needs real cross-package linking.
 
+## Verification start-check — 7 September 2026
+
+- **Sources read:** `AGENTS.md`, `docs/agent-handoff.md`, `docs/gecis-rehberi.md`,
+  `docs/ai-calisma-duzeni.md`, all six `memory-bank/*.md` records, `MIGRATION.md`,
+  `KARARLAR.md` (including #21–22), `docs/mobil-teslim-plani.md`, this brief and
+  `docs/briefs/_TEMPLATE.md`. Inspected native package/Jest/TypeScript/Metro configuration,
+  test setup and isolated doubles, auth/UI test entry points and the CI workflow.
+- **Checkout:** `main`, `10b6f9f0d4f5abc1b2332f2ec6faeddf34c07206`; clean at entry,
+  one worktree and one writer (main agent). Local `origin/main` reference is 19 commits
+  behind; no fetch or push. Remote alias and Git identity match AGENTS.
+- **One outcome:** rerun the native type/test/bundle gate against this HEAD on macOS and
+  record direct evidence in the existing table. No product source differs from `dc5f7a6`
+  in `apps/mobile`, `lib` or the CI workflow.
+- **Allowed changes:** this brief, a local test transcript under `docs/`, the handoff,
+  delivery-plan status and affected repository memory indexes. Generated Metro output
+  stays ignored under `apps/mobile/.expo/`. No product behavior, shared contract,
+  annotation schema or native/WebView boundary changes are planned.
+- **Authority:** the current user message permits local tests, scoped local work and local
+  commits only. No push, production access/deploy, real account/data, email or spending.
+  Hardware testing remains postponed; 010 stays pending and repertoire/PDF cannot start.
+- **Environment/gates:** directly verified Darwin 25.5.0 arm64, macOS 26.5.1 (25F80),
+  Node v24.13.1, npm 11.8.0. Run `npx tsc --noEmit && npm test && npm run bundle:check`
+  in `apps/mobile` using the existing macOS install. Disable dotenv loading and Expo
+  online features; no real account is needed for isolated tests or bundle generation.
+  Then check documentation links, status consistency and `git diff --check`.
+- **Rollback/uncertainty:** revert only this documentation commit; no data rollback.
+  Historical Linux/delete limitations are not assumed to apply to this direct macOS
+  environment. The brief header and two status indexes still claim no product workspace;
+  reconcile those stale summaries with the existing implementation and evidence without
+  changing any acceptance criterion. No independent review or device result is claimed.
+
 ## Mandatory acceptance evidence
 
-Filled before implementation, updated with the results of the 6 September 2026 run.
+Filled before implementation. Historical 6 September results are retained below; the native
+and Metro rows were rerun directly on macOS on 7 September at `10b6f9f`. Other PASS rows
+retain their original evidence dates and limits; no device, web or live test was rerun.
 
 Environments referenced below:
 - **NATIVE-VM** — local Linux dev VM on the user's machine (linux-arm64), Node v22.23.2,
@@ -151,7 +187,10 @@ Environments referenced below:
   commands run by the user on 6 September 2026 around 22:10–22:15 Europe/Istanbul and reported
   back in full. Node version was not recorded. This is the environment that actually builds and
   will later run the native app.
-- Revision under test: `main` at `a2659ca` plus this brief's changes, committed as `3009afe`
+- **MACOS-HEAD** — direct agent execution on 7 September 2026, macOS 26.5.1 /
+  Darwin 25.5.0 arm64, Node v24.13.1, npm 11.8.0. Existing dependencies reused;
+  `CI=1 EXPO_NO_DOTENV=1 EXPO_OFFLINE=1`. [Captured output](004-native-gate-2026-09-07.md).
+- Historical implementation revision: `main` at `a2659ca` plus this brief's changes, committed as `3009afe`
   (production code). This documentation update is a separate commit.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date, revision, environment, command or scenario | Evidence and limits |
@@ -172,21 +211,26 @@ Environments referenced below:
 | Running-app flow: rejected sign-in, automatic single-membership choir, session restored after a full relaunch, sign-out returning to the login screen | yes | PASS | 6 Sep 2026, MACOS, iOS Simulator (iPhone 17 Pro, iOS 26.5); four scenarios executed manually by the product owner twice — first on the Expo Go-hosted bundle, then repeated on the project's own `expo run:ios` build | All four behaved as specified in both runs. The second run is the one that counts: the session was persisted and restored through `expo-secure-store` inside this app's own keychain scope. Limit: a simulator is not hardware, so real-device behavior is still unproven |
 | Membership list parsing fails closed on a malformed RPC payload | yes | PASS | 6 Sep 2026, NATIVE-VM, `npm test` | `auth-store.test.ts` "fails closed on a malformed membership payload"; shared parser is the same one the web client uses |
 | Web behavior preserved: `lib/choir-context` public API and its existing tests unchanged | yes | PASS | 6 Sep 2026, WEB-LINUX, `pnpm test:coverage` | 32 files / 190 tests passed, including `lib/choir-context.test.ts` unmodified. The module now re-exports the shared core and adds `isChoirId` / `ChoirContextClient`; no export was removed or renamed |
-| Native gate: `npx tsc --noEmit && npm test` in `apps/mobile` | yes | PASS | 6 Sep 2026, NATIVE-VM and MACOS | 4 suites / 35 tests passed in both environments; on MACOS after `npm ci`, with `npx tsc --noEmit` silent |
+| Native gate: `npx tsc --noEmit && npm test` in `apps/mobile` | yes | PASS | 7 Sep 2026, `10b6f9f`, MACOS-HEAD; `npx tsc --noEmit && npm test && npm run bundle:check`, exit 0 | [Direct transcript](004-native-gate-2026-09-07.md): TypeScript silent; 4 suites / 35 tests passed. Existing macOS install, isolated doubles; no live Auth or hardware. Historical 6 Sep NATIVE-VM/MACOS passes retained in the preceding record |
 | Web gate: `pnpm lint`, `pnpm typecheck`, `pnpm test:coverage`, `pnpm test:service-worker` | yes | PASS | 6 Sep 2026, WEB-LINUX (scripts run separately) and MACOS (single `pnpm check` run) | All exit 0 in both. 32 files / 190 tests; coverage 92.93% statements / 81.77% branches, above the configured thresholds |
 | Web gate: `pnpm build` | yes | PASS | 6 Sep 2026, MACOS, `pnpm check` run to completion | `next build` compiled successfully in 3.1s; types checked, 17 static pages generated, full route table produced. Earlier WEB-LINUX attempts could not reach this step because the session's egress policy blocks the `next/font` fetch to `fonts.googleapis.com`; that was an environment limit, not a code failure |
-| Metro bundles the native entry point, resolving both the workspace's nested dependencies and the shared `@shared/*` contract | yes | PASS | 6 Sep 2026, NATIVE-VM, `npx expo export --platform ios --no-bytecode --clear`; MACOS, `expo start --clear` | 660 modules exported on NATIVE-VM with `list_my_choirs` and `set_active_choir` present in the output bundle; 798 modules bundled on MACOS and the app rendered. This criterion was added after an earlier `metro.config.js` disabled hierarchical lookup and broke `expo-asset` resolution; `npm run bundle:check` now guards it in CI |
+| Metro bundles the native entry point, resolving both the workspace's nested dependencies and the shared `@shared/*` contract | yes | PASS | 7 Sep 2026, `10b6f9f`, MACOS-HEAD; `npm run bundle:check` as the final step of the native chain, exit 0 | [Direct transcript](004-native-gate-2026-09-07.md): iOS export bundled 660 modules in 4366 ms; 2.2 MB `.hbc` plus metadata generated in ignored `.expo/bundle-check`. Uses the normal Hermes bytecode step (no `--no-bytecode`). No app launch, real environment values or device acceptance; historical simulator evidence remains dated 6 Sep |
 | Native checks integrated into `.github/workflows/ci.yml`; existing web jobs unchanged | yes | PASS | 6 Sep 2026, NATIVE-VM, workflow YAML parsed; `npm install --package-lock-only --dry-run` | New `mobile` job runs `npm ci`, `npx tsc --noEmit`, `npm test` in `apps/mobile`; `quality` and `browser` jobs are untouched; `package.json` and `package-lock.json` verified in sync |
 | `npm ci` reproduces the native workspace from the committed lockfile | yes | PASS | 6 Sep 2026, MACOS, `rm -rf node_modules && npm ci` in `apps/mobile` | 1118 packages installed, 1119 audited; the subsequent type and test run passed. This is the exact command the new CI job uses. Limit: deprecation warnings and 10 moderate advisories were reported by npm and are not addressed in this brief |
 | CI actually executed for this revision | yes | NOT RUN | no push or remote run is authorized in this session | Configuration alone is not a CI result; branch protection was neither checked nor changed |
 | iOS development build runs on a device or simulator | yes | PASS | 6 Sep 2026, MACOS, `npx expo run:ios` | The project's own native iOS build was generated and launched on the iOS Simulator (iPhone 17 Pro, iOS 26.5); the app runs as Genova rather than inside Expo Go. Built locally with Xcode, no EAS and no spending. Limit: simulator only, no hardware |
-| Android development build runs on a device or emulator | yes | NOT RUN | no Android SDK or emulator in this environment | — |
+| Android development build runs on a device or emulator | yes | NOT RUN | 7 Sep 2026, `10b6f9f`, MACOS-HEAD read-only prerequisite check: `apps/mobile/android/`, `/Applications/Android Studio.app` and `~/Library/Android/sdk` are absent | No Android build, SDK installation, emulator or phone launch attempted. This checks conventional paths, not every possible custom installation; coordinate the owner-assisted Android step before proceeding |
 | Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
 | Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
 
-**Optional progress: 21 passed / 26 required criteria.** Five required criteria are NOT RUN, so
+**Optional progress: 22 passed / 27 required criteria.** Five required criteria are NOT RUN, so
 004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
 skipped or loosened to reach a green result.
+
+**Count correction, 7 September:** the committed HEAD table already contained 27 required
+rows (22 PASS, 5 NOT RUN), although the summary said 21/26. This is an arithmetic correction,
+not an added/removed criterion or a newly accepted device/live check. The native/Metro
+rerun refreshes two existing PASS records and leaves all five NOT RUN criteria in place.
 
 ### Diff self-review — 6 September 2026
 
@@ -240,9 +284,34 @@ This was a **self-review**, not an independent review; no reviewer agent was inv
   own choice, not for lack of a decision.
 - Rollback: revert the 004 code and documentation commits; `lib/choir-context.ts` returns to a
   single file and `apps/mobile/` disappears. No live system is involved.
-- Next single step: re-run `npx tsc --noEmit && npm test && npm run bundle:check` in
-  `apps/mobile` on macOS at the current HEAD and record the result here; the last successful
-  run of that gate was at `3009afe`, before the `metro.config.js` fix. After that the brief
-  can only advance with the owner present, through the Android development build, the real
-  phone and the device keychain check. The repertoire/PDF reading brief is not started
-  before 004 is accepted. Entry point for a new session: [agent handoff](../agent-handoff.md).
+- 7 September follow-up: the first handoff action is complete at `10b6f9f`; the native gate
+  and standard iOS Hermes export passed directly on macOS. See the existing evidence table
+  and [captured output](004-native-gate-2026-09-07.md). No product file was changed.
+- Next single step: coordinate the owner-assisted Android development-build prerequisites
+  (Android Studio/default SDK and generated Android project are absent). Ask before treating
+  the postponed phone/keychain test as due; real-account/data work also needs explicit
+  authority. CI needs separately authorized push, and 010 remains pending. Do not begin
+  repertoire/PDF before 004 is accepted. Entry point: [agent handoff](../agent-handoff.md).
+
+### Verification self-review — 7 September 2026
+
+This is a self-review by the main agent; no independent reviewer was used.
+The intended diff contains only evidence and affected status/handoff documentation. Product
+sources, lockfiles, tests, CI configuration, annotation contracts and MIGRATION's screen
+boundaries are unchanged. The table's criterion names, required flags and five NOT RUN
+statuses are preserved. The Android row only refreshes prerequisite evidence. The root
+`pnpm check`, browser tests, `npm ci`, native device builds, remote CI and live 010 were
+not rerun; prior results retain their original dates. Rollback is this documentation commit only.
+
+Documentation verification on 7 September, direct macOS execution: a local Python check
+resolved all 79 local links across the seven changed/new Markdown files (zero missing targets),
+compared all 27 criterion names/required flags/statuses with `git show HEAD:<brief>` and found
+them identical, and confirmed no product/configuration or `MIGRATION.md` diff. The transcript's
+evidence-table anchor exists. `git diff --check` passed. Manual self-review confirmed that the
+current decision #21 order, 010 pending state and postponed hardware boundary are preserved.
+
+Commit preparation found a trailing blank line in the new transcript; it was removed and
+`git diff --cached --check` then passed. The commit subsequently hit an existing empty
+`.git/HEAD.lock` (modified 6 September 22:52 local time). No active Git process was found;
+`lsof` showed only an Apple reader. The stale file was preserved in `.git/_stale_locks/`
+before retrying the local commit. No product files or other worktree edits were involved.

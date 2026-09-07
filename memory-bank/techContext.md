@@ -5,7 +5,9 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 
 - Web: Next.js 15, React 19, TypeScript, Tailwind 4, Capacitor 8.
 - Mobil hedef: React Native + Expo, ortak TS/Supabase istemcisi, Skia.
-  RN spike tamamlandı; ürün çalışma alanı henüz kurulmuş kabul edilmez.
+  Product workspace: `apps/mobile/` (Expo SDK 57, separate npm lockfile), implemented
+  6 September. Native type/test/bundle gate directly verified on macOS on 7 September;
+  [004](../docs/briefs/004-rn-kabuk-ve-giris.md) remains pending device/live acceptance.
   Flutter spike yalnız tarihsel referanstır; ürün yolu değildir.
 - Backend: Supabase Auth/Postgres/RLS/Realtime/Storage/Edge Functions; AI: Gemini.
 - Çalışma ortamı: [package.json](../package.json) Node `>=22.12 <25`, pnpm `11.9.0`.
@@ -17,7 +19,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | Salt belge | Bağlantı/tutarlılık incelemesi ve `git diff --check`; ürün testleri tekrar koşulmaz |
 | Web kalite kapısı | Kökten `pnpm check`: lint, typecheck, kapsamlı birim test çalıştırması, service worker sözdizimi, build |
 | Tarayıcı | Kökten `pnpm test:e2e`; testlerin gerçek üyeli akışı kapsayıp kapsamadığını ayrıca belirt |
-| RN ürün | Kurulumdan sonra ürün çalışma alanında `npx tsc --noEmit && npm test`; cihaz testi ayrıca |
+| RN product | In `apps/mobile`: `npx tsc --noEmit && npm test && npm run bundle:check`; actual platform builds and hardware acceptance remain separate |
 | DB / Edge | İlgili brief'in ortamı ve yetkisi doğrulanmış kontrolleri; web testi bunların yerine geçmez |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.

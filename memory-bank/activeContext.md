@@ -50,9 +50,11 @@ simülatörde (iPhone 17 Pro, iOS 26.5) çalıştırıldı; dört senaryo (yanl�
 üyelikte otomatik koro, yeniden açmada oturum, çıkış) hem Expo Go'da hem kendi
 derlememizde elle geçti.
 Metro çözümleme hatası (`disableHierarchicalLookup` yüzünden `expo-asset` bulunamıyordu)
-`dc5f7a6` ile düzeltildi; `npm run bundle:check` CI'a eklendi. Kendi iOS/Android
-Android derlemesi, gerçek telefon (donanım) ve CI koşusu yapılmadı. 26 zorunlu
-kriterin 21'i geçti, 5'i çalıştırılmadı; 004 kısmi/bekliyor. Ürün sahibinin Android
+`dc5f7a6` ile düzeltildi; `npm run bundle:check` CI'a eklendi.
+Android derlemesi, gerçek telefon (donanım) ve CI koşusu yapılmadı.
+The 7 September count audit found 22 PASS / 27 required rows already in the table;
+five remain NOT RUN. The earlier 21/26 summary was an arithmetic error, not a scope change.
+004 remains partial/pending. Ürün sahibinin Android
 telefonu var ancak gerçek cihaz testini ertelemeyi seçti ve brief'in yeniden
 kapsamlandırılmamasını istedi; kriterler yerinde duruyor. `apps/mobile/node_modules` macOS ile ajanın
 Linux VM'i arasında paylaşıldığı için yetkili kurulum macOS'tur; ajan orada `npm install` çalıştırmaz. 005 sözleşmesi `lib/choir-context-core.ts` ile ortaklaştırıldı;
@@ -92,7 +94,7 @@ Hafif model seçimi ile ajan sayısı farklıdır; ölçülmemiş tasarruf iddia
 ## English session handoff
 
 [agent-handoff.md](../docs/agent-handoff.md) is the entry point and was refreshed on
-6 September 2026 at `020e571`. It carries the startup message, the source order, the
+7 September 2026 from `10b6f9f`. It carries the startup message, the source order, the
 separation of deployed / locally verified / unverified work, the tests actually run with
 their environments and limits, the open blockers, the authorization boundary and the next
 bounded task. Read it there rather than duplicating it here.
@@ -103,3 +105,13 @@ compliance, and it has never executed for the current revision.
 
 Tarihsel ayrıntılar [progress.md](progress.md)'deki kanıt bağlantılarındadır.
 Devirde sadece değişen özet/bağlantıları güncelle; tüm dosyaları yeniden yazma.
+
+## Direct macOS verification — 7 September 2026
+
+At `10b6f9f`, the native type/test/bundle gate passed: 35 tests and a 660-module iOS
+Hermes export. [004 evidence](../docs/briefs/004-rn-kabuk-ve-giris.md) contains the
+environment, command and transcript. No product file changed or device/live check ran.
+Next: coordinate the owner-assisted Android build prerequisites; Android Studio/default
+SDK and generated Android project are absent at the checked paths. Phone/keychain testing
+stays postponed until the owner chooses to resume; real-account authority remains separate.
+010 stays pending; repertoire/PDF cannot begin before 004 acceptance.
