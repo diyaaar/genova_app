@@ -417,3 +417,46 @@ canlıda gerçek kullanıcılar, gerçek oturumlar ve gerçek e-posta teslimi va
 4. adım: canlı DB'ye yalnız kesin 008 SQL'i uygulanır, migration geçmişi işlenir, hosted testler
 transaction + `ROLLBACK` ile koşturulur. Ardından 5. Edge deploy, 6. web yayını, 7. kontrollü
 ürün kabulü. Test korosu operatör hesabıyla giriş yapılıp `create-choir` üzerinden açılacak.
+
+## Adım 4 — canlı DB migration'ı uygulandı (7 Eylül 2026)
+
+Toplu `db push` kullanılmadı. Depodaki `20260905210953_choir_invitations_008.sql` dosyasının
+içeriği canlı projeye birebir uygulandı ve migration defteri **depodaki sürüm numarasıyla**
+işlendi. Öncesinde aynı gün alınmış yedek, SHA-256'sı, kanıtlanmış restore ve taze kopyada
+geçmiş tam test seti vardı.
+
+### Uygulama öncesi durum
+
+`genova_008` yok, komut fonksiyonu yok, `choir_members` = 29, `choirs` = 1, `auth.users` = 28,
+`choir_member_roles` = 28, defterdeki en yeni sürüm `20260905160539`.
+
+### Uygulama sonrası doğrulama
+
+| Kontrol | Sonuç |
+|---|---|
+| `genova_008` şeması, `invitations` tablosu, `public.choir_invitation_command` | Üçü de var |
+| Tabloda RLS | Açık |
+| İndeksler | 6 (kısmi `invitations_pending_email_idx` dahil) |
+| `anon` / `authenticated` / `service_role` / `public` için tablo yetkisi | **0 — sızma yok** |
+| Fonksiyon yetkileri | Yalnız `authenticated: EXECUTE` ve sahibi `postgres: EXECUTE` |
+| `choir_members`, `auth.users` | 29 ve 28 — değişmedi |
+| `genova_008.invitations` satır sayısı | 0 |
+
+### Defter sürümü neden elle işlendi
+
+`apply_migration` aracı kendi zaman damgasını üretir. Bu, defterdeki sürümün depodaki dosya
+adından farklı olmasına yol açardı ve sonraki bir `supabase db push` denemesi 008'i yeniden
+uygulamaya çalışıp `schema genova_008 already exists` ile düşerdi. Bu yüzden DDL doğrudan
+çalıştırıldı ve defter satırı `version = '20260905210953'`, `name = 'choir_invitations_008'`
+olarak eklendi. Defter artık depoyla aynı hizada: en yeni üç sürüm `20260905210953`,
+`20260905160539`, `20260905102806`.
+
+### Bu adımda henüz yapılmayan
+
+Hosted 008 testi (`supabase/tests/008_choir_invitations.sql`) transaction + `ROLLBACK` ile
+canlıda **henüz koşturulmadı**. Ajan bunu MCP üzerinden çalıştırmak için dosyanın 200 satırını
+yeniden yazmak zorunda kalacaktı; canlı bir veritabanında kopyalama hatası riskini almamak için
+dosya olduğu gibi `psql -f` ile çalıştırılacak. Test `public.choir_member_roles` üzerinde geçici
+bir trigger kurup aynı transaction içinde geri alır, yani kısa süreli bir tablo kilidi alır.
+
+Sonuç geldiğinde bu bölüm güncellenecek; 5. adım (Edge deploy) ondan önce başlamaz.
