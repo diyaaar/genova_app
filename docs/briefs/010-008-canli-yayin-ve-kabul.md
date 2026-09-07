@@ -451,12 +451,35 @@ uygulamaya çalışıp `schema genova_008 already exists` ile düşerdi. Bu yüz
 olarak eklendi. Defter artık depoyla aynı hizada: en yeni üç sürüm `20260905210953`,
 `20260905160539`, `20260905102806`.
 
-### Bu adımda henüz yapılmayan
+### Hosted test canlıda geçti
 
-Hosted 008 testi (`supabase/tests/008_choir_invitations.sql`) transaction + `ROLLBACK` ile
-canlıda **henüz koşturulmadı**. Ajan bunu MCP üzerinden çalıştırmak için dosyanın 200 satırını
-yeniden yazmak zorunda kalacaktı; canlı bir veritabanında kopyalama hatası riskini almamak için
-dosya olduğu gibi `psql -f` ile çalıştırılacak. Test `public.choir_member_roles` üzerinde geçici
-bir trigger kurup aynı transaction içinde geri alır, yani kısa süreli bir tablo kilidi alır.
+`supabase/tests/008_choir_invitations.sql` canlı projede `psql -X -v ON_ERROR_STOP=1 -f` ile
+dosyanın kendisinden çalıştırıldı, **çıkış kodu 0**. Dosya MCP üzerinden gönderilmedi: 200 satırı
+yeniden yazmak canlı veritabanında kopyalama hatası riski demekti ve bu risk alınmadı.
 
-Sonuç geldiğinde bu bölüm güncellenecek; 5. adım (Edge deploy) ondan önce başlamaz.
+Test kendi transaction'ı içinde çalışır ve `rollback` ile biter. Kapsadığı davranışlar: davetin
+oluşturulması ve yenisinin eskisini geçersiz kılması, başka koronun listesine erişimin reddi,
+yanlış hesabın ve doğrulanmamış hesabın kabul edememesi, tek kullanımlık kabul, süresi dolmuş ve
+iptal edilmiş davetin reddi, ham token'ın saklanmadığının doğrulanması, `anon`/`service_role`
+için yetki bulunmadığının doğrulanması, kabul sırasında rol yazımı başarısız olduğunda üyeliğin
+de geri alınması, ve daveti açan Şef'in rolü alındığında bekleyen davetin kullanılamaz hâle gelmesi.
+
+Test sonrası doğrulama — hiçbir fixture sızmadı:
+
+| Sayaç | Test öncesi | Test sonrası |
+|---|---:|---:|
+| `choir_members` | 29 | 29 |
+| `auth.users` | 28 | 28 |
+| `choirs` | 1 | 1 |
+| `choir_member_roles` | 28 | 28 |
+| `genova_008.invitations` | 0 | 0 |
+
+Testin `public.choir_member_roles` üzerinde kurduğu geçici trigger da kalmadı. Tabloda görünen
+tek trigger `tenant_links_003` — 003'ün meşru kiracı koruması. Bu ayrıca taze restore'daki 003
+hatasının teşhisini doğrular: koruma bir trigger fonksiyonudur ve `BYPASSRLS` olmayan bir rol
+altında üst kaydı göremediği için sessizce geçmişti.
+
+**Adım 4 tamamlandı.** Sırada 5. adım: `choir-invitations` Edge fonksiyonunun `verify_jwt=true`
+ile dağıtımı. `supabase/config.toml` bu ayarı zaten taşıyor. Dağıtım CLI ile depodaki dosyalardan
+yapılacak, çünkü `index.ts` başka bir fonksiyon klasöründeki `create-choir-core.ts` dosyasını da
+import ediyor; MCP'ye elle dosya yapıştırmak bu bağımlılık zincirini eksik bırakırdı.
