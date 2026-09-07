@@ -162,3 +162,33 @@ uygulama veya `create-choir` Edge fonksiyonu üzerinden denendiğinde kabul edil
 
 Koro içi `Şef` rolünün global yetki olmadığı sözleşmesi değişmedi; bu atama yalnız bu tek
 hesaba koro oluşturma yetkisi verir.
+
+## Authenticated başarı yolu kabul edildi — 7 Eylül 2026
+
+Brief'in son açık maddesi kapandı. Allow-list'teki operatör kendi kullanıcı JWT'siyle
+`create-choir` Edge fonksiyonunu çağırdı ve koro atomik olarak oluştu.
+
+| Öğe | Değer |
+|---|---|
+| Çağrı | `POST /functions/v1/create-choir`, gerçek kullanıcı JWT'si + anon apikey |
+| Operatör | `alidiyarduran35@gmail.com` (`70a75f7c-…`), allow-list'te |
+| Sonuç | HTTP 201, `{"choir":{"choirId":"37d0a21f-1970-425b-931c-ed1cfcf9a254","memberId":"95e8aafd-…","choirSlug":"genova-008-test","choirName":"Genova 008 Test"}}` |
+
+Veritabanı doğrulaması:
+
+| Kontrol | Sonuç |
+|---|---|
+| Koro | `genova-008-test` oluştu |
+| Varsayılan roller | 3 — `Şef`, `Partisyon Şefi`, `Korist` |
+| Kurucu üyelik | 1 üye |
+| Kurucu rolü | Yalnız `Şef` |
+| `genova_007.choir_creation_audit` | 1 satır, koroya bağlı |
+| Gerçek koro `Genesi Nova` | 29 üye, 0 denetim satırı — **etkilenmedi** |
+
+RPC'nin tek transaction'da koro, üç rol, kurucu üyelik ve kurucu `Şef` eşlemesini kurma
+sözleşmesi canlıda doğrulandı. Koro içi `Şef` rolünün global yetki vermediği sınırı değişmedi:
+bu çağrıyı mümkün kılan şey allow-list kaydıydı, kullanıcının mevcut korodaki rolü değil.
+
+**007 artık tamamlandı.** Koro `010` test verisidir; temizlik listesi
+[010](010-008-canli-yayin-ve-kabul.md#temizlik-listesi--önerilen-uygulanmadan-önce-ayrıca-onaylanacak)
+içindedir ve gerçek koroya dokunmaz.
