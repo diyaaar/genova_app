@@ -80,3 +80,19 @@ test('the recovery request refuses an undeliverable address before any call',asy
   await expect(page.locator('main [role="alert"]')).toContainText('Geçerli bir e-posta adresi yazın.');
   expect(called).toBe(false);
 });
+
+test('a recovery session still reaches the new-password form',async({page})=>{
+  const expiresAt=Math.floor(Date.now()/1000)+3600;
+  const payload=Buffer.from(JSON.stringify({sub:'33333333-3333-4333-8333-333333333333',role:'authenticated',aud:'authenticated',session_id:'44444444-4444-4444-8444-444444444444',exp:expiresAt})).toString('base64url');
+  const session={access_token:`eyJhbGciOiJIUzI1NiJ9.${payload}.test-signature`,token_type:'bearer',expires_in:3600,expires_at:expiresAt,refresh_token:'test-refresh-token',user:{id:'33333333-3333-4333-8333-333333333333',aud:'authenticated',role:'authenticated',email:'multi@example.invalid',app_metadata:{},user_metadata:{},created_at:new Date().toISOString()}};
+  await page.addInitScript((stored)=>{
+    window.localStorage.setItem('sb-example-auth-token',JSON.stringify(stored));
+  },session);
+
+  // Adding the request form must not disturb the path a real recovery link takes.
+  await page.goto('/auth/recovery?recovery=1');
+  await expect(page.getByRole('heading',{name:'Yeni şifre belirle'})).toBeVisible();
+  await expect(page.getByLabel('Yeni şifre',{exact:true})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Şifremi güncelle'})).toBeVisible();
+  await expect(page.getByLabel('E-posta',{exact:true})).toHaveCount(0);
+});
