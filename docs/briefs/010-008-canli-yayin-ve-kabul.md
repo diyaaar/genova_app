@@ -127,3 +127,106 @@ project is reachable and its preconditions are now observed rather than assumed 
 the restore evidence, the fixture decision and every write step are still outstanding, and none of
 them may be inferred from general authorization. The next concrete action belongs to the owner:
 produce the backup and restore evidence, and name the fixtures.
+
+## Adım 2 hazırlığı — yedek prosedürü ve doğrulama temeli (7 Eylül 2026)
+
+Yedek **sizin Mac'inizde** alınacak. Aşağıda gerekçesi, çalıştırılacak komutlar ve restore'u
+mekanik hale getiren sayım temeli var. Bu bölüm bir hazırlıktır; yedek alınmadı, hiçbir şey
+dağıtılmadı, 010 başlatılmadı.
+
+### Neden ajan alamıyor — ölçülmüş engel, eksik izin değil
+
+| Ortam | Bulgu |
+|---|---|
+| Ajan VM'i (kullanıcının makinesinde) | Proxy `api.supabase.com` ve `db.hievmwwctjjlhmssoxsu.supabase.co` için CONNECT'e 403 veriyor. `psql`, `pg_dump`, Supabase CLI kurulu değil ve npm ile kurulum başarısız oldu |
+| Bulut konteyneri | DNS çözülüyor ama 5432 ve pooler 6543 kapalı. `db.*` yalnız IPv6 döndürüyor, pooler IPv4 döndürüyor; ikisine de TCP açılamıyor. Ayrıca oradaki `pg_dump` 16.13, sunucu Postgres 17 — sürüm uyuşmazlığı tek başına engel |
+
+Supabase CLI'ı projeye eklemek bunu çözmez: engel binary değil, ağ. Ayrıca kök `package.json`'a
+sadece araç için bağımlılık eklemek canlı web projesinin bağımlılık grafiğini ve lockfile'ını
+değiştirir; bu iş için gereksiz bir yan etki olur.
+
+### Mac'te çalıştırılacak komutlar
+
+Bağlantı parolası Supabase panelinden alınır ve hiçbir yere yapıştırılmaz.
+
+```
+cd ~/Antigravity/genovakorist
+supabase --version
+supabase link --project-ref hievmwwctjjlhmssoxsu
+
+D=$(date +%F)
+supabase db dump --linked --role-only -f backup_roles_$D.sql
+supabase db dump --linked            -f backup_schema_$D.sql
+supabase db dump --linked --data-only -f backup_data_$D.sql
+
+shasum -a 256 backup_roles_$D.sql backup_schema_$D.sql backup_data_$D.sql
+```
+
+`backup_*.sql` kökte `.gitignore` kapsamındadır, Git'e girmez. Depodaki `backup_*_2026-09-04.sql`
+dosyaları boş yer tutuculardır, kanıt değildir.
+
+### Taze PostgreSQL 17'ye geri yükleme
+
+```
+docker run --rm -d --name genova-restore -e POSTGRES_PASSWORD=local -p 55432:5432 postgres:17
+sleep 8
+psql "postgresql://postgres:local@127.0.0.1:55432/postgres" -v ON_ERROR_STOP=1 -f backup_roles_$D.sql
+psql "postgresql://postgres:local@127.0.0.1:55432/postgres" -v ON_ERROR_STOP=1 -f backup_schema_$D.sql
+psql "postgresql://postgres:local@127.0.0.1:55432/postgres" -v ON_ERROR_STOP=1 -f backup_data_$D.sql
+```
+
+### Sayım karşılaştırması
+
+Aynı sorguyu **hem canlıda hem restore edilmiş kopyada** çalıştırıp çıktıları karşılaştırın:
+
+```sql
+select t.table_name,
+       (xpath('/row/cnt/text()',
+              query_to_xml(format('select count(*) as cnt from %I.%I', t.table_schema, t.table_name),
+                           false, true, '')))[1]::text::bigint as exact_rows
+from information_schema.tables t
+where t.table_schema = 'public' and t.table_type = 'BASE TABLE'
+order by t.table_name;
+```
+
+**7 Eylül 2026 referans anlık görüntüsü** (canlı proje, MCP `execute_sql`, salt okunur). Bu bir
+referanstır, kabul ölçütü değil: üyeler uygulamayı kullandıkça sayılar değişir, bu yüzden asıl
+karşılaştırma **yedeğin alındığı andaki** sayımla yapılmalıdır. Sapma varsa önce nedeni açıklanır.
+
+| Tablo | Satır | Tablo | Satır |
+|---|---:|---|---:|
+| announcements | 4 | profile_change_requests | 9 |
+| assignment_submission_audit_logs | 14 | push_subscriptions | 61 |
+| assignment_submission_history | 0 | rehearsal_invitees | 536 |
+| assignment_submission_private_notes | 10 | rehearsals | 21 |
+| assignment_submissions | 10 | repertoire | 9 |
+| assignment_targets | 11 | repertoire_cache_versions | 1 |
+| assignments | 2 | repertoire_files | 79 |
+| attendance | 536 | repertoire_pdf_annotations | 40 |
+| chat_message_status | 0 | repertoire_song_comments | 2 |
+| chat_messages | 27 | repertoire_song_tags | 0 |
+| chat_notification_preferences | 0 | repertoire_tags | 0 |
+| chat_poll_votes | 2 | roles | 3 |
+| chat_polls | 1 | schools | 4 |
+| chat_reactions | 0 | song_assignments | 213 |
+| chat_room_members | 43 | subscribers | 3 |
+| chat_rooms | 11 | choir_member_roles | 28 |
+| chat_starred_messages | 0 | choir_members | 29 |
+| collab_inquiries | 0 | choirs | 1 |
+| contact_messages | 1 | departments | 15 |
+
+38 tablo, toplam yaklaşık 1.700 satır. Küçük bir veri kümesi; yedek ve restore hızlı olmalı.
+
+### Yedek dosyalarının içeriği hakkında
+
+Dump'lar korist adları, e-posta ve telefonları, doğum tarihleri ve yoklama geçmişi içerir. Bu
+dosyalar Mac'inizde kalmalı: sohbete yapıştırılmaz, depoya commit edilmez, ajan ortamlarına
+taşınmaz ve devir kayıtlarına yazılmaz. Ajan yalnız SHA-256 değerini ve sayım karşılaştırmasının
+sonucunu kanıt olarak kaydeder.
+
+### Bundan sonra kalan
+
+Yedek ve restore kanıtı geldiğinde 010'un 3. adımı (taze restore üzerinde 003–008, concurrency ve
+down roundtrip) çalıştırılabilir. 7. adım için hâlâ **sizin** belirlemeniz gereken şey duruyor:
+test korosu/şefinin adı, işletmeciye ait davet alıcısı ve test sonunda silinecek kayıtların
+listesi. Bu, brief'in kendi şartı; genel yetkiden türetilmez.
