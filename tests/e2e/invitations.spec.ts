@@ -76,6 +76,7 @@ test('the recovery request refuses an undeliverable address before any call',asy
   await page.goto('/auth/recovery');
   await page.getByLabel('E-posta',{exact:true}).fill('ada@example');
   await page.getByRole('button',{name:'Sıfırlama bağlantısı gönder'}).click();
-  await expect(page.getByRole('alert')).toContainText('Geçerli bir e-posta adresi yazın.');
+  // Scoped to main: Next renders its own role="alert" route announcer in the body.
+  await expect(page.locator('main [role="alert"]')).toContainText('Geçerli bir e-posta adresi yazın.');
   expect(called).toBe(false);
 });
