@@ -87,3 +87,43 @@ onayıyla alınır. 009 SMTP/yönlendirme bu geri dönüşte değiştirilmez.
 repertuvar/PDF ve cihaz pilotu gelir. Plan-limit mağaza öncesinde tamamlanır; yalnız
 ölçülmüş pilot engeli gerekli en küçük parçayı öne alabilir. 010 dış erişim/yetki
 nedeniyle beklerse bağımsız, onaylı 004 yerel işleri ilerleyebilir; 010 kapanmış sayılmaz.
+
+## Salt okunur preflight sonucu — 7 Eylül 2026
+
+Uygulama sırasının 1. adımı (salt okunur preflight) büyük ölçüde tamamlandı. Aşağıdakilerin
+tamamı **okuma**dır: hiçbir migration uygulanmadı, fonksiyon dağıtılmadı, SQL çalıştırılmadı,
+ayar veya veri değiştirilmedi. Bu kayıt 010'u başlatmaz; yalnız önkoşulları ölçer.
+
+Agent-facing detail is in English below, per decision #22.
+
+| Check | Source | Result |
+|---|---|---|
+| Exact project | Supabase MCP `list_projects` | `hievmwwctjjlhmssoxsu`, `genesinovachoir's Project`, org `urpuzollmvvdkayavnhd`, Postgres 17, `ACTIVE_HEALTHY`. Matches the only project AGENTS permits |
+| Applied migrations | `list_migrations` | 50 entries, newest `20260905160539` (007). **`20260905210953_choir_invitations_008` is absent** |
+| Live Edge functions | `list_edge_functions` | `send-email`, `send-push-notification`, `drive-manager`, `drive-manager-test`, `drive-manager-v2` v19, `create-choir` v2, `resend-inbound` v3. **`choir-invitations` is absent** |
+| Schema-level confirmation | `list_tables` on `public` | 38 tables, **every one RLS-enabled**, and **no `choir_invitations` table**. The migration is genuinely unapplied, not merely missing from the ledger |
+| Live data present | same listing, aggregate counts only | Real member data exists — attendance and rehearsal-invitee rows in the hundreds, 79 repertoire files, 61 push subscriptions, 40 PDF annotations, 1 choir. This is production, not a scratch project |
+| Web/Git link | Vercel `get_project`, `list_deployments` | `genova-app` serves `app.genesinovachoir.com` from branch `main`; production sits on `0389242`, identical to `origin/main`. Nothing from the unpushed history has shipped |
+| Working tree | `git status`, `git worktree list` | Clean, single worktree, main agent is the only writer |
+
+**Step 1 is therefore satisfied except for the supported write path.** The brief requires an IPv4
+session-pooler connection to be proven before any write. That check cannot be performed from the
+agent sandbox at all: DNS resolution for both `db.hievmwwctjjlhmssoxsu.supabase.co:5432` and the
+pooler host fails, and `psql`, `pg_dump` and the Supabase CLI are not installed there. The sandbox
+reaches Supabase only through the MCP HTTP API.
+
+**Consequence for step 2, the backup.** A fresh logical schema + data backup, its SHA-256 and a
+restore into a clean PostgreSQL 17 with matching row counts **cannot be produced by the agent**.
+It needs the owner's machine, where the Supabase CLI or `pg_dump` can reach the database directly.
+This is a capability limit, like the GitHub remote before it, not a missing permission.
+
+**Consequence for step 7.** The brief itself requires the owner to name, in advance, the temporary
+choir/chief and the operator-owned invitation recipient, and to say which Auth, membership and
+choir records will be deleted afterwards. That decision has never been given. Existing users and
+the 27 accounts covered by decision #17 are not substitutes.
+
+**Status: 010 remains pending.** The access blocker that held it for days is gone — the correct
+project is reachable and its preconditions are now observed rather than assumed — but the backup,
+the restore evidence, the fixture decision and every write step are still outstanding, and none of
+them may be inferred from general authorization. The next concrete action belongs to the owner:
+produce the backup and restore evidence, and name the fixtures.
