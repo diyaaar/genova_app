@@ -177,6 +177,33 @@ oturumunun eski yolunun bozulmamış olması. İkisi de 011 yayına girmeden öl
 sıradaki adım bu değişikliğin yayınlanmasıdır — ayrı yetki ister ve 010'un kalan
 maddelerinden sonra gelir.
 
+## Yayın ve tarayıcı regresyonu — 7-8 Eylül 2026
+
+011 ürün sahibinin onayıyla yayına alındı: `main` `6b6d9a4..a912089`, 12 commit. Aralıktaki
+tek ürün kodu 011'dir; kalanı belge ve zaten canlıya uygulanmış 012 SQL'idir.
+
+**İlk koşu kırmızı geldi ve sebebi tam olarak bu değişiklikti** — bu yüzden de değerliydi:
+
+Koşu [#34162690120](https://github.com/genesinovachoir/genova_app/actions/runs/34162690120),
+`Quality and security` ve `Native product checks` yeşil, `Browser regression` **kırmızı**:
+`tests/e2e/invitations.spec.ts:9` iki tarayıcı projesinde de düştü. Beklenen "Doğrulama
+e-postanızı kontrol edin" yerine "Kayıt tamamlanamadı." görülüyordu.
+
+Sebep: test `page.route('**/auth/v1/signup', …)` ile kayıt çağrısını taklit ediyordu.
+`emailRedirectTo` eklenince supabase-js aynı çağrıyı `?redirect_to=…` sorgu dizesiyle
+gönderiyor ve Playwright'ın glob'u sorgu dizesi olan adrese uymuyor. Taklit devreye
+girmeyince istek gerçek sunucuya gidiyor ve hata dönüyor. Yani test, davranışın
+**değiştiğini** doğru şekilde yakaladı; kusur üründe değil, testin kalıbındaydı.
+
+Kalıp `'**/auth/v1/signup*'` yapıldı ve testler daraltılmak yerine **genişletildi**: artık
+`redirect_to`'nun tam olarak `/invite` olduğunu ve ham token'ın sorgu dizesinde hiç
+görünmediğini de doğruluyorlar. Ayrıca dört yeni tarayıcı testi eklendi: fragment'siz
+dönüşte davetin korunması, bozuk depo kaydının yok sayılması, sıfırlama isteğinin tek tip
+yanıtı ve geçersiz adresin ağ çağrısından önce reddi.
+
+Kayıt notu: CI günlüklerinin barındığı sunucuya ajan ortamından çıkılamıyor; hata
+GitHub API'sinin **annotation** uçundan okundu, günlük dosyasından değil.
+
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date, revision, environment, command or scenario | Evidence and limits |
