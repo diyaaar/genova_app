@@ -595,7 +595,13 @@ Düzeltme, doğrulama dönüş adresine davet parametresini taşımaktır ve ayr
 > sayfasına değil kök adrese dönüyordu. Yanlış teşhis burada tarihsel kayıt olarak
 > bırakıldı; doğrusu 011'dedir.
 
-Bunlar 008'in kabul ölçütlerini düşürmez; ikisi de akışın etrafındaki yönlendirme
+**3. Test korosu, çok üyelikli seçim kilidini ortaya çıkardı.** İkinci üyelik oluşur
+oluşmaz ürün sahibinin hesabı koro seçim ekranına ulaşamaz oldu. Sebep 010'da değil 005'in
+`list_my_choirs` fonksiyonundaydı ve [012](012-coklu-uyelik-secim-kilidi.md)'de canlıda
+kapatıldı. Bu, 010'un beklenmedik ama en değerli yan çıktısı: kusur, ikinci üyelik var
+olmadan görünemezdi.
+
+Bunlar 008'in kabul ölçütlerini düşürmez; ilk ikisi akışın etrafındaki yönlendirme
 sorunlarıdır. İkisi de [011 — davet dönüşü ve kendi kendine şifre
 sıfırlama](011-davet-donusu-ve-sifre-sifirlama.md) brief'inde ele alındı ve yerel olarak
 düzeltildi (commit `3986f35`); yayına girmesi için depo kapısı ve Auth yönlendirme izin

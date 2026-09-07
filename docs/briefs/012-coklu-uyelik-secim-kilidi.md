@@ -79,6 +79,25 @@ Anlam birebir korunur: satır oturumun aktif korosuysa `true`, değilse `false` 
 yapılmadı" hâli dahil. `choir.id` birincil anahtardır ve asla null olamaz, dolayısıyla
 operatörün "iki taraf da null" dalına düşülemez.
 
+## Aynı sınıftan başka kusur var mı — tarama
+
+Kusurun sınıfı şu: istemcinin katı ayrıştırıcısına `null` gelebilen bir alan beslemek.
+`parseMembershipOption`'ın şart koştuğu altı alan canlıda tek tek kontrol edildi.
+
+| Alan | Kaynak | Null olabilir mi |
+|---|---|---|
+| `choir_id` | `public.choirs.id` | hayır (NOT NULL, birincil anahtar) |
+| `member_id` | `public.choir_members.id` | hayır (NOT NULL) |
+| `choir_name` | `public.choirs.name` | hayır (NOT NULL) |
+| `choir_slug` | `public.choirs.slug` | hayır (NOT NULL) — sözleşme zaten null'a da izin veriyor |
+| `member_is_active` | `public.choir_members.is_active` | hayır (NOT NULL, varsayılan `true`) |
+| `is_current` | **hesaplanan** | **evet — düzeltilen kusur buydu** |
+
+Yani listeyi besleyen tek hesaplanan alan `is_current`'tı ve tek null kaynağı oydu.
+`boolean` dönen diğer fonksiyonlar (`is_chef`, `is_leader`, `current_member_has_role` ve
+benzerleri) RLS `using` ifadelerinde kullanılıyor; orada `null` "izin yok" gibi davranır,
+yani kapalı tarafa düşer, açılmaz. Bu tarama yeni bir kusur bulmadı.
+
 ## Sonuç kaydı
 
 | Tarih | Komut / işlem | Ortam | Sonuç | Kanıt / sınır |

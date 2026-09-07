@@ -81,6 +81,14 @@ cleanup of the test data. Cleanup needs its own confirmation at execution time.
 | 008 | Deployed and accepted live for creation, acceptance and the single-use refusal | Revoked-link and wrong-account refusals are proven in isolation and in the hosted SQL test, not yet through the live product path |
 | 009 | [SMTP/return URL and signed reply forwarding accepted](briefs/009-auth-eposta-ve-yanit.md); **real Auth email delivery now verified** for recovery and new-user verification | Delivery times were not measured |
 
+**Fixed live, after the release:** [012](briefs/012-coklu-uyelik-secim-kilidi.md) closes a
+multi-membership lockout that the 010 round exposed. `list_my_choirs` computed `is_current`
+with `=` against a function that returns null when nothing is selected yet, so every row came
+back with a null boolean, the shared client contract rejected the list, and a member of two
+choirs was shown "no accessible choir membership" instead of the picker. Function body only,
+verified live before and after; no redeploy was needed. Its regression test file is written
+but has not been executed.
+
 **Local, not deployed:** [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) fixes two dead
 ends the live round exposed — the verification round trip losing the invitation, and a
 "forgot password" link leading to a page nothing could ever reach. Partial at 8 of 12 required
