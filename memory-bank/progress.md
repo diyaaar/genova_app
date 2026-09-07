@@ -10,7 +10,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 001 Flutter repertuvar spike | Tarihsel deneme geçti | [001](../docs/briefs/001-repertuvar-spike.md); ürün mimarisi değil |
 | 002 RN PDF/katman spike | Deneme geçti, RN kararı kesin | [002](../docs/briefs/002-rn-pdf-spike.md); ürün kurulumu ve tüm cihazlar değil |
 | 003 kiracı şeması | Tamamlandı ve canlıda | [003 kanıtları](../docs/briefs/003-dogrulama.md); web `3878e1d`, Edge v14, hosted izolasyon ROLLBACK ve oturumlu duman testi geçti |
-| 004 RN kabuk + native giriş | Yerel uygulama hazır; cihaz ve canlı kabul yok (kısmi/bekliyor) | [004](../docs/briefs/004-rn-kabuk-ve-giris.md); `apps/mobile` Expo SDK 57. Ürün sahibinin Mac'inde temiz `npm ci` + 35 native test ve `pnpm check` uçtan uca (190 test + `next build`) geçti; kendi iOS derlememiz `expo run:ios` ile simülatörde çalıştı ve dört akış senaryosu elle geçti. 22/27 required criteria PASS (7 Sep arithmetic correction; no criterion changed); cihaz keychain'i, Android derlemesi, gerçek telefon, CI koşusu ve 010 canlı kabulü çalıştırılmadı |
+| 004 native shell | Partial/pending: 23/27 required PASS, four NOT RUN | [004 evidence](../docs/briefs/004-rn-kabuk-ve-giris.md): native gate at `10b6f9f`; own Android build/emulator at `6d64d16`; historical iOS simulator acceptance. Hardware keychain, real-phone account flow, remote CI and live 010 remain open |
 | 005 çoklu üyelik + aktif koro | Tamamlandı ve canlıda | [005](../docs/briefs/005-coklu-uyelik-aktif-koro.md); DB `20260905003154`, Edge v15, web `0a2b94c`; taze restore, hosted izolasyon ve oturumlu canlı duman testi geçti |
 | 006 üyelik yönetimi güvenlik kapısı | Kapatıldı; kalan 27 hesap riski ürün sahibi tarafından kabul edildi | [006](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md); eski public bootstrap silindi, 15 restrictive politika ve hosted 003/005/006 testleri geçti. Toplu parola/oturum düzeltmesi ve e-posta bilinçli olarak yapılmadı; bu hesapların güvenli olduğu anlamına gelmez |
 | 007 operatör kontrollü koro oluşturma | Canlı altyapı hazır; gerçek kullanım yok | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); taze backup/restore, DB `20260905160539`, Edge v1 ve hosted 003/005/006/007 geçti. Allow-list boş; gerçek operatör/koro ve authenticated başarı kabulü yok |
@@ -40,17 +40,10 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-7 September verification: the main agent reran the native type/test/bundle gate on macOS
-at `10b6f9f`: 4 suites / 35 tests and 660-module Hermes export PASS. The
-[004 table and transcript](../docs/briefs/004-rn-kabuk-ve-giris.md) are authoritative.
-Five required criteria remain NOT RUN; no product, device, remote CI or live status changed.
+## Latest handoff — 7 September 2026
 
-## Android acceptance follow-up — 7 September 2026
-
-At `6d64d16`, the own Android debug APK built and ran on a dedicated API 36 ARM64 emulator.
-Signed-out UI and empty-form validation passed with synthetic loopback settings; no real
-account or hardware. [Evidence](../docs/briefs/004-android-build-2026-09-07.md).
-This supersedes the earlier absent-SDK/Android-not-run snapshot: the existing Homebrew SDK
-and Java 17 were reused, emulator/image added. Current 004 count: 23/27 PASS, four NOT RUN
-(hardware keychain, real-phone account flow, remote CI, 010). Ask before resuming postponed
-hardware testing; repertoire/PDF stays blocked. No product source or live state changed.
+The owner postponed real-device testing again. [Current handoff](../docs/agent-handoff.md)
+records verified checkout/ownership and recommends the bounded 004 CI-readiness proposal.
+This documentation update reruns no product test and grants no remote/live authority.
+Historical/native/Android outputs remain in 004's linked records; no acceptance criterion
+changed during handoff. Repertoire/PDF remains blocked until 004 acceptance.

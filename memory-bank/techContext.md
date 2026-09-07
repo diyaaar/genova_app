@@ -35,12 +35,15 @@ Railway hazırlığı production bağlantısı değildir. Var olan bucket'ı iç
 grafiğini olduğu gibi uygulama; [altyapı kaydındaki](../docs/altyapi-2026-09-04.md)
 sürüm/veri/hesap sınırlarını işlem öncesinde yeniden kontrol et.
 
-## Android acceptance follow-up — 7 September 2026
+## Verified local Android environment — 7 September 2026
 
-At `6d64d16`, the own Android debug APK built and ran on a dedicated API 36 ARM64 emulator.
-Signed-out UI and empty-form validation passed with synthetic loopback settings; no real
-account or hardware. [Evidence](../docs/briefs/004-android-build-2026-09-07.md).
-This supersedes the earlier absent-SDK/Android-not-run snapshot: the existing Homebrew SDK
-and Java 17 were reused, emulator/image added. Current 004 count: 23/27 PASS, four NOT RUN
-(hardware keychain, real-phone account flow, remote CI, 010). Ask before resuming postponed
-hardware testing; repertoire/PDF stays blocked. No product source or live state changed.
+Existing Homebrew Java 17 and SDK at `/opt/homebrew/share/android-commandlinetools`
+were reused; Android Studio was not required by the verified command-line build.
+Task-created emulator/API 36 ARM64 image and AVD `genova004_api36` remain reusable.
+Exact environment variables, commands, Metro IPv6 fix, partition-size override, APK hash
+and screenshots belong to the [Android evidence](../docs/briefs/004-android-build-2026-09-07.md).
+Generated `apps/mobile/android/` is ignored; never hand-edit or commit generated files.
+Metro/emulator were stopped after acceptance, and absence was checked for handoff.
+Keep macOS dependencies intact; do not install Linux binaries into its shared node_modules.
+Hardware remains deferred; current acceptance status and next task are in
+[activeContext](activeContext.md) and [004](../docs/briefs/004-rn-kabuk-ve-giris.md).

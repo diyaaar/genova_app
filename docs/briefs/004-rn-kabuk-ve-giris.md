@@ -173,8 +173,9 @@ Filled before implementation, per the migration guide and the brief template.
 ## Mandatory acceptance evidence
 
 Filled before implementation. Historical 6 September results are retained below; the native
-and Metro rows were rerun directly on macOS on 7 September at `10b6f9f`. Other PASS rows
-retain their original evidence dates and limits; no device, web or live test was rerun.
+and Metro rows were rerun directly on macOS on 7 September at `10b6f9f`; Android build
+acceptance followed at `6d64d16`. Other PASS rows
+retain their original evidence dates and limits; no hardware, web or live test was rerun.
 
 Environments referenced below:
 - **NATIVE-VM** — local Linux dev VM on the user's machine (linux-arm64), Node v22.23.2,
@@ -361,3 +362,85 @@ product/configuration diff. Screen targets in `MIGRATION.md` are unchanged. The 
 checked screenshots/XML, build result and known environment failures against the criterion.
 Task-owned Metro and emulator were stopped after capture. This documentation/evidence
 commit is local only; the brief remains partial/pending.
+
+## Handoff start-check and next-task contract — 7 September 2026
+
+- **Request:** the owner explicitly postponed the real-device step again and requested a
+  fresh-session handoff plus a reasoned next step. Do not ask to resume the phone test as
+  the receiving agent's automatic first action. Existing criteria remain in place.
+- **Entry checkout:** `main`, `01ce1f1412f89427e8026c68455bd756709b3b77`; clean,
+  one worktree, main agent sole writer; no inherited unfinished edits. The local tracking
+  ref is 21 commits behind (no fetch). Product/native/shared/CI sources have no diff since
+  `dc5f7a6`. The ignored Android APK hash still matches its acceptance record; Metro 8081
+  and task emulator processes were absent at this check. No product test was rerun.
+- **Sources:** reread AGENTS, migration guide, working cycle, existing handoff, six memory
+  records, MIGRATION, decisions, delivery plan, brief template, this evidence table,
+  native/Android evidence records, 010 and `.github/workflows/ci.yml`.
+- **This handoff's allowed edits:** this brief, `docs/agent-handoff.md`, relevant
+  `memory-bank/` summaries only. Preserve product/configuration, evidence artifacts,
+  MIGRATION screen targets, all acceptance names/required flags/statuses and historical dates.
+  Authority is documentation/local commits; no push, deployment, production, accounts,
+  email, spending or hardware test. Rollback: this documentation commit only.
+
+### Next bounded task: 004 CI execution readiness (recommendation, not execution authority)
+
+**Why:** hardware is intentionally postponed. The other two open gates are remote CI and
+010 live acceptance. A scoped CI readiness review can prepare a concrete decision without
+phone access or production mutation. It does not accept CI and cannot close 004. Starting
+repertoire/PDF or inventing extra infrastructure to bypass acceptance is not authorized.
+
+**First concrete action after startup verification:** read `.github/workflows/ci.yml`,
+compare `origin/main...HEAD` and inspect the proposed revision's release-impact diff.
+The current local findings are a starting point, not a reason to repeat checks unchanged:
+`push` triggers only on `main`; `pull_request` and `workflow_dispatch` are also defined.
+The pending range includes 008 web invitation routes, Edge code and its DB migration,
+plus 009 and native/shared changes. A plain `main` push can publish web code before the
+010 DB → Edge → web sequence is satisfied. A branch push alone is not configured to
+trigger this workflow; a PR/dispatch route would require remote availability, hosting
+integration and permissions to be checked rather than assumed.
+
+**Deliverable:** in this brief, prepare one precise CI execution proposal: exact repository,
+revision/ref and commit range; jobs to run; proposed trigger; any preview/production effects;
+which hosting/account facts remain unknown; expected evidence and any required approval.
+Prefer a route that does not publish production. Do not claim a non-main ref is automatically
+free of preview/deployment effects. Use read-only remote configuration checks only within
+existing access authority; if unavailable, name the exact missing check and stop that step.
+Do not mutate hosting settings or create a remote branch/PR/run during local preparation.
+
+**Relevant files:** `.github/workflows/ci.yml`, `apps/mobile/package.json` and lockfile,
+`apps/mobile/metro.config.js`, root `package.json`, this brief, and the dependency/order
+source `docs/briefs/010-008-canli-yayin-ve-kabul.md`. Inspect only relevant outgoing
+web/Edge/migration paths to explain release impact; do not implement or start 010.
+
+**Preparation acceptance:** proposal identifies exact code, trigger, required jobs, hosting
+unknowns and separate authorization; documentation links/diff pass; no required criterion
+changes. **Actual CI acceptance** still needs a successful remote run tied to the relevant
+revision, job results and run reference. Local reproduction/configuration is not that proof.
+If source/build configuration changes are needed, record their scope first, preserve tests,
+run the AGENTS gates and keep code/documentation commits separate. Push, PR/run dispatch,
+production work, real data/email and spending remain withheld until explicitly authorized.
+
+After CI readiness is prepared, ask only for the concrete remote operation needed; do not
+ask the owner again whether the phone test is due. 010 remains pending until separately
+selected/authorized. If neither remote path is authorized, pause with a complete handoff;
+there is no local-only route to 004 acceptance under the unchanged criteria.
+
+### Handoff acceptance evidence (documentation only)
+
+This is separate from product acceptance; the 27-row product table remains authoritative.
+
+| Handoff requirement | Required | Status | Evidence / boundary |
+|---|---|---|---|
+| Checkout, ownership, sources and latest owner deferral recorded | yes | PASS | 7 Sep, `01ce1f1`, direct local inspection above; no inherited edits |
+| Current/historical, deployed/local/unverified states separated; next task and authority precise | yes | PASS | 7 Sep, `01ce1f1` plus this documentation diff; main-agent self-review against decisions #21/#22, user deferral, 004/010 and dated evidence. No independent review |
+| Local links, unchanged product criteria and diff checked | yes | PASS | 7 Sep, direct local Python validation: five allowed Markdown files, 73 local targets and four anchors valid; product table byte-identical (27 rows, 23 PASS, four NOT RUN); `git diff --check` passed |
+
+No independent review or receiving-agent execution is claimed. Product remains 23/27 PASS
+with four NOT RUN criteria regardless of completion of this documentation-only handoff.
+
+Handoff self-review exercised the receiving-agent paths: hardware remains deferred; missing
+remote authority yields a proposal rather than push; CI success alone leaves three other
+product gates; historical simulator/Android evidence never becomes live or hardware proof.
+All five edited files are documentation/index records; original test transcripts and
+screenshots are unchanged. No new product tests, remote checks, fixture access or deployments
+ran for this handoff. Documentation acceptance is complete; underlying 004 is not.
