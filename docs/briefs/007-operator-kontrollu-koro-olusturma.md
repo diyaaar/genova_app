@@ -137,3 +137,28 @@ gönderildi; canlı DB migration ve Edge v1 aktiftir. Allow-list boş bırakıld
 gerçek operatör atanmadı ve gerçek koro oluşturulmadı. İlk gerçek işlemden önce
 operatör kimliği ayrıca seçilip yetkilendirilmeli ve authenticated başarı yolu
 kontrollü kabul kaydıyla tamamlanmalıdır.
+
+## İlk platform operatörü atandı — 7 Eylül 2026
+
+Ürün sahibi kendi hesabını operatör olarak seçti ve işlemi açıkça yetkilendirdi. Atama canlı
+projede `hievmwwctjjlhmssoxsu` üzerinde yapıldı; öncesinde aynı gün alınmış yedek ve
+[geri yükleme kanıtı](010-008-canli-yayin-ve-kabul.md#adım-2-sonucu--yedek-ve-geri-yükleme-kanıtlandı-7-eylül-2026) vardı.
+
+| Öğe | Değer |
+|---|---|
+| İşlem | `insert into genova_007.platform_operators (auth_user_id, granted_by) … on conflict do nothing` |
+| Operatör | `alidiyarduran35@gmail.com`, `auth.users.id = 70a75f7c-ca85-4cab-9a8a-b92bbc79677b`, e-postası doğrulanmış, hesap 16 Nisan 2026'da açılmış |
+| `granted_by` | Aynı kimlik. İlk operatör olduğu için kendinden başka verecek kimse yoktu; bu bir öz-atamadır ve öyle kaydedilmiştir |
+| Sonuç | Allow-list'te **tek satır**. Doğrulama aynı sorguda `auth.users` ile join edilerek yapıldı |
+| Şema etkisi | Yok. Yalnız veri satırı; DDL çalıştırılmadı |
+| Geri alma | `delete from genova_007.platform_operators where auth_user_id = '70a75f7c-…';` Tek satır, yan etkisiz |
+
+**Bu neyi kapatır, neyi kapatmaz.** Brief'in "allow-list boş, gerçek operatör ataması yok"
+maddesi kapandı. **Authenticated başarı yolu hâlâ açık:** `public.create_operator_choir`
+`auth.uid()` üzerinden çalışır, yani gerçek bir kullanıcı JWT'si ister. MCP/SQL bağlantısı
+service rolüyle çalıştığı için `auth.uid()` boştur ve fonksiyon `insufficient_privilege`
+verir — bu doğru davranıştır. Gerçek koro oluşturma, operatör hesabıyla giriş yapılıp
+uygulama veya `create-choir` Edge fonksiyonu üzerinden denendiğinde kabul edilebilir.
+
+Koro içi `Şef` rolünün global yetki olmadığı sözleşmesi değişmedi; bu atama yalnız bu tek
+hesaba koro oluşturma yetkisi verir.

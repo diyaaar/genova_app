@@ -287,3 +287,43 @@ kopyada olacağı için canlı etkisi yoktur.
 
 7. adım için hâlâ ürün sahibinin belirlemesi gereken şey duruyor: test korosu/şefinin adı,
 işletmeciye ait davet alıcısı ve test sonunda silinecek kayıtlar.
+
+## Test verisi seçimi — 7 Eylül 2026
+
+Brief'in şart koştuğu "kullanıcı test verisini açıkça seçer" maddesi karşılandı. Ürün sahibinin
+belirlediği kimlikler ve canlı durumları:
+
+| Rol | Adres | Auth durumu (7 Eylül, salt okunur kontrol) |
+|---|---|---|
+| Platform operatörü | `alidiyarduran35@gmail.com` | **Var**, doğrulanmış. Allow-list'e eklendi; kanıt [007](007-operator-kontrollu-koro-olusturma.md#i̇lk-platform-operatörü-atandı--7-eylül-2026) |
+| Test Şefi | `diyarinhesaplari@gmail.com` | **Auth'ta yok** |
+| Davet alıcısı | `ali.duran@orbibarobotics.com` | **Auth'ta yok** |
+
+**Alıcının bulunmaması sorun değil, tam tersi.** 008 yeni Auth kullanıcısı yolunu açıkça
+kapsıyor; davetin gerçek değeri de orada. Alıcı hesabı önceden açılmamalı.
+
+**Şefin bulunmaması ise bir önkoşul.** `public.create_operator_choir` kurucu olarak **var olan**
+bir Auth kullanıcısının kimliğini ister (`p_founder_auth_user_id`). Yani test korosu
+oluşturulmadan önce `diyarinhesaplari@gmail.com` canlı uygulamadan kayıt olup e-postasını
+doğrulamalıdır. Bu adım ürün sahibine aittir; ajan Auth kullanıcısı oluşturamaz ve
+oluşturmamalıdır.
+
+### Temizlik listesi — önerilen, uygulanmadan önce ayrıca onaylanacak
+
+Test bittiğinde silinecekler, dar kapsamlı:
+
+1. Test korosuna ait `choir_member_roles`, `choir_members`, `roles` satırları
+2. Test korosunun `choirs` satırı ve `genova_007.choir_creation_audit` kaydı
+3. Test korosuna ait davet satırları (008 tablosu)
+4. `diyarinhesaplari@gmail.com` ve `ali.duran@orbibarobotics.com` Auth kullanıcıları
+5. Operatör kaydı, artık gerekmiyorsa: `genova_007.platform_operators` tek satırı
+
+Kapsam dışı ve **kesinlikle dokunulmayacak**: mevcut gerçek koro, 29 üyesi ve karar #17
+kapsamındaki 27 hesap. Silme işlemi ayrı, hedefleri tek tek doğrulanmış bir işlemdir ve
+o anda ayrıca onaylanır.
+
+### Sıradaki adım değişmedi
+
+Canlı 008 migration'ı hâlâ 3. adımın arkasında: taze restore üzerinde 008 uygulanıp
+003–008 regresyonları, concurrency ve down roundtrip geçmeden canlı şemaya dokunulmaz.
+Operatör ataması 007 altyapısıdır ve bu sıraya dahil değildir.
