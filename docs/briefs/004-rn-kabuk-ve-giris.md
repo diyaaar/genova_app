@@ -218,13 +218,13 @@ Environments referenced below:
 | Metro bundles the native entry point, resolving both the workspace's nested dependencies and the shared `@shared/*` contract | yes | PASS | 7 Sep 2026, `10b6f9f`, MACOS-HEAD; `npm run bundle:check` as the final step of the native chain, exit 0 | [Direct transcript](004-native-gate-2026-09-07.md): iOS export bundled 660 modules in 4366 ms; 2.2 MB `.hbc` plus metadata generated in ignored `.expo/bundle-check`. Uses the normal Hermes bytecode step (no `--no-bytecode`). No app launch, real environment values or device acceptance; historical simulator evidence remains dated 6 Sep |
 | Native checks integrated into `.github/workflows/ci.yml`; existing web jobs unchanged | yes | PASS | 6 Sep 2026, NATIVE-VM, workflow YAML parsed; `npm install --package-lock-only --dry-run` | New `mobile` job runs `npm ci`, `npx tsc --noEmit`, `npm test` in `apps/mobile`; `quality` and `browser` jobs are untouched; `package.json` and `package-lock.json` verified in sync |
 | `npm ci` reproduces the native workspace from the committed lockfile | yes | PASS | 6 Sep 2026, MACOS, `rm -rf node_modules && npm ci` in `apps/mobile` | 1118 packages installed, 1119 audited; the subsequent type and test run passed. This is the exact command the new CI job uses. Limit: deprecation warnings and 10 moderate advisories were reported by npm and are not addressed in this brief |
-| CI actually executed for this revision | yes | FAIL | 7 Sep 2026, `4e698f5`, GitHub Actions run [#19](https://github.com/genesinovachoir/genova_app/actions/runs/34126230982), `pull_request` event from draft PR [#7](https://github.com/genesinovachoir/genova_app/pull/7) | The run completed. `Native product checks` PASS (`npm ci`, `tsc --noEmit`, `npm test`, `bundle:check` all green) and `Browser regression` PASS (`pnpm test:e2e`, which builds the app itself). **`Quality and security` FAILED at `Run pnpm check`**, so `pnpm audit` was skipped. Acceptance needs all three green, so this criterion is FAIL, not PASS. The failing step's root cause is **not yet verified** — see below |
+| CI actually executed for this revision | yes | PASS | 7 Sep 2026, `08f41dc`, GitHub Actions run [#20](https://github.com/genesinovachoir/genova_app/actions/runs/34127073470), `pull_request` event from draft PR [#7](https://github.com/genesinovachoir/genova_app/pull/7) | All three jobs green: `Quality and security`, `Browser regression`, `Native product checks`. The first attempt, run [#19](https://github.com/genesinovachoir/genova_app/actions/runs/34126230982) at `4e698f5`, failed in `next build`; `08f41dc` fixes the job environment and is the revision this PASS refers to. Limit: this proves the workflow on a pull-request ref, not a `main` push, and it is not evidence of live deployment |
 | iOS development build runs on a device or simulator | yes | PASS | 6 Sep 2026, MACOS, `npx expo run:ios` | The project's own native iOS build was generated and launched on the iOS Simulator (iPhone 17 Pro, iOS 26.5); the app runs as Genova rather than inside Expo Go. Built locally with Xcode, no EAS and no spending. Limit: simulator only, no hardware |
 | Android development build runs on a device or emulator | yes | PASS | 7 Sep 2026, `6d64d16`, direct macOS; Expo Android prebuild, Gradle ARM64 `assembleDebug`, adb install/launch on dedicated API 36 emulator | [Build, launch and UI evidence](004-android-build-2026-09-07.md): 160 tasks, own debug APK installed; signed-out screen and empty-form validation visually/XML verified. Synthetic loopback configuration, no real account/device. Initial disk/Metro connection failures resolved before acceptance |
 | Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
 | Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
 
-**Optional progress: 23 passed / 27 required criteria.** Three are NOT RUN and one now FAILs, so
+**Optional progress: 24 passed / 27 required criteria.** Three are NOT RUN, none fail, so
 004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
 skipped or loosened to reach a green result.
 
@@ -722,11 +722,31 @@ seconds, which is arguably short for a full `next build`, so an earlier stage of
 `pnpm check` — lint, typecheck, coverage or the service-worker check — cannot be excluded. A
 prediction that matches an outcome is not a verified diagnosis.
 
-**Next step for this criterion:** obtain the failing step's output, either from the owner opening
-the run and pasting it or by another route to the log, and only then decide the fix. If it is the
-environment, the change is a scoped workflow edit adding the variables that job needs, with the
-synthetic-versus-secret choice made by the owner. If it is something else, the fix is different and
-this criterion must not be closed by adding environment that was never the problem.
+**Root cause, then confirmed.** The owner supplied the failing step's output. `pnpm check` passed
+lint, typecheck, 32 files / 190 unit tests and the service-worker check, then `next build`
+compiled successfully and failed while generating static pages:
 
-Draft PR #7 exists only to obtain this evidence and must not be merged: the branch carries the
-undeployed 008 invitation UI. Close it and delete the branch once the criterion is settled.
+```
+Error occurred prerendering page "/auth/recovery".
+Error: supabaseUrl is required.
+Export encountered an error on /auth/recovery/page: /auth/recovery, exiting the build.
+```
+
+That is exactly the predicted mechanism, now measured rather than inferred: the root layout wraps
+every route in `AuthProvider`, `lib/supabase.ts` constructs its client at module scope, and
+prerender executes that module.
+
+**Fix and re-run.** `08f41dc` adds a job-level `env` block to `quality` with synthetic values,
+chosen over repository secrets because nothing is fetched at build time, CI never deploys this
+output, and secrets are unavailable to Dependabot pull requests, which would leave their CI
+permanently red. It follows the convention `playwright.config.ts` already uses, which is why the
+`browser` job built successfully all along. Run **#20** at `08f41dc` then passed all three jobs,
+so the CI criterion moves to PASS.
+
+**Deliberately not done here.** The underlying fragility — a shared module that throws on import —
+was not changed. Making the client lazy touches live web code and needs its own brief and gates;
+adding build environment does not fix that, it only stops CI from tripping over it.
+
+Draft PR #7 existed only to obtain this evidence and was never merged. It is closed and the branch
+deleted now that the criterion is settled; run #19 and #20 remain as permanent evidence. The fix
+commit `08f41dc` lives on local `main` and reaches `origin` only through a future authorized push.

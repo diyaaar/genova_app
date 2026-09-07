@@ -25,7 +25,10 @@ undeployed migration and Edge function, and that the `quality` job is predicted 
 not a test — to fail at `next build` for missing Supabase environment. Six remote facts stay
 unknown. Work is paused on the owner's answer to a four-step approval request whose first two
 steps write nothing: a `git fetch`, and an owner-side report of Vercel and branch-protection
-settings. Do not push, branch, open a pull request, dispatch a run or change hosting.
+settings. Bu iş 7 Eylül'de tamamlandı: kullanıcı depo kapsamlı bir GitHub token'ı verdi, `ci/004-native-check`
+dalı push edildi, taslak PR #7 açıldı, koşu #19 tahmin edilen `next build` hatasını üretti,
+`08f41dc` `quality` işinin ortamını düzeltti ve koşu #20 üç işi de yeşil geçti. Uzak CI kriteri
+PASS; 004 artık 24/27. PR merge edilmeden kapatıldı, dal silindi, `main` push edilmedi.
 
 7 Eylül eki: kullanıcı connector'ları yeniden bağladı. Supabase ve Railway artık doğru
 `genesinovachoir` hesabında; salt okunur listelerle canlı projede 008 migration'ının ve

@@ -147,7 +147,18 @@ assumption that it is now due. A proposal in a document is not permission to exe
 
 ## Next bounded task
 
-**Done, awaiting the owner's decision:** the CI execution-readiness preparation asked for by
+**Completed.** The owner granted standing authorization and supplied a repository-scoped GitHub
+token, so the remote steps were carried out: branch `ci/004-native-check` was pushed, draft pull
+request #7 opened into `main`, run #19 reproduced the predicted `next build` failure, `08f41dc`
+fixed the `quality` job environment, and run **#20 passed all three jobs**. The CI criterion is
+**PASS**, 004 now stands at **24 of 27** with three NOT RUN and none failing. The pull request was
+closed unmerged and the branch deleted; `main` was never pushed and nothing was deployed. Details
+in the [CI run record](briefs/004-rn-kabuk-ve-giris.md#ci-run-19-result--7-september-2026).
+
+The three remaining criteria are hardware keychain, the real-phone flow — both deferred by the
+owner — and live 010 acceptance. There is no remaining local or CI route to close 004.
+
+**Historical, kept for reasoning:** the CI execution-readiness preparation asked for by
 the [next-task contract](briefs/004-rn-kabuk-ve-giris.md#next-bounded-task-004-ci-execution-readiness-recommendation-not-execution-authority)
 was completed on 7 September at `d9ab194`. The result is the
 [CI execution-readiness proposal](briefs/004-rn-kabuk-ve-giris.md#ci-execution-readiness-proposal--7-september-2026),
@@ -178,11 +189,11 @@ except on the custom domain, and previews still talk to the live Supabase projec
 settings — Actions enablement, secrets and branch protection — remain unknown. Access improving does not grant deployment:
 010 remains pending and needs its own authorization and backup evidence.
 
-**Next action:** none that an agent may take alone. The proposal ends in a four-step approval
-request, the first two steps of which write nothing: a `git fetch` to replace the two-day-old
-cached `origin/main`, and an owner-side report of the Vercel and branch-protection settings.
-Until the owner answers, this brief is paused with the preparation complete. Do not push,
-open a branch or pull request, dispatch a run, or modify hosting.
+**Next action:** 010 is the only path that can still advance 004, and it needs its own
+authorization, a fresh backup and restore evidence before any schema step. Hardware testing stays
+deferred at the owner's request; do not raise it as the next action. `main` remains unpushed and
+ahead of `origin/main`, and pushing it would publish the 008 UI ahead of its backend, so it stays
+withheld until 010 sequences DB → Edge → web.
 
 Acceptance for that preparation, exact relevant files, stop conditions and the actual remote-CI
 proof required are in 004. Successful proposal preparation does not change the product table.
