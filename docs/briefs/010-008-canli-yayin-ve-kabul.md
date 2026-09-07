@@ -341,3 +341,79 @@ o anda ayrıca onaylanır.
 Canlı 008 migration'ı hâlâ 3. adımın arkasında: taze restore üzerinde 008 uygulanıp
 003–008 regresyonları, concurrency ve down roundtrip geçmeden canlı şemaya dokunulmaz.
 Operatör ataması 007 altyapısıdır ve bu sıraya dahil değildir.
+
+## Adım 3 sonucu — taze restore kabulü geçti (7 Eylül 2026)
+
+Yedeğin geri yüklendiği yerel kopyada yalnız 008 migration'ı uygulandı; 003/005/006/007/008
+izolasyon testleri, 008 concurrency kabulü ve gerçek down roundtrip çalıştırıldı. Canlı ortama
+hiçbir şey uygulanmadı; canlı erişim yalnız rol özniteliklerini okumak için kullanıldı.
+
+Ortam: yerel PostgreSQL 17.11 (Homebrew), veritabanı `genova_008_test_restore`, `127.0.0.1:5432`.
+Koşucu: [supabase/test-support/010_step3_runner.sh](../../supabase/test-support/010_step3_runner.sh).
+Koşucu, veritabanı adı `genova_008_test*` değilse, host `127.0.0.1` değilse veya 008 zaten
+uygulanmışsa çalışmayı reddeder.
+
+### İlk koşu başarısızdı ve sebebi yedeğin kendisiydi
+
+| Test | Belirti |
+|---|---|
+| 003 | `Service-role cross-tenant announcement target accepted` — engellenmesi beklenen kiracılar-arası yazma kabul edildi |
+| 006 | `Service role could not update choir_members` — başarılı olması beklenen güncelleme 0 satır etkiledi |
+| 007 | `Founder must be an active Auth user with an email address` — fixture'daki kurucu görünmedi |
+
+Üçünün de tek bir kök nedeni vardı: **`pg_dump` rol özniteliklerini taşımaz.** Öznitelikler
+cluster globals'ta durur; şema, veri ve grant'lar gelir, `BYPASSRLS` gelmez. Canlıda
+`postgres`, `service_role`, `supabase_admin` ve `supabase_read_only_user` bu yetkiyi taşıyor,
+restore'da taşımıyordu. Sonuçları tam olarak yukarıdaki üç belirtidir:
+
+- 007'deki `create_operator_choir` `security definer`'dır ve sahibi olan rol adına çalışır.
+  O rol RLS'i atlayamayınca `auth.users` sorgusu boş döndü ve fonksiyon kurucuyu bulamadı.
+- 006'da `service_role` RLS'e takıldı, güncelleme 0 satır etkiledi.
+- 003'te kiracı CHECK'i bir üst kaydı sorgulayarak doğruluyor; o sorgu RLS yüzünden boş dönünce
+  kısıt **sessizce geçti**. Yani koruma kalkmış olmasına rağmen hata değil, kabul üretti.
+
+Bu üçüncüsü kaydın asıl değeri: geri yüklenmiş kopya "yüklendi" diye doğru sayılsaydı,
+kiracı korumasının çalıştığı **yanlış** biçimde varsayılacaktı. Yedeğin var olması yetmiyor;
+davranışsal olarak da eş olması gerekiyor.
+
+Düzeltme: [restore-prep.sql](../../supabase/test-support/restore-prep.sql) artık öznitelikleri
+canlı `pg_roles` çıktısından birebir kopyalar. Bu, yedek prosedürünün zorunlu bir parçasıdır.
+
+### Koşucunun kendi hatası da düzeltildi
+
+İlk sürüm down migration'ını ayrıca çalıştırıyordu; oysa `008_concurrency.mjs` roundtrip'i
+zaten yapıyor — gerçek bir kabul commit'leyip down'ı uyguluyor ve kabul edilmiş üyeliğin
+kaldığını doğruluyor. Bu yüzden ayrı down adımı zaten düşmüş nesneler üzerinde hata verdi,
+ardından gelen iki kontrol de **yanlış sebeple** geçti. Koşucu artık roundtrip'i tekrarlamıyor,
+concurrency testinin bıraktığı durumu doğruluyor.
+
+### İkinci koşu — sonuç
+
+| Adım | Sonuç |
+|---|---|
+| Önkoşul | 008 yok, `genova_003/005/007` var, `choir_members` = 29 |
+| 008 migration uygulandı | PASS |
+| 003 tenant isolation | PASS (`003 tenant isolation test passed`) |
+| 005 active choir isolation | PASS |
+| 006 membership admin lockdown | PASS |
+| 007 operator controlled choir creation | PASS |
+| 008 choir invitations | PASS |
+| 008 concurrency + down roundtrip | PASS (`008 concurrent acceptance and accepted-membership preservation: passed`) |
+| Down sonrası `genova_008` ve komut fonksiyonu kalktı | PASS |
+| Üyelik sayısı roundtrip boyunca değişmedi | PASS, 29 |
+| 008 down sonrası yeniden uygulandı | PASS |
+
+Log: `supabase/test-support/010_step3.log`, 7 Eylül 14:37 UTC, **sıfır hata satırı**.
+Log `.gitignore` kapsamındadır; kanıt olarak sonuç tablosu tutulur.
+
+### Sınır
+
+Bu, geri yüklenmiş bir kopyadaki kabuldür. Canlı DB'de 008'in davranacağının kanıtı değildir:
+canlıda gerçek kullanıcılar, gerçek oturumlar ve gerçek e-posta teslimi vardır. 4. adım
+(canlı migration) hâlâ ayrı bir işlem ve ayrı bir onaydır.
+
+### Sırada
+
+4. adım: canlı DB'ye yalnız kesin 008 SQL'i uygulanır, migration geçmişi işlenir, hosted testler
+transaction + `ROLLBACK` ile koşturulur. Ardından 5. Edge deploy, 6. web yayını, 7. kontrollü
+ürün kabulü. Test korosu operatör hesabıyla giriş yapılıp `create-choir` üzerinden açılacak.
