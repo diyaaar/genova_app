@@ -517,3 +517,20 @@ kontrol edilir; anon anahtarıyla istek zaten kimlik aşamasında durduğu için
 
 **Adım 5 tamamlandı.** DB ve Edge hazır olduğuna göre 6. adım (web yayını) artık
 DB → Edge → web sırasına uygun.
+
+## Adım 6 — web yayını (7 Eylül 2026)
+
+DB ve Edge hazır olduktan sonra, sırayı bozmadan `main` `origin`'e gönderildi:
+`0389242..6b6d9a4`, 39 commit. Aralık 008 davet arayüzünü, 009 çalışmasını, native
+çalışma alanını ve belgeleri içeriyor.
+
+| Doğrulama | Sonuç |
+|---|---|
+| GitHub CI | Koşu [#21](https://github.com/genesinovachoir/genova_app/actions/runs/34135147638), `push` olayı, `6b6d9a4` — **üç iş de yeşil**: Quality and security, Browser regression, Native product checks |
+| Vercel production | `dpl_AsrMsnYPgcT98CbSH3AatR469poj`, hedef `production`, durum **READY**, commit `6b6d9a4` |
+| Canlı alan adı | **Ajan doğrulayamadı.** Ne bulut konteyneri ne cihaz VM'i `app.genesinovachoir.com`'a çıkabiliyor; ikisinde de bağlantı kurulamıyor. Ürün sahibinin doğrulaması gerekiyor |
+
+CI'ın `push` olayıyla ve `main` üzerinde yeşil geçmesi, 004'ün CI kriterinin daha önce
+yalnız `pull_request` ref'inde kanıtlanmış olmasındaki sınırı da kapatır.
+
+Commit/push/deploy birbirinin kanıtı sayılmadı: üçü ayrı ayrı okundu.
