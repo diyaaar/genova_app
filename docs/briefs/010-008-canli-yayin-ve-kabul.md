@@ -73,10 +73,10 @@ onayıyla alınır. 009 SMTP/yönlendirme bu geri dönüşte değiştirilmez.
 
 ## Kabul
 
-- [ ] Taze schema/data yedeği, hash, restore ve kaynak sayım eşleşmesi geçti.
-- [ ] Taze restore 003–008, concurrency ve down roundtrip geçti.
-- [ ] Kesin 008 canlı migration, hosted rollback testleri ve DB yetkileri geçti.
-- [ ] Edge canlı güvenlik/CORS kontrolleri geçti.
+- [x] Taze schema/data yedeği, hash, restore ve kaynak sayım eşleşmesi geçti.
+- [x] Taze restore 003–008, concurrency ve down roundtrip geçti.
+- [x] Kesin 008 canlı migration, hosted rollback testleri ve DB yetkileri geçti.
+- [x] Edge canlı güvenlik/CORS kontrolleri geçti.
 - [ ] GitHub CI, Vercel deployment ve canlı domain aynı commit'i gösterdi.
 - [ ] Gerçek Auth doğrulaması ile oluştur/iptal/kabul ve olumsuz yollar geçti.
 - [ ] Onaylı test verisi temizlendi; kapsam dışı üretim verisi değişmedi.
@@ -575,8 +575,60 @@ değil, ama tamamlanmamış bir akış.
 Bunlar 008'in kabul ölçütlerini düşürmez; ikisi de akışın etrafındaki yönlendirme sorunlarıdır
 ve kendi brief'lerini gerektirir.
 
+### Tek kullanımlık davet — canlı olumsuz yol (7 Eylül 2026)
+
+Kabul tamamlandıktan sonra **aynı bağlantı yeniden açıldı**. Sayfa kabulü reddetti:
+
+> Davet geçersiz, kullanılmış, iptal edilmiş veya bu hesaba ait değil.
+
+Mesajın dört durumu tek metinde toplaması bilinçli: sayfa hangi koşulun tuttuğunu
+söylemiyor, yoksa geçerli ama başkasına ait bir token'ın varlığı sızardı.
+
+Reddin gerçekten reddetme olduğu, ekran metnine güvenilmeden veritabanından doğrulandı —
+ikinci denemeden **sonra** okunan satırlar:
+
+| Kontrol | Değer |
+|---|---|
+| Davet satırı sayısı | 1 (`1d87a4b8-…`) |
+| `accepted_at` | `2026-09-07 18:34:01.143653+03` — ilk kabulden değişmedi |
+| `accepted_by` | `26648117-…` — değişmedi |
+| `revoked_at` | `null` |
+| `token_hash` uzunluğu | 64 (ham token hâlâ saklanmıyor) |
+| `genova-008-test` kadrosu | **2 üye** — ikinci kabul üyelik üretmedi |
+| `genesi-nova` kadrosu | **29 üye** — değişmedi |
+
+Kritik nokta budur: hata metni gösterilirken arka planda ikinci bir üyelik ya da mükerrer
+kabul damgası oluşsaydı, ekran doğru görünüp veri yanlış olurdu. İkisi ayrı ayrı okundu.
+
+### Viewport kontrolü
+
+Ürün sahibi davet sayfasını mobil ve masaüstü genişliğinde açtı ve okunabilirlik sorunu
+bildirmedi. **Kanıt sınırı:** bu bir sahip beyanıdır; ajan ölçüm yapmadı, ekran görüntüsü
+veya belirli kırılma noktası kaydı yok. Ölçülmüş bir uyum kanıtı gerekirse ayrıca alınmalı.
+
 ### Bu turda henüz yapılmayan
 
-Olumsuz yollar canlıda tekrar denenmedi: aynı bağlantıyla ikinci kabul, iptal edilmiş bağlantı
-ve yanlış hesapla kabul. Üçü de izole veritabanında ve hosted testte geçti, ancak 010 bunları
-kontrollü canlı kabulde de ister. Masaüstü/mobil viewport kontrolü de yapılmadı.
+İki olumsuz yol canlıda hâlâ denenmedi: **iptal edilmiş bağlantıyla kabul** ve **yanlış
+hesapla kabul**. İkisi de izole veritabanında ve hosted testte geçti, ancak 010 bunları
+kontrollü canlı kabulde de ister. İkisi de yeni bir davet ve iki ayrı gerçek kullanıcı
+oturumu gerektiriyor; ilk turda kullanılan oturum belirteçleri geçici dosyalarda tutulmuştu
+ve o dosyalar artık yok, dolayısıyla belirteçlerin yeniden alınması gerekiyor.
+
+## Kabul kanıt tablosu — 7 Eylül 2026
+
+Yedi ölçüt için tek tablo. Kural: koşulmamış hiçbir kontrol geçmiş sayılmaz ve hiçbiri
+öz-değerlendirmeyle doldurulmaz. Kısmî satırlar kasıtlı olarak kısmî bırakıldı.
+
+| # | Ölçüt | Durum | Kanıt |
+|---|---|---|---|
+| 1 | Taze schema/data yedeği, hash, restore, kaynak sayım eşleşmesi | **PASS** | [Adım 2 sonucu](#adım-2-sonucu--yedek-ve-geri-yükleme-kanıtlandı-7-eylül-2026) |
+| 2 | Taze restore üzerinde 003–008, concurrency, down roundtrip | **PASS** | [Adım 3 sonucu](#adım-3-sonucu--taze-restore-kabulü-geçti-7-eylül-2026); ilk koşu FAIL'i ve kök nedeni aynı bölümde |
+| 3 | Canlı 008 migration'ı, hosted rollback testleri, DB yetkileri | **PASS** | [Adım 4](#adım-4--canlı-db-migrationı-uygulandı-7-eylül-2026) |
+| 4 | Edge canlı güvenlik ve CORS kontrolleri | **PASS** | [Adım 5](#adım-5--edge-fonksiyonu-dağıtıldı-ve-canlı-güvenlik-kontrolleri-geçti-7-eylül-2026), dört kontrol de önceden yazılmış beklentiyle eşleşti |
+| 5 | CI, Vercel ve canlı domain aynı commit'i gösterdi | **KISMÎ** | CI koşu #21 ve Vercel `dpl_AsrMsn…` ikisi de `6b6d9a4` — **PASS**. Canlı domain **NOT RUN**: iki ajan ortamı da `app.genesinovachoir.com`'a çıkamıyor; ürün sahibi doğrulaması gerekiyor |
+| 6 | Gerçek Auth ile oluştur / iptal / kabul ve olumsuz yollar | **KISMÎ** | Oluşturma, kabul ve tek kullanımlık reddi **PASS** ([Adım 7](#adım-7--kontrollü-ürün-kabulü-ilk-tur-7-eylül-2026) ve tek kullanımlık bölümü). İptal edilmiş bağlantı ve yanlış hesap **NOT RUN** — canlıda hiç denenmedi |
+| 7 | Onaylı test verisi temizlendi, kapsam dışı üretim verisi değişmedi | **NOT RUN** | Temizlik listesi [hazır](#temizlik-listesi--önerilen-uygulanmadan-önce-ayrıca-onaylanacak); uygulanmadı. Kapsam dışı veri şu ana kadar değişmedi: `genesi-nova` her ölçümde 29 üye |
+
+**010 kapanmadı.** Üç ölçüt eksik: canlı domain doğrulaması (sahip), iki olumsuz yol
+(oturum belirteci gerekiyor), temizlik (ayrı onay gerekiyor). Bu tablo, 004'ün "canlı 010
+kabulü" satırının da neden hâlâ NOT RUN olduğunu açıklar.
