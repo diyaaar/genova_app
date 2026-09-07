@@ -218,13 +218,13 @@ Environments referenced below:
 | Metro bundles the native entry point, resolving both the workspace's nested dependencies and the shared `@shared/*` contract | yes | PASS | 7 Sep 2026, `10b6f9f`, MACOS-HEAD; `npm run bundle:check` as the final step of the native chain, exit 0 | [Direct transcript](004-native-gate-2026-09-07.md): iOS export bundled 660 modules in 4366 ms; 2.2 MB `.hbc` plus metadata generated in ignored `.expo/bundle-check`. Uses the normal Hermes bytecode step (no `--no-bytecode`). No app launch, real environment values or device acceptance; historical simulator evidence remains dated 6 Sep |
 | Native checks integrated into `.github/workflows/ci.yml`; existing web jobs unchanged | yes | PASS | 6 Sep 2026, NATIVE-VM, workflow YAML parsed; `npm install --package-lock-only --dry-run` | New `mobile` job runs `npm ci`, `npx tsc --noEmit`, `npm test` in `apps/mobile`; `quality` and `browser` jobs are untouched; `package.json` and `package-lock.json` verified in sync |
 | `npm ci` reproduces the native workspace from the committed lockfile | yes | PASS | 6 Sep 2026, MACOS, `rm -rf node_modules && npm ci` in `apps/mobile` | 1118 packages installed, 1119 audited; the subsequent type and test run passed. This is the exact command the new CI job uses. Limit: deprecation warnings and 10 moderate advisories were reported by npm and are not addressed in this brief |
-| CI actually executed for this revision | yes | NOT RUN | no push or remote run is authorized in this session | Configuration alone is not a CI result; branch protection was neither checked nor changed |
+| CI actually executed for this revision | yes | FAIL | 7 Sep 2026, `4e698f5`, GitHub Actions run [#19](https://github.com/genesinovachoir/genova_app/actions/runs/34126230982), `pull_request` event from draft PR [#7](https://github.com/genesinovachoir/genova_app/pull/7) | The run completed. `Native product checks` PASS (`npm ci`, `tsc --noEmit`, `npm test`, `bundle:check` all green) and `Browser regression` PASS (`pnpm test:e2e`, which builds the app itself). **`Quality and security` FAILED at `Run pnpm check`**, so `pnpm audit` was skipped. Acceptance needs all three green, so this criterion is FAIL, not PASS. The failing step's root cause is **not yet verified** — see below |
 | iOS development build runs on a device or simulator | yes | PASS | 6 Sep 2026, MACOS, `npx expo run:ios` | The project's own native iOS build was generated and launched on the iOS Simulator (iPhone 17 Pro, iOS 26.5); the app runs as Genova rather than inside Expo Go. Built locally with Xcode, no EAS and no spending. Limit: simulator only, no hardware |
 | Android development build runs on a device or emulator | yes | PASS | 7 Sep 2026, `6d64d16`, direct macOS; Expo Android prebuild, Gradle ARM64 `assembleDebug`, adb install/launch on dedicated API 36 emulator | [Build, launch and UI evidence](004-android-build-2026-09-07.md): 160 tasks, own debug APK installed; signed-out screen and empty-form validation visually/XML verified. Synthetic loopback configuration, no real account/device. Initial disk/Metro connection failures resolved before acceptance |
 | Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
 | Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
 
-**Optional progress: 23 passed / 27 required criteria.** Four required criteria are NOT RUN, so
+**Optional progress: 23 passed / 27 required criteria.** Three are NOT RUN and one now FAILs, so
 004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
 skipped or loosened to reach a green result.
 
@@ -695,3 +695,38 @@ and is not contradicted by Vercel's green builds.
 **Remaining unknowns after this check:** whether GitHub Actions is enabled and whether any run has
 ever passed, whether repository secrets exist, and whether `main` is branch-protected. Those live
 in GitHub settings, which no connected connector exposes.
+
+
+### CI run #19 result — 7 September 2026
+
+The owner supplied a repository-scoped GitHub token so the agent could perform the remote steps
+itself. Branch `ci/004-native-check` was pushed at `4e698f5` and draft pull request
+[#7](https://github.com/genesinovachoir/genova_app/pull/7) opened into `main`. `main` was not
+pushed, nothing was merged, and no deployment was promoted.
+
+| Job | Result | Detail |
+|---|---|---|
+| `Native product checks` | **PASS** | `npm ci`, `npx tsc --noEmit`, `npm test`, `npm run bundle:check` all green. First remote proof that the native workspace, its lockfile and the Metro bundle build on a clean machine |
+| `Browser regression` | **PASS** | `playwright install` and `pnpm test:e2e` green. This job builds the app through its own web server, with the synthetic environment `playwright.config.ts` supplies |
+| `Quality and security` | **FAIL** | Failed at step 6, `Run pnpm check`, after `pnpm install --frozen-lockfile` succeeded. `pnpm audit` was skipped as a consequence |
+
+**Resolved by this run:** GitHub Actions is enabled and the `pull_request` route works, closing two
+of the previously unknown remote facts. The `mobile` job added in `dc5f7a6` is real and green.
+
+**Not resolved, and not to be written up as if it were.** The proposal predicted that
+`Quality and security` would fail at `next build` for missing Supabase environment. It did fail,
+but **the predicted cause is unconfirmed**: the job's own log could not be retrieved, because
+GitHub redirects log downloads to a storage host that the agent's egress proxy refuses, and the
+check-run annotation carries only `Process completed with exit code 1`. The step ran roughly 90
+seconds, which is arguably short for a full `next build`, so an earlier stage of
+`pnpm check` — lint, typecheck, coverage or the service-worker check — cannot be excluded. A
+prediction that matches an outcome is not a verified diagnosis.
+
+**Next step for this criterion:** obtain the failing step's output, either from the owner opening
+the run and pasting it or by another route to the log, and only then decide the fix. If it is the
+environment, the change is a scoped workflow edit adding the variables that job needs, with the
+synthetic-versus-secret choice made by the owner. If it is something else, the fix is different and
+this criterion must not be closed by adding environment that was never the problem.
+
+Draft PR #7 exists only to obtain this evidence and must not be merged: the branch carries the
+undeployed 008 invitation UI. Close it and delete the branch once the criterion is settled.
