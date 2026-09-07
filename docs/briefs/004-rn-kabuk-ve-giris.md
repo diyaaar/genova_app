@@ -1,7 +1,7 @@
 # 004 — RN ürün kurulumu, giriş ve koro seçimi
 
 **Status:** Local implementation exists; partial/pending acceptance. Updated 7 September 2026.
-22 of 27 required criteria PASS; five remain NOT RUN. See the mandatory evidence table.
+23 of 27 required criteria PASS; four remain NOT RUN. See the mandatory evidence table.
 **Amaç:** Aynı depoda telefonda çalıştırılabilir Expo ürününü kurmak; güvenli giriş,
 üyelik çözümü ve koro seçimiyle repertuvar adımına hazır kabuğa ulaşmak.
 Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #21](../../KARARLAR.md).
@@ -219,11 +219,11 @@ Environments referenced below:
 | `npm ci` reproduces the native workspace from the committed lockfile | yes | PASS | 6 Sep 2026, MACOS, `rm -rf node_modules && npm ci` in `apps/mobile` | 1118 packages installed, 1119 audited; the subsequent type and test run passed. This is the exact command the new CI job uses. Limit: deprecation warnings and 10 moderate advisories were reported by npm and are not addressed in this brief |
 | CI actually executed for this revision | yes | NOT RUN | no push or remote run is authorized in this session | Configuration alone is not a CI result; branch protection was neither checked nor changed |
 | iOS development build runs on a device or simulator | yes | PASS | 6 Sep 2026, MACOS, `npx expo run:ios` | The project's own native iOS build was generated and launched on the iOS Simulator (iPhone 17 Pro, iOS 26.5); the app runs as Genova rather than inside Expo Go. Built locally with Xcode, no EAS and no spending. Limit: simulator only, no hardware |
-| Android development build runs on a device or emulator | yes | NOT RUN | 7 Sep 2026, `10b6f9f`, MACOS-HEAD read-only prerequisite check: `apps/mobile/android/`, `/Applications/Android Studio.app` and `~/Library/Android/sdk` are absent | No Android build, SDK installation, emulator or phone launch attempted. This checks conventional paths, not every possible custom installation; coordinate the owner-assisted Android step before proceeding |
+| Android development build runs on a device or emulator | yes | PASS | 7 Sep 2026, `6d64d16`, direct macOS; Expo Android prebuild, Gradle ARM64 `assembleDebug`, adb install/launch on dedicated API 36 emulator | [Build, launch and UI evidence](004-android-build-2026-09-07.md): 160 tasks, own debug APK installed; signed-out screen and empty-form validation visually/XML verified. Synthetic loopback configuration, no real account/device. Initial disk/Metro connection failures resolved before acceptance |
 | Real-phone scenario: sign-in → choir selection → sign-out with a real account | yes | NOT RUN | needs a device and a real account; real-account authority was explicitly withheld | A missing phone is not substituted by any local result |
 | Live invitation/membership acceptance (010) available for the native flow | yes | NOT RUN | 010 stays pending: no live deployment authority and no Supabase MCP/CLI access in this session | See the 010 brief; nothing live was attempted |
 
-**Optional progress: 22 passed / 27 required criteria.** Five required criteria are NOT RUN, so
+**Optional progress: 23 passed / 27 required criteria.** Four required criteria are NOT RUN, so
 004 stays **partial/pending**. No criterion was deleted, weakened or waived, and no test was
 skipped or loosened to reach a green result.
 
@@ -315,3 +315,49 @@ Commit preparation found a trailing blank line in the new transcript; it was rem
 `.git/HEAD.lock` (modified 6 September 22:52 local time). No active Git process was found;
 `lsof` showed only an Apple reader. The stale file was preserved in `.git/_stale_locks/`
 before retrying the local commit. No product files or other worktree edits were involved.
+
+## Android build start-check — 7 September 2026
+
+- **Checkout/ownership:** `main` at `6d64d1677c82b95611ec4141b7a22edf1a169f1e`, clean
+  at entry; main agent is the sole writer. Sources from the preceding start-check remain
+  applicable; reread current evidence, app config, native Auth initialization and ignore rules.
+- **Outcome:** build this project's Android development app and verify it launches on an
+  isolated emulator. The user explicitly asked to continue with this next step. Real-phone,
+  device-keychain and real-account scenarios remain postponed/unapproved; 010 and CI stay pending.
+- **Discovery correction:** the prior check covered conventional paths only. Existing tools
+  are under `/opt/homebrew/share/android-commandlinetools`: SDK platforms 35/36, build tools
+  34/35/36, CMake 3.22.1 and NDK 27.1.12297006. Java 17.0.20 is installed through Homebrew
+  but not registered with macOS `java_home`. React Native's installed version catalog requires
+  SDK 36 and that NDK. No Android Studio or AVD is present; use existing command-line tools.
+- **Allowed paths/actions:** ignored `apps/mobile/android/` and `.expo/`; additive local
+  emulator/system-image packages in the existing SDK and a dedicated Genova AVD; this brief,
+  evidence under `docs/`, handoff and affected status indexes. A narrowly necessary source/config
+  fix must be recorded separately and tested; generated files are never hand-edited or committed.
+- **Preservation/authority:** no web/shared-contract/annotation or native/WebView boundary change;
+  no push, deployment, live access, account/data action, email or spending. Disable dotenv and
+  use synthetic public client settings pointing only to loopback for app launch. Do not connect
+  any physical phone or use any pre-existing emulator session/account.
+- **Checks:** Android prebuild/build/install; emulator process and actual UI evidence; inspect
+  app crash output. Run native gates if source/config changes; root `pnpm check` only if its
+  governed paths change. Retain the four other acceptance gaps even if this build passes.
+- **Rollback:** documentation commit can be reverted. Stop the task-owned emulator/Metro,
+  retain reusable SDK dependencies and record generated artifacts; any cleanup targets only
+  this task's AVD/output. No production rollback applies. Initial disk space: 21 GiB available.
+
+### Android acceptance — 7 September 2026
+
+The Android criterion now PASSes on `6d64d16`, with [build/UI evidence](004-android-build-2026-09-07.md).
+All other criterion names, required flags and statuses remain unchanged. Current count is
+23 PASS / 27 required, four NOT RUN; the earlier 22/27 count remains a historical correction.
+No production source changed, so the already-passing native and web gates were not rerun.
+Self-review only: generated Android files remain ignored, native/WebView boundaries preserved.
+Next step requires the owner's decision on resuming postponed hardware tests and explicit
+real-account authority; remote CI/push and 010 remain separately blocked. No repertoire work.
+
+Android follow-up documentation verification: eight Markdown files / 99 local links resolved;
+`git diff --check` passed. Programmatic comparison with entry HEAD confirms exactly one
+status change (Android NOT RUN → PASS), no criterion name/required-flag changes, and no
+product/configuration diff. Screen targets in `MIGRATION.md` are unchanged. The self-review
+checked screenshots/XML, build result and known environment failures against the criterion.
+Task-owned Metro and emulator were stopped after capture. This documentation/evidence
+commit is local only; the brief remains partial/pending.

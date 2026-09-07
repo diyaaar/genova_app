@@ -44,3 +44,13 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 at `10b6f9f`: 4 suites / 35 tests and 660-module Hermes export PASS. The
 [004 table and transcript](../docs/briefs/004-rn-kabuk-ve-giris.md) are authoritative.
 Five required criteria remain NOT RUN; no product, device, remote CI or live status changed.
+
+## Android acceptance follow-up — 7 September 2026
+
+At `6d64d16`, the own Android debug APK built and ran on a dedicated API 36 ARM64 emulator.
+Signed-out UI and empty-form validation passed with synthetic loopback settings; no real
+account or hardware. [Evidence](../docs/briefs/004-android-build-2026-09-07.md).
+This supersedes the earlier absent-SDK/Android-not-run snapshot: the existing Homebrew SDK
+and Java 17 were reused, emulator/image added. Current 004 count: 23/27 PASS, four NOT RUN
+(hardware keychain, real-phone account flow, remote CI, 010). Ask before resuming postponed
+hardware testing; repertoire/PDF stays blocked. No product source or live state changed.

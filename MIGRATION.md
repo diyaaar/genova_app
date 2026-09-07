@@ -27,8 +27,11 @@ değişiminde cache temizliği ve çıkış izole testlerle geçti: `npx tsc --n
 web davranışı değişmedi. Kapılar 6 Eylül'de ürün sahibinin Mac'inde de doğrulandı:
 temiz `npm ci` sonrası 35 native test ve `pnpm check` uçtan uca (190 test + `next build`).
 Kendi iOS derlememiz `expo run:ios` ile simülatörde çalıştı; giriş/koro/yeniden açma/çıkış
-akışı orada elle doğrulandı. Android derlemesi, gerçek telefon denemesi ve CI koşusu
-yapılmadı; 010 canlı kabulü açık.
+akışı orada elle doğrulandı.
+7 September update: own Android debug build and API 36 ARM64 emulator launch passed at
+`6d64d16`; signed-out UI and empty-form validation only, using synthetic settings.
+Real-phone/keychain, remote CI and 010 remain unrun; 004 is partial (23/27 PASS).
+Evidence: [Android build](docs/briefs/004-android-build-2026-09-07.md).
 Kanıt ve sınırlar: `docs/briefs/004-rn-kabuk-ve-giris.md`.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 

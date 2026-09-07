@@ -18,8 +18,8 @@ yönetimin tüm ayrıntıları ilk cihaz denemesinin önkoşulu değildir.
 
 - 001/002 teknik spike'lar geçti.
 - 7 September status correction: Expo product workspace exists at `apps/mobile/`.
-  [004](briefs/004-rn-kabuk-ve-giris.md) remains partial/pending (22/27 required PASS,
-  five NOT RUN); direct macOS type/test/bundle verification passed at `10b6f9f`.
+  [004](briefs/004-rn-kabuk-ve-giris.md) remains partial/pending (23/27 required PASS,
+  four NOT RUN after Android emulator acceptance at `6d64d16`); direct macOS type/test/bundle verification passed at `10b6f9f`.
   This updates setup status only; the delivery order and acceptance boundaries below remain.
 - 003/005 canlı: koro izolasyonu, çoklu üyelik ve oturuma bağlı aktif koro.
 - 006 eski yetkisiz oluşturma/yazı yollarını kapattı. 27 hesabın kabul edilmiş

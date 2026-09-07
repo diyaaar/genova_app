@@ -84,7 +84,7 @@ move. Drive migration is not complete.
 | Area | State | Source |
 |---|---|---|
 | 008 invitations/membership | Local package: 155 tests, 20 browser tests, isolated SQL/concurrency/down evidence. Browser Auth is mocked | [008](briefs/008-davet-ve-uyelik.md) |
-| 004 native shell | `apps/mobile/` Expo SDK 57 workspace with sign-in, secure chunked session storage, zero/single/multi membership resolution, server-verified choir selection, per-choir cache clearing and sign-out. **22 of 27 required criteria PASS, 5 NOT RUN, so 004 is partial/pending** | [004](briefs/004-rn-kabuk-ve-giris.md) |
+| 004 native shell | `apps/mobile/` Expo SDK 57 workspace with sign-in, secure chunked session storage, zero/single/multi membership resolution, server-verified choir selection, per-choir cache clearing and sign-out. **23 of 27 required criteria PASS, 4 NOT RUN, so 004 is partial/pending** | [004](briefs/004-rn-kabuk-ve-giris.md) |
 
 The 005 active-choir contract now lives in [`lib/choir-context-core.ts`](../lib/choir-context-core.ts)
 and is imported by both clients. [`lib/choir-context.ts`](../lib/choir-context.ts) keeps its
@@ -97,7 +97,7 @@ and the web behavior is unchanged.
 |---|---|---|
 | 010 live release of 008 | Exact release/acceptance plan written; no live action ever started | [010](briefs/010-008-canli-yayin-ve-kabul.md) |
 | Native CI job | `.github/workflows/ci.yml` gained a `mobile` job running `npm ci`, `npx tsc --noEmit`, `npm test`, `npm run bundle:check`. Configuration only — it has never executed remotely | [ci.yml](../.github/workflows/ci.yml) |
-| Android build | Never attempted. `apps/mobile/android/` does not exist | [004](briefs/004-rn-kabuk-ve-giris.md) |
+| Android build | Own debug APK built and launched on dedicated API 36 ARM64 emulator at `6d64d16`; synthetic settings, no real account | [Evidence](briefs/004-android-build-2026-09-07.md) |
 | Hosting / Drive exit | Research and separate staging preparation only | [infrastructure record](altyapi-2026-09-04.md) |
 
 ## Latest local verification — 7 September 2026
@@ -141,8 +141,8 @@ live 010 action.
 
 ## Open blockers and risks
 
-- **004 cannot close on the current authority and prerequisites.** The five open criteria
-  include an Android build, hardware, a remote CI run and live acceptance. Do not start
+- **004 cannot close on the current authority and prerequisites.** The four open criteria
+  concern hardware keychain, real-phone account flow, remote CI and live acceptance. Do not start
   the repertoire/PDF brief before 004 is accepted.
 - **010 is blocked twice over:** the session that prepared this handoff had no live
   deployment authority, and Supabase MCP was unauthorized with no CLI installed. At the
@@ -218,15 +218,16 @@ repertoire/PDF brief yet; the delivery plan puts it after 004 acceptance.
 7 September, with direct macOS output in the brief. Do not rerun it simply because a new
 session begins; rerun when product/configuration changes or an unresolved failure warrants it.
 
-**Next bounded action:** coordinate the owner-assisted Android development-build setup.
-The conventional Android Studio and SDK paths and `apps/mobile/android/` were absent in the
-7 September check; a custom installation has not been ruled out. Identify/install the local
-prerequisites and run the project's own Android build when the owner is participating.
+**Android next action completed:** at `6d64d16`, reused the Homebrew SDK/JDK, added
+emulator/API 36 ARM64 image, built the own debug APK and verified the signed-out screen
+and empty-form validation on dedicated AVD `genova004_api36`. See the
+[Android record](briefs/004-android-build-2026-09-07.md) for commands, launch failures
+resolved, screenshots, hash and synthetic-only scope. Generated files remain ignored.
 
-The real-phone and keychain checks remain postponed. Ask before treating them as due and
-obtain explicit authorization for any real-account/data scenario. A successful emulator build
-would address only the Android-build criterion; it would not prove the phone/keychain criteria.
-CI still needs separately authorized push, and 010 remains pending. Do not start repertoire/PDF.
+**Next decision:** ask whether the owner wants to resume the postponed hardware check.
+Do not assume it is due. Real-account/data use needs explicit authorization for the exact
+scenario. Four criteria remain NOT RUN: hardware keychain, real-phone account flow,
+remote CI (push not authorized) and live 010. Repertoire/PDF remains blocked on 004 acceptance.
 
 **Relevant files:** `apps/mobile/src/auth/auth-store.ts` holds every acceptance rule and is
 where behavior changes belong; `apps/mobile/src/auth/AuthProvider.tsx` is a thin React
@@ -297,10 +298,10 @@ Use this from the Genova project checkout:
 > `docs/agent-handoff.md` as the entry point. Follow decision #21 and the current delivery
 > plan. Verify the checkout, recorded state and applicable evidence yourself; do not assume
 > access to any previous conversation.
-> Brief 004 is open with 22 of 27 required criteria passed (the previous 21/26 summary
-> was a counting error). The native gate and bundle check passed on macOS at `10b6f9f`
+> Brief 004 is open with 23 of 27 required criteria passed. Android build/emulator
+> acceptance passed at `6d64d16`; real hardware, remote CI and 010 remain open. The native gate and bundle check passed on macOS at `10b6f9f`
 > on 7 September; verify the evidence and source changes before deciding to rerun. Next,
-> coordinate the owner-assisted Android development-build prerequisites. Do not begin
+> ask whether the postponed hardware check should resume; do not assume it is due. Do not begin
 > the repertoire/PDF brief before 004 is accepted, and keep 010 pending.
 > I authorize local implementation, local testing and the required local commits for the
 > documented mobile plan, one brief at a time. This message grants no production
@@ -310,3 +311,12 @@ Use this from the Genova project checkout:
 > replace evidence with a self-score, or re-scope a criterion to close a brief. Preserve
 > existing behavior and the native/WebView boundaries in `MIGRATION.md`. Keep agent records
 > in English and my updates short and in Turkish.
+
+## Android follow-up — 7 September 2026
+
+Supersedes the earlier conventional-path prerequisite snapshot: SDK/JDK were already installed
+under Homebrew. Android emulator acceptance now passed; historical five-gap and absent-Android
+statements above describe the earlier run only. The main agent used synthetic loopback settings
+with dotenv disabled and stopped its Metro/emulator after evidence capture. The dedicated AVD,
+SDK additions and ignored `apps/mobile/android/` remain for reuse. No product source changed.
+Current evidence: [Android acceptance](briefs/004-android-build-2026-09-07.md), [004](briefs/004-rn-kabuk-ve-giris.md).

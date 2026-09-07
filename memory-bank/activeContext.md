@@ -115,3 +115,13 @@ Next: coordinate the owner-assisted Android build prerequisites; Android Studio/
 SDK and generated Android project are absent at the checked paths. Phone/keychain testing
 stays postponed until the owner chooses to resume; real-account authority remains separate.
 010 stays pending; repertoire/PDF cannot begin before 004 acceptance.
+
+## Android acceptance follow-up — 7 September 2026
+
+At `6d64d16`, the own Android debug APK built and ran on a dedicated API 36 ARM64 emulator.
+Signed-out UI and empty-form validation passed with synthetic loopback settings; no real
+account or hardware. [Evidence](../docs/briefs/004-android-build-2026-09-07.md).
+This supersedes the earlier absent-SDK/Android-not-run snapshot: the existing Homebrew SDK
+and Java 17 were reused, emulator/image added. Current 004 count: 23/27 PASS, four NOT RUN
+(hardware keychain, real-phone account flow, remote CI, 010). Ask before resuming postponed
+hardware testing; repertoire/PDF stays blocked. No product source or live state changed.
