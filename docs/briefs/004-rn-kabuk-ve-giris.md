@@ -618,3 +618,42 @@ creation and pull requests **cannot** run from the agent sandbox regardless of a
 Copying a private key into the sandbox is not an option: AGENTS forbids secrets in prompts,
 command output or records. These steps stay with the owner, who runs the commands the agent
 prepares. This is a capability limit, not a missing permission.
+
+### Access re-check after the owner reconnected the connectors — 7 September 2026
+
+The owner reconnected the connectors and ran the fetch. All checks below are **read-only**:
+no migration, function deploy, SQL execution, variable change, redeploy, cost confirmation or
+project mutation was attempted anywhere. This supersedes the previous connector access check.
+
+| Subject | Check | Result |
+|---|---|---|
+| GitHub remote | Owner ran `git fetch origin` then `git rev-list --left-right --count origin/main...main` on macOS | `0 24` — **`origin/main` has not moved**; local `main` is 24 commits ahead. CI proposal unknown 1 is resolved, and the earlier cached figure was accurate |
+| Supabase account | `list_projects` | Now the **correct** project: `hievmwwctjjlhmssoxsu`, `genesinovachoir's Project`, org `urpuzollmvvdkayavnhd`, Postgres 17, `ACTIVE_HEALTHY`. AGENTS' required project is reachable at last |
+| Supabase migrations | `list_migrations` on `hievmwwctjjlhmssoxsu` | 50 migrations, the newest `20260905160539 operator_controlled_choir_creation_007`. **`20260905210953_choir_invitations_008` is absent** |
+| Supabase Edge functions | `list_edge_functions` | `send-email`, `send-push-notification`, `drive-manager`, `drive-manager-test`, `drive-manager-v2` (v19), `create-choir` (v2), `resend-inbound` (v3). **`choir-invitations` is absent** |
+| Railway | `whoami`, `list-projects` | Authenticated as `genesinovachoir`, one project `genova-staging` created 4 September, in the workspace of the same name |
+| Vercel | `list_teams`, `list_projects` | Zero teams, and a personal-scope listing returns `Failed to list projects.` The live web project is still not reachable through this connector |
+
+**What this changes.** The long-standing "MCP unauthorized, access unknown" state is over for
+Supabase and Railway: both are now connected to the right account, and the 008 preconditions are
+no longer inferred from repository files but **observed on the live project** — the migration is
+not applied and the Edge function does not exist, exactly as [010](010-008-canli-yayin-ve-kabul.md)
+assumed. That confirms the release-impact warning in the CI proposal above: pushing `main` today
+would publish invitation UI against a database and Edge surface that do not have it.
+
+**What this does not change.** No product criterion moves; 004 stays at 23 of 27 with four NOT RUN,
+and remote CI is still unrun. 010 is still pending and still requires its own authorization,
+a fresh backup and restore evidence before any schema step. Railway remains preparation: a single
+staging project is not a hosting move, and nothing about it was altered.
+
+**Still unknown.** The Vercel production branch, preview-deployment settings and preview
+environment values — CI proposal unknown 5 — remain unanswered, because the connected Vercel
+account does not expose the project. Either that connector needs the account that owns
+`app.genesinovachoir.com`, or the owner reports those settings manually.
+
+**Two small discrepancies to reconcile before relying on version numbers.** Records describe
+`create-choir` as Edge v1 and `drive-manager-v2` around v14–v15; the live project reports v2 and
+v19. `resend-inbound` v3 matches the 009 record. These are observations, not defects: Supabase
+version counters increment per deploy, and no record claims exclusive ownership of those numbers.
+Do not treat any of them as evidence of an undocumented deployment without checking the function's
+history first.

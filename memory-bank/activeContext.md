@@ -27,6 +27,15 @@ unknown. Work is paused on the owner's answer to a four-step approval request wh
 steps write nothing: a `git fetch`, and an owner-side report of Vercel and branch-protection
 settings. Do not push, branch, open a pull request, dispatch a run or change hosting.
 
+7 Eylül eki: kullanıcı connector'ları yeniden bağladı. Supabase ve Railway artık doğru
+`genesinovachoir` hesabında; salt okunur listelerle canlı projede 008 migration'ının ve
+`choir-invitations` Edge fonksiyonunun **bulunmadığı** doğrulandı, yani 010'un önkoşulları
+artık varsayım değil gözlem. Kullanıcının `git fetch`'i `origin/main`'in yerinde durduğunu,
+`main`'in 24 commit önde olduğunu gösterdi. Vercel hâlâ canlı web projesini göstermiyor.
+Erişimin açılması yayın yetkisi değildir: 010 bekliyor, ayrı yetki ve yedek/geri yükleme
+kanıtı istiyor. Ayrıntı ve sınırlar
+[004 erişim kaydında](../docs/briefs/004-rn-kabuk-ve-giris.md#access-re-check-after-the-owner-reconnected-the-connectors--7-september-2026).
+
 ## Preserved order and boundaries
 
 [Decision #21](../KARARLAR.md) and the [delivery plan](../docs/mobil-teslim-plani.md):

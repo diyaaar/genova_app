@@ -164,7 +164,15 @@ Six remote facts stay unknown, the Vercel preview settings among them. A 7 Septe
 then established why they stay unknown: the connected Supabase and Vercel connectors are
 authenticated to an account that owns neither `hievmwwctjjlhmssoxsu` nor the live web project,
 and the agent sandbox has no SSH key or SSH transport to the GitHub remote, so remote git steps
-belong to the owner as a matter of capability rather than permission.
+belong to the owner as a matter of capability rather than permission. The owner then reconnected
+the connectors, and a second
+[access re-check](briefs/004-rn-kabuk-ve-giris.md#access-re-check-after-the-owner-reconnected-the-connectors--7-september-2026)
+found Supabase and Railway now on the correct `genesinovachoir` account. Read-only listings
+confirmed on the live project that the 008 migration and the `choir-invitations` Edge function are
+**absent**, so 010's preconditions are now observed rather than assumed, and the owner's own
+`git fetch` showed `origin/main` unmoved with `main` 24 ahead. Vercel still does not expose the
+live web project, so the hosting unknowns stand. Access improving does not grant deployment:
+010 remains pending and needs its own authorization and backup evidence.
 
 **Next action:** none that an agent may take alone. The proposal ends in a four-step approval
 request, the first two steps of which write nothing: a `git fetch` to replace the two-day-old
