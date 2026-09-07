@@ -1,64 +1,45 @@
 # Active context
 
-Updated 7 September 2026 from clean `main` at `01ce1f1`; handoff-only follow-up.
-[Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point. Follow AGENTS,
-all six memory files and the migration guide; this index is not test or live-state proof.
+Updated 8 September 2026 from `main` at `a13f696`, in step with `origin/main`.
+[Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
+detail. This index is not test evidence and not live-state proof; follow its links.
 
-## Current work and latest owner direction
+## Where the work stands
 
-[004 native shell](../docs/briefs/004-rn-kabuk-ve-giris.md) is locally implemented and
-**partial/pending: 23/27 required PASS, four NOT RUN**. On 7 September the owner again
-postponed real-device testing and requested a handoff and next-step analysis. Do not make
-another phone-test question the next agent's automatic first action; no criteria were waived.
+The live release of invitation-based membership is done. [010](../docs/briefs/010-008-canli-yayin-ve-kabul.md)
+took 008 to production in DB → Edge → web order, the flow was accepted end to end on the live
+product with purpose-made test identities, and the fixture was cleaned up afterwards with the
+owner's confirmation. **010 is six of seven**: the revoked-link and wrong-account refusals were
+never exercised through the product, and the fixture that would do so no longer exists.
 
-Native type/test/iOS bundle checks passed at `10b6f9f`; the own Android development build
-ran on an isolated emulator at `6d64d16`. Detailed commands, screenshots and limits live in
-004's linked evidence. The earlier absent-Android and 21/26 or 22/27 summaries are historical.
-Hardware keychain, real-phone account flow, remote CI and live 010 remain unrun.
+Two faults surfaced during that acceptance and both are fixed and live:
+[011](../docs/briefs/011-davet-donusu-ve-sifre-sifirlama.md) (13/13, released as `f661ab2`)
+restored the invitation across the email-verification round trip and gave the app the
+self-service password reset it never had; [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md)
+(9/10) stopped `list_my_choirs` returning a null `is_current`, which had locked every
+multi-choir member out of the choir picker.
 
-004's **CI execution-readiness proposal** was prepared on 7 September at `d9ab194` and is
-recorded in the [brief](../docs/briefs/004-rn-kabuk-ve-giris.md#ci-execution-readiness-proposal--7-september-2026),
-which stays authoritative; do not redo or restate it. Local read-only inspection only, no
-remote operation, and no criterion changed. It concludes that every route to a remote run
-needs at least one push, that a `main` push would publish the 008 invitation UI ahead of its
-undeployed migration and Edge function, and that the `quality` job is predicted — by analysis,
-not a test — to fail at `next build` for missing Supabase environment. Six remote facts stay
-unknown. Work is paused on the owner's answer to a four-step approval request whose first two
-steps write nothing: a `git fetch`, and an owner-side report of Vercel and branch-protection
-settings. Bu iş 7 Eylül'de tamamlandı: kullanıcı depo kapsamlı bir GitHub token'ı verdi, `ci/004-native-check`
-dalı push edildi, taslak PR #7 açıldı, koşu #19 tahmin edilen `next build` hatasını üretti,
-`08f41dc` `quality` işinin ortamını düzeltti ve koşu #20 üç işi de yeşil geçti. Uzak CI kriteri
-PASS; 004 artık 24/27. PR merge edilmeden kapatıldı, dal silindi, `main` push edilmedi.
+[004](../docs/briefs/004-rn-kabuk-ve-giris.md) is now **25 of 27**. The live-010 criterion
+passed; the two that remain are hardware keychain and the real-phone flow, both postponed by
+the owner. Do not make either the next agent's first action.
 
-7 Eylül eki: kullanıcı connector'ları yeniden bağladı. Supabase ve Railway artık doğru
-`genesinovachoir` hesabında; salt okunur listelerle canlı projede 008 migration'ının ve
-`choir-invitations` Edge fonksiyonunun **bulunmadığı** doğrulandı, yani 010'un önkoşulları
-artık varsayım değil gözlem. Kullanıcının `git fetch`'i `origin/main`'in yerinde durduğunu,
-`main`'in 24 commit önde olduğunu gösterdi. Vercel hâlâ canlı web projesini göstermiyor.
-Erişimin açılması yayın yetkisi değildir: 010 bekliyor, ayrı yetki ve yedek/geri yükleme
-kanıtı istiyor. Ayrıntı ve sınırlar
-[004 erişim kaydında](../docs/briefs/004-rn-kabuk-ve-giris.md#access-re-check-after-the-owner-reconnected-the-connectors--7-september-2026).
+## Sharpest open risk
+
+`supabase/tests/012_list_my_choirs_is_current.sql` has never been executed, and after the
+cleanup the fault cannot be reproduced live either. It is the only guard on a defect that
+locked a real member out of the product. Running it, and proving it fails against the
+down-migration, is the [next bounded task](../docs/agent-handoff.md#next-bounded-task).
 
 ## Preserved order and boundaries
 
-[Decision #21](../KARARLAR.md) and the [delivery plan](../docs/mobil-teslim-plani.md):
-invitation acceptance → native sign-in/selection → repertoire/PDF → device pilot;
-limits before store release unless a measured pilot blocker justifies earlier work.
-004 cannot close locally while the four required gates remain open. Do not start
-repertoire/PDF, plan-limit or hosting work to bypass this acceptance boundary.
+[Decisions #21 and #23-#26](../KARARLAR.md) and the [delivery plan](../docs/mobil-teslim-plani.md).
+004's acceptance gate is open, so repertoire/PDF is no longer blocked — but it starts only when
+the owner says so. RN + Expo, the shared annotation contract and the permanent WebView targets
+are unchanged. The 005 client contract stays fail-closed by decision #24.
 
-[008](../docs/briefs/008-davet-ve-uyelik.md) is locally verified, not deployed;
-[010](../docs/briefs/010-008-canli-yayin-ve-kabul.md) remains pending separate authority.
-Earlier live 003/005/006/007/009 evidence and limits are indexed in
-[progress](progress.md), not reverified here. Real second membership/operator/choir creation
-is not automatically authorized by deployed infrastructure. Old-account risk remains
-accepted under decision #17; real Auth delivery is not proven by reply forwarding.
+## Authority
 
-## Authority and handoff
-
-Existing authority: local implementation/tests and required local commits for the documented
-plan, one brief at a time. Latest request: handoff/analysis only. No push, remote PR/run,
-deploy, production account/data work, email or spending; hardware remains deferred.
-Single writer, preserve unrelated/generated user state. RN + Expo, shared annotation
-contract and permanent WebView targets remain unchanged. Current source/test applicability,
-artifact ownership, environment recovery and remaining risks are in the handoff and 004.
+Standing: local implementation, local commits, reading live state, running the repository
+gates. Requiring approval every time: deleting live rows, any production release (push,
+deploy, migration), anything touching `Genesi Nova`, real email, spending, and hardware
+testing. Housekeeping the owner still owes: revoke the GitHub token in `.env.local.github`.

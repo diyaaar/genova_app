@@ -47,3 +47,23 @@ Metro/emulator were stopped after acceptance, and absence was checked for handof
 Keep macOS dependencies intact; do not install Linux binaries into its shared node_modules.
 Hardware remains deferred; current acceptance status and next task are in
 [activeContext](activeContext.md) and [004](../docs/briefs/004-rn-kabuk-ve-giris.md).
+
+## Where each gate can actually be evaluated — 8 September 2026
+
+Measured this stretch, not assumed. Recording it so no future session repeats the search or,
+worse, records an unevaluated gate as passed.
+
+| Gate | Runs in the agent's Linux shell? | Where it was run |
+|---|---|---|
+| `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **yes** | A copy of the repository **outside** the connected folder, with its own `pnpm install --frozen-lockfile` and CI's synthetic Supabase environment. 33 files / 206 tests |
+| `pnpm build` | **no** | `next/font` fetches Manrope and Noto Serif at build time; `fonts.googleapis.com` and `fonts.gstatic.com` are refused by the proxy in both agent environments. Owner's macOS, or CI |
+| `pnpm test:e2e` | **no** | Playwright's browser download is refused as well. CI only |
+| SQL test files | **no** | No agent shell reaches a live or local Postgres; they need `psql -f` on the owner's machine or a database an agent can create locally |
+
+Never run an install against `apps/mobile/node_modules` or the root `node_modules` from a Linux
+shell — both are macOS installs reached through the connected folder, and reinstalling
+invalidates the owner's working setup. Copy the tree out first, as above.
+
+When a CI job fails, the log storage host is unreachable from the agent shells, but the GitHub
+API's **check-run annotations** endpoint returns Playwright's failure text, including the
+locator and the received value. That is how three CI failures were diagnosed on 8 September.

@@ -1,243 +1,216 @@
 # Genova — agent handoff
 
-Snapshot: 7 September 2026, updated from `main` at `3986f35` after the live 008 release,
-the first round of controlled product acceptance, and the local 011 fix. Verify the receiving
-checkout; conversation history is not required.
-This file is an entry point and source index, not a second roadmap or authorization grant.
+Snapshot: 8 September 2026, written from `main` at `a13f696`, which is also `origin/main`.
+Verify the receiving checkout before trusting anything here; conversation history is not
+required and is not available. This file is an entry point and a source index — not a second
+roadmap, and not an authorization grant.
 
 ## Entry and source order
 
-Read [AGENTS](../AGENTS.md), then follow the complete [migration guide](gecis-rehberi.md)
-and [working cycle](ai-calisma-duzeni.md): all six memory-bank files, [MIGRATION](../MIGRATION.md),
-[decisions](../KARARLAR.md), [delivery plan](mobil-teslim-plani.md), active brief and relevant
-code/evidence. Record the start-check in the brief before changing anything. Use the
-[brief template](briefs/_TEMPLATE.md) and retain one writer per checkout.
+1. [`AGENTS.md`](../AGENTS.md) — repository configuration, git discipline, gates, accounts.
+2. This file.
+3. [`docs/gecis-rehberi.md`](gecis-rehberi.md) — migration guide; every migration task fills
+   in its brief's start-check from it.
+4. [`docs/ai-calisma-duzeni.md`](ai-calisma-duzeni.md) — working loop and memory ownership.
+5. [`memory-bank/`](../memory-bank/) — six short files; `activeContext.md` and `progress.md`
+   are the ones that move. They are an index, never proof.
+6. The brief for the task at hand, under [`docs/briefs/`](briefs/).
+7. [`KARARLAR.md`](../KARARLAR.md) for decisions, [`MIGRATION.md`](../MIGRATION.md) for the
+   native/WebView ledger.
 
-Write agent records in English and user updates/product copy in Turkish. Original Turkish
-decisions remain authoritative. Evidence belongs in its brief; indexes link to it.
+Records are written in English; user-facing updates and product copy stay Turkish. Older
+Turkish briefs remain authoritative for their own subject.
 
 ## Objective and accepted decisions
 
-Ship the existing choir product on iOS and Android while preserving the working web.
-The first product milestone is installed sign-in → choir selection → repertoire → PDF and
-existing annotations → sign-out, then chief/chorister device pilot. It is not yet achieved.
+The product is Genova, a live choir application at `app.genesinovachoir.com` (Next.js 15 on
+Vercel, Supabase behind it), being extended with a React Native + Expo product app in the same
+repository. The owner's objective for this stretch was to get **invitation-based membership
+working on the live product**, because nothing else in the mobile plan can be accepted until a
+real person can be invited into a choir and sign in.
 
-The [decisions](../KARARLAR.md) and [delivery plan](mobil-teslim-plani.md) retain the reasons:
+Decisions that govern the work, with their reasons, live in [`KARARLAR.md`](../KARARLAR.md).
+The ones a receiving agent must hold:
 
-- #7–8: React Native + Expo, settled by the 002 spike; same repository. `spike/` is disposable
-  research, not product code. Shared TypeScript still needs platform-dependency inspection.
-- #2/#4: preserve behavior/data rather than pixel parity. The single annotation contract is
-  [annotation-types.ts](../lib/repertuvar/annotation-types.ts); no separate schema mirror.
-- #16/#18: server-verified session-bound active choir; a saved client preference is only a hint.
-  Choir creation belongs to a separate platform operator, not every choir chief.
-- #21: invitation acceptance → 004 native sign-in/selection → repertoire/PDF → device pilot;
-  limits before store release. Independent authorized 004 local work can proceed while 010
-  is blocked. Limits/hosting/commercial administration do not automatically delay the pilot.
-- #22: English agent records, Turkish user updates, dated acceptance evidence instead of scores.
-- #17: the owner's accepted old-account risk stays historical; do not reopen mass recovery or
-  claim those accounts were secured. See the original decision for details.
+- **#21** — order of work: invitation acceptance → 004 native sign-in/choir selection →
+  repertoire/PDF → device pilot; store limits last. Do not reorder to get around an open
+  acceptance item.
+- **#22** — English handoffs and dated evidence per acceptance item; a required FAIL or NOT RUN
+  keeps a brief open, and a self-score never substitutes for a run.
+- **#23** — 008 went live in DB → Edge → web order, with a proven backup first.
+- **#24** — the null `is_current` was fixed in the database; the client contract stays
+  fail-closed, because failing closed is what exposed the fault.
+- **#25** — 011 released; the profile form deliberately keeps its current-password field, and
+  the app gained a self-service reset instead.
+- **#26** — the acceptance fixture was deleted, knowingly leaving 010's sixth criterion unfinished.
 
-Permanent WebView boundaries in MIGRATION remain: announcements, choristers, profile/change
-requests and attendance. No rewrite of these screens; the session bridge is separate work.
+Two boundaries hold everywhere: the shared annotation contract in
+`lib/repertuvar/annotation-types.ts` is the single source of truth for both clients, and screens
+listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 
-**Latest owner steering, recorded in [004](briefs/004-rn-kabuk-ve-giris.md#handoff-start-check-and-next-task-contract--7-september-2026):**
-the owner again postponed real-device testing on 7 September and asked for this handoff and a
-reasoned next step. Do not ask to resume it as the automatic next action. The earlier instruction
-not to re-scope 004 stands; required hardware criteria stay NOT RUN, not moved to the pilot.
+## Current state — completed, deployed, and unverified, kept apart
 
-## Current state by verification layer
+### Live and accepted
 
-**004 native product area — partial, 25 of 27 required criteria PASS.** Expo workspace at
-`apps/mobile/`, sign-in/session adapter, zero/single/multiple membership handling,
-server-verified selection, cache clearing and sign-out. Shared 005 logic lives in
-[choir-context-core.ts](../lib/choir-context-core.ts); the web module keeps its public
-exports. Native gate, iOS simulator, Android emulator and a green remote CI run are recorded.
-The [mandatory table](briefs/004-rn-kabuk-ve-giris.md#mandatory-acceptance-evidence) is
-authoritative. Two criteria stay NOT RUN and both were deferred by the owner: hardware keychain
-and the real-phone real-account flow — **do not raise either as the next action**. The live 010
-acceptance criterion passed on 8 September: 008 is deployed and was accepted end to end on the
-live product, so the backend the native flow signs in against is live.
-
-**Live as of 7 September 2026.** 010 took 008 to production in the required DB → Edge → web
-order and the [step-by-step record](briefs/010-008-canli-yayin-ve-kabul.md) carries the
-evidence for each: fresh backup with a proven restore, a fresh-restore acceptance run that
-first failed and exposed a real gap in the backup, the live migration, the Edge deploy with
-four security checks, and the web release on `6b6d9a4` with CI run #21 and a matching Vercel
-production deployment. A controlled product acceptance then created a test choir, invited a
-test account, delivered a real verification email, accepted the invitation and refused a
-second acceptance of the same link.
-
-**010 has one criterion left, and it will stay open.** Six of seven passed, cleanup included:
-the test choir, its roles, memberships, invitation, audit row and the recipient Auth account
-were removed on 8 September with the owner's confirmation, and every count returned to the
-pre-010 baseline. What remains unproven is the sixth criterion's last part — the revoked-link
-and wrong-account refusals **through the live product**. Both are proven on the live database
-by the hosted SQL test and in isolation; only the product path is missing, and the fixture that
-would exercise it no longer exists. Closing it honestly means standing up a new test choir, not
-reinterpreting the evidence. See the
-[acceptance evidence table](briefs/010-008-canli-yayin-ve-kabul.md#kabul-kanıt-tablosu--7-eylül-2026).
-
-**Historically deployed, revisited here:**
-
-| Area | Recorded state and source | Limit |
+| Area | State | Source |
 |---|---|---|
-| 003/005 | [Tenant isolation](briefs/003-dogrulama.md), [session-bound choir](briefs/005-coklu-uyelik-aktif-koro.md) deployed | The 010 round exercised a real second membership and a live `set_active_choir`; that is now observed, not implied |
-| 006 | [Unauthorized bootstrap/write paths closed](briefs/006-uyelik-yonetimi-guvenlik-kapisi.md) | Owner accepted remaining old-account risk |
-| 007 | **Complete.** Operator allow-list filled and the [authenticated success path accepted](briefs/007-operator-kontrollu-koro-olusturma.md#authenticated-başarı-yolu-kabul-edildi--7-eylül-2026) | The accepted creation is the test choir; it is on the cleanup list |
-| 008 | Deployed and accepted live for creation, acceptance and the single-use refusal | Revoked-link and wrong-account refusals are proven in isolation and in the hosted SQL test, not yet through the live product path |
-| 009 | [SMTP/return URL and signed reply forwarding accepted](briefs/009-auth-eposta-ve-yanit.md); **real Auth email delivery now verified** for recovery and new-user verification | Delivery times were not measured |
+| 003 tenant schema | Deployed, hosted isolation tests passed | [003](briefs/003-dogrulama.md) |
+| 005 multi-membership / active choir | Deployed. A real second membership was exercised on 8 September and then removed with the fixture | [005](briefs/005-coklu-uyelik-aktif-koro.md), [010](briefs/010-008-canli-yayin-ve-kabul.md) |
+| 006 membership admin lockdown | Closed; the owner accepted the remaining risk on 27 old accounts under decision #17 | [006](briefs/006-uyelik-yonetimi-guvenlik-kapisi.md) |
+| 007 operator-controlled choir creation | **Complete.** The authenticated success path was accepted live; the choir it created has since been cleaned up, which does not undo the acceptance | [007](briefs/007-operator-kontrollu-koro-olusturma.md) |
+| 008 invitations | Deployed and accepted live for creation, acceptance and the single-use refusal. **Its two negative paths were never exercised through the product** | [008](briefs/008-davet-ve-uyelik.md), [010](briefs/010-008-canli-yayin-ve-kabul.md) |
+| 009 Auth email | Complete; real verification and recovery delivery observed on 8 September. Delivery times were never measured | [009](briefs/009-auth-eposta-ve-yanit.md) |
+| 011 invitation return + self-service reset | **Complete, 13/13,** released as `f661ab2` with all three CI jobs green | [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) |
+| 012 multi-membership lockout fix | Live and confirmed on the product, **9/10** | [012](briefs/012-coklu-uyelik-secim-kilidi.md) |
 
-**Fixed live, after the release:** [012](briefs/012-coklu-uyelik-secim-kilidi.md) closes a
-multi-membership lockout that the 010 round exposed. `list_my_choirs` computed `is_current`
-with `=` against a function that returns null when nothing is selected yet, so every row came
-back with a null boolean, the shared client contract rejected the list, and a member of two
-choirs was shown "no accessible choir membership" instead of the picker. Function body only,
-verified live before and after; no redeploy was needed. Its regression test file is written
-but has not been executed.
+### Partial, with the gap named
 
-**Deployed and complete:** [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) closed the two
-dead ends the live round exposed — the verification round trip losing the invitation, and a
-"forgot password" link leading to a page nothing could ever reach. 13 of 13 required criteria
-pass. Released on 8 September as `f661ab2` with all three CI jobs green and 30 browser tests;
-`/auth/recovery` on the live domain now offers a self-service reset. Two of the three runs
-were red first, both because of the tests rather than the product; the record explains each.
+| Area | State | What is missing |
+|---|---|---|
+| 004 native shell | **25 of 27 required criteria PASS** | Hardware keychain/keystore, and the real-phone real-account flow. Both were postponed by the owner — **do not raise either as the next action** |
+| 010 live release and acceptance | **Six of seven criteria PASS**, including cleanup | The sixth: revoked-link and wrong-account refusals *through the live product*. Proven on the live database by the hosted SQL test and in isolation; never through the product, and the fixture is gone |
+| 012 | Fixed and confirmed live | `supabase/tests/012_list_my_choirs_is_current.sql` has never been executed |
 
-**Not started:** repertoire/PDF, which waits on 004 acceptance. Hosting/Drive exit is
-[separate preparation](altyapi-2026-09-04.md); Vercel remains the verified live host and
-Railway preparation is not a completed move.
+### Not started
 
-## Tests actually run — historical evidence index
+Repertoire/PDF, which decision #21 put behind 004's acceptance. **That gate is now open.**
+Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
+the verified live host and Railway preparation is not a completed move.
 
-No product test was rerun to prepare this handoff. Read the linked records for exact output.
-Product/native/shared/CI sources were locally confirmed unchanged since `dc5f7a6`; later commits
-record evidence and status. This applicability check is not a new test run.
+## Tests actually run
 
-| Date / revision | Environment and command/scenario | Result and limitation | Evidence |
+Nothing below was re-run to prepare this handoff. Read the linked record for exact output.
+
+| Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
-| 6 Sep, `3009afe` | Linux ARM VM, native `npx tsc --noEmit && npm test` | 4 suites / 35 PASS; isolated doubles | [004](briefs/004-rn-kabuk-ve-giris.md) |
-| 6 Sep, `c91886c` | Owner's macOS, clean `npm ci`, native gate; root `pnpm check` | Native 35 PASS; web 190 tests and build PASS. Owner-reported historical output; 10 moderate npm advisories unresolved | [004](briefs/004-rn-kabuk-ve-giris.md) |
-| 6 Sep, `3009afe` | Extracted Linux web copy: lint/type/coverage/service-worker checks | PASS; build blocked there by font-fetch egress, later passed on macOS | [004](briefs/004-rn-kabuk-ve-giris.md) |
-| 6 Sep, `dc5f7a6` | Linux export with `--no-bytecode`; macOS Expo Go then own `expo run:ios` build | Metro resolution fixed. Owner reported four scenarios on own iOS simulator build: rejected login, single choir, session relaunch, sign-out. Not agent-observed hardware | [004](briefs/004-rn-kabuk-ve-giris.md) |
-| 7 Sep, `10b6f9f` | Direct macOS 26.5.1 arm64, Node 24.13.1/npm 11.8.0; native type/test/bundle chain | PASS: 35 tests, 660-module iOS Hermes export. Existing install, dotenv disabled; no device/live test | [Transcript](briefs/004-native-gate-2026-09-07.md) |
-| 7 Sep, `6d64d16` | Direct macOS, Java 17, Expo Android prebuild + Gradle ARM64 debug build; dedicated API 36 emulator | PASS: build 160 tasks, own APK installed/launched, signed-out screen and empty-form validation visually/XML verified. Synthetic loopback settings; no real account | [Android evidence and screenshots](briefs/004-android-build-2026-09-07.md) |
-| 7 Sep, `08f41dc` | GitHub Actions run #20 on `ci/004-native-check`, then run #21 on `main` at `6b6d9a4` | PASS: `quality`, `browser`, `mobile` all green on both a `pull_request` and a `push` event | [004 CI record](briefs/004-rn-kabuk-ve-giris.md#ci-run-19-result--7-september-2026) |
-| 7 Sep, live project | `psql -f supabase/tests/008_choir_invitations.sql` against production, inside a rolled-back transaction | Exit code 0; row counts identical before and after, no fixture leaked | [010 step 4](briefs/010-008-canli-yayin-ve-kabul.md#hosted-test-canlıda-geçti) |
-| 7 Sep, restored copy | `supabase/test-support/010_step3_runner.sh` on a fresh PostgreSQL 17 restore | First run FAILED 003/006/007 — `pg_dump` carries no role attributes, so `BYPASSRLS` was lost and a tenant check passed vacuously. Passed after reproducing the live role attributes. The most load-bearing finding of the release | [010 step 3](briefs/010-008-canli-yayin-ve-kabul.md#adım-3-sonucu--taze-restore-kabulü-geçti-7-eylül-2026) |
-| 7 Sep, live product | Operator creates choir, chief invites, recipient registers, verifies email, accepts; link reopened afterwards | PASS end to end; the reopened link was refused and the database confirmed no second acceptance or membership | [010 step 7](briefs/010-008-canli-yayin-ve-kabul.md#adım-7--kontrollü-ürün-kabulü-ilk-tur-7-eylül-2026) |
-| 7 Sep, `3986f35` | Isolated container, `vitest run --environment node` on `lib/invite-token-store.test.ts` and `lib/auth-recovery.test.ts` | 19/19 PASS. Limit: vitest 5.0.0 in a scratch container, not the repository's pinned vitest 4 and not the repository gate | [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md#mandatory-acceptance-evidence) |
+| 8 Sep, `a13f696` | GitHub Actions, `push` on `main`, run [34165767148](https://github.com/genesinovachoir/genova_app/actions/runs/34165767148) | **PASS** — Quality and security, Browser regression, Native product checks | The authoritative environment for `next build` and Playwright; neither agent shell can run either |
+| 8 Sep, `f661ab2` | Same workflow, run [34163714428](https://github.com/genesinovachoir/genova_app/actions/runs/34163714428) | **PASS** — 30 browser tests | Two earlier runs on this change were red; both were faults in the tests, detailed in [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) |
+| 8 Sep, `3986f35` | Clean Linux install outside the connected folder: `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **PASS** — 33 files / 206 tests | `pnpm build` could not run there: `next/font` cannot reach Google Fonts through either agent proxy. The owner ran the build on macOS and pasted its route table |
+| 8 Sep, live DB | `list_my_choirs()` as the affected account, before and after the 012 fix, in rolled-back transactions | **PASS** — `null/null` became `false/false`; single-membership still `true`; one row current after a selection | Function-level. The product-level confirmation is the `active_choir_sessions` row the owner's own sign-in wrote |
+| 8 Sep, live DB | 010 step 8 cleanup, single transaction | **PASS** — 12 rows removed, every counter back to the pre-010 baseline, each preserved item checked by name | Snapshot in `supabase/test-support/010_step8_pre_cleanup_snapshot.json` before deleting |
+| 8 Sep, live product | Operator creates a choir → chief invites → recipient registers, verifies email, accepts → the link is reopened | **PASS** end to end; the reopened link was refused and the database confirmed no second acceptance | Owner-driven in a browser; the agent read the database, not the screen |
+| 8 Sep, live product | `/invite` and `/auth/recovery` read through the browser pane on the owner's machine | **PASS** — the domain serves the release; `/auth/recovery` now offers the reset form | The commit hash is not readable client-side; the tie is behavioural |
+| 7 Sep, live project | `psql -f supabase/tests/008_choir_invitations.sql` against production inside a rolled-back transaction | **PASS**, exit 0; row counts identical before and after | Covers the revoked and wrong-account refusals at the database level — this is why those are not unknown, only unproven through the product |
+| 7 Sep, restored copy | `supabase/test-support/010_step3_runner.sh` on a fresh PostgreSQL 17 restore | **First run FAILED** 003/006/007; passed after reproducing the live role attributes | `pg_dump` carries no role attributes, so `BYPASSRLS` was lost and a tenant check passed vacuously. The most load-bearing finding of the release |
+| 7 Sep, `10b6f9f` | Owner's macOS: `npx tsc --noEmit && npm test && npm run bundle:check` in `apps/mobile` | **PASS** — 35 tests, 660-module iOS export | Historical. No device, no live account |
+| 7 Sep, `6d64d16` | Owner's macOS: Expo Android prebuild + Gradle debug build on a dedicated API 36 emulator | **PASS** — build installed and launched, signed-out screen verified | Historical. Emulator is not hardware; synthetic settings, no real account |
 
-Remote CI and the live invitation/membership flow have since passed, so the open 004 criteria
-are now three: **hardware keychain/keystore, the real-phone real-account flow, and the parts of
-live 010 acceptance that are still open**. Emulator success is not hardware/real-account
-evidence. Every review recorded here is self-review; no independent review or receiving-agent
-test is claimed.
+Every review recorded in this repository is **self-review**. No independent review and no
+receiving-agent test is claimed anywhere.
 
-## Environment, artifacts, failures and risks
+## Failures, blockers, risks and unfinished changes
 
-- Direct macOS is usable. Existing Java 17 and Android SDK are under Homebrew; Android Studio
-  is absent but not required by the proven command-line path. Exact environment variables,
-  commands and versions are in the Android evidence record; do not reinstall from scratch.
-- Existing macOS `apps/mobile/node_modules` must not be overwritten by a Linux install sharing
-  this folder. Product npm lockfile is separate from the root web pnpm lockfile.
-- Owner-owned `.env` was not read/printed/modified; local exports and Android launch disabled
-  dotenv and used synthetic settings. Never capture secrets or real sessions into evidence.
-- Ignored output exists: `apps/mobile/ios/`, `android/`, `.expo/`, and the own Android APK.
-  APK hash was rechecked at handoff and matches the Android record. It is a debug artifact,
-  not a release/store build. Keep original iOS/user artifacts intact.
-- Task-created reusable resources: SDK emulator/API 36 ARM64 system image and dedicated
-  `~/.android/avd/genova004_api36.avd`. Task Metro/emulator were stopped; handoff check found
-  no Metro 8081 listener or emulator process. Do not open a physical device or existing account.
-- Resolved Android failures: default AVD userdata exceeded free disk; runtime partition-size
-  override succeeded. Metro initially listened only on IPv6 loopback; documented LAN/IPv4
-  setup resolved script loading. Missing `devices.xml` diagnostic did not prevent AVD creation.
-  See the evidence's failure sequence; no generated source was hand-edited.
-- Remaining warnings: npm advisories not audited away, Gradle/SDK deprecations, and automatic
-  system-UI feature warning. No source regression was fixed in these documentation follow-ups.
-  Basic emulator launch does not prove full Android behavior, lifecycle, accessibility or parity.
-- Earlier Linux delete/lock limitations are historical. An empty stale HEAD lock was
-  quarantined after checking no Git writer was active; no general lock deletion recipe.
-- 010 records disagree historically about CLI availability; access was not rechecked here.
-  Treat current MCP/CLI/network status as unknown, not a verified blocker or authorization.
-  Shared DB changes still require fresh backup/restore, both-project impact and DB → Edge → web.
+- **010's sixth criterion cannot be closed as things stand.** Closing it means creating a new
+  test choir and invitation on production. That is a decision for the owner, not a chore to
+  pick up.
+- **012's only regression guard is a file that has never run.** After the cleanup the fault
+  cannot be reproduced live either. This is the sharpest open risk in the repository.
+- **`next build` and Playwright cannot run in either agent environment.** Google Fonts is
+  blocked at the proxy, and Playwright browser downloads are blocked too. CI is the only place
+  those two gates can be evaluated; the owner's macOS is the other place for the build.
+- **CI log storage is unreachable** from the agent shells. Failures were diagnosed through the
+  GitHub check-run **annotations** endpoint, which does return Playwright's failure text.
+- **The connected folder denies file deletion to the agent shell**, so git cannot clear its own
+  `HEAD.lock` / `index.lock`. Move them into `.git/_stale_locks/` before a git write when
+  "cannot lock ref" appears. That folder holds only quarantined junk and the owner can delete it.
+- **`origin` is an SSH alias the agent shell has no key for.** Pushes in this stretch went over
+  HTTPS with the token in `.env.local.github`. **That token should be revoked** — its job is done.
+- **`apps/mobile/node_modules` is a macOS install** shared through the connected folder. Never
+  run an install against it from a Linux shell; copy the tree outside the folder instead, which
+  is how the gate was run here.
+- **Uncommitted and not ours:** `supabase/.temp/cli-latest` is modified (empty → `v2.116.0`).
+  It is a Supabase CLI version cache the CLI rewrites on its own. It was left unstaged
+  deliberately in every commit of this stretch. Do not commit it as part of unrelated work.
 
 ## Checkout and ownership
 
-Branch `main`, worktree clean apart from `supabase/.temp/cli-latest`, a CLI cache artifact
-left unstaged on purpose. This agent owns every edit recorded here. `main` and `origin/main`
-are in step: the 010 step 6 release (`0389242..6b6d9a4`) and the 011 release
-(`6b6d9a4..604922e`, then documentation) were both pushed with explicit owner authorization,
-each after CI went green.
+Branch `main`, HEAD `a13f696`, in step with `origin/main` (verified by `ls-remote`, then
+fetched over HTTPS so the local ref is no longer stale). The working tree is clean apart from
+`supabase/.temp/cli-latest` above.
 
-Pushes go over HTTPS with the token in `.env.local.github`; the configured `origin` is an SSH
-alias the agent's shell has no key for.
-
-A practical repository quirk: this checkout sits in a folder that denies file deletion to the
-agent's shell, so git cannot clear its own `HEAD.lock`/`index.lock`. Move them into
-`.git/_stale_locks/` before a git write when a "cannot lock ref" error appears. That folder
-holds only quarantined junk and can be deleted by the owner at any time.
+Every commit in this stretch was written by a single agent, this one, and the owner approved
+each production step as it came. `main` was pushed twice with explicit authorization: the 010
+step 6 release (`0389242..6b6d9a4`) and the 011 release plus its records
+(`6b6d9a4..a13f696`), each after CI went green. Code and documentation were kept in separate
+commits per `AGENTS.md`.
 
 ## Authority
 
-Standing authorization from the owner: proceed without asking, one bounded piece at a time,
-provided the rules are followed and results are reported honestly with evidence. That covers
-local implementation, local commits, reading live state, and the live 010 steps already
-carried out.
+**Standing:** local implementation, local commits, reading live state, and running the
+repository gates. The owner has repeatedly said to proceed without asking inside those bounds,
+provided results are reported honestly with dated evidence.
 
-Still requiring explicit confirmation at execution time: **any deletion of live rows**; any
-spending; anything touching the real choir `Genesi Nova`; and any further production release.
-Hardware/real-phone testing was postponed by the owner — do not raise it as the next action. A
-proposal in a document is not permission to execute it, and no unrun test may be recorded as
-passed.
+**Requires explicit approval, every time:**
 
-Housekeeping the owner should do when this work ends: revoke the GitHub token in
-`.env.local.github`.
+- Any deletion of live rows.
+- Any production release: push to `main`, deployment, Edge function deploy, migration.
+- Anything touching the real choir `Genesi Nova` or its 29 members.
+- Real email sends, spending, and any new account or credential.
+- Hardware/real-phone testing — **postponed by the owner; do not propose it as the next step.**
+
+A proposal written in a document is not permission to execute it. An unrun test is never
+recorded as passed, and a required FAIL or NOT RUN keeps its brief open.
 
 ## Next bounded task
 
-Nothing is blocked on evidence any more, and nothing is half-finished. The acceptance work
-that ran from 003 through 012 is closed except for items that are deliberately open:
+**Task:** run the 012 regression test and give it a home that keeps running it.
 
-- **004** — hardware keychain and the real-phone flow, both postponed by the owner. Do not
-  raise them.
-- **010, sixth criterion** — the revoked-link and wrong-account refusals through the live
-  product. Proven on the live database and in isolation, never through the product, and the
-  fixture is gone. Finishing it means standing up a new test choir, which is a decision for
-  the owner, not a leftover chore.
-- **012's regression test** — `supabase/tests/012_list_my_choirs_is_current.sql` has never
-  been executed. It needs `psql -f` against a database no agent shell can reach. Running it,
-  or wiring the SQL tests into CI against a throwaway database, is the single highest-value
-  small task left, because after the cleanup that file is the only guard on a fault that
-  locked a real member out of the product.
+**Why this one:** after the cleanup, `supabase/tests/012_list_my_choirs_is_current.sql` is the
+only thing standing between the repository and a repeat of a fault that locked a real member
+out of the live product — and it has never been executed. Everything else that is open is
+either deferred by the owner or needs a decision from them.
 
-**The next feature is repertoire/PDF**, which decision #21 put behind 004's acceptance. That
-gate is now open. Nothing else is pending.
+**Brief:** [012](briefs/012-coklu-uyelik-secim-kilidi.md). Its acceptance table has one row
+left; do not open a new brief for this.
 
-**Housekeeping:** the GitHub token in `.env.local.github` should be revoked; it was created
-for this work and its job is done. `.git/_stale_locks/` holds quarantined lock files and can
-be deleted.
+**Relevant files:**
 
-004 now stands at 25 of 27 with only the two owner-deferred criteria left, so **repertoire/PDF
-is no longer blocked by acceptance evidence** — it is the next feature work whenever the owner
-wants it. Nothing else is pending that an agent can close alone.
+- `supabase/tests/012_list_my_choirs_is_current.sql` — the test
+- `supabase/tests/005_active_choir_isolation.sql` — the harness idiom it follows, and the file
+  whose missing assertion let the fault through
+- `supabase/migrations/20260907210932_list_my_choirs_is_current_not_null_012.sql` and
+  `supabase/rollback/012_list_my_choirs_is_current_not_null_down.sql`
+- `supabase/test-support/010_step3_runner.sh` — the existing pattern for running SQL tests
+  against a restored database, including its refusal to run outside an isolated one
+- `.github/workflows/ci.yml` — if the test is to run automatically, this is where
+
+**Acceptance:**
+
+- The test file runs to completion with exit code 0 against a database that has 003 and 005
+  applied, and the run is recorded with date, environment and command.
+- The same file is shown to **fail** when the 012 down-migration is applied, so it is proven to
+  guard the fault rather than merely pass. Restore the fixed function afterwards.
+- Neither run leaves a fixture behind; both are transaction-local and roll back.
+- 012's last acceptance row is updated with the result, and the count is corrected honestly.
+
+**First concrete action:** read [012](briefs/012-coklu-uyelik-secim-kilidi.md) end to end, then
+`supabase/test-support/010_step3_runner.sh`, and decide where the database will come from — a
+local PostgreSQL 17 with the migrations applied is enough and needs no production access. Only
+if that is impossible, ask the owner to run `psql -X -v ON_ERROR_STOP=1 -f` against an isolated
+database. **Do not run it against production**, even though it rolls back.
 
 ## Copyable startup prompt
 
-> Work in `/Users/alidiyarduran/Antigravity/genovakorist`. Read `AGENTS.md`, then follow
-> `docs/gecis-rehberi.md` and `docs/ai-calisma-duzeni.md` completely, using
-> `docs/agent-handoff.md` as the entry point. Do not assume access to earlier conversations.
-> Verify branch, HEAD, worktree state and which evidence still applies. Follow decision #21
-> and preserve the native/WebView boundaries.
+> Work in `/Users/alidiyarduran/Antigravity/genovakorist`. Read `AGENTS.md`, then
+> `docs/agent-handoff.md`, then follow `docs/gecis-rehberi.md` and
+> `docs/ai-calisma-duzeni.md` in the order the handoff lists. Do not assume you can see
+> earlier conversations. Verify the branch, HEAD, working tree and which recorded evidence
+> still applies before acting.
 >
-> Current state: 008 is live and 010 carried it there, but 010 is **not closed** — read its
-> acceptance evidence table and treat its three open criteria as the live work. 004 stands at
-> 25 of 27; its two unrun criteria stay unrun. Brief 011 is local and partial and needs the
-> repository gate plus two Auth redirect URLs before it means anything in production.
-> Real-device testing was postponed by me and must not be raised as the next action.
-> Do not start repertoire/PDF.
+> State to hold: 008 is live and was accepted on the product, but `010` is **not closed** —
+> its sixth criterion, the revoked-link and wrong-account refusals through the live product,
+> is NOT RUN and the fixture that would exercise it was cleaned up. 004 stands at 25 of 27;
+> its two unrun criteria are hardware keychain and the real-phone flow, both postponed by me —
+> do not raise either as the next action. 011 and 012 are live. Repertoire/PDF is unblocked
+> but is not your task unless I say so.
 >
-> I have given standing authorization to proceed without asking, one bounded piece at a time,
-> as long as you follow the rules and report honestly with dated evidence. That does not
-> extend to deleting data: the 010 cleanup needs my confirmation when you are about to run it.
-> No spending. Never record an unrun test as passed, never replace evidence with a self-score,
-> and keep a required FAIL or NOT RUN visible rather than closing the brief. Keep agent records
-> in English and your updates to me short and in Turkish.
+> Your task is the next bounded task named in the handoff: run the 012 regression test against
+> an isolated database and prove it fails against the down-migration. Follow that section's
+> acceptance criteria exactly.
+>
+> Authorization: local implementation, local commits, reading live state, and running the
+> repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,
+> touching the real choir `Genesi Nova`, sending email, spending, or hardware testing. Ask me
+> for any of those. Never record an unrun test as passed, never replace evidence with a
+> self-score, and leave a required FAIL or NOT RUN visible rather than closing a brief around
+> it. Keep agent records in English and your updates to me short and in Turkish.
