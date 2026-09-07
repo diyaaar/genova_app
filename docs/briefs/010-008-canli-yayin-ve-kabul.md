@@ -534,3 +534,49 @@ CI'ın `push` olayıyla ve `main` üzerinde yeşil geçmesi, 004'ün CI kriterin
 yalnız `pull_request` ref'inde kanıtlanmış olmasındaki sınırı da kapatır.
 
 Commit/push/deploy birbirinin kanıtı sayılmadı: üçü ayrı ayrı okundu.
+
+## Adım 7 — kontrollü ürün kabulü, ilk tur (7 Eylül 2026)
+
+Canlı ortamda, önceden ürün sahibi tarafından seçilmiş test kimlikleriyle. Gerçek koro
+`Genesi Nova` akışın hiçbir noktasında kullanılmadı.
+
+### Uçtan uca geçen akış
+
+| Adım | Sonuç |
+|---|---|
+| Operatör test korosunu oluşturdu | `genova-008-test`, üç varsayılan rol, kurucu `Şef`. Kanıt [007](007-operator-kontrollu-koro-olusturma.md#authenticated-başarı-yolu-kabul-edildi--7-eylül-2026) |
+| Aktif koro seçimi | Kurucu hesap iki üyelikli hâle geldiği için 005 sözleşmesi gereği seçim zorunlu oldu; `set_active_choir` ile test korosu seçildi. Davetin oluşabilmesi bunun çalıştığının kanıtı: 008 aksi hâlde `Current choir Chef required` ile reddederdi |
+| Şef davet oluşturdu | Davet `1d87a4b8-…`, alıcı `ali.duran@orbibarobotics.com`, ses grubu Bass, 7 günlük geçerlilik |
+| Ham token saklanmadı | Tabloda yalnız 64 karakterlik SHA-256 özeti var; ham token hiçbir sütunda yok |
+| Yeni Auth kullanıcısı kaydoldu | Kayıt yalnız davet sayfası üzerinden yapılabiliyor; uygulamada bağımsız kayıt ekranı yok |
+| Gerçek Auth doğrulama e-postası | **Teslim edildi.** Gönderen `team@…genesinovachoir.com`, görünen ad `GENOVA APP` |
+| Davet kabul edildi | `accepted_at` 18:34:01, `accepted_by` alıcının kimliği |
+| Rol ve kadro | `ali.duran@orbibarobotics.com [Korist]`, `alidiyarduran35@gmail.com [Şef]`. Davet rolü tasarım gereği `Korist`; rol yükseltme yok |
+| Gerçek koro | `genesi-nova` **29 üye** — değişmedi |
+
+Davetin oluşturulmasından kabulüne kadar geçen süre altı dakikadan az; token 64 karakter,
+tek kullanımlık ve koroya bağlı.
+
+### Bu turda ortaya çıkan iki ürün bulgusu
+
+**1. Doğrulama e-postasının dönüş adresi davet bağlantısını taşımıyor.** Yeni kullanıcı
+kaydolup e-postasını doğruladıktan sonra uygulamanın ana sayfasına düşüyor; üyeliği henüz
+olmadığı için `ChoirSelectionGate` onu "Koro erişimi gerekli" ekranında durduruyor. Kapının
+davranışı doğru — `app/(main)/layout.tsx` üyeliksiz hesabı veri ekranlarına sokmuyor ve
+`/invite` o grubun dışında olduğu için engellenmiyor. Sorun yönlendirmede: kullanıcı davet
+bağlantısını elle yeniden açmak zorunda kalıyor. Gerçek bir korist için çıkmaz gibi görünür.
+Düzeltme, doğrulama dönüş adresine davet parametresini taşımaktır ve ayrı bir iştir.
+
+**2. Kurtarma bağlantısı yeni parola sormadan oturum açıyor.** Supabase'in kurtarma oturumu
+davranışı beklenen bir şey, ancak `/auth/recovery` sayfası yeni parola belirlemeye zorlamadığı
+için parola fiilen sıfırlanmıyor; bağlantı tek kullanımlık bir giriş yoluna dönüşüyor. Açık
+değil, ama tamamlanmamış bir akış.
+
+Bunlar 008'in kabul ölçütlerini düşürmez; ikisi de akışın etrafındaki yönlendirme sorunlarıdır
+ve kendi brief'lerini gerektirir.
+
+### Bu turda henüz yapılmayan
+
+Olumsuz yollar canlıda tekrar denenmedi: aynı bağlantıyla ikinci kabul, iptal edilmiş bağlantı
+ve yanlış hesapla kabul. Üçü de izole veritabanında ve hosted testte geçti, ancak 010 bunları
+kontrollü canlı kabulde de ister. Masaüstü/mobil viewport kontrolü de yapılmadı.

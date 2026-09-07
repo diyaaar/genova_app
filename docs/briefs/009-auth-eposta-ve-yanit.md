@@ -99,3 +99,24 @@ bu adrese gelen yanıtlar sonradan değiştirilebilir tek hedefe yönlendirilsin
   silme. Edge'i kaldırmak ayrı ve geri döndürmesi daha zor bir işlemdir.
 - Sınır: Gmail'den `team@...` adına cevap göndermek için ayrıca Gmail/SMTP
   “Farklı gönder” kurulumu gerekir; bu iş yalnız gelen yanıtları aktarır.
+
+
+## Gerçek Auth e-posta teslimi doğrulandı — 7 Eylül 2026
+
+Brief'in ve devir kayıtlarının aylardır açık tuttuğu madde kapandı: HTTP 200 veya yanıt
+aktarımı değil, gerçek Auth e-postalarının kullanıcıya ulaştığı gözlendi. Her ikisi de
+010'un kontrollü canlı kabulü sırasında, ürünün kendi akışıyla üretildi.
+
+| E-posta | Sonuç |
+|---|---|
+| Parola kurtarma (`/auth/v1/recover`) | Ürün sahibinin kutusuna **ulaştı**; bağlantı çalıştı ve hesabı açtı |
+| Yeni kullanıcı doğrulama (davet sayfasından kayıt) | `ali.duran@orbibarobotics.com` adresine **ulaştı**; bağlantı hesabı doğruladı, `email_confirmed_at` canlıda dolu |
+| Gönderen | `team@…genesinovachoir.com`, görünen ad `GENOVA APP` |
+
+Sınır: teslim süreleri ölçülmedi, yalnız varış doğrulandı. Spam yerleşimi, farklı sağlayıcılar
+ve toplu gönderim davranışı bu kanıtın kapsamında değildir.
+
+İki akış kaydında yönlendirme kusuru bulundu ve
+[010](010-008-canli-yayin-ve-kabul.md#bu-turda-ortaya-çıkan-iki-ürün-bulgusu) içinde
+kayıtlıdır: doğrulama dönüşü davet bağlantısını taşımıyor, kurtarma bağlantısı da yeni parola
+sormuyor. İkisi de teslimle ilgili değil, dönüş adresi ve sayfa akışıyla ilgilidir.
