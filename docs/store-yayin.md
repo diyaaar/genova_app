@@ -1,8 +1,12 @@
 # Mağaza Yayını — App Store & Play Store
 
-> Bu **Flutter geçişinden ayrı bir hat.** Bir kısmı bugün, mevcut web/Capacitor
-> uygulamasıyla başlayabilir ve Flutter'a olduğu gibi taşınır.
-> Durum: **hiç yayınlanmadı** (`versionCode 1`, `MARKETING_VERSION 1.0`, `DEVELOPMENT_TEAM` boş).
+> Bu kayıt 4 Eylül 2026 tarihli ilk envanterden doğdu ve artık React Native + Expo
+> ürün yoluna göre ele alınır. Aşağıdaki ücret, hesap, kapalı test ve inceleme kuralları
+> tarihsel nottur; herhangi bir mağaza işi veya harcama öncesinde resmi Apple/Google
+> kaynaklarından hesap türüne ve tarihe göre yeniden doğrulanır.
+>
+> Durum: mağaza adayı brief'i açılmadı; EAS/yayın kimliği, güncel gereklilikler ve
+> gerçek cihaz regresyonu henüz kabul edilmedi. Yerel hazırlık push, upload veya yayın izni değildir.
 
 ## Repoda tespit edilen eksikler
 
@@ -15,7 +19,7 @@
 | 5 | Demo hesap yok | Uygulama tamamen giriş duvarının arkasında. App Review'a çalışan bir hesap verilmezse 2.1'den reddedilir. |
 | 6 | `DEVELOPMENT_TEAM` boş | Apple Developer Program hesabı bağlı değil |
 
-## Şimdi yapılabilir (Flutter beklemez, Flutter'a aynen taşınır)
+## Ürün kodundan bağımsız hazırlanabilecekler
 
 1. **Hesap silme** — web'e ekle. Üye kendi hesabını siler; Supabase tarafında
    `choir_members` anonimleştirme + auth kullanıcısı silme. Bir Edge Function işi.
@@ -28,7 +32,7 @@
    Google Play Console (tek seferlik $25).
 5. **Play kapalı test saatini başlat** — aşağıya bak, takvim kısıtı var.
 
-## Play'in 12 test kullanıcısı / 14 gün kuralı
+## Tarihsel Play kapalı test notu — kullanmadan önce resmi kaynaktan yenile
 
 Kasım 2023'ten sonra açılan **şahıs** Play hesapları, üretime çıkmadan önce
 **12 test kullanıcısıyla 14 gün kesintisiz kapalı test** yapmak zorunda.
@@ -36,8 +40,8 @@ Koro için 12 kişi bulmak kolay ama **14 gün takvim işi** — Flutter gelişt
 paralel yürütülmeli, sonuna bırakılmamalı. Mevcut Capacitor derlemesi kapalı teste
 yüklenebilir; kapalı test üretim incelemesi kadar katı değil.
 
-**Kurum (organization) hesabıyla açarsan bu kural uygulanmaz.** Koro dernek/tüzel kişilikse
-kurum hesabı hem bu 14 günü atlatır hem de mağazada kurum adıyla görünür.
+Bu şartın hangi yeni kişisel hesaplara uygulandığı ve kurum hesabının güncel koşulları
+mağaza brief'inde resmi Play Console yardım sayfalarından yeniden doğrulanmadan plan girdisi olmaz.
 
 ## Dağıtım şekli — karar gerekiyor
 
@@ -47,7 +51,7 @@ kurum hesabı hem bu 14 günü atlatır hem de mağazada kurum adıyla görünü
 | Apple Business Manager özel uygulama | Kurumsal | Listelenmez, sadece davetliler. Kurumsal Apple hesabı ve D-U-N-S gerekir. |
 | TestFlight / Play kapalı test | Geçici | Hızlı ama TestFlight derlemeleri 90 günde dolar; kalıcı çözüm değil. |
 
-## Gönderim anı (Faz 1 bittiğinde)
+## Gönderim anı — ayrı yayın yetkisiyle
 
 - App Privacy (Apple) ve Data Safety (Play) formları — ses kaydı ve fotoğraf beyan edilmeli
 - Uygulama ikonu, açılış ekranı, mağaza görselleri (iPhone + iPad, telefon + tablet boyutları)

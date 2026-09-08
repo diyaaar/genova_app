@@ -1,7 +1,8 @@
 # 007 — Operatör kontrollü koro oluşturma
 
-**Durum / tarih / sorumlu yazıcı:** CANLI ALTYAPI HAZIR; ALLOW-LIST BOŞ,
-GERÇEK KORO YOK — 5 Eylül 2026; ana ajan tek yazıcı.
+**Durum / tarih / sorumlu yazıcı:** COMPLETE — live authenticated success accepted;
+the test choir was later removed while the single operator allow-list row was preserved —
+8 September 2026; main agent was the single writer.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Manuel faturalama döneminde yalnız
 ayrıca tanımlanmış platform operatörünün, mevcut bir Auth kullanıcısı için yeni
@@ -100,11 +101,10 @@ Supabase proje erişimi MCP üzerinden reddedildi; aynı kesin bağlı proje
   kurucu üyelik + kurucu `Şef` eşlemesini tek transaction'da oluşturabiliyor.
 - [x] Koro içi `Şef`, operatör olmayan kullanıcı, anon ve service-role doğrudan
   RPC çağrısı reddediliyor; geçersiz/tekrarlı giriş kısmi veri bırakmıyor.
-- [ ] Edge Function kullanıcı JWT'sini doğruluyor, service-role kullanmıyor ve
-  DB hata sınıflarını kişisel veri sızdırmadan güvenli yanıta çeviriyor. Kod ve
-  beş çekirdek testi ile hosted 401/CORS/handler başlangıç kontrolleri geçti;
-  allow-list boş tutulduğu için gerçek authenticated operatör başarı yolu
-  çalıştırılmadı.
+- [x] Edge Function kullanıcı JWT'sini doğruluyor, service-role kullanmıyor ve
+  DB hata sınıflarını kişisel veri sızdırmadan güvenli yanıta çeviriyor. Kod,
+  çekirdek/hosted güvenlik kontrolleri ve gerçek authenticated operator success
+  path passed; the fixture cleanup did not erase the recorded acceptance.
 - [x] 007 down roundtrip ile 003/005/006 regresyonları restore edilmiş DB'de geçti.
 - [x] Geçiş rehberinin teslim kontrolleri ve kökten `pnpm check` geçti; canlı
   DB/Edge/Auth/gerçek cihaz/yayın katmanları ayrı ve doğru biçimde raporlandı.

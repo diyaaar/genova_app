@@ -17,7 +17,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
-| Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Repertuvar/PDF açık ama kullanıcı tarafından henüz görev verilmedi | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md), [handoff](../docs/agent-handoff.md) |
+| Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |
 | English agent handoff / pilot priority | Documentation accepted: 16 files / 107 local links, diff and scenario self-review passed | [WF-004](../docs/briefs/WF-004-english-agent-handoff.md), [handoff](../docs/agent-handoff.md); no product, CI configuration or remote changes; receiving model not tested |
 
 | 010 canlı yayın ve kabul | 7/7 ölçütten **6'sı geçti**; altıncı açık kaldı | [010](../docs/briefs/010-008-canli-yayin-ve-kabul.md); yedek + kanıtlanmış restore, taze restore kabulü (ilk koşu başarısız, sebep `pg_dump`'ın rol niteliklerini taşımaması), canlı migration, Edge güvenlik kontrolleri, web yayını, uçtan uca ürün kabulü ve temizlik. Açık: iptal edilmiş bağlantı ve yanlış hesap yollarının **ürün üzerinden** reddi |
@@ -54,6 +54,6 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
 [Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
 roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
-device items postponed. Repertoire/PDF is unblocked but not authorized as the next task.
-No push, deploy, production database operation, real choir access, email or hardware test
-was performed for 012.
+device items postponed. The owner has now authorized the local repertoire/PDF work-package sequence; WF-005
+reconciles the roadmap before the native repertoire contract brief opens. No push, deploy,
+production database operation, real choir access, email or hardware test was performed for 012.

@@ -156,7 +156,7 @@ provided results are reported honestly with dated evidence.
 A proposal written in a document is not permission to execute it. An unrun test is never
 recorded as passed, and a required FAIL or NOT RUN keeps its brief open.
 
-## Completed bounded task and next decision
+## Active bounded sequence
 
 The 012 regression task is complete at local code/test commit `5702bca`; exact acceptance
 evidence is in [012](briefs/012-coklu-uyelik-secim-kilidi.md). The reusable command is
@@ -166,10 +166,12 @@ expected down-migration failure, restores the fixed function and compares fixtur
 snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for future restored
 database acceptance runs.
 
-There is no newly authorized product task in this handoff. Preserve the remaining gaps rather
-than choosing around them: 010 is still 6/7 and needs a new production fixture plus explicit
-owner approval; 004 is 25/27 and both device items are postponed. Repertoire/PDF is unblocked
-but starts only when the owner names it as the next bounded task.
+On 8 September the owner authorized the local work-package sequence without authorizing any
+external write. WF-005 reconciles the roadmap first. The next product brief establishes the
+native repertoire contract and inventory; catalogue, shared secure file access, and PDF plus
+read-only annotations then proceed as separate bounded packages. Preserve the remaining gaps:
+010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
+both device items are postponed. Neither is the next action.
 
 ## Copyable startup prompt
 
@@ -183,14 +185,14 @@ but starts only when the owner names it as the next bounded task.
 > its sixth criterion, the revoked-link and wrong-account refusals through the live product,
 > is NOT RUN and the fixture that would exercise it was cleaned up. 004 stands at 25 of 27;
 > its two unrun criteria are hardware keychain and the real-phone flow, both postponed by me —
-> do not raise either as the next action. 011 and 012 are live. Repertoire/PDF is unblocked
-> but is not your task unless I say so.
+> do not raise either as the next action. 011 and 012 are live. The local repertoire/PDF
+> work-package sequence is now authorized; external writes remain separately gated.
 >
 > Verify the local 012 evidence and current checkout rather than rerunning or reopening it by
 > assumption. 012 is complete locally at `5702bca`: its SQL file passed on the fixed function,
 > failed for the expected reason after the down-migration, and passed after restoration on an
-> isolated PostgreSQL 17.11 copy, with fixture snapshots unchanged. Do not choose a new product
-> task until I name one.
+> isolated PostgreSQL 17.11 copy, with fixture snapshots unchanged. Continue from the active
+> bounded package recorded above; do not recreate the 010 fixture or start hardware work.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,

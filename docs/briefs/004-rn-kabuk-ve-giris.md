@@ -9,7 +9,8 @@ Sıra/kabul kaynağı: [teslim planı](../mobil-teslim-plani.md), [karar #21](..
 ## Başlangıç ve önkoşul
 
 4 Eylül kaydındaki “003 canlı değil” engeli güncelliğini yitirdi. 003 ve 005 canlı
-kanıtları kendi brief'lerindedir; 007 altyapısı canlı, allow-list boş.
+kanıtları kendi brief'lerindedir; 007 altyapısı canlı ve tek operator allow-list
+kaydı korunuyor.
 002 spike ürün değildir.
 The product workspace now exists at `apps/mobile/`; setup was implemented on 6 September.
 The preparation text below is retained as scope history, not a claim that setup is still absent.

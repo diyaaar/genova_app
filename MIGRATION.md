@@ -17,8 +17,9 @@ taze yedek kopyasında geçti; canlı DB migration, hosted test, Edge v15 ve web
 Kanıt: `docs/briefs/005-coklu-uyelik-aktif-koro.md`.
 **007 — operatör kontrollü koro oluşturma: TAMAMLANDI ve CANLIDA (8 Eyl kabul).**
 DB `20260905160539`, `create-choir` Edge v1 ve hosted 003/005/006/007 testleri
-geçti. Kimliği doğrulanmış gerçek operatör başarı yolu canlıda kabul edildi; test korosu,
-operatör kaydı ve ilgili fikstür daha sonra kontrollü temizlikte kaldırıldı.
+geçti. Kimliği doğrulanmış gerçek operatör başarı yolu canlıda kabul edildi; test korosu
+ve ilgili fikstür daha sonra kontrollü temizlikte kaldırıldı. Tek operator allow-list
+kaydı korundu.
 Kanıt: `docs/briefs/007-operator-kontrollu-koro-olusturma.md`.
 **004 — Expo ürün alanı, native giriş ve koro seçimi: KISMÎ, 25/27 (8 Eyl).**
 `apps/mobile/` kuruldu (Expo SDK 57, kendi npm lockfile'ı ve test kapısı). Giriş, güvenli
@@ -73,7 +74,7 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 
 | Parça | Durum |
 |---|---|
-| Supabase (auth, realtime, storage) | 003, 005, 007, 008 ve 012 canlı; aktif koro Auth `session_id` ile sunucuda çözülüyor; kabul fikstürü temizlendi ve operatör allow-list'i yeniden boş |
+| Supabase (auth, realtime, storage) | 003, 005, 007, 008 ve 012 canlı; aktif koro Auth `session_id` ile sunucuda çözülüyor; kabul fikstürü temizlendi, tek operator allow-list kaydı korundu |
 | `supabase/functions/drive-manager-v2` | v15 canlı; 005 aktif-koro sözleşmesi, `verify_jwt=true` |
 | `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu kabul edildi, test fikstürü daha sonra temizlendi |
 | `supabase/functions/choir-invitations` | canlı; `verify_jwt=true`; 008 kabul edildi, 010'un iptal edilmiş bağlantı ve yanlış hesap ürün yolları açık kaldı |
@@ -161,11 +162,10 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**Otomatik sıradaki iş yok.** 008 canlıda ve kabul edildi; [010](docs/briefs/010-008-canli-yayin-ve-kabul.md)
-6/7 kaldı çünkü iptal edilmiş bağlantı ve yanlış hesap retleri ürün üzerinden koşulmadı ve
-fikstür temizlendi. [012](docs/briefs/012-coklu-uyelik-secim-kilidi.md) 10/10 tamamlandı.
-004'ün iki cihaz ölçütü ertelendi. Repertuvar/PDF artık engelli değil ama ürün sahibi onu
-yeni, sınırlandırılmış görev olarak adlandırmadan başlanmaz.
+**Sıradaki iş:** ürün sahibi 8 Eylül'de yerel çalışma paketlerini başlattı. Önce
+native repertuvar sözleşmesi ve envanteri; sonra katalog, ortak güvenli dosya erişimi ve
+PDF + salt okunur anotasyon akışı ayrı brief'lerle ilerler. 010 6/7 kalır; yeni canlı
+fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 
 **007 koro oluşturma: TAMAMLANDI ve CANLIDA KABUL EDİLDİ.** İlk sürüm herkese açık
 self-servis olmayacak: manuel
@@ -174,8 +174,8 @@ koro, kurucu üyelik ve kurucu Şef rolünü tek transaction'da oluşturacak. Me
 koro içi Şef rolü başka koro açma yetkisi vermeyecek. Migration, geri dönüş,
 Edge giriş noktası ve restore edilmiş DB kabul testleri
 [007 brief'inde](docs/briefs/007-operator-kontrollu-koro-olusturma.md) hazırlandı,
-canlıya uygulandı ve gerçek operatör JWT'siyle başarı yolu kabul edildi. Test korosu ve
-operatör kaydı 010 temizliğinde kaldırıldı; kabul geçerli, allow-list yeniden boş.
+canlıya uygulandı ve gerçek operatör JWT'siyle başarı yolu kabul edildi. Test korosu
+010 temizliğinde kaldırıldı; kabul geçerli, tek operator allow-list kaydı korundu.
 
 **006 üyelik yönetimi güvenlik kapısı: KAPALI.** 5 Eylül canlı envanterinde eski
 `create-choir-users` fonksiyonunun kimlik doğrulaması kapalı ve sabit başlangıç

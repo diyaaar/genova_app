@@ -21,8 +21,8 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   varsayılan roller, kurucu üyelik ve kurucu `Şef` eşlemesini atomik RPC ile kurar.
   Edge kullanıcı JWT'sini doğrular ve service-role anahtarı taşımaz. DB migration
   `20260905160539` ve Edge v1 canlıdır; gerçek operatör başarı yolu 8 Eylül'de
-  kabul edildi. Test korosu ve operatör kaydı daha sonra temizlendi, dolayısıyla
-  allow-list yeniden boştur; temizlik önceki kabulü geri almaz.
+  kabul edildi. Test korosu daha sonra temizlendi; tek operator allow-list kaydı
+  korundu. Temizlik önceki kabulü geri almaz.
 - Toplu Auth kurtarması sabit e-posta/parola listesine dayanmaz: değişmez oluşum
   penceresi ve beklenen sayı birlikte doğrulanır, servis anahtarı yanında ayrı tek
   kullanımlık yürütme anahtarı gerekir, denetim ve etki modları ayrılır. Kısmi

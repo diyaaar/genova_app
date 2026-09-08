@@ -3,6 +3,8 @@
 5 Eylül 2026. Kullanıcı, önerilen yönü ve proje kurallarının buna göre düzenlenmesini
 onayladı. Bu kayıt planlama kapsamıdır; ürün kodu veya canlı işlem yapılmış sayılmaz.
 6 Eylül güncellemesi: pilot önceliği ve İngilizce ajan devri onaylandı.
+8 Eylül güncellemesi: 008/011/012 canlı; 010 6/7; 004 25/27. Ürün sahibi repertuvar/PDF
+ile başlayan yerel çalışma paketlerini yetkilendirdi. Dış yazılar yine ayrı onay ister.
 Güncel karar: [KARARLAR #21–22](../KARARLAR.md); #19'un eski sırası tarihseldir.
 Durum: [MIGRATION](../MIGRATION.md).
 
@@ -17,17 +19,18 @@ yönetimin tüm ayrıntıları ilk cihaz denemesinin önkoşulu değildir.
 ## Doğrulanmış başlangıç
 
 - 001/002 teknik spike'lar geçti.
-- 7 September status correction: Expo product workspace exists at `apps/mobile/`.
-  [004](briefs/004-rn-kabuk-ve-giris.md) remains partial/pending (23/27 required PASS,
-  four NOT RUN after Android emulator acceptance at `6d64d16`); direct macOS type/test/bundle verification passed at `10b6f9f`.
-  This updates setup status only; the delivery order and acceptance boundaries below remain.
+- Expo product workspace exists at `apps/mobile/`. [004](briefs/004-rn-kabuk-ve-giris.md)
+  is 25/27: CI and live invitation acceptance passed; hardware keychain/keystore and the
+  real-phone flow are NOT RUN and postponed by the owner. They are not the next action.
 - 003/005 canlı: koro izolasyonu, çoklu üyelik ve oturuma bağlı aktif koro.
 - 006 eski yetkisiz oluşturma/yazı yollarını kapattı. 27 hesabın kabul edilmiş
   parola riski giderilmiş sayılmaz; yeni davetlerde ortak başlangıç parolası kullanılmaz.
-- 007 DB ve Edge canlı; allow-list boş, authenticated Edge başarı kabulü açık.
-- 008 davet/üyelik yerel paketi hazır; canlı kabul bekliyor. 009 ile Auth SMTP,
-  production dönüş adresi ve yanıt aktarımı canlıda kabul edildi. Gerçek Auth
-  doğrulama e-postası teslimi açık; temel plan-limit başlamadı.
+- 007 DB ve Edge canlı; authenticated başarı yolu kabul edildi. Test korosu silindi,
+  platform operator allow-list kaydı korundu.
+- 008 canlı ve temel ürün kabulü geçti. 010 altı/yedi: iptal edilmiş bağlantı ve yanlış
+  hesap reddi ürün üzerinden NOT RUN; fikstür temizlendi. 009 ve 011 tamamlandı.
+- 012 canlı ve ürün üzerinde doğrulandı; down-migration'a karşı yerel izole regresyon
+  kanıtı da geçti. Temel plan-limit başlamadı.
 - Railway ayrı hazırlık ortamı; Drive dosyaları production'dan taşınmış değil.
 
 ## Sıra, sınır ve kabul
@@ -37,13 +40,19 @@ kanıtıyla olur; brief numarası kronolojik sıra anlamına gelmez.
 
 | Sıra | İş ve kapsam | Çıkış ölçütü | Bilinçli ertelenen |
 |---|---|---|---|
-| 1 | 008: minimum davet/üyelik. Şef kendi korosuna davet oluşturur/iptal eder; doğrulanmış alıcı kabul eder. Mevcut ve yeni Auth kullanıcısı yolu açıkça tanımlanır. | Süreli, tek kullanımlık, doğru alıcıya bağlı davet; atomik üyelik; tekrar/iptal/yanlış hesap/yanlış koro reddi. Rol yükseltme kapalı, iki koro izolasyonu testli. | Toplu aktarım, gelişmiş yönetim paneli, otomatik kampanya e-postaları. |
-| 2 | 004: aynı depoda Expo ürün alanı, güvenli giriş, üyelik çözümü, koro seçimi ve en küçük kabuk. | Tek üyelik otomatik; çok üyelikte seçim zorunlu; sıfır üyelikte anlaşılır ekran; uygulama yeniden açılınca oturum doğru; koro değişimi/çıkışta özel cache temizlenir. iOS/Android derlemesi, en az bir gerçek telefon denemesi. | Push, player, beş boş sekme, tüm WebView ekranları. |
-| 3 | Repertuvar okuma brief'i: liste, yetkili PDF erişimi, zoom/kaydırma ve mevcut anotasyonların ortak TS sözleşmesiyle gösterimi. | Girişten PDF okumaya kesintisiz cihaz akışı; büyük/bozuk PDF, zayıf ağ, süresi dolan URL, bilinmeyen anotasyon ve koro değişimi testli. | Yeni çizim araçları, tüm repertuvar yönetimi, toplu refactor. |
-| 4 | Küçük pilot: şef + korist, temsilî içerik, iOS ve Android. | Görev tamamlanabiliyor; engelleyici hatalar kapalı; açılış süresi/bellek/çökme gözlemleri cihaz, dosya ve ağla birlikte kayıtlı. | Kanıtsız performans yüzdesi veya genel yayın iddiası. |
-| 5 | Minimum plan-limit brief'i: elle atanabilen plan ve sunucuda üyelik/depolama kullanım sınırı. Somut pilot engeli kanıtlanırsa gerekli en küçük parça öne alınır. | Limit sınırında ve eşzamanlı işlemde aşım reddi; tekrar/başarısız işlem kullanım sayısını bozmaz; mevcut koroya engel oluşturmayan geçiş doğrulanır. Mağazadan önce tamamlanır. | Ödeme, fatura motoru, yükseltme ekranı, gelişmiş raporlama. |
-| 6 | Pilot bulgularıyla ayrı brief'ler: tablet/stylus yazma, ses, güvenli WebView köprüsü; dosya deposu geçişi. | Web/mobile anotasyon uyumu; gerçek kalem/avuç testi; ses seek/yenileme; ortak çıkış; taşıma checksum/izin/geri dönüşü. | Çalışan alanları sırf yeni kurala uydurmak için baştan yazma. |
-| 7 | Mağaza adayı: gerekli özellikler, gizlilik/hesap silme/demo, yayın kimliği, erişilebilirlik ve cihaz regresyonu. | Sürüm ve dağıtım doğrulanmış; güncel hesap bazlı Apple/Play gereklilikleri tamam; beta ve genel yayın ayrı kayıtlı. | Mağaza kabulünü build sonucundan çıkarma. |
+| 1 | 008/010 minimum davet/üyelik | 008 canlı; 010'un altıncı ölçütü KISMÎ, iki ürün yolu NOT RUN. Bu açık kayıt korunur; yeniden fikstür kurmak ayrı canlı yetkidir. | Toplu aktarım, otomatik kampanya e-postaları. |
+| 2 | 004 native giriş/koro seçimi | 25/27. İki cihaz ölçütü ertelendi; diğer katmanlar geçti. | Donanım ölçütlerini yerel/emülatör kanıtıyla kapatma. |
+| 3 | Native repertuvar sözleşmesi ve envanteri | Liste, dosya erişimi, PDF, anotasyon ve cache sınırları kod/şema üzerinden tanımlı; sonraki uygulama brief'leri küçük ve testlenebilir. | Ürün kodu, canlı işlem, sağlayıcı göçü. |
+| 4 | Native repertuvar kataloğu | Seçili koroya ait liste ve boş/yükleniyor/hata durumları izole testli; koro değişiminde eski veri gösterilmiyor. | PDF, çizim ve yönetim yazıları. |
+| 5 | Ortak güvenli dosya erişimi | Web ve native aynı Edge sözleşmesini kullanır; auth, tenant, kapsam, MIME/range, süre sonu ve hata yolları izole DB/çekirdek testleriyle kanıtlı. | Canlı deploy/migration ve Drive taşıması. |
+| 6 | PDF + salt okunur anotasyon | Sayfa görüntüsü, zoom/kaydırma ve mevcut anotasyonlar ortak TS sözleşmesiyle gösterilir; bilinmeyen tür fail-closed/uyumlu davranır. | Stylus yazımı, ses ve gerçek donanım kabulü. |
+| 7 | Cihaz pilotu | Şef + korist akışı gerçek iOS/Android cihazlarda kanıtlanır; yalnız ayrı donanım yetkisi gelirse çalıştırılır. | Simülatörü gerçek cihaz sayma. |
+| 8 | Yazma anotasyonları ve ses | Web/native şema uyumu, çevrimdışı/yeniden deneme, çakışma, ses seek ve arka plan davranışları ayrı brief'lerde testli. | Kanıtsız performans iddiası. |
+| 9 | Kalıcı WebView köprüsü | Duyuru, korist, profil/değişiklik ve devamsızlık ekranlarında ortak oturum, çıkış, geri navigasyon ve dosya geçişi doğrulanır. | Bu ekranları native yeniden yazma. |
+| 10 | Chat, ödevler ve ana sayfa | Her modül kendi veri/Realtime/push/sıfır-veri/hata sözleşmesiyle native olur; mevcut web korunur. | Tek brief'te toplu yeniden yazım. |
+| 11 | Minimum plan-limit | Üyelik/depolama limitleri sunucuda ve eşzamanlılık altında doğru; mağazadan önce tamamlanır. | Otomatik ödeme/fatura motoru. |
+| 12 | Drive'dan kontrollü çıkış | Tam envanter, checksum, yetki, çift-okuma/geçiş ve gerçek restore/rollback kanıtı. Ayrı sağlayıcı ve harcama onayı gerekir. | Dosya silme veya production taşımasını yerel hazırlık sayma. |
+| 13 | Mağaza adayı ve yayın | Güncel resmi Apple/Play kuralları, gizlilik/hesap silme/demo, erişilebilirlik, imzalama, beta ve yayın kapıları kanıtlı. Push/deploy/harcama ayrı yetkilidir. | Build sonucunu mağaza kabulü sayma. |
 
 ## Küçük işlerin başlangıç kararları
 
@@ -94,8 +103,8 @@ Kalıcı WebView ekranları için oturum/navigasyon/erişilebilirlik yine kabul 
 
 ## Açık kararların doğru zamanı
 
-Şimdi: 008/010 kabulü ve 004 kurulumu. Kurulumda: çalışma alanı/sürümler.
-Plan-limit: somut pilot engeli yoksa pilot sonrasında, mağaza öncesinde.
-İlk gerçek koro işleminde: operatör/kurucu kimliği. Pilot sonrasında: ölçülmüş
+Şimdi: native repertuvar sözleşmesi, ardından katalog ve güvenli dosya erişimi.
+010'un eksik ürün yolları ve 004 donanım ölçütleri açık kalır fakat sıradaki iş değildir.
+Plan-limit: somut pilot engeli yoksa pilot sonrasında, mağaza öncesinde. Pilot sonrasında: ölçülmüş
 dosya sağlayıcısı ve mağaza adayının özellik kapsamı. Yayında: şirket/yayın hesabı
 kimliği ve güncel mağaza koşulları. Bu belge bunları verilmiş karar gibi uydurmaz.

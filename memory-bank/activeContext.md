@@ -28,19 +28,20 @@ after restoration on an isolated PostgreSQL 17.11 copy. The reusable local guard
 passed; the two that remain are hardware keychain and the real-phone flow, both postponed by
 the owner. Do not make either the next agent's first action.
 
-## Open work after 012
+## Active work after 012
 
-012's regression gap is closed locally. No next product implementation task is authorized
-by this handoff. 010's sixth criterion still needs a newly created production fixture and
-explicit owner authorization; 004's two hardware/real-phone criteria remain postponed.
-Repertoire/PDF is unblocked but starts only when the owner names it as the next task.
+The owner authorized the local work-package sequence on 8 September. WF-005 first reconciles
+the stale roadmap records, then the next bounded task establishes the native repertoire
+contract and inventory. Catalogue, shared secure file access, and PDF/read-only annotations
+follow as separate briefs and commits. 010's sixth criterion still needs a new production
+fixture and explicit authorization; 004's two hardware criteria remain postponed.
 
 ## Preserved order and boundaries
 
 [Decisions #21 and #23-#26](../KARARLAR.md) and the [delivery plan](../docs/mobil-teslim-plani.md).
-004's acceptance gate is open, so repertoire/PDF is no longer blocked — but it starts only when
-the owner says so. RN + Expo, the shared annotation contract and the permanent WebView targets
-are unchanged. The 005 client contract stays fail-closed by decision #24.
+004's acceptance gate is open and the owner has now started the local repertoire/PDF sequence.
+RN + Expo, the shared annotation contract and the permanent WebView targets are unchanged.
+The 005 client contract stays fail-closed by decision #24.
 
 ## Authority
 
