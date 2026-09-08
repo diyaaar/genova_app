@@ -75,3 +75,7 @@ Worklets 0.10.1. Expo Doctor passed 21/21 and the iOS simulator native build com
 modules. `npm audit --omit=dev` remains FAIL with 10 moderate Expo CLI/config to xcode to uuid
 findings; its complete automatic fix proposes a breaking Expo 46 downgrade and was not applied.
 This is a dependency-maintenance risk, not proof of an exploitable product path.
+
+Package 017 added no dependency, build setting or native source. Its isolated acceptance and full
+mobile gate passed 14 suites / 73 tests plus the 1,314-module iOS bundle. Root build, Expo Doctor
+and native simulator build were correctly left N/A for 017 rather than relabeling 016 evidence.

@@ -35,6 +35,9 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   dosya yolu veya bucket öneki yetkilendirme yerine geçmemelidir.
 - UI, iş mantığı, veri erişimi ve dosya sağlayıcısı sorumluluklarını ayır.
   Mevcut sınırları sırf satır sayısı için taşıma veya bütün işleri yöneten tek nesne yaratma.
+- Native tenant-cache kayıtları birden çok yaşam-döngüsü sahibi tarafından paylaşılabilir. 017
+  ile aynı temizleyici referans sayılır; ekranın unregister işlemi uygulama-sahibi kaydını düşürmez
+  ve her koro/kimlik geçişinde temizleyici yalnız bir kez çalışır.
 
 ## Tek doğru kaynak dağılımı
 

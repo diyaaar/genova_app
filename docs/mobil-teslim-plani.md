@@ -103,9 +103,10 @@ Kalıcı WebView ekranları için oturum/navigasyon/erişilebilirlik yine kabul 
 
 ## Açık kararların doğru zamanı
 
-Şimdi: native repertuvar sözleşmesi, katalog, ortak güvenli dosya erişimi ve PDF/salt okunur
-anotasyon yerelde kabul edildi. 017 non-hardware uçtan uca kabul ve pilot devri sırada. Güvenli
-dosya Edge deploy'u ve canlı doğrulaması NOT RUN.
+Şimdi: native repertuvar sözleşmesi, katalog, ortak güvenli dosya erişimi, PDF/salt okunur
+anotasyon ve 017 non-hardware uçtan uca kabul yerelde tamamlandı; pilot kontrol listesi hazır,
+uygulaması NOT RUN. Cihaz pilotu ertelendiği için sıradaki güvenli yerel iş, ayrı bir native
+anotasyon-yazma brief'idir. Güvenli dosya Edge deploy'u ve canlı doğrulaması NOT RUN.
 010'un eksik ürün yolları ve 004 donanım ölçütleri açık kalır fakat sıradaki iş değildir.
 Plan-limit: somut pilot engeli yoksa pilot sonrasında, mağaza öncesinde. Pilot sonrasında: ölçülmüş
 dosya sağlayıcısı ve mağaza adayının özellik kapsamı. Yayında: şirket/yayın hesabı

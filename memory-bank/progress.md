@@ -26,7 +26,8 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 013 native repertoire contract | Documentation accepted | [013](../docs/briefs/013-native-repertoire-contract.md); source and isolated-schema inventory fixed catalogue, cache, protected-file, PDF and read-only annotation boundaries. No product/live/provider/hardware action was claimed |
 | 014 native repertoire catalogue | Local acceptance complete | [014](../docs/briefs/014-native-repertoire-catalogue.md); shared pure core and native catalogue passed root `pnpm check` (211 tests/build) and mobile type/test/bundle (50 tests, iOS export). Device, live product, protected-file, PDF and hardware are NOT RUN |
 | 015 shared protected repertoire file | Local acceptance complete | [015](../docs/briefs/015-shared-protected-repertoire-file.md); signed Edge ticket/GET/HEAD/range core, web adoption and isolated role/tenant matrix passed. Root gate: 37 files / 240 tests/build. Deno compile/serve, deploy and live provider/product are NOT RUN |
-| 016 native PDF and read-only annotations | Local acceptance complete; 017 is active | [016](../docs/briefs/016-native-pdf-readonly-annotations.md); private download, bounded 40-page rendering, basic zoom/scroll, shared defensive parser and read-only overlays passed root 244 tests/build, mobile 72 tests/bundle, Expo Doctor 21/21 and an iOS simulator native build. Live Edge/provider/account/hardware are NOT RUN; supplemental dependency audit FAIL remains visible |
+| 016 native PDF and read-only annotations | Local acceptance complete | [016](../docs/briefs/016-native-pdf-readonly-annotations.md); private download, bounded 40-page rendering, basic zoom/scroll, shared defensive parser and read-only overlays passed root 244 tests/build, mobile 72 tests/bundle, Expo Doctor 21/21 and an iOS simulator native build. Live Edge/provider/account/hardware are NOT RUN; supplemental dependency audit FAIL remains visible |
+| 017 non-hardware read-flow acceptance | Local acceptance complete; real pilot NOT RUN | [017](../docs/briefs/017-non-hardware-read-flow-acceptance.md); one synthetic component flow passed signed-out, two-choir selection, catalogue, recovered 40-page PDF/annotation, cache ordering, tenant switch and sign-out. Full mobile gate: 14 suites / 73 tests plus iOS bundle. Live/provider/RLS/account/device evidence is not inferred |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -60,5 +61,7 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
 device items postponed. The owner has now authorized the local repertoire/PDF sequence;
 WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
-`9cec58d`, `42fc8ff` and `0bbe646`. Package 017 non-hardware acceptance is active. No push, deploy,
-production database operation, real choir access, email or hardware test was performed for 016.
+`9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`. The 013–017 read-path
+sequence is complete. With the real pilot postponed, a native annotation-write brief is the next
+safe local package. No push, deploy, production database operation, real choir access, email or
+hardware test was performed for 017.

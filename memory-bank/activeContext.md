@@ -1,6 +1,6 @@
 # Active context
 
-Updated 8 September 2026 after the local 016 product commit `0bbe646`. The recorded
+Updated 8 September 2026 after the local 017 code/test commit `326aae9`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -39,8 +39,11 @@ fixtures. Deno compile/serve, Edge deploy, live product and provider integration
 Package 016 then locally accepted private PDF download/render, basic zoom/scroll and read-only
 annotations: root passed 244 tests/build; mobile passed 72 tests/bundle; Expo Doctor passed 21/21;
 an iPhone 17 Pro simulator native build passed. The supplemental dependency audit remains FAIL
-with 10 moderate Expo toolchain findings. The active package is 017: non-hardware end-to-end
-acceptance and pilot handoff. 010's sixth
+with 10 moderate Expo toolchain findings. Package 017 accepted one synthetic continuous flow
+through sign-in, choir selection, catalogue, recovered 40-page PDF/annotation, tenant switch and
+sign-out; mobile passed 73 tests/bundle. The real pilot is NOT RUN. The 013–017 local read-path
+sequence is complete; with hardware postponed, the next safe local package is a bounded native
+annotation-write brief. 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
 criteria remain postponed.
 

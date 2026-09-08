@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026. Package 016 is locally accepted at product commit `0bbe646`.
+Snapshot: 8 September 2026. Package 017 is locally accepted at code/test commit `326aae9`.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -77,7 +77,8 @@ listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 accepted the shared protected-file Edge path and web adoption; 016 locally accepted private PDF
 download/render, basic zoom/scroll and read-only annotation overlays. The new Edge function is not
 deployed, so its Deno/provider/live-product behavior is NOT RUN and the web/native adoption must not
-be released before the function. Package 017 non-hardware end-to-end acceptance is next.
+be released before the function. Package 017 locally accepted the continuous synthetic read flow
+and prepared, but did not execute, the real pilot.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -88,6 +89,7 @@ record for exact output and limitations.
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 8 Sep, `326aae9` | macOS task: isolated native product-flow component acceptance; full mobile gate and iOS bundle | **PASS** — signed-out through two-choir selection, catalogue, recovered synthetic 40-page PDF/annotation, tenant switch and sign-out; 14 suites / 73 tests; 1,314-module bundle | Auth/RPC/catalogue/PDF are injected fakes. Live Edge/provider/RLS/account and hardware are NOT RUN; no native rebuild was required or claimed |
 | 8 Sep, `0bbe646` | macOS task: root `pnpm check`; mobile TypeScript/Jest/bundle/Expo Doctor; iOS simulator native build | **PASS** — root 37 files / 244 tests and Next build; mobile 13 suites / 72 tests; 1,314-module iOS export; Expo Doctor 21/21; product compiled/installed on iPhone 17 Pro simulator | Edge/provider/live account flow is NOT RUN. Native build used no Metro or real data; simulator is not hardware. Supplemental production-dependency audit remains **FAIL** with 10 moderate Expo toolchain findings |
 | 8 Sep, `42fc8ff` | macOS task: root `pnpm check`; 015 focused tests; isolated PostgreSQL 17.11 runner | **PASS** — 37 files / 240 tests, build; 4 focused files / 32 tests; chef/leader/assigned/unassigned/no-selection/wrong-choir RLS matrix with unchanged hashes | Deno CLI absent. Deploy, provider integration, live product and native PDF are NOT RUN |
 | 8 Sep, `9cec58d` | macOS task: root `pnpm check`; mobile type/test/iOS bundle | **PASS** — 34 files / 211 tests and build; 7 native suites / 50 tests; 666-module Hermes export | Fake/native gateway only. Device, live product, Edge and PDF are NOT RUN |
@@ -138,7 +140,7 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Current product HEAD before this evidence update is `0bbe646`; local
+Branch `main`. Current code/test HEAD before this evidence update is `326aae9`; local
 `origin/main` remains recorded at `a13f696`. Packages 012–015 and workflow/contract records are
 local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
@@ -180,8 +182,11 @@ On 8 September the owner authorized the local work-package sequence without auth
 external write. WF-005 reconciled the roadmap; 013 accepted the native repertoire contract; 014,
 015 and 016 locally accepted the catalogue, shared protected file path and native PDF/read-only
 annotation layers. Deno compile/serve, deploy and live provider/product behavior are NOT RUN.
-The next bounded package from 013 is 017: non-hardware end-to-end acceptance and pilot handoff.
-Preserve the remaining gaps:
+Package 017 then accepted the non-hardware end-to-end flow and prepared an exact pilot checklist;
+the real pilot remains NOT RUN. The authorized 013–017 local read-path sequence is complete.
+Because the device pilot is postponed, the next safe local roadmap package is a new bounded brief
+for native annotation writes; it must preserve the shared schema/RLS and cannot infer live write
+authority. Preserve the remaining gaps:
 010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
 both device items are postponed. Neither is the next action.
 
@@ -206,8 +211,10 @@ both device items are postponed. Neither is the next action.
 > passed 244 tests/build; the mobile gate passed 72 tests; the iOS bundle, Expo Doctor 21/21 and an
 > iPhone 17 Pro simulator native build passed. The dependency audit remains FAIL with 10 moderate
 > Expo toolchain findings. Deno compile/serve, Edge deploy and live provider/product behavior are
-> NOT RUN. Continue with package 017 under `docs/briefs/013-native-repertoire-contract.md`; do not
-> recreate the 010 fixture or start hardware work.
+> NOT RUN. Package 017 is locally accepted at `326aae9`: its isolated continuous scenario passed
+> along with 14 mobile suites / 73 tests and the iOS bundle; the real pilot is NOT RUN. The
+> 013–017 local read-path sequence is complete. If continuing locally, open a bounded native
+> annotation-write brief next; do not recreate the 010 fixture or start hardware work.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,
