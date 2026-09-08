@@ -33,7 +33,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import { AnnotationStage } from '@/components/repertuvar/AnnotationStage';
 import { ChefCommentSection } from '@/components/repertuvar/ChefCommentSection';
 import { useProtectedDriveFileUrl } from '@/hooks/useProtectedDriveFileUrl';
-import { getProtectedDriveFileUrl } from '@/lib/drive-file-url';
+import { getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
 import {
   loadAnnotationsForFile,
   saveLayerSnapshot,
@@ -432,7 +432,9 @@ function getInlineFileSource(
       return offlineUrl;
     }
   }
-  return file?.drive_download_link ?? null;
+  // Provider links are metadata, not authorization. Online viewing must use the
+  // protected endpoint; only the versioned local runtime cache may be a fallback.
+  return null;
 }
 
 function formatSyncedAtLabel(timestamp: number | null) {
@@ -908,15 +910,11 @@ function AudioPanel({
             }
           }
           try {
-            const protectedUrl = await getProtectedDriveFileUrl(file);
-            const source = protectedUrl ?? file.drive_download_link;
+            const protectedUrl = await getProtectedRepertoireFileUrl(file);
+            const source = protectedUrl;
             if (!source) return null;
             return { id: file.id, label: getAudioDisplayName(file), source };
-          } catch {
-            const fallback = file.drive_download_link;
-            if (!fallback) return null;
-            return { id: file.id, label: getAudioDisplayName(file), source: fallback };
-          }
+          } catch { return null; }
         }),
       );
 
@@ -1349,9 +1347,9 @@ export function RepertoireWorkspace({
   const selectedAudio =
     audioFiles.find((file) => file.id === selectedAudioId) ??
     defaultAudioFile;
-  const { url: protectedSelectedPdfSource, isStaleLocal: selectedPdfIsStaleLocal } = useProtectedDriveFileUrl(selectedPdf);
-  const { url: protectedSelectedCoverSource, isStaleLocal: selectedCoverIsStaleLocal } = useProtectedDriveFileUrl(selectedCover);
-  const { url: protectedSelectedAudioSource, isStaleLocal: selectedAudioIsStaleLocal } = useProtectedDriveFileUrl(selectedAudio);
+  const { url: protectedSelectedPdfSource, isStaleLocal: selectedPdfIsStaleLocal } = useProtectedDriveFileUrl(selectedPdf, { repertoireFile: true });
+  const { url: protectedSelectedCoverSource, isStaleLocal: selectedCoverIsStaleLocal } = useProtectedDriveFileUrl(selectedCover, { repertoireFile: true });
+  const { url: protectedSelectedAudioSource, isStaleLocal: selectedAudioIsStaleLocal } = useProtectedDriveFileUrl(selectedAudio, { repertoireFile: true });
   const hasFreshOfflineSnapshot = offlineEnabled && offlineSyncedVersion === offlineSongVersion;
   const allowOfflineFallback = offlineEnabled && (!isOnline || hasFreshOfflineSnapshot);
   const selectedPdfSource = getInlineFileSource(selectedPdf, protectedSelectedPdfSource, allowOfflineFallback);
@@ -1746,8 +1744,8 @@ export function RepertoireWorkspace({
     try {
       const filesToSync: OfflineSyncFileInput[] = [];
       for (const file of filesWithDriveId) {
-        const protectedUrl = await getProtectedDriveFileUrl(file);
-        const source = protectedUrl ?? file.drive_download_link;
+        const protectedUrl = await getProtectedRepertoireFileUrl(file);
+        const source = protectedUrl;
         if (!source) {
           throw new Error(`${file.file_name} için indirme bağlantısı oluşturulamadı.`);
         }

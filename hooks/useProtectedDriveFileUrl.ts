@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { getProtectedDriveFileUrl } from '@/lib/drive-file-url';
+import { getProtectedDriveFileUrl, getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
 import {
   buildRuntimeDriveFileVersion,
   cacheRuntimeDriveFile,
@@ -13,15 +13,19 @@ import {
 import type { RepertoireFile } from '@/lib/supabase';
 
 type DriveFileUrlInput = Pick<RepertoireFile, 'drive_file_id'> &
-  Partial<Pick<RepertoireFile, 'file_name' | 'mime_type' | 'updated_at' | 'file_size_bytes'>>;
+  Partial<Pick<RepertoireFile, 'id' | 'file_name' | 'mime_type' | 'updated_at' | 'file_size_bytes'>>;
 
-export function useProtectedDriveFileUrl(file: DriveFileUrlInput | null | undefined) {
+export function useProtectedDriveFileUrl(
+  file: DriveFileUrlInput | null | undefined,
+  options: { repertoireFile?: boolean } = {},
+) {
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLocal, setIsLocal] = useState(false);
   const [isStaleLocal, setIsStaleLocal] = useState(false);
   const driveFileId = file?.drive_file_id;
+  const repositoryFileId = file?.id;
   const fileName = file?.file_name;
   const mimeType = file?.mime_type;
   const updatedAt = file?.updated_at;
@@ -87,11 +91,21 @@ export function useProtectedDriveFileUrl(file: DriveFileUrlInput | null | undefi
           return;
         }
 
-        const nextUrl = await getProtectedDriveFileUrl({
-          drive_file_id: driveFileId,
-          file_name: fileName ?? '',
-          mime_type: mimeType ?? null,
-        });
+        if (options.repertoireFile && !repositoryFileId) {
+          throw new Error('Dosya kimliği geçersiz.');
+        }
+        const nextUrl = options.repertoireFile
+          ? await getProtectedRepertoireFileUrl({
+              id: repositoryFileId!,
+              drive_file_id: driveFileId,
+              file_name: fileName ?? '',
+              mime_type: mimeType ?? null,
+            })
+          : await getProtectedDriveFileUrl({
+            drive_file_id: driveFileId,
+            file_name: fileName ?? '',
+            mime_type: mimeType ?? null,
+          });
 
         if (cancelled) {
           return;
@@ -138,7 +152,7 @@ export function useProtectedDriveFileUrl(file: DriveFileUrlInput | null | undefi
     return () => {
       cancelled = true;
     };
-  }, [driveFileId, fileName, mimeType, updatedAt, fileSizeBytes]);
+  }, [driveFileId, fileName, mimeType, options.repertoireFile, repositoryFileId, updatedAt, fileSizeBytes]);
 
   return { url, loading, error, isLocal, isStaleLocal };
 }
