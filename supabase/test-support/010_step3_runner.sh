@@ -98,6 +98,12 @@ fi
 
 step "008 re-applied after down"    $PSQL -f "$MIGRATION"
 
+# --- 012 regression guard ---------------------------------------------------
+# The restored copy has 003 and 005 applied. Keep the multi-membership picker
+# regression in this database acceptance path, including proof that the guard
+# fails against 012's down-migration and restores the fixed function afterwards.
+step "012 list_my_choirs regression guard" bash supabase/test-support/012_regression_runner.sh
+
 # --- summary -----------------------------------------------------------------
 echo
 echo "finished: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
