@@ -1,9 +1,11 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026, written from `main` at `a13f696`, which is also `origin/main`.
-Verify the receiving checkout before trusting anything here; conversation history is not
-required and is not available. This file is an entry point and a source index — not a second
-roadmap, and not an authorization grant.
+Snapshot: 8 September 2026. The completed 012 code/test evidence is local commit `5702bca`.
+At task start, local `main` was `03ea87d`, one commit ahead of the local `origin/main` ref at
+`a13f696`; no remote refresh, push or deployment was performed. Verify the receiving checkout
+before trusting anything here; conversation history is not required and is not available.
+This file is an entry point and a source index — not a second roadmap, and not an
+authorization grant.
 
 ## Entry and source order
 
@@ -61,7 +63,7 @@ listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 | 008 invitations | Deployed and accepted live for creation, acceptance and the single-use refusal. **Its two negative paths were never exercised through the product** | [008](briefs/008-davet-ve-uyelik.md), [010](briefs/010-008-canli-yayin-ve-kabul.md) |
 | 009 Auth email | Complete; real verification and recovery delivery observed on 8 September. Delivery times were never measured | [009](briefs/009-auth-eposta-ve-yanit.md) |
 | 011 invitation return + self-service reset | **Complete, 13/13,** released as `f661ab2` with all three CI jobs green | [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) |
-| 012 multi-membership lockout fix | Live and confirmed on the product, **9/10** | [012](briefs/012-coklu-uyelik-secim-kilidi.md) |
+| 012 multi-membership lockout fix | **Complete, 10/10.** Live and confirmed on the product; its SQL guard now passes on the fixed function and fails against the down-migration in an isolated PostgreSQL 17.11 copy | [012](briefs/012-coklu-uyelik-secim-kilidi.md) |
 
 ### Partial, with the gap named
 
@@ -69,7 +71,6 @@ listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 |---|---|---|
 | 004 native shell | **25 of 27 required criteria PASS** | Hardware keychain/keystore, and the real-phone real-account flow. Both were postponed by the owner — **do not raise either as the next action** |
 | 010 live release and acceptance | **Six of seven criteria PASS**, including cleanup | The sixth: revoked-link and wrong-account refusals *through the live product*. Proven on the live database by the hosted SQL test and in isolation; never through the product, and the fixture is gone |
-| 012 | Fixed and confirmed live | `supabase/tests/012_list_my_choirs_is_current.sql` has never been executed |
 
 ### Not started
 
@@ -79,10 +80,12 @@ the verified live host and Railway preparation is not a completed move.
 
 ## Tests actually run
 
-Nothing below was re-run to prepare this handoff. Read the linked record for exact output.
+Only the new 012 local database row was run in this receiving task. Every other row is
+historical; read its linked record for exact output and limitations.
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 8 Sep, `5702bca` | Local PostgreSQL 17.11 at `127.0.0.1`, `genova_008_test_restore`; `PGHOST=127.0.0.1 PGPORT=5432 PGDATABASE=genova_008_test_restore PSQL_BIN=/opt/homebrew/opt/libpq/bin/psql bash supabase/test-support/012_regression_runner.sh` | **PASS** — SQL file exit 0 fixed; expected exit 3 with two null rows after down; exit 0 after restoring the fix; fixture-table snapshots unchanged | Isolated restored copy only, not production or a new live-product check. The complete 010 restore runner was not rerun; its new 012 call was syntax-checked |
 | 8 Sep, `a13f696` | GitHub Actions, `push` on `main`, run [34165767148](https://github.com/genesinovachoir/genova_app/actions/runs/34165767148) | **PASS** — Quality and security, Browser regression, Native product checks | The authoritative environment for `next build` and Playwright; neither agent shell can run either |
 | 8 Sep, `f661ab2` | Same workflow, run [34163714428](https://github.com/genesinovachoir/genova_app/actions/runs/34163714428) | **PASS** — 30 browser tests | Two earlier runs on this change were red; both were faults in the tests, detailed in [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) |
 | 8 Sep, `3986f35` | Clean Linux install outside the connected folder: `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **PASS** — 33 files / 206 tests | `pnpm build` could not run there: `next/font` cannot reach Google Fonts through either agent proxy. The owner ran the build on macOS and pasted its route table |
@@ -103,8 +106,9 @@ receiving-agent test is claimed anywhere.
 - **010's sixth criterion cannot be closed as things stand.** Closing it means creating a new
   test choir and invitation on production. That is a decision for the owner, not a chore to
   pick up.
-- **012's only regression guard is a file that has never run.** After the cleanup the fault
-  cannot be reproduced live either. This is the sharpest open risk in the repository.
+- **012's former regression gap is closed locally.** The reusable runner checks green →
+  expected red after down → restored green and is called by the existing restored-database
+  acceptance path. It is not a new production or live-product run, and no CI run is claimed.
 - **`next build` and Playwright cannot run in either agent environment.** Google Fonts is
   blocked at the proxy, and Playwright browser downloads are blocked too. CI is the only place
   those two gates can be evaluated; the owner's macOS is the other place for the build.
@@ -124,9 +128,10 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`, HEAD `a13f696`, in step with `origin/main` (verified by `ls-remote`, then
-fetched over HTTPS so the local ref is no longer stale). The working tree is clean apart from
-`supabase/.temp/cli-latest` above.
+Branch `main`. At the receiving task's start, HEAD was `03ea87d`; it contained the handoff
+documentation commit on top of local `origin/main` at `a13f696`. The 012 runner was then
+committed locally as `5702bca`. No remote refresh or push was attempted. The pre-existing
+`supabase/.temp/cli-latest` change remains deliberately untouched.
 
 Every commit in this stretch was written by a single agent, this one, and the owner approved
 each production step as it came. `main` was pushed twice with explicit authorization: the 010
@@ -151,43 +156,20 @@ provided results are reported honestly with dated evidence.
 A proposal written in a document is not permission to execute it. An unrun test is never
 recorded as passed, and a required FAIL or NOT RUN keeps its brief open.
 
-## Next bounded task
+## Completed bounded task and next decision
 
-**Task:** run the 012 regression test and give it a home that keeps running it.
+The 012 regression task is complete at local code/test commit `5702bca`; exact acceptance
+evidence is in [012](briefs/012-coklu-uyelik-secim-kilidi.md). The reusable command is
+`PGDATABASE=<dedicated-test-copy> bash supabase/test-support/012_regression_runner.sh`.
+It refuses non-local or non-test-named targets, requires PostgreSQL 17 plus 003/005, proves the
+expected down-migration failure, restores the fixed function and compares fixture-table
+snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for future restored
+database acceptance runs.
 
-**Why this one:** after the cleanup, `supabase/tests/012_list_my_choirs_is_current.sql` is the
-only thing standing between the repository and a repeat of a fault that locked a real member
-out of the live product — and it has never been executed. Everything else that is open is
-either deferred by the owner or needs a decision from them.
-
-**Brief:** [012](briefs/012-coklu-uyelik-secim-kilidi.md). Its acceptance table has one row
-left; do not open a new brief for this.
-
-**Relevant files:**
-
-- `supabase/tests/012_list_my_choirs_is_current.sql` — the test
-- `supabase/tests/005_active_choir_isolation.sql` — the harness idiom it follows, and the file
-  whose missing assertion let the fault through
-- `supabase/migrations/20260907210932_list_my_choirs_is_current_not_null_012.sql` and
-  `supabase/rollback/012_list_my_choirs_is_current_not_null_down.sql`
-- `supabase/test-support/010_step3_runner.sh` — the existing pattern for running SQL tests
-  against a restored database, including its refusal to run outside an isolated one
-- `.github/workflows/ci.yml` — if the test is to run automatically, this is where
-
-**Acceptance:**
-
-- The test file runs to completion with exit code 0 against a database that has 003 and 005
-  applied, and the run is recorded with date, environment and command.
-- The same file is shown to **fail** when the 012 down-migration is applied, so it is proven to
-  guard the fault rather than merely pass. Restore the fixed function afterwards.
-- Neither run leaves a fixture behind; both are transaction-local and roll back.
-- 012's last acceptance row is updated with the result, and the count is corrected honestly.
-
-**First concrete action:** read [012](briefs/012-coklu-uyelik-secim-kilidi.md) end to end, then
-`supabase/test-support/010_step3_runner.sh`, and decide where the database will come from — a
-local PostgreSQL 17 with the migrations applied is enough and needs no production access. Only
-if that is impossible, ask the owner to run `psql -X -v ON_ERROR_STOP=1 -f` against an isolated
-database. **Do not run it against production**, even though it rolls back.
+There is no newly authorized product task in this handoff. Preserve the remaining gaps rather
+than choosing around them: 010 is still 6/7 and needs a new production fixture plus explicit
+owner approval; 004 is 25/27 and both device items are postponed. Repertoire/PDF is unblocked
+but starts only when the owner names it as the next bounded task.
 
 ## Copyable startup prompt
 
@@ -204,9 +186,11 @@ database. **Do not run it against production**, even though it rolls back.
 > do not raise either as the next action. 011 and 012 are live. Repertoire/PDF is unblocked
 > but is not your task unless I say so.
 >
-> Your task is the next bounded task named in the handoff: run the 012 regression test against
-> an isolated database and prove it fails against the down-migration. Follow that section's
-> acceptance criteria exactly.
+> Verify the local 012 evidence and current checkout rather than rerunning or reopening it by
+> assumption. 012 is complete locally at `5702bca`: its SQL file passed on the fixed function,
+> failed for the expected reason after the down-migration, and passed after restoration on an
+> isolated PostgreSQL 17.11 copy, with fixture snapshots unchanged. Do not choose a new product
+> task until I name one.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,

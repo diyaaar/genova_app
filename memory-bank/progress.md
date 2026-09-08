@@ -6,7 +6,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | İş | Durum | Kanıt / sınır |
 |---|---|---|
 | 008 minimum davet/üyelik | Canlıda ve kabul edildi; iki olumsuz yol ürün üzerinde denenmedi | [008](../docs/briefs/008-davet-ve-uyelik.md), [010](../docs/briefs/010-008-canli-yayin-ve-kabul.md); canlı oluşturma, kabul ve tek kullanımlık reddi geçti. İptal edilmiş bağlantı ve yanlış hesap yalnız DB düzeyinde kanıtlı; fikstür temizlendiği için ürün yolu artık koşulamaz |
-| 009 Auth e-postası ve yanıt aktarımı | Tamamlandı; canlı yönlendirme ve anahtar temizliği geçti | [009](../docs/briefs/009-auth-eposta-ve-yanit.md); SMTP/Site URL düzeltildi, Edge v3 aktif, 190 test/build, canlı teslim/tekrar ve silme sonrası Gmail kabulü geçti. Gerçek Auth teslimi ayrıca 008 kabulünde doğrulanmalı |
+| 009 Auth e-postası ve yanıt aktarımı | Tamamlandı; canlı yönlendirme ve anahtar temizliği geçti | [009](../docs/briefs/009-auth-eposta-ve-yanit.md); SMTP/Site URL düzeltildi, Edge v3 aktif, 190 test/build, canlı teslim/tekrar ve silme sonrası Gmail kabulü geçti. Gerçek Auth doğrulama ve kurtarma teslimi 8 Eylül'de ayrıca gözlendi |
 | 001 Flutter repertuvar spike | Tarihsel deneme geçti | [001](../docs/briefs/001-repertuvar-spike.md); ürün mimarisi değil |
 | 002 RN PDF/katman spike | Deneme geçti, RN kararı kesin | [002](../docs/briefs/002-rn-pdf-spike.md); ürün kurulumu ve tüm cihazlar değil |
 | 003 kiracı şeması | Tamamlandı ve canlıda | [003 kanıtları](../docs/briefs/003-dogrulama.md); web `3878e1d`, Edge v14, hosted izolasyon ROLLBACK ve oturumlu duman testi geçti |
@@ -17,12 +17,12 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
-| Çok korolu ürün / RN ürün / mağazalar | Sıradaki: 008/010 kabul → 004 giriş/koro seçimi → repertuvar/PDF → pilot → limit ve yayın işleri; [plan](../docs/mobil-teslim-plani.md). Gerçek operatör ataması ayrı | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md) |
+| Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Repertuvar/PDF açık ama kullanıcı tarafından henüz görev verilmedi | [MIGRATION](../MIGRATION.md), [mağaza hattı](../docs/store-yayin.md), [handoff](../docs/agent-handoff.md) |
 | English agent handoff / pilot priority | Documentation accepted: 16 files / 107 local links, diff and scenario self-review passed | [WF-004](../docs/briefs/WF-004-english-agent-handoff.md), [handoff](../docs/agent-handoff.md); no product, CI configuration or remote changes; receiving model not tested |
 
 | 010 canlı yayın ve kabul | 7/7 ölçütten **6'sı geçti**; altıncı açık kaldı | [010](../docs/briefs/010-008-canli-yayin-ve-kabul.md); yedek + kanıtlanmış restore, taze restore kabulü (ilk koşu başarısız, sebep `pg_dump`'ın rol niteliklerini taşımaması), canlı migration, Edge güvenlik kontrolleri, web yayını, uçtan uca ürün kabulü ve temizlik. Açık: iptal edilmiş bağlantı ve yanlış hesap yollarının **ürün üzerinden** reddi |
 | 011 davet dönüşü ve şifre sıfırlama | Tamamlandı (13/13) ve yayında | [011](../docs/briefs/011-davet-donusu-ve-sifre-sifirlama.md); `f661ab2`, üç CI işi yeşil, 30 tarayıcı testi. Doğrulama dönüşü artık `/invite`'a düşüyor; uygulamada ilk kez kendi kendine parola sıfırlama var |
-| 012 çoklu üyelikte seçim kilidi | Canlıda düzeltildi (9/10) | [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md); kusur önce canlıda üretildi, `is not distinct from` ile düzeltildi, üç kontrol geçti ve ürün üzerinde doğrulandı. **Açık:** regresyon testi dosyası hiç koşulmadı ve temizlik sonrası kusur canlıda tekrar üretilemiyor |
+| 012 çoklu üyelikte seçim kilidi | Complete (10/10); live fix plus local regression guard | [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md); the defect was reproduced live, fixed with `is not distinct from`, and confirmed on the product. On 8 Sep, commit `5702bca` ran the SQL file on an isolated PostgreSQL 17.11 copy: exit 0 fixed, expected exit 3 after down with two null rows, exit 0 after restoring the fix; full fixture-table snapshots were unchanged. No production action in that run. |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -32,10 +32,9 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 - Yeni uygulama sürümü ile eski canlı şemayı karıştırma. Web/Edge/DB beraber planlanır.
 - Koro oluşturma/davet akışı ve kabul testleri hazır olmadan gerçek ikinci üyelik ekleme;
   005 altyapısı canlı olsa da üyelik yönetimi ayrı ürün işidir.
-- **En keskin açık risk:** `supabase/tests/012_list_my_choirs_is_current.sql` hiç koşulmadı ve
-  temizlik sonrası 012 kusuru canlıda tekrar üretilemiyor. Gerçek bir üyeyi üründen kilitleyen
-  bir kusurun tek bekçisi bu dosya. Sıradaki iş bu; ayrıntı
-  [devir kaydında](../docs/agent-handoff.md#next-bounded-task).
+- 012's formerly unrun regression guard now passes on the fixed function and fails for
+  the expected reason after the down-migration in an isolated PostgreSQL 17.11 copy.
+  This is local database evidence, not a new live-product or production run.
 - `next build` ve Playwright hiçbir ajan ortamında koşamıyor (Google Fonts ve Playwright
   indirmesi proxy tarafından kesiliyor). Bu iki kapı yalnız CI'da veya ürün sahibinin
   macOS'unda değerlendirilebilir; ajan ortamında "koşulmadı" yazılır, "geçti" değil.
@@ -51,10 +50,10 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 7 September 2026
+## Latest handoff — 8 September 2026
 
-The owner postponed real-device testing again. [Current handoff](../docs/agent-handoff.md)
-records verified checkout/ownership and recommends the bounded 004 CI-readiness proposal.
-This documentation update reruns no product test and grants no remote/live authority.
-Historical/native/Android outputs remain in 004's linked records; no acceptance criterion
-changed during handoff. Repertoire/PDF remains blocked until 004 acceptance.
+[Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
+roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
+device items postponed. Repertoire/PDF is unblocked but not authorized as the next task.
+No push, deploy, production database operation, real choir access, email or hardware test
+was performed for 012.

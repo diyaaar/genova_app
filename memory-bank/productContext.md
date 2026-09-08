@@ -27,8 +27,10 @@ Giriş → koro seçimi → repertuvar → PDF/mevcut anotasyon okuma → çık�
 
 ## Henüz sonuçlanmayanlar
 
-Çok korolu ürün/davet akışları, native ürün kurulumu, mağaza kabulü ve Drive'dan çıkış
-tamamlandı kabul edilmez. Sağlayıcı/bölge/maliyet kararları
+008 davet/üyelik canlıda kabul edildi; 010'un iptal edilmiş bağlantı ve yanlış hesap
+ürün retleri açık kaldı. Native 004 25/27'dir ve iki cihaz ölçütü ertelenmiştir.
+Repertuvar/PDF, mağaza kabulü ve Drive'dan çıkış tamamlandı kabul edilmez.
+Sağlayıcı/bölge/maliyet kararları
 [altyapı kaydında](../docs/altyapi-2026-09-04.md), iş durumu
 [progress.md](progress.md) içinde izlenir. Başka ürünlerin kullanıcıları veya
 özellikleri Genova'ya kendiliğinden aktarılmaz.

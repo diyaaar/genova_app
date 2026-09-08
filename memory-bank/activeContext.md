@@ -1,6 +1,8 @@
 # Active context
 
-Updated 8 September 2026 from `main` at `a13f696`, in step with `origin/main`.
+Updated 8 September 2026 from the local 012 code/test commit `5702bca`. At task
+start local `main` was one commit ahead of the local `origin/main` ref; no remote
+refresh, push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
 
@@ -16,19 +18,22 @@ Two faults surfaced during that acceptance and both are fixed and live:
 [011](../docs/briefs/011-davet-donusu-ve-sifre-sifirlama.md) (13/13, released as `f661ab2`)
 restored the invitation across the email-verification round trip and gave the app the
 self-service password reset it never had; [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md)
-(9/10) stopped `list_my_choirs` returning a null `is_current`, which had locked every
-multi-choir member out of the choir picker.
+(10/10) stopped `list_my_choirs` returning a null `is_current`, which had locked every
+multi-choir member out of the choir picker. Its SQL file now passes on the fixed function,
+fails for the expected two-null-row assertion after the down-migration, and passes again
+after restoration on an isolated PostgreSQL 17.11 copy. The reusable local guard is
+`supabase/test-support/012_regression_runner.sh` at `5702bca`.
 
 [004](../docs/briefs/004-rn-kabuk-ve-giris.md) is now **25 of 27**. The live-010 criterion
 passed; the two that remain are hardware keychain and the real-phone flow, both postponed by
 the owner. Do not make either the next agent's first action.
 
-## Sharpest open risk
+## Open work after 012
 
-`supabase/tests/012_list_my_choirs_is_current.sql` has never been executed, and after the
-cleanup the fault cannot be reproduced live either. It is the only guard on a defect that
-locked a real member out of the product. Running it, and proving it fails against the
-down-migration, is the [next bounded task](../docs/agent-handoff.md#next-bounded-task).
+012's regression gap is closed locally. No next product implementation task is authorized
+by this handoff. 010's sixth criterion still needs a newly created production fixture and
+explicit owner authorization; 004's two hardware/real-phone criteria remain postponed.
+Repertoire/PDF is unblocked but starts only when the owner names it as the next task.
 
 ## Preserved order and boundaries
 

@@ -1,6 +1,7 @@
 # 012 — çoklu üyelikte koro seçim kilidi
 
-**Durum / tarih / sorumlu yazıcı:** Kısmî (9/10; kalan tek satır regresyon testi dosyasının koşulması) — 7-8 Eylül 2026 — tek yazıcı: bu ajan.
+**Durum / tarih / sorumlu yazıcı:** Complete (10/10) — 8 September 2026 — single
+writer: receiving Codex agent.
 
 **Amaç (tek cümle) ve kullanıcı ihtiyacı:** Birden fazla koroya üye olan hesabın, oturum
 başında koro seçim ekranını görebilmesi.
@@ -59,7 +60,35 @@ düzeltme de oradadır: `boolean` ilan edilen bir sütun `null` döndürmemelidi
 - `supabase/migrations/20260907210932_list_my_choirs_is_current_not_null_012.sql`
 - `supabase/rollback/012_list_my_choirs_is_current_not_null_down.sql`
 - `supabase/tests/012_list_my_choirs_is_current.sql`
+- `supabase/test-support/012_regression_runner.sh`
+- `supabase/test-support/010_step3_runner.sh`
 - Bu brief
+- `docs/agent-handoff.md`, `MIGRATION.md`, `memory-bank/activeContext.md`,
+  `memory-bank/productContext.md`, `memory-bank/systemPatterns.md`,
+  `memory-bank/techContext.md`, `memory-bank/progress.md`
+
+## Transition start-check — 8 September 2026
+
+- **Sources read:** `AGENTS.md`, `docs/agent-handoff.md`, `docs/gecis-rehberi.md`,
+  `docs/ai-calisma-duzeni.md`, all six `memory-bank/` files, this brief,
+  `KARARLAR.md`, `MIGRATION.md`, the 005/012 SQL tests, both 012 migration
+  directions, `supabase/test-support/010_step3_runner.sh`, and CI configuration.
+- **Single result and boundary:** execute the existing 012 SQL regression in an
+  isolated PostgreSQL 17 database, prove it fails for the old function restored by
+  the down-migration, then restore the fixed function. This is a backend test task;
+  no native, WebView, client-contract, RLS or production behavior changes.
+- **Behavior preserved:** `current_choir_id()` remains fail-closed before a
+  multi-membership selection; `list_my_choirs()` must expose explicit booleans;
+  single-membership and selected-session behavior remain unchanged.
+- **Authority and ownership:** one local writer. Local implementation, local commits
+  and repository gates are authorized. Push, deploy, production migration/data,
+  `Genesi Nova`, email, spending and hardware are not authorized and were not used.
+- **Environment, tests and rollback:** local PostgreSQL 17.11 at `127.0.0.1`, database
+  `genova_008_test_restore`, with 003 and 005 present. The runner refuses non-local or
+  non-test-named targets, snapshots fixture tables, applies fix → test → down →
+  expected failure → fix → test, and restores the fix from an exit trap. At task
+  start local `main` was `03ea87d`, one commit ahead of the local `origin/main` ref;
+  the only worktree change was the pre-existing `supabase/.temp/cli-latest` cache.
 
 **Kapsam dışı:** istemci sözleşmesi, `current_choir_id()`'nin kademeleri, `set_active_choir`,
 RLS politikaları, şema ve veri. Hiçbiri değiştirilmedi.
@@ -110,6 +139,8 @@ yani kapalı tarafa düşer, açılmaz. Bu tarama yeni bir kusur bulmadı.
 | 7 Eylül 2026 | Düzeltme sonrası: tek üyelikli gerçek hesap | **canlı**, geri alınan transaction | **geçti** | 1 satır, `is_current = true` — mevcut davranış korundu |
 | 7 Eylül 2026 | Düzeltme sonrası: `set_active_choir` ardından liste | **canlı**, geri alınan transaction | **geçti** | Seçilen koro `true`, diğeri `false` |
 | 7 Eylül 2026 | `supabase/tests/012_list_my_choirs_is_current.sql` | — | **çalıştırılmadı** | Regresyon testi yazıldı ama koşulmadı: dosyadan `psql -f` ile çalıştırmak gerekiyor ve ajanın iki kabuğundan da canlı Postgres'e erişim yok. Testin iddiaları canlıda tek tek elle doğrulandı; bu, dosyanın koşulduğu anlamına gelmez |
+| 8 Sep 2026, `5702bca` | `PGHOST=127.0.0.1 PGPORT=5432 PGDATABASE=genova_008_test_restore PSQL_BIN=/opt/homebrew/opt/libpq/bin/psql bash supabase/test-support/012_regression_runner.sh` | local isolated PostgreSQL 17.11 restored copy; 003 and 005 present | **PASS** | Fixed function: SQL file exited 0. Down-migration: the same file exited 3 with the expected `is_current came back null for 2 row(s)` assertion. The runner restored the fix and the file exited 0 again. Full-row hashes and counts for `auth.users`, `public.choirs`, `public.choir_members` and `genova_005.active_choir_sessions` matched before/after both fixture runs. Not production and not a live-product check. |
+| 8 Sep 2026, `5702bca` | `bash -n` for both runners; run 012 runner with `PGDATABASE=postgres` | local shell | **PASS** | Both scripts parse. The target guard refused the non-test database before connecting and exited 2. The full 010 restore runner was not rerun because this copy already has 008 applied; its new 012 step is syntax-checked, while the standalone 012 runner is the executed evidence. |
 
 Üç canlı doğrulama da fikstür bırakmadı: hepsi `rollback` ile biten transaction'lar içindeydi
 ve `set_active_choir` çağrısı da aynı transaction'da geri alındı.
@@ -126,13 +157,14 @@ ve `set_active_choir` çağrısı da aynı transaction'da geri alındı.
 | The migration ledger stays aligned with the repository | yes | **PASS** | 7 Sep 2026 | `20260907210932` written by hand to match the filename |
 | No schema, data, grant or policy changed | yes | **PASS** | 7 Sep 2026 | Function body only; `revoke`/`grant` re-asserted unchanged |
 | A rollback exists | yes | **PASS** | 7 Sep 2026 | `supabase/rollback/012_list_my_choirs_is_current_not_null_down.sql` restores the old body |
-| Regression test file runs green | yes | **NOT RUN** | — | `supabase/tests/012_list_my_choirs_is_current.sql` is written but not executed: it needs `psql -f` against a database neither agent shell can reach. Its assertions were each verified live by hand, which is not the same as running the file |
+| Regression test file runs green and guards the down-migration | yes | **PASS** | 8 Sep 2026, `5702bca`, local isolated PostgreSQL 17.11, `PGHOST=127.0.0.1 PGPORT=5432 PGDATABASE=genova_008_test_restore PSQL_BIN=/opt/homebrew/opt/libpq/bin/psql bash supabase/test-support/012_regression_runner.sh` | Exit 0 with the fixed function; exit 3 with the expected two-null-row assertion after the down-migration; exit 0 after restoring the fixed function. Full fixture-table snapshots matched before/after. The reusable runner is also called by `010_step3_runner.sh`; that complete restore suite was not rerun in this task. |
 | The affected member can reach the choir picker in the live product | yes | **PASS** | 8 Sep 2026 00:16 (+03), live product, owner's own session | `genova_005.active_choir_sessions` gained a row for session `c45ce20e-…` selecting `genesi-nova`. A selection can only be written after `loadMyChoirs` succeeds — the exact call that used to throw — so the client parsed the list and the server-verified switch went through. The owner reports the app now opens instead of stopping at the gate. Limit: the picker screen itself was not observed by the agent; the evidence is the selection it produces |
 
-Required criteria: 10. Passed: 9. Not run: 1. Self-review; no independent review.
+Required criteria: 10. Passed: 10. Failed: 0. Not run: 0. Self-review; no independent review.
 
-**Teslim:** kusur canlıda kapandı, web yayını gerektirmedi ve ürün üzerinde doğrulandı —
-ürün sahibi 8 Eylül 00:16'da yeniden girip koro seçti. Kalan tek satır regresyon testi
-dosyasının `psql -f` ile koşulması; ajanın erişimi yok, ürün sahibinde ya da CI'da koşulmalı.
-Sıradaki adım 010'un temizliği; temizlik ikinci üyeliği kaldıracağı için hesap yeniden tek
-üyeliğe döner ve bu kusurun canlı tekrar üretilebileceği tek ortam da kapanır.
+**Delivery:** the live defect and product confirmation remain the historical evidence above.
+The formerly unrun SQL file is now executed and mutation-tested locally: green on the fixed
+function, red for the expected reason on the down-migration, and green after restoring the fix.
+Both fixture transactions left the isolated copy unchanged. Commit `5702bca` gives the guard
+a reusable runner and includes it in the existing restored-database acceptance path. No push,
+deployment, live database operation, real choir access, email or hardware test was performed.

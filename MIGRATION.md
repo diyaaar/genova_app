@@ -15,11 +15,12 @@ hosted izolasyon ve oturumlu duman testi geçti. Kanıt: `docs/briefs/003-dogrul
 Auth oturumuna bağlı seçim, web/Next/Edge uyarlaması, cache ayrımı ve güvenli down
 taze yedek kopyasında geçti; canlı DB migration, hosted test, Edge v15 ve web yayını doğrulandı.
 Kanıt: `docs/briefs/005-coklu-uyelik-aktif-koro.md`.
-**007 — operatör kontrollü koro oluşturma: CANLI ALTYAPI HAZIR (5 Eyl).**
+**007 — operatör kontrollü koro oluşturma: TAMAMLANDI ve CANLIDA (8 Eyl kabul).**
 DB `20260905160539`, `create-choir` Edge v1 ve hosted 003/005/006/007 testleri
-geçti. Allow-list boş; gerçek operatör veya yeni koro yok.
+geçti. Kimliği doğrulanmış gerçek operatör başarı yolu canlıda kabul edildi; test korosu,
+operatör kaydı ve ilgili fikstür daha sonra kontrollü temizlikte kaldırıldı.
 Kanıt: `docs/briefs/007-operator-kontrollu-koro-olusturma.md`.
-**004 — Expo ürün alanı, native giriş ve koro seçimi: YEREL UYGULAMA HAZIR, CİHAZ KABULÜ YOK (6 Eyl).**
+**004 — Expo ürün alanı, native giriş ve koro seçimi: KISMÎ, 25/27 (8 Eyl).**
 `apps/mobile/` kuruldu (Expo SDK 57, kendi npm lockfile'ı ve test kapısı). Giriş, güvenli
 oturum saklama, sıfır/tek/çok üyelik çözümü, sunucu doğrulamalı koro seçimi, koro
 değişiminde cache temizliği ve çıkış izole testlerle geçti: `npx tsc --noEmit && npm test`
@@ -30,9 +31,18 @@ Kendi iOS derlememiz `expo run:ios` ile simülatörde çalıştı; giriş/koro/y
 akışı orada elle doğrulandı.
 7 September update: own Android debug build and API 36 ARM64 emulator launch passed at
 `6d64d16`; signed-out UI and empty-form validation only, using synthetic settings.
-Real-phone/keychain, remote CI and 010 remain unrun; 004 is partial (23/27 PASS).
+Remote CI and live 010 acceptance passed. Hardware keychain/keystore and the real-phone
+real-account flow remain NOT RUN and were postponed by the owner; do not make either the next action.
 Evidence: [Android build](docs/briefs/004-android-build-2026-09-07.md).
 Kanıt ve sınırlar: `docs/briefs/004-rn-kabuk-ve-giris.md`.
+**008/010 — davet ve üyelik: CANLIDA KABUL EDİLDİ; 010 KISMÎ, 6/7.**
+Oluşturma, kabul ve tek kullanımlık ret ürün üzerinde geçti; iptal edilmiş bağlantı ve yanlış
+hesap retleri ürün üzerinden NOT RUN kaldı. Fikstür temizlendi; bu iki yolu tamamlamak yeni bir
+canlı test fikstürü ve açık ürün sahibi yetkisi gerektirir.
+**011 — davet dönüşü ve şifre sıfırlama: TAMAMLANDI ve CANLIDA, 13/13.**
+**012 — çoklu üyelik seçim kilidi: TAMAMLANDI, 10/10.** Canlı düzeltme ve ürün kabulüne ek
+olarak SQL regresyonu 8 Eylül'de izole PostgreSQL 17.11 kopyasında sabit gövdede geçti,
+down-migration sonrası beklenen iki null satırla kaldı ve düzeltme geri konunca yeniden geçti.
 **Hedef:** ~%80 native (React Native + Expo), ~%20 kalıcı WebView. Bu bir ara durum değil, bitiş noktasıdır.
 
 ---
@@ -63,9 +73,10 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 
 | Parça | Durum |
 |---|---|
-| Supabase (auth, realtime, storage) | 003, 005 ve 007 canlı; aktif koro Auth `session_id` ile sunucuda çözülüyor; koro oluşturma allow-list'i boş |
+| Supabase (auth, realtime, storage) | 003, 005, 007, 008 ve 012 canlı; aktif koro Auth `session_id` ile sunucuda çözülüyor; kabul fikstürü temizlendi ve operatör allow-list'i yeniden boş |
 | `supabase/functions/drive-manager-v2` | v15 canlı; 005 aktif-koro sözleşmesi, `verify_jwt=true` |
-| `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu henüz çalıştırılmadı |
+| `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu kabul edildi, test fikstürü daha sonra temizlendi |
+| `supabase/functions/choir-invitations` | canlı; `verify_jwt=true`; 008 kabul edildi, 010'un iptal edilmiş bağlantı ve yanlış hesap ürün yolları açık kaldı |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
 | Push (VAPID → FCM/APNs) | Faz 1'de ikinci kanal eklenecek |
@@ -150,20 +161,21 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**008 davet/üyelik: YEREL PAKET HAZIR, CANLI DEĞİL.**
-[008 brief'i](docs/briefs/008-davet-ve-uyelik.md): 155 birim/bileşen ve 20 tarayıcı
-testi, izole restore regresyonları ve eşzamanlı kabul/rollback geçti. Sıradaki
-kapı [010 canlı yayın/kabul](docs/briefs/010-008-canli-yayin-ve-kabul.md), gerçek
-Auth doğrulaması ve kontrollü kabul; sonra 004. Plan-limit pilotu otomatik bekletmez.
+**Otomatik sıradaki iş yok.** 008 canlıda ve kabul edildi; [010](docs/briefs/010-008-canli-yayin-ve-kabul.md)
+6/7 kaldı çünkü iptal edilmiş bağlantı ve yanlış hesap retleri ürün üzerinden koşulmadı ve
+fikstür temizlendi. [012](docs/briefs/012-coklu-uyelik-secim-kilidi.md) 10/10 tamamlandı.
+004'ün iki cihaz ölçütü ertelendi. Repertuvar/PDF artık engelli değil ama ürün sahibi onu
+yeni, sınırlandırılmış görev olarak adlandırmadan başlanmaz.
 
-**007 koro oluşturma: CANLI ALTYAPI HAZIR, GERÇEK KULLANIM YOK.** İlk sürüm herkese açık
+**007 koro oluşturma: TAMAMLANDI ve CANLIDA KABUL EDİLDİ.** İlk sürüm herkese açık
 self-servis olmayacak: manuel
 faturalama kararı nedeniyle yalnız platform operatörünün yetkilendirdiği akış yeni
 koro, kurucu üyelik ve kurucu Şef rolünü tek transaction'da oluşturacak. Mevcut
 koro içi Şef rolü başka koro açma yetkisi vermeyecek. Migration, geri dönüş,
 Edge giriş noktası ve restore edilmiş DB kabul testleri
-[007 brief'inde](docs/briefs/007-operator-kontrollu-koro-olusturma.md) hazırlandı
-ve canlıya uygulandı; allow-list boş. Gerçek operatör ataması ve koro kaydı yapılmadı.
+[007 brief'inde](docs/briefs/007-operator-kontrollu-koro-olusturma.md) hazırlandı,
+canlıya uygulandı ve gerçek operatör JWT'siyle başarı yolu kabul edildi. Test korosu ve
+operatör kaydı 010 temizliğinde kaldırıldı; kabul geçerli, allow-list yeniden boş.
 
 **006 üyelik yönetimi güvenlik kapısı: KAPALI.** 5 Eylül canlı envanterinde eski
 `create-choir-users` fonksiyonunun kimlik doğrulaması kapalı ve sabit başlangıç
@@ -177,11 +189,10 @@ production recovery URL'si eklendi ve tekrar okundu. Hesap parola/oturum kurtarm
 başlatılmadı. Ürün sahibi 27 hesabın kalan riskini açıkça kabul ederek bu adımı
 kapsamdan çıkardı; bu karar parolaların güvenli hâle getirildiği anlamına gelmez.
 
-Ardından davet/üyelik (`008`) ve plan-limit işleri ayrı brief'lere bölünür;
-gerçek ikinci üyelik bu akış ve kabul testleri hazır olmadan eklenmez. İlk gerçek
-koro işlemi için platform operatörü ayrıca seçilip yetkilendirilir. `004` RN kabuk
-brief'i karar #21'e göre sıradaki mobil iştir; temel limit geliştirmesini beklemez. Şirket adının
-henüz kesinleşmemesi bu teknik işi engellemez.
+Davet/üyelik (`008`) ve canlı temel kabul tamamlandı; 010'un ürün üzerindeki iki negatif
+yolu açık kalır. Yeni gerçek ikinci üyelik veya platform operatörü işlemi ayrı açık yetki
+gerektirir. `004` RN kabuk brief'i 25/27'dir; kalan iki cihaz kriteri ertelendi. Şirket
+adının henüz kesinleşmemesi gelecekteki teknik işi engellemez.
 
 **Tamamlanan:** `001` (Flutter spike) ve `002` (RN spike) — ikisi de geçti.
 `002`'nin sonundaki 8 maddelik kurulum zinciri ürün projesinde baştan uygulanacak.

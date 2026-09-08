@@ -20,7 +20,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | Web kalite kapısı | Kökten `pnpm check`: lint, typecheck, kapsamlı birim test çalıştırması, service worker sözdizimi, build |
 | Tarayıcı | Kökten `pnpm test:e2e`; testlerin gerçek üyeli akışı kapsayıp kapsamadığını ayrıca belirt |
 | RN product | In `apps/mobile`: `npx tsc --noEmit && npm test && npm run bundle:check`; actual platform builds and hardware acceptance remain separate |
-| DB / Edge | İlgili brief'in ortamı ve yetkisi doğrulanmış kontrolleri; web testi bunların yerine geçmez |
+| DB / Edge | İlgili brief'in ortamı ve yetkisi doğrulanmış kontrolleri; web testi bunların yerine geçmez. 012 için yerel izole kapı: `PGDATABASE=<dedicated-test-copy> bash supabase/test-support/012_regression_runner.sh` |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -50,15 +50,15 @@ Hardware remains deferred; current acceptance status and next task are in
 
 ## Where each gate can actually be evaluated — 8 September 2026
 
-Measured this stretch, not assumed. Recording it so no future session repeats the search or,
-worse, records an unevaluated gate as passed.
+Measured across the 8 September agent environments, not assumed. Host capabilities differ;
+verify the receiving shell before use and never record an unevaluated gate as passed.
 
-| Gate | Runs in the agent's Linux shell? | Where it was run |
+| Gate | Observed agent-shell availability | Where it was run |
 |---|---|---|
-| `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **yes** | A copy of the repository **outside** the connected folder, with its own `pnpm install --frozen-lockfile` and CI's synthetic Supabase environment. 33 files / 206 tests |
-| `pnpm build` | **no** | `next/font` fetches Manrope and Noto Serif at build time; `fonts.googleapis.com` and `fonts.gstatic.com` are refused by the proxy in both agent environments. Owner's macOS, or CI |
-| `pnpm test:e2e` | **no** | Playwright's browser download is refused as well. CI only |
-| SQL test files | **no** | No agent shell reaches a live or local Postgres; they need `psql -f` on the owner's machine or a database an agent can create locally |
+| `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **Linux: yes** | A copy of the repository **outside** the connected folder, with its own `pnpm install --frozen-lockfile` and CI's synthetic Supabase environment. 33 files / 206 tests |
+| `pnpm build` | **Linux: no** | `next/font` fetches Manrope and Noto Serif at build time; `fonts.googleapis.com` and `fonts.gstatic.com` are refused by the proxy in both agent environments. Owner's macOS, or CI |
+| `pnpm test:e2e` | **Linux: no** | Playwright's browser download is refused as well. CI only |
+| SQL test files | **macOS desktop task: yes, local isolated copy only** | On 8 September the owner's macOS exposed Homebrew PostgreSQL 17.11 at `127.0.0.1:5432`; 012 ran on `genova_008_test_restore`. This does not grant or prove production access. The runner refuses non-local/non-test-named targets |
 
 Never run an install against `apps/mobile/node_modules` or the root `node_modules` from a Linux
 shell — both are macOS installs reached through the connected folder, and reinstalling
