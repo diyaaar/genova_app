@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog yerel kabul edildi (014); güvenli dosya/PDF bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog (014) ve ortak güvenli dosya yolu (015) yerel kabul edildi; PDF bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -78,6 +78,7 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 | `supabase/functions/drive-manager-v2` | v15 canlı; 005 aktif-koro sözleşmesi, `verify_jwt=true` |
 | `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu kabul edildi, test fikstürü daha sonra temizlendi |
 | `supabase/functions/choir-invitations` | canlı; `verify_jwt=true`; 008 kabul edildi, 010'un iptal edilmiş bağlantı ve yanlış hesap ürün yolları açık kaldı |
+| `supabase/functions/repertoire-file` | yerel kabul edildi (015), **canlıya alınmadı**; bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
 | Push (VAPID → FCM/APNs) | Faz 1'de ikinci kanal eklenecek |
@@ -164,10 +165,10 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 **Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
 sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog
-çekirdeğini ve native katalog UI'ını yerelde kabul etti. Şimdi 015: web ve native için ortak,
-salt okunur güvenli dosya Edge sözleşmesi ve web uyarlaması. Sonra PDF + salt okunur anotasyon
-ayrı brief'lerle ilerler. 010 6/7 kalır; yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü
-ertelendi ve sıradaki eylem değildir.
+çekirdeğini ve native katalog UI'ını yerelde kabul etti. [015](docs/briefs/015-shared-protected-repertoire-file.md)
+ortak güvenli dosya Edge yolunu ve web uyarlamasını yerelde kabul etti; deploy ve canlı ürün
+NOT RUN. Şimdi 016: native PDF indirme/görüntüleme ve salt okunur anotasyon. 010 6/7 kalır;
+yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 
 **007 koro oluşturma: TAMAMLANDI ve CANLIDA KABUL EDİLDİ.** İlk sürüm herkese açık
 self-servis olmayacak: manuel

@@ -1,6 +1,6 @@
 # Active context
 
-Updated 8 September 2026 after the local 014 product commit `9cec58d`. The recorded
+Updated 8 September 2026 after the local 015 product commit `42fc8ff`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -32,9 +32,11 @@ the owner. Do not make either the next agent's first action.
 The owner authorized the local work-package sequence on 8 September. WF-005 reconciled the
 stale roadmap records, 013 accepted the native repertoire contract, and 014 locally accepted
 the shared pure catalogue core plus native catalogue. Root `pnpm check` passed with 211 tests;
-the mobile gate passed 50 tests and the iOS bundle export. Device, live-product, protected-file
-and PDF behavior remain untested by 014. The active package is 015: shared protected-file Edge
-read plus web adoption, locally only unless separate release authority is given. 010's sixth
+the mobile gate passed 50 tests and the iOS bundle export. Package 015 then locally accepted a
+shared protected repertoire-file ticket/Edge path and web adoption: root `pnpm check` passed
+240 tests/build and the isolated PostgreSQL 17.11 role/tenant matrix passed with unchanged
+fixtures. Deno compile/serve, Edge deploy, live product and provider integration are NOT RUN.
+The active package is 016: native PDF download/render and read-only annotations. 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
 criteria remain postponed.
 

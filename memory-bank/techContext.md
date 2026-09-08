@@ -56,7 +56,7 @@ verify the receiving shell before use and never record an unevaluated gate as pa
 | Gate | Observed agent-shell availability | Where it was run |
 |---|---|---|
 | `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **Linux: yes** | A copy of the repository **outside** the connected folder, with its own `pnpm install --frozen-lockfile` and CI's synthetic Supabase environment. 33 files / 206 tests |
-| `pnpm build` | **Linux: no** | `next/font` fetches Manrope and Noto Serif at build time; `fonts.googleapis.com` and `fonts.gstatic.com` are refused by the proxy in both agent environments. Owner's macOS, or CI |
+| `pnpm build` | **macOS desktop: yes; earlier Linux agents: no** | Passed in this macOS task for 014 and 015. Earlier Linux proxies refused Google Fonts; do not transfer either result to another environment without rerunning |
 | `pnpm test:e2e` | **Linux: no** | Playwright's browser download is refused as well. CI only |
 | SQL test files | **macOS desktop task: yes, local isolated copy only** | On 8 September the owner's macOS exposed Homebrew PostgreSQL 17.11 at `127.0.0.1:5432`; 012 ran on `genova_008_test_restore`. This does not grant or prove production access. The runner refuses non-local/non-test-named targets |
 

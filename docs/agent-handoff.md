@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026. Package 014 is locally accepted at product commit `9cec58d`.
+Snapshot: 8 September 2026. Package 015 is locally accepted at product commit `42fc8ff`.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -71,19 +71,24 @@ listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 | 004 native shell | **25 of 27 required criteria PASS** | Hardware keychain/keystore, and the real-phone real-account flow. Both were postponed by the owner — **do not raise either as the next action** |
 | 010 live release and acceptance | **Six of seven criteria PASS**, including cleanup | The sixth: revoked-link and wrong-account refusals *through the live product*. Proven on the live database by the hosted SQL test and in isolation; never through the product, and the fixture is gone |
 
-### Not started
+### Local-only progress, not deployed
 
-Repertoire/PDF, which decision #21 put behind 004's acceptance. **That gate is now open.**
+013 defined the repertoire contract; 014 locally accepted the native catalogue; 015 locally
+accepted the shared protected-file Edge path and web adoption. The new Edge function is not
+deployed, so its Deno/provider/live-product behavior is NOT RUN and the web adoption must not be
+released before the function. PDF/read-only annotations remain the active 016 package.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
 ## Tests actually run
 
-Only the new 012 local database row was run in this receiving task. Every other row is
-historical; read its linked record for exact output and limitations.
+The 014 and 015 local rows were run in this task. Older rows are historical; read each linked
+record for exact output and limitations.
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 8 Sep, `42fc8ff` | macOS task: root `pnpm check`; 015 focused tests; isolated PostgreSQL 17.11 runner | **PASS** — 37 files / 240 tests, build; 4 focused files / 32 tests; chef/leader/assigned/unassigned/no-selection/wrong-choir RLS matrix with unchanged hashes | Deno CLI absent. Deploy, provider integration, live product and native PDF are NOT RUN |
+| 8 Sep, `9cec58d` | macOS task: root `pnpm check`; mobile type/test/iOS bundle | **PASS** — 34 files / 211 tests and build; 7 native suites / 50 tests; 666-module Hermes export | Fake/native gateway only. Device, live product, Edge and PDF are NOT RUN |
 | 8 Sep, `5702bca` | Local PostgreSQL 17.11 at `127.0.0.1`, `genova_008_test_restore`; `PGHOST=127.0.0.1 PGPORT=5432 PGDATABASE=genova_008_test_restore PSQL_BIN=/opt/homebrew/opt/libpq/bin/psql bash supabase/test-support/012_regression_runner.sh` | **PASS** — SQL file exit 0 fixed; expected exit 3 with two null rows after down; exit 0 after restoring the fix; fixture-table snapshots unchanged | Isolated restored copy only, not production or a new live-product check. The complete 010 restore runner was not rerun; its new 012 call was syntax-checked |
 | 8 Sep, `a13f696` | GitHub Actions, `push` on `main`, run [34165767148](https://github.com/genesinovachoir/genova_app/actions/runs/34165767148) | **PASS** — Quality and security, Browser regression, Native product checks | The authoritative environment for `next build` and Playwright; neither agent shell can run either |
 | 8 Sep, `f661ab2` | Same workflow, run [34163714428](https://github.com/genesinovachoir/genova_app/actions/runs/34163714428) | **PASS** — 30 browser tests | Two earlier runs on this change were red; both were faults in the tests, detailed in [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) |
@@ -108,9 +113,9 @@ receiving-agent test is claimed anywhere.
 - **012's former regression gap is closed locally.** The reusable runner checks green →
   expected red after down → restored green and is called by the existing restored-database
   acceptance path. It is not a new production or live-product run, and no CI run is claimed.
-- **`next build` and Playwright cannot run in either agent environment.** Google Fonts is
-  blocked at the proxy, and Playwright browser downloads are blocked too. CI is the only place
-  those two gates can be evaluated; the owner's macOS is the other place for the build.
+- **Environment results differ.** `next build` passed in this macOS task for 014 and 015; it was
+  blocked by Google Fonts in earlier Linux agents. Playwright was not required or run for 014/015,
+  and a local browser cannot prove an undeployed Edge function.
 - **CI log storage is unreachable** from the agent shells. Failures were diagnosed through the
   GitHub check-run **annotations** endpoint, which does return Playwright's failure text.
 - **The connected folder denies file deletion to the agent shell**, so git cannot clear its own
@@ -127,9 +132,9 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. At the receiving task's start, HEAD was `03ea87d`; it contained the handoff
-documentation commit on top of local `origin/main` at `a13f696`. The 012 runner was then
-committed locally as `5702bca`. No remote refresh or push was attempted. The pre-existing
+Branch `main`. Current product HEAD before this evidence update is `42fc8ff`; local
+`origin/main` remains recorded at `a13f696`. Packages 012–015 and workflow/contract records are
+local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
 Every commit in this stretch was written by a single agent, this one, and the owner approved
@@ -167,9 +172,10 @@ database acceptance runs.
 
 On 8 September the owner authorized the local work-package sequence without authorizing any
 external write. WF-005 reconciled the roadmap, 013 accepted the native repertoire contract,
-and 014 locally accepted the shared pure catalogue core plus native catalogue. The active
-package is 015: shared, read-only protected-file Edge access plus web adoption. PDF plus
-read-only annotations then proceed as separate bounded packages. Preserve the remaining gaps:
+014 locally accepted the shared pure catalogue core plus native catalogue, and 015 locally
+accepted shared protected-file Edge access plus web adoption. Deno compile/serve, deploy and
+live provider/product behavior for 015 are NOT RUN. The active package is 016: native PDF
+download/render plus read-only annotations. Preserve the remaining gaps:
 010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
 both device items are postponed. Neither is the next action.
 
@@ -189,11 +195,12 @@ both device items are postponed. Neither is the next action.
 > work-package sequence is now authorized; external writes remain separately gated.
 >
 > Verify the local evidence and current checkout rather than reopening accepted work by
-> assumption. 012 is complete locally at `5702bca`. Package 014 is locally accepted at product
-> commit `9cec58d`: root `pnpm check` passed with 211 tests/build and the mobile gate passed 50
-> tests plus an iOS bundle export. Device/live/PDF/Edge behavior was not claimed. Continue with
-> package 015 under `docs/briefs/013-native-repertoire-contract.md`; do not recreate the 010
-> fixture or start hardware work.
+> assumption. 012 is complete locally at `5702bca`; 014 is locally accepted at `9cec58d`.
+> Package 015 is locally accepted at `42fc8ff`: root `pnpm check` passed 240 tests/build and the
+> isolated PostgreSQL role/tenant matrix passed with fixture hashes unchanged. Deno compile/serve,
+> Edge deploy and live provider/product behavior are NOT RUN. Continue with package 016 under
+> `docs/briefs/013-native-repertoire-contract.md`; do not recreate the 010 fixture or start
+> hardware work.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,
