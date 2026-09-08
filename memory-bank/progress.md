@@ -25,7 +25,8 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 012 çoklu üyelikte seçim kilidi | Complete (10/10); live fix plus local regression guard | [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md); the defect was reproduced live, fixed with `is not distinct from`, and confirmed on the product. On 8 Sep, commit `5702bca` ran the SQL file on an isolated PostgreSQL 17.11 copy: exit 0 fixed, expected exit 3 after down with two null rows, exit 0 after restoring the fix; full fixture-table snapshots were unchanged. No production action in that run. |
 | 013 native repertoire contract | Documentation accepted | [013](../docs/briefs/013-native-repertoire-contract.md); source and isolated-schema inventory fixed catalogue, cache, protected-file, PDF and read-only annotation boundaries. No product/live/provider/hardware action was claimed |
 | 014 native repertoire catalogue | Local acceptance complete | [014](../docs/briefs/014-native-repertoire-catalogue.md); shared pure core and native catalogue passed root `pnpm check` (211 tests/build) and mobile type/test/bundle (50 tests, iOS export). Device, live product, protected-file, PDF and hardware are NOT RUN |
-| 015 shared protected repertoire file | Local acceptance complete; 016 is active | [015](../docs/briefs/015-shared-protected-repertoire-file.md); signed Edge ticket/GET/HEAD/range core, web adoption and isolated role/tenant matrix passed. Root gate: 37 files / 240 tests/build. Deno compile/serve, deploy, live provider/product and native PDF are NOT RUN |
+| 015 shared protected repertoire file | Local acceptance complete | [015](../docs/briefs/015-shared-protected-repertoire-file.md); signed Edge ticket/GET/HEAD/range core, web adoption and isolated role/tenant matrix passed. Root gate: 37 files / 240 tests/build. Deno compile/serve, deploy and live provider/product are NOT RUN |
+| 016 native PDF and read-only annotations | Local acceptance complete; 017 is active | [016](../docs/briefs/016-native-pdf-readonly-annotations.md); private download, bounded 40-page rendering, basic zoom/scroll, shared defensive parser and read-only overlays passed root 244 tests/build, mobile 72 tests/bundle, Expo Doctor 21/21 and an iOS simulator native build. Live Edge/provider/account/hardware are NOT RUN; supplemental dependency audit FAIL remains visible |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -58,6 +59,6 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 [Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
 roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
 device items postponed. The owner has now authorized the local repertoire/PDF sequence;
-WF-005 and 013 are documentation-complete; 014 and 015 are locally accepted at product commits
-`9cec58d` and `42fc8ff`. Package 016 is active. No push, deploy, production database operation,
-real choir access, email or hardware test was performed for 015.
+WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
+`9cec58d`, `42fc8ff` and `0bbe646`. Package 017 non-hardware acceptance is active. No push, deploy,
+production database operation, real choir access, email or hardware test was performed for 016.

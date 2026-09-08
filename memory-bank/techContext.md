@@ -56,7 +56,7 @@ verify the receiving shell before use and never record an unevaluated gate as pa
 | Gate | Observed agent-shell availability | Where it was run |
 |---|---|---|
 | `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **Linux: yes** | A copy of the repository **outside** the connected folder, with its own `pnpm install --frozen-lockfile` and CI's synthetic Supabase environment. 33 files / 206 tests |
-| `pnpm build` | **macOS desktop: yes; earlier Linux agents: no** | Passed in this macOS task for 014 and 015. Earlier Linux proxies refused Google Fonts; do not transfer either result to another environment without rerunning |
+| `pnpm build` | **macOS desktop: yes; earlier Linux agents: no** | Passed in this macOS task for 014, 015 and 016. Earlier Linux proxies refused Google Fonts; do not transfer either result to another environment without rerunning |
 | `pnpm test:e2e` | **Linux: no** | Playwright's browser download is refused as well. CI only |
 | SQL test files | **macOS desktop task: yes, local isolated copy only** | On 8 September the owner's macOS exposed Homebrew PostgreSQL 17.11 at `127.0.0.1:5432`; 012 ran on `genova_008_test_restore`. This does not grant or prove production access. The runner refuses non-local/non-test-named targets |
 
@@ -67,3 +67,11 @@ invalidates the owner's working setup. Copy the tree out first, as above.
 When a CI job fails, the log storage host is unreachable from the agent shells, but the GitHub
 API's **check-run annotations** endpoint returns Playwright's failure text, including the
 locator and the received value. That is how three CI failures were diagnosed on 8 September.
+
+## Native PDF dependency state — 8 September 2026
+
+Package 016 added PDF-page-image 2.0.0, Skia 2.6.2, Expo FileSystem, Reanimated 4.5.1 and
+Worklets 0.10.1. Expo Doctor passed 21/21 and the iOS simulator native build compiled those
+modules. `npm audit --omit=dev` remains FAIL with 10 moderate Expo CLI/config to xcode to uuid
+findings; its complete automatic fix proposes a breaking Expo 46 downgrade and was not applied.
+This is a dependency-maintenance risk, not proof of an exploitable product path.

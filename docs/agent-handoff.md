@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026. Package 015 is locally accepted at product commit `42fc8ff`.
+Snapshot: 8 September 2026. Package 016 is locally accepted at product commit `0bbe646`.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -74,9 +74,10 @@ listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 ### Local-only progress, not deployed
 
 013 defined the repertoire contract; 014 locally accepted the native catalogue; 015 locally
-accepted the shared protected-file Edge path and web adoption. The new Edge function is not
-deployed, so its Deno/provider/live-product behavior is NOT RUN and the web adoption must not be
-released before the function. PDF/read-only annotations remain the active 016 package.
+accepted the shared protected-file Edge path and web adoption; 016 locally accepted private PDF
+download/render, basic zoom/scroll and read-only annotation overlays. The new Edge function is not
+deployed, so its Deno/provider/live-product behavior is NOT RUN and the web/native adoption must not
+be released before the function. Package 017 non-hardware end-to-end acceptance is next.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -87,6 +88,7 @@ record for exact output and limitations.
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 8 Sep, `0bbe646` | macOS task: root `pnpm check`; mobile TypeScript/Jest/bundle/Expo Doctor; iOS simulator native build | **PASS** — root 37 files / 244 tests and Next build; mobile 13 suites / 72 tests; 1,314-module iOS export; Expo Doctor 21/21; product compiled/installed on iPhone 17 Pro simulator | Edge/provider/live account flow is NOT RUN. Native build used no Metro or real data; simulator is not hardware. Supplemental production-dependency audit remains **FAIL** with 10 moderate Expo toolchain findings |
 | 8 Sep, `42fc8ff` | macOS task: root `pnpm check`; 015 focused tests; isolated PostgreSQL 17.11 runner | **PASS** — 37 files / 240 tests, build; 4 focused files / 32 tests; chef/leader/assigned/unassigned/no-selection/wrong-choir RLS matrix with unchanged hashes | Deno CLI absent. Deploy, provider integration, live product and native PDF are NOT RUN |
 | 8 Sep, `9cec58d` | macOS task: root `pnpm check`; mobile type/test/iOS bundle | **PASS** — 34 files / 211 tests and build; 7 native suites / 50 tests; 666-module Hermes export | Fake/native gateway only. Device, live product, Edge and PDF are NOT RUN |
 | 8 Sep, `5702bca` | Local PostgreSQL 17.11 at `127.0.0.1`, `genova_008_test_restore`; `PGHOST=127.0.0.1 PGPORT=5432 PGDATABASE=genova_008_test_restore PSQL_BIN=/opt/homebrew/opt/libpq/bin/psql bash supabase/test-support/012_regression_runner.sh` | **PASS** — SQL file exit 0 fixed; expected exit 3 with two null rows after down; exit 0 after restoring the fix; fixture-table snapshots unchanged | Isolated restored copy only, not production or a new live-product check. The complete 010 restore runner was not rerun; its new 012 call was syntax-checked |
@@ -116,6 +118,10 @@ receiving-agent test is claimed anywhere.
 - **Environment results differ.** `next build` passed in this macOS task for 014 and 015; it was
   blocked by Google Fonts in earlier Linux agents. Playwright was not required or run for 014/015,
   and a local browser cannot prove an undeployed Edge function.
+- **The 016 supplemental dependency audit is red.** `npm audit --omit=dev` reports 10 moderate
+  findings in Expo CLI/config's `xcode` to `uuid` chain. Its complete automatic remedy proposes a
+  breaking Expo 46 downgrade, so no force fix was applied. This does not invalidate the defined
+  016 gates, but it remains an explicit dependency-maintenance risk.
 - **CI log storage is unreachable** from the agent shells. Failures were diagnosed through the
   GitHub check-run **annotations** endpoint, which does return Playwright's failure text.
 - **The connected folder denies file deletion to the agent shell**, so git cannot clear its own
@@ -132,7 +138,7 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Current product HEAD before this evidence update is `42fc8ff`; local
+Branch `main`. Current product HEAD before this evidence update is `0bbe646`; local
 `origin/main` remains recorded at `a13f696`. Packages 012–015 and workflow/contract records are
 local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
@@ -171,11 +177,11 @@ snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for 
 database acceptance runs.
 
 On 8 September the owner authorized the local work-package sequence without authorizing any
-external write. WF-005 reconciled the roadmap, 013 accepted the native repertoire contract,
-014 locally accepted the shared pure catalogue core plus native catalogue, and 015 locally
-accepted shared protected-file Edge access plus web adoption. Deno compile/serve, deploy and
-live provider/product behavior for 015 are NOT RUN. The active package is 016: native PDF
-download/render plus read-only annotations. Preserve the remaining gaps:
+external write. WF-005 reconciled the roadmap; 013 accepted the native repertoire contract; 014,
+015 and 016 locally accepted the catalogue, shared protected file path and native PDF/read-only
+annotation layers. Deno compile/serve, deploy and live provider/product behavior are NOT RUN.
+The next bounded package from 013 is 017: non-hardware end-to-end acceptance and pilot handoff.
+Preserve the remaining gaps:
 010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
 both device items are postponed. Neither is the next action.
 
@@ -195,12 +201,13 @@ both device items are postponed. Neither is the next action.
 > work-package sequence is now authorized; external writes remain separately gated.
 >
 > Verify the local evidence and current checkout rather than reopening accepted work by
-> assumption. 012 is complete locally at `5702bca`; 014 is locally accepted at `9cec58d`.
-> Package 015 is locally accepted at `42fc8ff`: root `pnpm check` passed 240 tests/build and the
-> isolated PostgreSQL role/tenant matrix passed with fixture hashes unchanged. Deno compile/serve,
-> Edge deploy and live provider/product behavior are NOT RUN. Continue with package 016 under
-> `docs/briefs/013-native-repertoire-contract.md`; do not recreate the 010 fixture or start
-> hardware work.
+> assumption. 012 is complete locally at `5702bca`; 014 is locally accepted at `9cec58d`; 015 is
+> locally accepted at `42fc8ff`. Package 016 is locally accepted at `0bbe646`: root `pnpm check`
+> passed 244 tests/build; the mobile gate passed 72 tests; the iOS bundle, Expo Doctor 21/21 and an
+> iPhone 17 Pro simulator native build passed. The dependency audit remains FAIL with 10 moderate
+> Expo toolchain findings. Deno compile/serve, Edge deploy and live provider/product behavior are
+> NOT RUN. Continue with package 017 under `docs/briefs/013-native-repertoire-contract.md`; do not
+> recreate the 010 fixture or start hardware work.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,

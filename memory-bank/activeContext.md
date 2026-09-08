@@ -1,6 +1,6 @@
 # Active context
 
-Updated 8 September 2026 after the local 015 product commit `42fc8ff`. The recorded
+Updated 8 September 2026 after the local 016 product commit `0bbe646`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -36,7 +36,11 @@ the mobile gate passed 50 tests and the iOS bundle export. Package 015 then loca
 shared protected repertoire-file ticket/Edge path and web adoption: root `pnpm check` passed
 240 tests/build and the isolated PostgreSQL 17.11 role/tenant matrix passed with unchanged
 fixtures. Deno compile/serve, Edge deploy, live product and provider integration are NOT RUN.
-The active package is 016: native PDF download/render and read-only annotations. 010's sixth
+Package 016 then locally accepted private PDF download/render, basic zoom/scroll and read-only
+annotations: root passed 244 tests/build; mobile passed 72 tests/bundle; Expo Doctor passed 21/21;
+an iPhone 17 Pro simulator native build passed. The supplemental dependency audit remains FAIL
+with 10 moderate Expo toolchain findings. The active package is 017: non-hardware end-to-end
+acceptance and pilot handoff. 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
 criteria remain postponed.
 

@@ -7,7 +7,9 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   web de aynı fonksiyona bağlanır. Bu, tüm API'lerin taşındığı anlamına gelmez.
 - Ortak anotasyon sözleşmesi [annotation-types.ts](../lib/repertuvar/annotation-types.ts).
   RN ayrı bir Dart aynası tutmaz. Eski mobil sürümler ve bilinmeyen anotasyon
-  türleri sözleşme değişikliğinde ayrıca test edilir.
+  türleri sözleşme değişikliğinde ayrıca test edilir. 016 ile web ve native okumalar aynı
+  savunmacı parser'ı kullanır; bilinmeyen/bozuk/gelecek şema öğeleri yazılabilir veriye
+  dönüştürülmeden atlanır ve kullanıcıya uyarı olarak gösterilir.
 - Auth/Realtime/DB Supabase'de; public web sitesiyle aynı proje kullanılır.
   İstemcinin gönderdiği koro/rol tek başına yetki değildir. Service-role kullanımı
   uygulamadaki yetki ve kiracı kontrollerini gereksiz kılmaz.

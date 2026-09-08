@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog (014) ve ortak güvenli dosya yolu (015) yerel kabul edildi; PDF bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015) ve PDF/salt okunur anotasyon (016) yerel kabul edildi; non-hardware kabul bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -167,7 +167,9 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog
 çekirdeğini ve native katalog UI'ını yerelde kabul etti. [015](docs/briefs/015-shared-protected-repertoire-file.md)
 ortak güvenli dosya Edge yolunu ve web uyarlamasını yerelde kabul etti; deploy ve canlı ürün
-NOT RUN. Şimdi 016: native PDF indirme/görüntüleme ve salt okunur anotasyon. 010 6/7 kalır;
+NOT RUN. [016](docs/briefs/016-native-pdf-readonly-annotations.md) native PDF indirme/görüntüleme,
+temel zoom/kaydırma ve salt okunur anotasyonu yerelde kabul etti. Şimdi 017: non-hardware uçtan
+uca kabul ve pilot devri. 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 
 **007 koro oluşturma: TAMAMLANDI ve CANLIDA KABUL EDİLDİ.** İlk sürüm herkese açık
