@@ -170,7 +170,13 @@ ortak güvenli dosya Edge yolunu ve web uyarlamasını yerelde kabul etti; deplo
 NOT RUN. [016](docs/briefs/016-native-pdf-readonly-annotations.md) native PDF indirme/görüntüleme,
 temel zoom/kaydırma ve salt okunur anotasyonu yerelde kabul etti. [017](docs/briefs/017-non-hardware-read-flow-acceptance.md)
 sentetik uçtan uca akışı yerelde kabul edip pilot devrini hazırladı; gerçek pilot NOT RUN. Cihaz
-pilotu ertelendiği için sıradaki güvenli yerel iş ayrı bir native anotasyon-yazma brief'idir.
+pilotu ertelendi.
+
+WF-006 plan review now routes the next local package to
+[018](docs/briefs/018-protected-file-runtime-acceptance.md), actual isolated service runtime
+acceptance, followed by native rendering and web compatibility checks in the
+[canonical plan](docs/mobil-teslim-plani.md). This is planned, not executed; annotation writes
+follow those local integration gates.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

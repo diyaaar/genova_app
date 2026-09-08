@@ -1,6 +1,9 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026. Package 017 is locally accepted at code/test commit `326aae9`.
+Snapshot: 8 September 2026. WF-006 prepared the long-term execution plan; product state remains
+017 locally accepted at code/test commit `326aae9`. Planning entry checkout was `de7e55d`.
+The canonical [delivery plan](mobil-teslim-plani.md) now routes next to prepared, unrun
+[018](briefs/018-protected-file-runtime-acceptance.md), before further annotation implementation.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -84,8 +87,8 @@ the verified live host and Railway preparation is not a completed move.
 
 ## Tests actually run
 
-The 014 and 015 local rows were run in this task. Older rows are historical; read each linked
-record for exact output and limitations.
+All product test rows below are historical evidence from their named revisions and environments.
+WF-006 is documentation-only and reran no product tests; read each source for exact limitations.
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
@@ -94,7 +97,7 @@ record for exact output and limitations.
 | 8 Sep, `42fc8ff` | macOS task: root `pnpm check`; 015 focused tests; isolated PostgreSQL 17.11 runner | **PASS** — 37 files / 240 tests, build; 4 focused files / 32 tests; chef/leader/assigned/unassigned/no-selection/wrong-choir RLS matrix with unchanged hashes | Deno CLI absent. Deploy, provider integration, live product and native PDF are NOT RUN |
 | 8 Sep, `9cec58d` | macOS task: root `pnpm check`; mobile type/test/iOS bundle | **PASS** — 34 files / 211 tests and build; 7 native suites / 50 tests; 666-module Hermes export | Fake/native gateway only. Device, live product, Edge and PDF are NOT RUN |
 | 8 Sep, `5702bca` | Local PostgreSQL 17.11 at `127.0.0.1`, `genova_008_test_restore`; `PGHOST=127.0.0.1 PGPORT=5432 PGDATABASE=genova_008_test_restore PSQL_BIN=/opt/homebrew/opt/libpq/bin/psql bash supabase/test-support/012_regression_runner.sh` | **PASS** — SQL file exit 0 fixed; expected exit 3 with two null rows after down; exit 0 after restoring the fix; fixture-table snapshots unchanged | Isolated restored copy only, not production or a new live-product check. The complete 010 restore runner was not rerun; its new 012 call was syntax-checked |
-| 8 Sep, `a13f696` | GitHub Actions, `push` on `main`, run [34165767148](https://github.com/genesinovachoir/genova_app/actions/runs/34165767148) | **PASS** — Quality and security, Browser regression, Native product checks | The authoritative environment for `next build` and Playwright; neither agent shell can run either |
+| 8 Sep, `a13f696` | GitHub Actions, `push` on `main`, run [34165767148](https://github.com/genesinovachoir/genova_app/actions/runs/34165767148) | **PASS** — Quality and security, Browser regression, Native product checks | Historical CI evidence; later macOS root builds passed in 014–016. Recheck current tool availability |
 | 8 Sep, `f661ab2` | Same workflow, run [34163714428](https://github.com/genesinovachoir/genova_app/actions/runs/34163714428) | **PASS** — 30 browser tests | Two earlier runs on this change were red; both were faults in the tests, detailed in [011](briefs/011-davet-donusu-ve-sifre-sifirlama.md) |
 | 8 Sep, `3986f35` | Clean Linux install outside the connected folder: `pnpm lint`, `typecheck`, `test:coverage`, `test:service-worker` | **PASS** — 33 files / 206 tests | `pnpm build` could not run there: `next/font` cannot reach Google Fonts through either agent proxy. The owner ran the build on macOS and pasted its route table |
 | 8 Sep, live DB | `list_my_choirs()` as the affected account, before and after the 012 fix, in rolled-back transactions | **PASS** — `null/null` became `false/false`; single-membership still `true`; one row current after a selection | Function-level. The product-level confirmation is the `active_choir_sessions` row the owner's own sign-in wrote |
@@ -126,10 +129,10 @@ receiving-agent test is claimed anywhere.
   016 gates, but it remains an explicit dependency-maintenance risk.
 - **CI log storage is unreachable** from the agent shells. Failures were diagnosed through the
   GitHub check-run **annotations** endpoint, which does return Playwright's failure text.
-- **The connected folder denies file deletion to the agent shell**, so git cannot clear its own
-  `HEAD.lock` / `index.lock`. Move them into `.git/_stale_locks/` before a git write when
-  "cannot lock ref" appears. That folder holds only quarantined junk and the owner can delete it.
-- **`origin` is an SSH alias the agent shell has no key for.** Pushes in this stretch went over
+- **Historical Linux connected-folder limitation:** earlier agents could not delete Git locks.
+  Do not apply that workaround automatically on macOS; first prove no active Git writer owns a
+  lock and diagnose the current environment. Never move a live process's lock.
+- **Historical external-release environment:** that agent lacked the SSH alias key. Its pushes went over
   HTTPS with the token in `.env.local.github`. **That token should be revoked** — its job is done.
 - **`apps/mobile/node_modules` is a macOS install** shared through the connected folder. Never
   run an install against it from a Linux shell; copy the tree outside the folder instead, which
@@ -140,13 +143,14 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Current code/test HEAD before this evidence update is `326aae9`; local
-`origin/main` remains recorded at `a13f696`. Packages 012–015 and workflow/contract records are
-local commits only. No remote refresh or push was attempted. The pre-existing
+Branch `main`. WF-006 planning entry HEAD was `de7e55d`, containing product code/test `326aae9`;
+local `origin/main` remains recorded at `a13f696` (17 commits behind the planning entry).
+The subsequent planning commit changes documentation only. Packages 012 local regression and
+013–017/workflow records are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
-Every commit in this stretch was written by a single agent, this one, and the owner approved
-each production step as it came. `main` was pushed twice with explicit authorization: the 010
+The historical release record reports a single writer and owner approval for each production
+step. WF-006 performed no production action and does not claim to re-audit those approvals. `main` was pushed twice with explicit authorization: the 010
 step 6 release (`0389242..6b6d9a4`) and the 011 release plus its records
 (`6b6d9a4..a13f696`), each after CI went green. Code and documentation were kept in separate
 commits per `AGENTS.md`.
@@ -178,47 +182,46 @@ expected down-migration failure, restores the fixed function and compares fixtur
 snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for future restored
 database acceptance runs.
 
-On 8 September the owner authorized the local work-package sequence without authorizing any
-external write. WF-005 reconciled the roadmap; 013 accepted the native repertoire contract; 014,
-015 and 016 locally accepted the catalogue, shared protected file path and native PDF/read-only
-annotation layers. Deno compile/serve, deploy and live provider/product behavior are NOT RUN.
-Package 017 then accepted the non-hardware end-to-end flow and prepared an exact pilot checklist;
-the real pilot remains NOT RUN. The authorized 013–017 local read-path sequence is complete.
-Because the device pilot is postponed, the next safe local roadmap package is a new bounded brief
-for native annotation writes; it must preserve the shared schema/RLS and cannot infer live write
-authority. Preserve the remaining gaps:
-010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
-both device items are postponed. Neither is the next action.
+On 8 September the owner authorized local package execution; 013–017 reached their recorded
+local acceptance. The latest request then set a planning goal: prepare a comprehensive long-term
+plan and agent execution directive through advanced mobile work and store readiness. WF-006
+performs that documentation task only; it does not start the future product packages.
+
+The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
+local/external work selection and the execution loop. Do not duplicate its backlog here.
+The next bounded implementation package is [018](briefs/018-protected-file-runtime-acceptance.md):
+actual protected-file runtime acceptance using isolated Auth/RLS and synthetic provider bytes.
+It is PREPARED, NOT STARTED, with every execution row NOT RUN. First action after source reading:
+verify checkout/ownership, inspect the actual Edge entrypoint/config and installed local runtime,
+and record whether an isolated test topology is available without accessing production.
+
+This replaces the earlier automatic annotation-write next step because Deno/HTTP composition
+and actual product rendering remain unverified. It does not revoke 013–017's historical local
+acceptance. After 018, A2 verifies actual native PDF/Skia output on both local platforms; A3
+checks existing web consumers. Independent later local work can continue under existing authority
+while external/device gates remain pending, following the roadmap's dependency rules.
+010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
 
 > Work in `/Users/alidiyarduran/Antigravity/genovakorist`. Read `AGENTS.md`, then
-> `docs/agent-handoff.md`, then follow `docs/gecis-rehberi.md` and
-> `docs/ai-calisma-duzeni.md` in the order the handoff lists. Do not assume you can see
-> earlier conversations. Verify the branch, HEAD, working tree and which recorded evidence
-> still applies before acting.
+> `docs/agent-handoff.md`, and follow `docs/gecis-rehberi.md` and `docs/ai-calisma-duzeni.md`
+> with the six memory-bank indexes, relevant decisions and MIGRATION. Verify the actual branch,
+> HEAD, working-tree ownership and applicable evidence; assume no access to previous chats.
 >
-> State to hold: 008 is live and was accepted on the product, but `010` is **not closed** —
-> its sixth criterion, the revoked-link and wrong-account refusals through the live product,
-> is NOT RUN and the fixture that would exercise it was cleaned up. 004 stands at 25 of 27;
-> its two unrun criteria are hardware keychain and the real-phone flow, both postponed by me —
-> do not raise either as the next action. 011 and 012 are live. The local repertoire/PDF
-> work-package sequence is now authorized; external writes remain separately gated.
+> Read the canonical `docs/mobil-teslim-plani.md` for the long-term milestones and execution
+> loop. WF-006 prepared the plan; it did not execute future packages. The next bounded product
+> task is `docs/briefs/018-protected-file-runtime-acceptance.md`, currently NOT STARTED with all
+> runtime acceptance rows NOT RUN. Revalidate existing local implementation/testing/commit
+> authorization before acting. First inspect the actual entrypoint/config and local runtime
+> availability and establish an isolated synthetic test topology; do not call production.
 >
-> Verify the local evidence and current checkout rather than reopening accepted work by
-> assumption. 012 is complete locally at `5702bca`; 014 is locally accepted at `9cec58d`; 015 is
-> locally accepted at `42fc8ff`. Package 016 is locally accepted at `0bbe646`: root `pnpm check`
-> passed 244 tests/build; the mobile gate passed 72 tests; the iOS bundle, Expo Doctor 21/21 and an
-> iPhone 17 Pro simulator native build passed. The dependency audit remains FAIL with 10 moderate
-> Expo toolchain findings. Deno compile/serve, Edge deploy and live provider/product behavior are
-> NOT RUN. Package 017 is locally accepted at `326aae9`: its isolated continuous scenario passed
-> along with 14 mobile suites / 73 tests and the iOS bundle; the real pilot is NOT RUN. The
-> 013–017 local read-path sequence is complete. If continuing locally, open a bounded native
-> annotation-write brief next; do not recreate the 010 fixture or start hardware work.
+> Preserve 013–017's historical local acceptance and distinguish it from unrun Deno/provider
+> integration and real native rendering. Keep 004 at 25/27 and 010 at 6/7; hardware remains
+> postponed and no new live fixture is authorized. Follow the plan one brief at a time and
+> retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.
 >
-> Authorization: local implementation, local commits, reading live state, and running the
-> repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,
-> touching the real choir `Genesi Nova`, sending email, spending, or hardware testing. Ask me
-> for any of those. Never record an unrun test as passed, never replace evidence with a
-> self-score, and leave a required FAIL or NOT RUN visible rather than closing a brief around
-> it. Keep agent records in English and your updates to me short and in Turkish.
+> This prompt adds no authority. Push, remote CI dispatch, deploy, live migration/data changes,
+> real accounts/data, email, credentials, spending and hardware need applicable explicit owner
+> approval. Preserve unrelated changes, commit owned code and records separately, write agent
+> records in English and user updates in Turkish. Product completion is not implied by a handoff.

@@ -62,6 +62,11 @@ roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 wi
 device items postponed. The owner has now authorized the local repertoire/PDF sequence;
 WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
 `9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`. The 013–017 read-path
-sequence is complete. With the real pilot postponed, a native annotation-write brief is the next
-safe local package. No push, deploy, production database operation, real choir access, email or
-hardware test was performed for 017.
+sequence is locally complete. WF-006 now routes to prepared, unrun
+[018](../docs/briefs/018-protected-file-runtime-acceptance.md) under the
+[canonical long-term plan](../docs/mobil-teslim-plani.md), closing actual runtime/native/web
+integration gaps before annotation writes. Planning completion does not execute 018. No push, deploy, production database operation, real choir
+access, email or hardware test was performed for 017.
+
+WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
+[WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.

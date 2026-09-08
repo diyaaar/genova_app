@@ -42,8 +42,13 @@ an iPhone 17 Pro simulator native build passed. The supplemental dependency audi
 with 10 moderate Expo toolchain findings. Package 017 accepted one synthetic continuous flow
 through sign-in, choir selection, catalogue, recovered 40-page PDF/annotation, tenant switch and
 sign-out; mobile passed 73 tests/bundle. The real pilot is NOT RUN. The 013–017 local read-path
-sequence is complete; with hardware postponed, the next safe local package is a bounded native
-annotation-write brief. 010's sixth
+sequence is locally complete. WF-006 subsequently prepared the
+[long-term execution plan](../docs/mobil-teslim-plani.md). The next package is prepared, unrun
+[018](../docs/briefs/018-protected-file-runtime-acceptance.md): actual isolated protected-file
+runtime acceptance, before native rendering/web integration and annotation writes. The latest
+request is planning only; no 018 execution or new external authority is implied.
+
+010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
 criteria remain postponed.
 
