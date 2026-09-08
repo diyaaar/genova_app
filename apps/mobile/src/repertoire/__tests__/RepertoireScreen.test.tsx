@@ -1,8 +1,9 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
-import type { RepertoireSong, RepertoireTag } from '@shared/repertuvar/catalog-core';
+import type { RepertoireFile, RepertoireSong, RepertoireTag } from '@shared/repertuvar/catalog-core';
 import { clearTenantCaches, resetTenantCacheRegistry } from '../../auth/tenant-cache';
 import { RepertoireScreen } from '../RepertoireScreen';
 import type { NativeRepertoireCatalog, NativeRepertoireGateway } from '../catalog-gateway';
+import type { NativeScoreReaderGateway } from '../reader-contract';
 
 const concertTag: RepertoireTag = {
   id: 'tag-concert',
@@ -48,13 +49,14 @@ function gateway(load: NativeRepertoireGateway['load']): NativeRepertoireGateway
   return { load: jest.fn(load), clear: jest.fn() };
 }
 
-async function renderScreen(preparedGateway: NativeRepertoireGateway) {
+async function renderScreen(preparedGateway: NativeRepertoireGateway, readerGateway?: NativeScoreReaderGateway) {
   return await render(
     <RepertoireScreen
       choirId="choir-a"
       memberId="member-a"
       choirName="Genova A"
       gateway={preparedGateway}
+      readerGateway={readerGateway}
       canSwitchChoir
       onBack={jest.fn()}
       onSwitchChoir={jest.fn()}
@@ -139,5 +141,49 @@ describe('RepertoireScreen', () => {
 
     await clearTenantCaches();
     await waitFor(() => expect(preparedGateway.clear).toHaveBeenCalledTimes(1));
+  });
+
+  it('opens an eligible repository score through the protected reader and returns', async () => {
+    const scoreFile: RepertoireFile = {
+      id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      song_id: 'song-a',
+      file_name: 'alto.pdf',
+      file_type: 'sheet',
+      partition_label: 'Alto',
+      drive_file_id: 'provider-id',
+      drive_web_view_link: 'https://provider.invalid/view',
+      drive_download_link: 'https://provider.invalid/download',
+      mime_type: 'application/pdf',
+      file_size_bytes: 64000,
+      uploaded_by: null,
+      created_at: '2026-09-08T00:00:00Z',
+      updated_at: '2026-09-08T00:00:00Z',
+    };
+    const readerGateway: NativeScoreReaderGateway = {
+      open: jest.fn(async ({ choirId, file }) => ({
+        choirId,
+        fileId: file.id,
+        fileName: file.file_name,
+        uri: 'file:///private/alto.pdf',
+        pageCount: 1,
+        annotations: { byPage: {}, skippedCount: 0 },
+      })),
+      renderWindow: jest.fn(async (_document, pageNumber) => ({
+        currentPage: pageNumber,
+        pages: { 1: { uri: 'file:///page-1.jpg', width: 595, height: 842 } },
+      })),
+      close: jest.fn(async () => {}),
+      clear: jest.fn(async () => {}),
+    };
+    const preparedGateway = gateway(async () => catalogue({ songs: [song({ files: [scoreFile] })] }));
+    await renderScreen(preparedGateway, readerGateway);
+    await screen.findByTestId('repertoire-list');
+
+    await fireEvent.press(screen.getByTestId(`repertoire-open-score-${scoreFile.id}`));
+    expect(await screen.findByTestId('score-reader-page-1')).toBeTruthy();
+    expect(readerGateway.open).toHaveBeenCalledWith({ choirId: 'choir-a', file: scoreFile });
+
+    await fireEvent.press(screen.getByTestId('score-reader-back'));
+    expect(await screen.findByTestId('repertoire-list')).toBeTruthy();
   });
 });

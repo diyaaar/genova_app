@@ -12,6 +12,7 @@ const SHARED_PREFIX = '@shared/';
 const config = getDefaultConfig(projectRoot);
 
 config.watchFolders = [sharedRoot];
+if (!config.resolver.assetExts.includes('pdf')) config.resolver.assetExts.push('pdf');
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (moduleName.startsWith(SHARED_PREFIX)) {

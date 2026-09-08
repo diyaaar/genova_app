@@ -4,6 +4,7 @@ import type { ChoirMembershipOption } from '@shared/choir-context-core';
 import { useAuth } from '../auth/AuthProvider';
 import { RepertoireScreen } from '../repertoire/RepertoireScreen';
 import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
+import type { NativeScoreReaderGateway } from '../repertoire/reader-contract';
 import { ChoirSelectScreen } from './ChoirSelectScreen';
 import { ShellScreen } from './ShellScreen';
 import { SignInScreen } from './SignInScreen';
@@ -17,12 +18,14 @@ function ReadyShell({
   activeChoir,
   canSwitchChoir,
   repertoireGateway,
+  readerGateway,
   onSwitchChoir,
   onSignOut,
 }: {
   activeChoir: ChoirMembershipOption;
   canSwitchChoir: boolean;
   repertoireGateway?: NativeRepertoireGateway;
+  readerGateway?: NativeScoreReaderGateway;
   onSwitchChoir: () => void;
   onSignOut: () => void;
 }) {
@@ -35,6 +38,7 @@ function ReadyShell({
         memberId={activeChoir.member_id}
         choirName={activeChoir.choir_name}
         gateway={repertoireGateway}
+        readerGateway={readerGateway}
         canSwitchChoir={canSwitchChoir}
         onBack={() => setScreen('home')}
         onSwitchChoir={onSwitchChoir}
@@ -54,7 +58,10 @@ function ReadyShell({
   );
 }
 
-export function AppRoot({ repertoireGateway }: { repertoireGateway?: NativeRepertoireGateway } = {}) {
+export function AppRoot({ repertoireGateway, readerGateway }: {
+  repertoireGateway?: NativeRepertoireGateway;
+  readerGateway?: NativeScoreReaderGateway;
+} = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
 
@@ -122,6 +129,7 @@ export function AppRoot({ repertoireGateway }: { repertoireGateway?: NativeReper
           activeChoir={auth.activeChoir}
           canSwitchChoir={auth.choirs.length > 1}
           repertoireGateway={repertoireGateway}
+          readerGateway={readerGateway}
           onSwitchChoir={() => setSwitching(true)}
           onSignOut={() => void auth.signOut()}
         />

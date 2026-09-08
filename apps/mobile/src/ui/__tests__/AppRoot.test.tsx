@@ -111,11 +111,11 @@ describe('shell routing', () => {
     await renderWithStore({ repertoireGateway });
     await screen.findByTestId('shell-screen');
 
-    fireEvent.press(screen.getByTestId('shell-open-repertoire'));
+    await fireEvent.press(screen.getByTestId('shell-open-repertoire'));
     expect(await screen.findByTestId('repertoire-screen')).toBeTruthy();
     expect(await screen.findByTestId('repertoire-empty')).toBeTruthy();
 
-    fireEvent.press(screen.getByTestId('repertoire-back'));
+    await fireEvent.press(screen.getByTestId('repertoire-back'));
     expect(await screen.findByTestId('shell-screen')).toBeTruthy();
   });
 });

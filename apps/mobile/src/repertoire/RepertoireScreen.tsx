@@ -13,12 +13,15 @@ import { theme } from '../ui/theme';
 import type { NativeRepertoireCatalog, NativeRepertoireGateway } from './catalog-gateway';
 import { registerRepertoireGatewayCache } from './cache-registration';
 import { getDefaultRepertoireGateway } from './default-gateway';
+import { getScorePdfFiles, type NativeScoreReaderGateway } from './reader-contract';
+import { ScoreReaderScreen } from './ScoreReaderScreen';
 
 interface RepertoireScreenProps {
   choirId: string;
   memberId: string;
   choirName: string;
   gateway?: NativeRepertoireGateway;
+  readerGateway?: NativeScoreReaderGateway;
   canSwitchChoir: boolean;
   onBack: () => void;
   onSwitchChoir: () => void;
@@ -30,6 +33,7 @@ export function RepertoireScreen({
   memberId,
   choirName,
   gateway: suppliedGateway,
+  readerGateway,
   canSwitchChoir,
   onBack,
   onSwitchChoir,
@@ -45,6 +49,7 @@ export function RepertoireScreen({
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<import('@shared/repertuvar/catalog-core').RepertoireFile | null>(null);
   const requestVersion = useRef(0);
 
   const load = useCallback(async (force: boolean) => {
@@ -103,6 +108,17 @@ export function RepertoireScreen({
       tag: activeTag,
     })
     : [], [activeTag, catalogue, search]);
+
+  if (selectedFile) {
+    return (
+      <ScoreReaderScreen
+        choirId={choirId}
+        file={selectedFile}
+        gateway={readerGateway}
+        onBack={() => setSelectedFile(null)}
+      />
+    );
+  }
 
   return (
     <View style={styles.container} testID="repertoire-screen">
@@ -168,7 +184,9 @@ export function RepertoireScreen({
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.list} testID="repertoire-list">
-              {songs.map((song) => (
+              {songs.map((song) => {
+                const scoreFiles = getScorePdfFiles(song.files);
+                return (
                 <View key={song.id} style={styles.card} testID={`repertoire-song-${song.id}`}>
                   <View style={styles.cardText}>
                     <Text style={styles.songTitle}>{song.title}</Text>
@@ -180,8 +198,15 @@ export function RepertoireScreen({
                   {catalogue?.userParts[song.id] ? (
                     <Text style={styles.part}>{catalogue.userParts[song.id]}</Text>
                   ) : null}
+                  <View style={styles.fileActions}>
+                    {scoreFiles.length === 0 ? <Text style={styles.noScore}>PDF nota yok</Text> : scoreFiles.map((file) => (
+                      <Pressable key={file.id} onPress={() => setSelectedFile(file)} accessibilityRole="button" testID={`repertoire-open-score-${file.id}`}>
+                        <Text style={styles.action}>{file.partition_label?.trim() || 'Notayı aç'}</Text>
+                      </Pressable>
+                    ))}
+                  </View>
                 </View>
-              ))}
+              );})}
             </ScrollView>
           )}
         </>
@@ -221,5 +246,7 @@ const styles = StyleSheet.create({
   songTitle: { color: theme.colors.text, fontSize: 18, fontWeight: '700' },
   meta: { color: theme.colors.textMuted, fontSize: 12 },
   part: { color: theme.colors.accent, fontSize: 12, fontWeight: '700' },
+  fileActions: { alignItems: 'flex-end', gap: 6 },
+  noScore: { color: theme.colors.textMuted, fontSize: 11 },
   footer: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: theme.spacing(1.5) },
 });

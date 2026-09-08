@@ -6,6 +6,7 @@ import {
   VoiceGroup,
   cloneAnnotationItems,
   makeLayerPageKey,
+  parseAnnotationSchemaPayload,
   parseLayerKey,
 } from '@/lib/repertuvar/annotation-types';
 
@@ -22,10 +23,6 @@ const MISSING_ANNOTATIONS_TABLE_MESSAGE =
   'PDF notları tablosu Supabase veritabanında kurulu değil. Notları kaydetmek için supabase/migrations/20260416_repertoire_pdf_annotations.sql migration dosyasını remote projeye uygulayın.';
 
 let annotationsTableMissing = false;
-
-function isAnnotationItemArray(value: unknown): value is AnnotationItem[] {
-  return Array.isArray(value);
-}
 
 function isMissingAnnotationsTableError(error: { code?: string; message?: string } | null) {
   return Boolean(
@@ -94,7 +91,12 @@ function applyLayerFilters(
   return query;
 }
 
-export async function loadAnnotationsForFile(repertoireFileId: string): Promise<Record<string, AnnotationItem[]>> {
+export interface AnnotationReadResult {
+  layers: Record<string, AnnotationItem[]>;
+  skippedCount: number;
+}
+
+export async function loadAnnotationReadResultForFile(repertoireFileId: string): Promise<AnnotationReadResult> {
   if (annotationsTableMissing) {
     throw new Error(MISSING_ANNOTATIONS_TABLE_MESSAGE);
   }
@@ -125,6 +127,7 @@ export async function loadAnnotationsForFile(repertoireFileId: string): Promise<
   }
 
   const layerMap: Record<string, AnnotationItem[]> = {};
+  let skippedCount = 0;
 
   (data as RepertoirePdfAnnotationRow[] | null | undefined)?.forEach((row) => {
     const layerKey = rowToLayerKey(row);
@@ -134,12 +137,17 @@ export async function loadAnnotationsForFile(repertoireFileId: string): Promise<
       layerKey,
     });
 
-    layerMap[layerPageKey] = isAnnotationItemArray(row.annotations_json)
-      ? cloneAnnotationItems(row.annotations_json)
-      : [];
+    const parsed = parseAnnotationSchemaPayload(row.annotations_json, row.schema_version);
+    layerMap[layerPageKey] = parsed.items;
+    skippedCount += parsed.skippedCount;
   });
 
-  return layerMap;
+  return { layers: layerMap, skippedCount };
+}
+
+/** Compatibility wrapper for callers that only consume layers. */
+export async function loadAnnotationsForFile(repertoireFileId: string): Promise<Record<string, AnnotationItem[]>> {
+  return (await loadAnnotationReadResultForFile(repertoireFileId)).layers;
 }
 
 export async function saveLayerSnapshot({

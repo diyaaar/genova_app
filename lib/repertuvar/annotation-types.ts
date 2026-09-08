@@ -56,6 +56,11 @@ export interface TextNote extends AnnotationBase {
 
 export type AnnotationItem = PenStroke | HighlighterStroke | ArrowShape | RectangleShape | TextNote;
 
+export interface AnnotationParseResult {
+  items: AnnotationItem[];
+  skippedCount: number;
+}
+
 export interface AnnotationContextDescriptor {
   fileId: string;
   pageNumber: number;
@@ -92,6 +97,9 @@ export const ANNOTATION_COLOR_PRESETS: Array<{ color: AnnotationColor; label: st
 ];
 
 const HEX_ANNOTATION_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
+const MAX_PARSED_ANNOTATION_ITEMS = 5_000;
+const MAX_STROKE_POINTS = 10_000;
+const MAX_TEXT_LENGTH = 10_000;
 
 export function isHexAnnotationColor(value: string): value is HexAnnotationColor {
   return HEX_ANNOTATION_COLOR_PATTERN.test(value);
@@ -175,7 +183,7 @@ export function parseLayerPageKey(layerPageKey: string): AnnotationContextDescri
   const [fileId, pageNumber, ...layerParts] = layerPageKey.split('::');
 
   return {
-    fileId,
+    fileId: fileId ?? '',
     pageNumber: Number(pageNumber),
     layerKey: layerParts.join('::') as AnnotationLayerKey,
   };
@@ -186,6 +194,121 @@ export function clampNormalizedPoint(point: NormalizedPoint): NormalizedPoint {
     x: Math.max(0, Math.min(1, point.x)),
     y: Math.max(0, Math.min(1, point.y)),
   };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function parsePoint(value: unknown): NormalizedPoint | null {
+  if (!isRecord(value) || typeof value.x !== 'number' || typeof value.y !== 'number') {
+    return null;
+  }
+  if (!Number.isFinite(value.x) || !Number.isFinite(value.y)) return null;
+  return clampNormalizedPoint({ x: value.x, y: value.y });
+}
+
+function parseColor(value: unknown): AnnotationColor | null {
+  if (value === 'black' || value === 'red' || value === 'white') return value;
+  return typeof value === 'string' && isHexAnnotationColor(value) ? value : null;
+}
+
+function parseBase(value: Record<string, unknown>) {
+  const id = typeof value.id === 'string' ? value.id.trim() : '';
+  const color = parseColor(value.color);
+  if (!id || id.length > 256 || !color) return null;
+  return { id, color };
+}
+
+function parsePositiveNumber(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0
+    ? Math.min(1, value)
+    : null;
+}
+
+/**
+ * Defensive compatibility boundary shared by web and native readers.
+ *
+ * Unknown or malformed items are deliberately skipped so a future web schema cannot crash an
+ * older client. Normalized points are clamped at this boundary before any renderer sees them.
+ */
+export function parseAnnotationItems(value: unknown): AnnotationParseResult {
+  if (!Array.isArray(value)) return { items: [], skippedCount: 1 };
+
+  const items: AnnotationItem[] = [];
+  let skippedCount = 0;
+
+  const limited = value.slice(0, MAX_PARSED_ANNOTATION_ITEMS);
+  skippedCount += Math.max(0, value.length - limited.length);
+  for (const raw of limited) {
+    if (!isRecord(raw)) {
+      skippedCount += 1;
+      continue;
+    }
+    const base = parseBase(raw);
+    if (!base) {
+      skippedCount += 1;
+      continue;
+    }
+
+    if (raw.type === 'pen' || raw.type === 'highlighter') {
+      const strokeWidth = parsePositiveNumber(raw.strokeWidth);
+      const points = Array.isArray(raw.points) && raw.points.length <= MAX_STROKE_POINTS
+        ? raw.points.map(parsePoint)
+        : [];
+      if (!strokeWidth || points.length === 0 || points.some((point) => point === null)) {
+        skippedCount += 1;
+        continue;
+      }
+      items.push({
+        ...base,
+        type: raw.type,
+        points: points as NormalizedPoint[],
+        strokeWidth,
+      });
+      continue;
+    }
+
+    if (raw.type === 'arrow' || raw.type === 'rectangle') {
+      const start = parsePoint(raw.start);
+      const end = parsePoint(raw.end);
+      const strokeWidth = parsePositiveNumber(raw.strokeWidth);
+      if (!start || !end || !strokeWidth) {
+        skippedCount += 1;
+        continue;
+      }
+      items.push({ ...base, type: raw.type, start, end, strokeWidth });
+      continue;
+    }
+
+    if (raw.type === 'text') {
+      const position = parsePoint(raw.position);
+      const width = parsePositiveNumber(raw.width);
+      if (!position || !width || typeof raw.text !== 'string' || raw.text.length > MAX_TEXT_LENGTH) {
+        skippedCount += 1;
+        continue;
+      }
+      items.push({ ...base, type: 'text', position, text: raw.text, width });
+      continue;
+    }
+
+    skippedCount += 1;
+  }
+
+  return { items, skippedCount };
+}
+
+export function parseAnnotationSchemaPayload(
+  value: unknown,
+  schemaVersion: number,
+): AnnotationParseResult {
+  if (schemaVersion !== 1) {
+    return {
+      items: [],
+      skippedCount: Array.isArray(value) ? Math.max(1, value.length) : 1,
+    };
+  }
+  return parseAnnotationItems(value);
 }
 
 export function normalizePoint(x: number, y: number, width: number, height: number): NormalizedPoint {

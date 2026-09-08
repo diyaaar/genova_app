@@ -35,7 +35,7 @@ import { ChefCommentSection } from '@/components/repertuvar/ChefCommentSection';
 import { useProtectedDriveFileUrl } from '@/hooks/useProtectedDriveFileUrl';
 import { getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
 import {
-  loadAnnotationsForFile,
+  loadAnnotationReadResultForFile,
   saveLayerSnapshot,
 } from '@/lib/repertuvar/annotations';
 import {
@@ -2290,12 +2290,15 @@ export function RepertoireWorkspace({
     setAnnotationLoading(true);
     setAnnotationError(null);
 
-    loadAnnotationsForFile(selectedPdf.id)
-      .then((layers) => {
+    loadAnnotationReadResultForFile(selectedPdf.id)
+      .then(({ layers, skippedCount }) => {
         if (cancelled) {
           return;
         }
         replaceFileLayers(selectedPdf.id, layers);
+        if (skippedCount > 0) {
+          setAnnotationError(`${skippedCount} desteklenmeyen veya bozuk not öğesi atlandı.`);
+        }
       })
       .catch((error: unknown) => {
         if (cancelled) {
