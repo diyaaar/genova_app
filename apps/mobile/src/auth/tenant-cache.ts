@@ -6,18 +6,23 @@
 
 export type TenantCacheCleaner = () => void | Promise<void>;
 
-const cleaners = new Set<TenantCacheCleaner>();
+const cleaners = new Map<TenantCacheCleaner, number>();
 
 export function registerTenantCache(cleaner: TenantCacheCleaner): () => void {
-  cleaners.add(cleaner);
+  cleaners.set(cleaner, (cleaners.get(cleaner) ?? 0) + 1);
+  let active = true;
   return () => {
-    cleaners.delete(cleaner);
+    if (!active) return;
+    active = false;
+    const owners = cleaners.get(cleaner) ?? 0;
+    if (owners <= 1) cleaners.delete(cleaner);
+    else cleaners.set(cleaner, owners - 1);
   };
 }
 
 /** Runs every registered cleaner. One failing cleaner must not stop the others. */
 export async function clearTenantCaches(): Promise<void> {
-  for (const cleaner of Array.from(cleaners)) {
+  for (const cleaner of Array.from(cleaners.keys())) {
     try {
       await cleaner();
     } catch {

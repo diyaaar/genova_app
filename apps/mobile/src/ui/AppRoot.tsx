@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import type { ChoirMembershipOption } from '@shared/choir-context-core';
 import { useAuth } from '../auth/AuthProvider';
 import { RepertoireScreen } from '../repertoire/RepertoireScreen';
 import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
 import type { NativeScoreReaderGateway } from '../repertoire/reader-contract';
+import { registerTenantCache } from '../auth/tenant-cache';
 import { ChoirSelectScreen } from './ChoirSelectScreen';
 import { ShellScreen } from './ShellScreen';
 import { SignInScreen } from './SignInScreen';
@@ -64,6 +65,21 @@ export function AppRoot({ repertoireGateway, readerGateway }: {
 } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
+
+  useEffect(() => {
+    // Injected gateways belong to the app-level caller. Keep their cleaners alive even while
+    // their screens are unmounted so a choir switch from the shell cannot retain old tenant data.
+    const unregisterCatalogue = repertoireGateway
+      ? registerTenantCache(repertoireGateway.clear)
+      : () => {};
+    const unregisterReader = readerGateway
+      ? registerTenantCache(readerGateway.clear)
+      : () => {};
+    return () => {
+      unregisterCatalogue();
+      unregisterReader();
+    };
+  }, [readerGateway, repertoireGateway]);
 
   const showSelection = auth.phase === 'selection-required' || (switching && auth.choirs.length > 1);
 
