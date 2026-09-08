@@ -1,16 +1,7 @@
-import type { RepertoireSong, RepertoireTag } from '@/lib/supabase';
+import { getRepertoireRoleScope } from '@/lib/repertuvar/catalog-core';
+import type { RepertoireCatalogData, RepertoireRoleScope } from '@/lib/repertuvar/catalog-core';
 
-export type RepertoireRoleScope = 'chef' | 'leader' | 'chorist';
-
-export interface RepertoireCatalogData {
-  version: number | null;
-  versionUpdatedAt: string | null;
-  cachedAt: number;
-  songs: RepertoireSong[];
-  tags: RepertoireTag[];
-  userParts: Record<string, string>;
-  assignedSongIds: string[];
-}
+export type { RepertoireCatalogData, RepertoireRoleScope } from '@/lib/repertuvar/catalog-core';
 
 const REPERTOIRE_CATALOG_CACHE_PREFIX = 'genova.repertoire.catalog.v2';
 const LEGACY_REPERTOIRE_CACHE_PREFIXES = [
@@ -21,11 +12,7 @@ function isBrowserEnvironment() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 }
 
-export function getRepertoireRoleScope(isChef: boolean, isSectionLeader: boolean): RepertoireRoleScope {
-  if (isChef) return 'chef';
-  if (isSectionLeader) return 'leader';
-  return 'chorist';
-}
+export { getRepertoireRoleScope };
 
 export function getRepertoireCatalogCacheScope(memberId: string | null | undefined, roleScope: RepertoireRoleScope) {
   return `${memberId ?? 'anonymous'}:${roleScope}`;

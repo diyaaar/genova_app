@@ -1,5 +1,15 @@
 import { createClient } from '@supabase/supabase-js';
 
+export {
+  normalizeRepertoireSong,
+  normalizeRepertoireSongs,
+  type FileType,
+  type RepertoireFile,
+  type RepertoireSong,
+  type RepertoireSongRow,
+  type RepertoireTag,
+} from '@/lib/repertuvar/catalog-core';
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
@@ -22,7 +32,6 @@ export async function callDriveFunction<T = unknown>(
 }
 
 export type UserRole = 'Şef' | 'Partisyon Şefi' | 'Korist';
-export type FileType = 'sheet' | 'midi' | 'audio' | 'other';
 
 export interface ChoirMember {
   id: string;
@@ -105,64 +114,6 @@ export interface Attendance {
 // Drive entegrasyonu tipleri
 // =============================================
 
-export interface RepertoireSong {
-  id: string;
-  title: string;
-  composer: string | null;
-  drive_folder_id: string | null;
-  is_visible: boolean;
-  created_at: string;
-  files?: RepertoireFile[];
-  tags?: RepertoireTag[];
-  assigned?: boolean; // Korist için: bu şarkı kendisine atanmış mı?
-}
-
-export interface RepertoireSongRow extends RepertoireSong {
-  repertoire_files?: RepertoireFile[];
-  repertoire_song_tags?: Array<{
-    tag_id: string;
-    repertoire_tags?: RepertoireTag | RepertoireTag[] | null;
-  }>;
-}
-
-export function normalizeRepertoireSong(song: RepertoireSongRow): RepertoireSong {
-  const tagsFromJoin = (song.repertoire_song_tags ?? [])
-    .map((row) => {
-      if (!row.repertoire_tags) {
-        return null;
-      }
-      return Array.isArray(row.repertoire_tags)
-        ? row.repertoire_tags[0] ?? null
-        : row.repertoire_tags;
-    })
-    .filter((tag): tag is RepertoireTag => Boolean(tag));
-
-  return {
-    ...song,
-    files: song.files ?? song.repertoire_files ?? [],
-    tags: song.tags ?? tagsFromJoin,
-  };
-}
-
-export function normalizeRepertoireSongs(songs: RepertoireSongRow[] | null | undefined): RepertoireSong[] {
-  return (songs ?? []).map(normalizeRepertoireSong);
-}
-
-export interface RepertoireFile {
-  id: string;
-  song_id: string;
-  file_name: string;
-  file_type: FileType;
-  partition_label: string | null; // 'Bass 1', 'Tenor 1', 'Soprano', 'Tutti', null (sheet için)
-  drive_file_id: string;
-  drive_web_view_link: string | null;
-  drive_download_link: string | null;
-  mime_type: string | null;
-  file_size_bytes: number | null;
-  uploaded_by: string | null;
-  created_at: string;
-  updated_at: string;
-}
 
 export interface RepertoirePdfAnnotationRow {
   id: string;
@@ -193,14 +144,6 @@ export interface RepertoireSongComment {
   created_at: string;
   updated_at: string;
   choir_members?: { first_name: string; last_name: string; photo_url: string | null } | null;
-}
-
-export interface RepertoireTag {
-  id: string;
-  name: string;
-  color: string | null;
-  created_by: string | null;
-  created_at: string;
 }
 
 export interface RepertoireSongTag {

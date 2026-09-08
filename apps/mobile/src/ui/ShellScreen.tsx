@@ -4,17 +4,19 @@ import { theme } from './theme';
 
 /**
  * Smallest shell that proves the flow: it names the server-confirmed active choir and
- * offers switch and sign-out. Repertoire, PDF, chat, assignments, push and the player
- * are separate briefs; no placeholder tabs are added here.
+ * offers repertoire, switch and sign-out. PDF, chat, assignments, push and the player
+ * remain separate briefs; no placeholder tabs are added here.
  */
 export function ShellScreen({
   activeChoir,
   canSwitchChoir,
+  onOpenRepertoire,
   onSwitchChoir,
   onSignOut,
 }: {
   activeChoir: ChoirMembershipOption;
   canSwitchChoir: boolean;
+  onOpenRepertoire: () => void;
   onSwitchChoir: () => void;
   onSignOut: () => void;
 }) {
@@ -26,9 +28,15 @@ export function ShellScreen({
       </View>
 
       <View style={styles.body}>
-        <Text style={styles.note}>
-          Repertuvar ve PDF okuma bir sonraki adımda eklenecek.
-        </Text>
+        <Pressable
+          onPress={onOpenRepertoire}
+          accessibilityRole="button"
+          style={styles.primaryAction}
+          testID="shell-open-repertoire"
+        >
+          <Text style={styles.primaryActionText}>Repertuvarı aç</Text>
+          <Text style={styles.note}>Eserlerinizi ve partisyon atamalarınızı görüntüleyin.</Text>
+        </Pressable>
       </View>
 
       <View style={styles.actions}>
@@ -52,6 +60,8 @@ const styles = StyleSheet.create({
   choir: { color: theme.colors.text, fontSize: 26, fontWeight: '700' },
   body: { flex: 1, justifyContent: 'center' },
   note: { color: theme.colors.textMuted, fontSize: 15, lineHeight: 22 },
+  primaryAction: { gap: theme.spacing(1), padding: theme.spacing(2), borderRadius: theme.radius, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
+  primaryActionText: { color: theme.colors.text, fontSize: 20, fontWeight: '700' },
   actions: { gap: theme.spacing(2), paddingBottom: theme.spacing(2) },
   action: { color: theme.colors.accent, fontSize: 16, fontWeight: '600' },
 });

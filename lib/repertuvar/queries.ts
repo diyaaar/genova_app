@@ -1,10 +1,12 @@
 import {
-  normalizeRepertoireSongs,
-  RepertoireSong,
-  RepertoireSongRow,
-  RepertoireTag,
   supabase,
 } from '@/lib/supabase';
+import {
+  normalizeRepertoireSongs,
+  type RepertoireSong,
+  type RepertoireSongRow,
+  type RepertoireTag,
+} from '@/lib/repertuvar/catalog-core';
 import {
   getRepertoireCatalogCacheScope,
   readRepertoireCatalogCache,

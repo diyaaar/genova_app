@@ -11,12 +11,14 @@ import {
   membership,
   sessionFor,
 } from '../../test/doubles';
+import type { NativeRepertoireGateway } from '../../repertoire/catalog-gateway';
 
 async function renderWithStore(options: {
   memberships?: ReturnType<typeof membership>[];
   activeChoirId?: string | null;
   initialSession?: ReturnType<typeof sessionFor> | null;
   signInError?: { message: string } | null;
+  repertoireGateway?: NativeRepertoireGateway;
 }) {
   const clientDouble = createClientDouble({
     memberships: options.memberships ?? [membership()],
@@ -35,7 +37,7 @@ async function renderWithStore(options: {
 
   await render(
     <AuthProvider store={store}>
-      <AppRoot />
+      <AppRoot repertoireGateway={options.repertoireGateway} />
     </AuthProvider>,
   );
   return { store, gateway };
@@ -89,5 +91,31 @@ describe('shell routing', () => {
     await fireEvent.press(screen.getByTestId('shell-switch-choir'));
 
     await waitFor(() => expect(screen.getByTestId('choir-select-screen')).toBeTruthy());
+  });
+
+  it('opens the isolated repertoire catalogue and returns to the active-choir shell', async () => {
+    const repertoireGateway: NativeRepertoireGateway = {
+      load: jest.fn(async (): Promise<import('../../repertoire/catalog-gateway').NativeRepertoireCatalog> => ({
+        version: 1,
+        versionUpdatedAt: null,
+        cachedAt: 1,
+        songs: [],
+        tags: [],
+        userParts: {},
+        assignedSongIds: [],
+        roleScope: 'chorist',
+        scopeKey: `${CHOIR_A}:33333333-3333-4333-8333-333333333333:chorist`,
+      })),
+      clear: jest.fn(),
+    };
+    await renderWithStore({ repertoireGateway });
+    await screen.findByTestId('shell-screen');
+
+    fireEvent.press(screen.getByTestId('shell-open-repertoire'));
+    expect(await screen.findByTestId('repertoire-screen')).toBeTruthy();
+    expect(await screen.findByTestId('repertoire-empty')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('repertoire-back'));
+    expect(await screen.findByTestId('shell-screen')).toBeTruthy();
   });
 });

@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import type { ChoirMembershipOption } from '@shared/choir-context-core';
 import { useAuth } from '../auth/AuthProvider';
+import { RepertoireScreen } from '../repertoire/RepertoireScreen';
+import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
 import { ChoirSelectScreen } from './ChoirSelectScreen';
 import { ShellScreen } from './ShellScreen';
 import { SignInScreen } from './SignInScreen';
@@ -10,7 +13,48 @@ import { StatusScreen } from './StatusScreen';
  * Single place that maps auth phase to screen. Only the `ready` phase may reach a data
  * screen; every other phase renders sign-in, a choice or an explicit status.
  */
-export function AppRoot() {
+function ReadyShell({
+  activeChoir,
+  canSwitchChoir,
+  repertoireGateway,
+  onSwitchChoir,
+  onSignOut,
+}: {
+  activeChoir: ChoirMembershipOption;
+  canSwitchChoir: boolean;
+  repertoireGateway?: NativeRepertoireGateway;
+  onSwitchChoir: () => void;
+  onSignOut: () => void;
+}) {
+  const [screen, setScreen] = useState<'home' | 'repertoire'>('home');
+
+  if (screen === 'repertoire') {
+    return (
+      <RepertoireScreen
+        choirId={activeChoir.choir_id}
+        memberId={activeChoir.member_id}
+        choirName={activeChoir.choir_name}
+        gateway={repertoireGateway}
+        canSwitchChoir={canSwitchChoir}
+        onBack={() => setScreen('home')}
+        onSwitchChoir={onSwitchChoir}
+        onSignOut={onSignOut}
+      />
+    );
+  }
+
+  return (
+    <ShellScreen
+      activeChoir={activeChoir}
+      canSwitchChoir={canSwitchChoir}
+      onOpenRepertoire={() => setScreen('repertoire')}
+      onSwitchChoir={onSwitchChoir}
+      onSignOut={onSignOut}
+    />
+  );
+}
+
+export function AppRoot({ repertoireGateway }: { repertoireGateway?: NativeRepertoireGateway } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
 
@@ -73,9 +117,11 @@ export function AppRoot() {
     return (
       <>
         <StatusBar style="light" />
-        <ShellScreen
+        <ReadyShell
+          key={auth.activeChoir.choir_id}
           activeChoir={auth.activeChoir}
           canSwitchChoir={auth.choirs.length > 1}
+          repertoireGateway={repertoireGateway}
           onSwitchChoir={() => setSwitching(true)}
           onSignOut={() => void auth.signOut()}
         />
