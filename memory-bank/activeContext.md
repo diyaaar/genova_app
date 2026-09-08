@@ -30,11 +30,12 @@ the owner. Do not make either the next agent's first action.
 
 ## Active work after 012
 
-The owner authorized the local work-package sequence on 8 September. WF-005 first reconciles
-the stale roadmap records, then the next bounded task establishes the native repertoire
-contract and inventory. Catalogue, shared secure file access, and PDF/read-only annotations
-follow as separate briefs and commits. 010's sixth criterion still needs a new production
-fixture and explicit authorization; 004's two hardware criteria remain postponed.
+The owner authorized the local work-package sequence on 8 September. WF-005 reconciled the
+stale roadmap records and 013 accepted the native repertoire contract. The active product
+package is 014: shared pure catalogue types/filters and a native catalogue driven by a fake
+gateway. Shared secure file access and PDF/read-only annotations follow as separate briefs
+and commits. 010's sixth criterion still needs a new production fixture and explicit
+authorization; 004's two hardware criteria remain postponed.
 
 ## Preserved order and boundaries
 

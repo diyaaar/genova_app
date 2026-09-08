@@ -167,9 +167,10 @@ snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for 
 database acceptance runs.
 
 On 8 September the owner authorized the local work-package sequence without authorizing any
-external write. WF-005 reconciles the roadmap first. The next product brief establishes the
-native repertoire contract and inventory; catalogue, shared secure file access, and PDF plus
-read-only annotations then proceed as separate bounded packages. Preserve the remaining gaps:
+external write. WF-005 reconciled the roadmap and 013 accepted the native repertoire contract
+and implementation split. The active product package is 014: shared pure catalogue types and
+filters plus a native catalogue driven by a fake gateway. Shared secure file access, and PDF
+plus read-only annotations then proceed as separate bounded packages. Preserve the remaining gaps:
 010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
 both device items are postponed. Neither is the next action.
 
@@ -191,8 +192,9 @@ both device items are postponed. Neither is the next action.
 > Verify the local 012 evidence and current checkout rather than rerunning or reopening it by
 > assumption. 012 is complete locally at `5702bca`: its SQL file passed on the fixed function,
 > failed for the expected reason after the down-migration, and passed after restoration on an
-> isolated PostgreSQL 17.11 copy, with fixture snapshots unchanged. Continue from the active
-> bounded package recorded above; do not recreate the 010 fixture or start hardware work.
+> isolated PostgreSQL 17.11 copy, with fixture snapshots unchanged. Continue from package 014
+> under `docs/briefs/013-native-repertoire-contract.md`; do not recreate the 010 fixture or
+> start hardware work.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,

@@ -162,10 +162,11 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**Sıradaki iş:** ürün sahibi 8 Eylül'de yerel çalışma paketlerini başlattı. Önce
-native repertuvar sözleşmesi ve envanteri; sonra katalog, ortak güvenli dosya erişimi ve
-PDF + salt okunur anotasyon akışı ayrı brief'lerle ilerler. 010 6/7 kalır; yeni canlı
-fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
+**Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
+sözleşmesini ve paket sınırlarını kabul etti. Şimdi 014: ortak saf katalog tip/filtreleri
+ve fake gateway üzerinden native katalog UI. Sonra ortak güvenli dosya erişimi ve PDF +
+salt okunur anotasyon akışı ayrı brief'lerle ilerler. 010 6/7 kalır; yeni canlı fikstür
+kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 
 **007 koro oluşturma: TAMAMLANDI ve CANLIDA KABUL EDİLDİ.** İlk sürüm herkese açık
 self-servis olmayacak: manuel

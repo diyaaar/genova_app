@@ -23,6 +23,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 010 canlı yayın ve kabul | 7/7 ölçütten **6'sı geçti**; altıncı açık kaldı | [010](../docs/briefs/010-008-canli-yayin-ve-kabul.md); yedek + kanıtlanmış restore, taze restore kabulü (ilk koşu başarısız, sebep `pg_dump`'ın rol niteliklerini taşımaması), canlı migration, Edge güvenlik kontrolleri, web yayını, uçtan uca ürün kabulü ve temizlik. Açık: iptal edilmiş bağlantı ve yanlış hesap yollarının **ürün üzerinden** reddi |
 | 011 davet dönüşü ve şifre sıfırlama | Tamamlandı (13/13) ve yayında | [011](../docs/briefs/011-davet-donusu-ve-sifre-sifirlama.md); `f661ab2`, üç CI işi yeşil, 30 tarayıcı testi. Doğrulama dönüşü artık `/invite`'a düşüyor; uygulamada ilk kez kendi kendine parola sıfırlama var |
 | 012 çoklu üyelikte seçim kilidi | Complete (10/10); live fix plus local regression guard | [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md); the defect was reproduced live, fixed with `is not distinct from`, and confirmed on the product. On 8 Sep, commit `5702bca` ran the SQL file on an isolated PostgreSQL 17.11 copy: exit 0 fixed, expected exit 3 after down with two null rows, exit 0 after restoring the fix; full fixture-table snapshots were unchanged. No production action in that run. |
+| 013 native repertoire contract | Documentation accepted; 014 is active | [013](../docs/briefs/013-native-repertoire-contract.md); source and isolated-schema inventory fixed catalogue, cache, protected-file, PDF and read-only annotation boundaries. No product/live/provider/hardware action was claimed |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -54,6 +55,6 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
 [Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
 roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
-device items postponed. The owner has now authorized the local repertoire/PDF work-package sequence; WF-005
-reconciles the roadmap before the native repertoire contract brief opens. No push, deploy,
+device items postponed. The owner has now authorized the local repertoire/PDF sequence;
+WF-005 and 013 are documentation-complete and 014 is the active local product package. No push, deploy,
 production database operation, real choir access, email or hardware test was performed for 012.
