@@ -1,8 +1,7 @@
 # Active context
 
-Updated 8 September 2026 from the local 012 code/test commit `5702bca`. At task
-start local `main` was one commit ahead of the local `origin/main` ref; no remote
-refresh, push or deployment was performed.
+Updated 8 September 2026 after the local 014 product commit `9cec58d`. The recorded
+remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
 
@@ -31,11 +30,13 @@ the owner. Do not make either the next agent's first action.
 ## Active work after 012
 
 The owner authorized the local work-package sequence on 8 September. WF-005 reconciled the
-stale roadmap records and 013 accepted the native repertoire contract. The active product
-package is 014: shared pure catalogue types/filters and a native catalogue driven by a fake
-gateway. Shared secure file access and PDF/read-only annotations follow as separate briefs
-and commits. 010's sixth criterion still needs a new production fixture and explicit
-authorization; 004's two hardware criteria remain postponed.
+stale roadmap records, 013 accepted the native repertoire contract, and 014 locally accepted
+the shared pure catalogue core plus native catalogue. Root `pnpm check` passed with 211 tests;
+the mobile gate passed 50 tests and the iOS bundle export. Device, live-product, protected-file
+and PDF behavior remain untested by 014. The active package is 015: shared protected-file Edge
+read plus web adoption, locally only unless separate release authority is given. 010's sixth
+criterion still needs a new production fixture and explicit authorization; 004's two hardware
+criteria remain postponed.
 
 ## Preserved order and boundaries
 

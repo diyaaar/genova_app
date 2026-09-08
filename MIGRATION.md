@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog yerel kabul edildi (014); güvenli dosya/PDF bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -163,10 +163,11 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 ## Sıradaki iş
 
 **Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
-sözleşmesini ve paket sınırlarını kabul etti. Şimdi 014: ortak saf katalog tip/filtreleri
-ve fake gateway üzerinden native katalog UI. Sonra ortak güvenli dosya erişimi ve PDF +
-salt okunur anotasyon akışı ayrı brief'lerle ilerler. 010 6/7 kalır; yeni canlı fikstür
-kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
+sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog
+çekirdeğini ve native katalog UI'ını yerelde kabul etti. Şimdi 015: web ve native için ortak,
+salt okunur güvenli dosya Edge sözleşmesi ve web uyarlaması. Sonra PDF + salt okunur anotasyon
+ayrı brief'lerle ilerler. 010 6/7 kalır; yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü
+ertelendi ve sıradaki eylem değildir.
 
 **007 koro oluşturma: TAMAMLANDI ve CANLIDA KABUL EDİLDİ.** İlk sürüm herkese açık
 self-servis olmayacak: manuel

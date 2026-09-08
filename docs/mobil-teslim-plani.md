@@ -103,7 +103,7 @@ Kalıcı WebView ekranları için oturum/navigasyon/erişilebilirlik yine kabul 
 
 ## Açık kararların doğru zamanı
 
-Şimdi: native repertuvar sözleşmesi, ardından katalog ve güvenli dosya erişimi.
+Şimdi: native repertuvar sözleşmesi ve katalog yerelde kabul edildi; ortak güvenli dosya erişimi sırada.
 010'un eksik ürün yolları ve 004 donanım ölçütleri açık kalır fakat sıradaki iş değildir.
 Plan-limit: somut pilot engeli yoksa pilot sonrasında, mağaza öncesinde. Pilot sonrasında: ölçülmüş
 dosya sağlayıcısı ve mağaza adayının özellik kapsamı. Yayında: şirket/yayın hesabı

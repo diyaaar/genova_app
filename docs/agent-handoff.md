@@ -1,8 +1,7 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026. The completed 012 code/test evidence is local commit `5702bca`.
-At task start, local `main` was `03ea87d`, one commit ahead of the local `origin/main` ref at
-`a13f696`; no remote refresh, push or deployment was performed. Verify the receiving checkout
+Snapshot: 8 September 2026. Package 014 is locally accepted at product commit `9cec58d`.
+The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
 authorization grant.
@@ -167,10 +166,10 @@ snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for 
 database acceptance runs.
 
 On 8 September the owner authorized the local work-package sequence without authorizing any
-external write. WF-005 reconciled the roadmap and 013 accepted the native repertoire contract
-and implementation split. The active product package is 014: shared pure catalogue types and
-filters plus a native catalogue driven by a fake gateway. Shared secure file access, and PDF
-plus read-only annotations then proceed as separate bounded packages. Preserve the remaining gaps:
+external write. WF-005 reconciled the roadmap, 013 accepted the native repertoire contract,
+and 014 locally accepted the shared pure catalogue core plus native catalogue. The active
+package is 015: shared, read-only protected-file Edge access plus web adoption. PDF plus
+read-only annotations then proceed as separate bounded packages. Preserve the remaining gaps:
 010 stays 6/7 and needs a new production fixture plus explicit approval; 004 stays 25/27 and
 both device items are postponed. Neither is the next action.
 
@@ -189,12 +188,12 @@ both device items are postponed. Neither is the next action.
 > do not raise either as the next action. 011 and 012 are live. The local repertoire/PDF
 > work-package sequence is now authorized; external writes remain separately gated.
 >
-> Verify the local 012 evidence and current checkout rather than rerunning or reopening it by
-> assumption. 012 is complete locally at `5702bca`: its SQL file passed on the fixed function,
-> failed for the expected reason after the down-migration, and passed after restoration on an
-> isolated PostgreSQL 17.11 copy, with fixture snapshots unchanged. Continue from package 014
-> under `docs/briefs/013-native-repertoire-contract.md`; do not recreate the 010 fixture or
-> start hardware work.
+> Verify the local evidence and current checkout rather than reopening accepted work by
+> assumption. 012 is complete locally at `5702bca`. Package 014 is locally accepted at product
+> commit `9cec58d`: root `pnpm check` passed with 211 tests/build and the mobile gate passed 50
+> tests plus an iOS bundle export. Device/live/PDF/Edge behavior was not claimed. Continue with
+> package 015 under `docs/briefs/013-native-repertoire-contract.md`; do not recreate the 010
+> fixture or start hardware work.
 >
 > Authorization: local implementation, local commits, reading live state, and running the
 > repository gates. **Not** authorized: pushing, deploying, migrating, deleting live rows,
