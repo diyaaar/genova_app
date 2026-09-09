@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-09 after local 022 web protected-file acceptance; originally prepared under
+Updated 2026-09-09 after 023 accepted the B1 annotation-write contract inventory; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -17,7 +17,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 
 | Milestone | Observable exit | Current evidence |
 |---|---|---|
-| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed |
+| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | Future packages; no implementation acceptance claimed |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
@@ -68,6 +68,11 @@ briefs, not in a second copy here.
   disposable protected-file service: exact bytes, ticket renewal, visible missing-object failure,
   wrong-choir refusal and tenant/sign-out cache teardown passed. No product repair was needed.
   Hosted routing, Drive, real accounts, deployment, remote CI and hardware remain unverified.
+- [023](briefs/023-annotation-write-contract-inventory.md) documentation-accepted B1. It maps
+  item/layer identity, role visibility and mutation, audit/version/delete semantics and the current
+  web lifecycle. It found blocking loss risks (cover-page offset, cancelled debounce, unsupported
+  item overwrite, no CAS and unchecked zero-row writes) and separates four owner decisions from
+  the mandatory fail-closed repair baseline. No product, schema or live change was made.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -118,7 +123,7 @@ provisioned, preserve the failing/unrun layer and solve that bounded environment
 
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
-| B1 / A1–A3 | Annotation-write contract and role/layer inventory. `lib/repertuvar/annotation-types.ts`, `lib/repertuvar/annotations.ts`, native annotation source | Existing personal/shared visibility, ownership, edit/delete and version behavior mapped; unknown/future fields are preserved or writing is refused; no silent destructive parse-and-save | Local design; owner resolves new product semantics before dependent implementation |
+| B1 / A1–A3 | **DOCUMENTATION ACCEPTED:** [023](briefs/023-annotation-write-contract-inventory.md). Shared item/layer, role/RLS, delete/audit/version, web lifecycle and native read-only boundaries mapped | Six current web safety defects recorded; unsupported content must be preserved/refused, stale writes must fail visibly and tenant exit cannot silently lose or replay a save | No product/schema/live change. Four new collaboration/UX semantics remain explicit owner decisions before final B2 UX |
 | B2 / B1 | One native annotation editing/save path, then additional tools in separate briefs. Native reader/overlay, shared schema and authorized data path | Web writes → native reads and native writes → web reads; coordinates/page indexing/undo/redo; denied writes; stale session/choir switch; interrupted save visible; no dropped unknown content | Local isolated writes only; shared-schema changes require old-client compatibility, not a parallel schema |
 | B3 / B2 | Recoverable annotation sync/offline queue under an explicit conflict contract | Retry idempotence; two clients editing; reconnect and process restart; revoked permission; tenant-scoped queue and sign-out disposition; no silent last-writer data loss | Conflict policy and unsaved-work UX decided before implementation. No hardware durability claim from fakes |
 | B4 / A3, read contract | Native audio playback/seek, then mini-player integration. `lib/shared-audio.ts`, repertoire consumers, `apps/mobile/` | Actual local audio bytes, seek/range, expiry renewal, cancellation; one active playback owner; switch/sign-out stops and clears; corrupt/unsupported format states | Local first. MIDI/MusicXML support is inventoried separately; decision #14 active-content filter stays |
@@ -257,6 +262,8 @@ review → link/consistency validation. [WF-006](briefs/WF-006-long-term-executi
 those iterations. A3 closed locally in [022](briefs/022-web-protected-file-compatibility.md) at
 code/test commit `fb4a6a2`; the immediate local read critical path A1–A3 is complete. A4 may now be
 prepared locally, but any release execution remains separately gated and A5 hardware stays
-postponed. Per the dependency rule above, **the next independently ready local package is B1:
-annotation-write contract and role/layer inventory.** 013–022's historical local acceptance,
-004/010 open criteria and the postponed hardware pilot remain unchanged.
+postponed. Per the blocker rule above, **the next bounded package is 024: the smallest web
+annotation safe-save repair required by B1 before native writing.** It must not choose the
+unresolved shared authorship/conflict/tenant-exit UX on the owner's behalf. Independent B4 audio
+remains ready if a later B2 decision gate pauses dependent annotation work. 013–023's historical
+local acceptance, 004/010 open criteria and the postponed hardware pilot remain unchanged.

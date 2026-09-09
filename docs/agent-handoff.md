@@ -1,10 +1,10 @@
 # Genova — agent handoff
 
-Snapshot: 9 September 2026. Package 022 locally completed A3 at code/test commit `fb4a6a2` by
-composing the actual disposable protected-file service with the existing production-browser PDF,
-audio and offline consumers; this documentation commit records its visual and cleanup evidence.
-The canonical [delivery plan](mobil-teslim-plani.md) now routes to B1 annotation-write contract
-inventory while release execution and hardware remain gated.
+Snapshot: 9 September 2026. Package 023 documentation-accepted the B1 annotation-write contract
+inventory after planning commit `cf44312`. It maps the current item/layer, role/RLS,
+delete/audit/version and lifecycle behavior and records six blocking web save-safety defects. The
+canonical [delivery plan](mobil-teslim-plani.md) now routes to the bounded 024 safe-save repair
+before native writing; release execution and hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -99,7 +99,12 @@ only. Package 022 then ran the existing web product in production Chrome against
 disposable Auth/RLS/Edge/private Storage stack. Exact PDF/audio bytes, HTTP 206 playback,
 explicit Service Worker offline caches, near-expiry renewal, visible missing-object 502,
 wrong-choir 403 and switch/sign-out teardown passed at `fb4a6a2`; no web product repair was
-required. This remains local synthetic evidence; the new Edge function is still not deployed.
+required. Package 023 then mapped the existing annotation write contract from tracked sources,
+ordered migrations and a read-only local PostgreSQL 17.11 metadata transaction. It found cover-page
+misaddressing, cancelled pending saves, unsupported-content overwrite, absent compare-and-swap,
+unchecked zero-row writes and global save-status races. No product/schema/live change was made;
+four new collaboration and exit semantics remain owner decisions. The 022 evidence remains local
+and synthetic; the new Edge function is still not deployed.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -166,8 +171,8 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 022 code/test is local commit `fb4a6a2`; this evidence update is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–022 and
+Branch `main`. Package 023 planning is local commit `cf44312`; its acceptance record is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–023 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -210,16 +215,17 @@ and authorized the local execution loop within existing boundaries. Package 018 
 recorded local acceptance at `0b3df6e`; 019 and 020 accepted actual iOS and Android rendering at
 `2c64e5e` and `e2fe177`. Package 021 completed the combined local service lifecycle at `404a9ee`.
 Package 022 completed production-browser compatibility at `fb4a6a2`, without any external or
-hardware action.
+hardware action. Package 023 then accepted the B1 source/contract inventory without product,
+schema or external changes.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
-The immediate local read path A1–A3 is complete. A4 release preparation may be written locally,
-but push/deploy/hosted checks remain externally gated and A5 hardware remains postponed. Following
-the roadmap's dependency rule, the next independently ready local package is B1: annotation-write
-contract and role/layer inventory. Open its own brief before product edits; map existing ownership,
-visibility, edit/delete and version behavior, and stop for owner decisions on genuinely new product
-semantics before dependent implementation.
+The immediate local read path A1–A3 and the B1 inventory are complete. A4 release preparation may
+be written locally, but push/deploy/hosted checks remain externally gated and A5 hardware remains
+postponed. Following the roadmap's blocker rule, the next bounded package is 024: repair the current
+web annotation save path so wrong-page, interrupted, incompatible, stale and zero-row writes fail
+safely before native writing is added. The repair may enforce no-loss behavior, but it must not
+silently choose the unresolved shared-authorship, conflict, tenant-exit or deletion UX semantics.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -231,11 +237,12 @@ semantics before dependent implementation.
 >
 > Read the canonical `docs/mobil-teslim-plani.md` for the long-term milestones and execution
 > loop. Package 022 locally completed A3 at code/test commit `fb4a6a2`; read its brief and evidence
-> without inferring deploy, Drive, real-account, CI or hardware proof. The immediate local read
-> path A1–A3 is complete. The next independently ready local task is B1: open a brief for the
-> annotation-write contract and role/layer inventory.
+> without inferring deploy, Drive, real-account, CI or hardware proof. Package 023 then
+> documentation-accepted the B1 annotation-write contract inventory after planning commit
+> `cf44312`; read its brief for the verified defects and explicit owner decisions. The next bounded
+> local task is 024: open a brief for the smallest safe-save repair before native writing.
 >
-> Preserve 013–022's historical local acceptance and distinguish it from deployment/Drive and
+> Preserve 013–023's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.

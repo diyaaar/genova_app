@@ -1,6 +1,6 @@
 # Active context
 
-Updated 9 September 2026 after the local 022 code/test commit `fb4a6a2`. The recorded
+Updated 9 September 2026 after 023 accepted the B1 annotation-write contract inventory. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -68,7 +68,12 @@ sign-out session/preference cleanup passed. Fixture and source baselines were re
 the current PDF, audio and explicit-offline consumers. Exact-byte/cache checks, ticket renewal,
 visible missing-object 502, wrong-choir 403 and switch/sign-out teardown passed; no web product
 repair was required. A1–A3 are complete locally. Release execution and hardware remain gated;
-B1 annotation-write contract inventory is the next independently ready local package.
+[023](../docs/briefs/023-annotation-write-contract-inventory.md) then mapped role/layer,
+row/delete/audit/version and web/native lifecycle behavior. It found six blocking web save risks,
+including cover-page offset, cancelled debounce, unsupported-content overwrite, no CAS and
+unchecked zero-row writes. Four new collaboration/exit UX choices remain explicit owner decisions.
+The next bounded local package is 024 safe-save repair; it can enforce no-loss behavior without
+choosing those product semantics. Release execution and hardware remain gated.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

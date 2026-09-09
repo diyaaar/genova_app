@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021) ve üretim-tipi yerel web uyumluluğu (022) kabul edildi; yazma/native ses ve canlı pilot bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022) ve anotasyon-yazma sözleşme envanteri (023) kabul edildi; mevcut web güvenli-kayıt onarımı, native yazma/ses ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -183,7 +183,10 @@ including refusal/retry, 40-page render, reader cleanup/reopen, tenant isolation
 cleanup. [022](docs/briefs/022-web-protected-file-compatibility.md) completed A3 locally at
 `fb4a6a2`: production Chrome passed exact PDF/audio/offline bytes, ticket renewal, visible 502,
 wrong-choir 403 and switch/sign-out cache cleanup without a product repair. The next independent
-local package is B1 annotation-write contract inventory; release and hardware remain gated.
+local package [023](docs/briefs/023-annotation-write-contract-inventory.md) accepted the B1
+contract inventory and exposed six blocking web write-safety defects. The next bounded package is
+024, the smallest safe-save repair before native annotation writing; release and hardware remain
+gated.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 
