@@ -1,7 +1,8 @@
 # 020 — Actual Android native PDF and Skia render acceptance
 
-Prepared: 2026-09-09. Status: **PREPARED / all execution criteria NOT RUN**.
-Single writer: main agent. This is the second bounded slice of delivery-plan A2.
+Prepared and executed: 2026-09-09. Status: **LOCAL ACCEPTANCE COMPLETE** at code/test commit
+`e2fe177`; this documentation-only commit records its evidence. Single writer: main agent. This is
+the second bounded slice of delivery-plan A2.
 
 ## Outcome and delivery focus
 
@@ -94,13 +95,13 @@ review is actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Acceptance entry is synthetic/platform-accurate and default product entry remains unchanged | yes | NOT RUN | | Diff and alternate-entry build command |
-| Actual Android PDF module opens exactly 40 pages and visibly renders distinct pages 1, 20 and 40 | yes | NOT RUN | | Current API 36 arm64 emulator; inspect pixels/dimensions |
-| Actual Android Skia overlay visibly aligns on pages 1 and 40 at base and 150% zoom | yes | NOT RUN | | Compare normalized fixture placement; testID/Jest is insufficient |
-| Invalid page, close cleanup and reopen behave safely without app crash | yes | NOT RUN | | Returned URI plus observable app cache; name unobservable limits |
-| Mobile TypeScript/Jest, normal Android bundle and actual native build/install pass; affected iOS acceptance regresses cleanly | yes | NOT RUN | | Emulator is not hardware; root gate only if root/shared files change |
-| Captures/hashes, scope, local links, status consistency and `git diff --check` pass | yes | NOT RUN | | Generated output stays ignored; unrelated CLI cache stays unstaged |
-| Separate code/evidence commits and next-task handoff preserve 004/010/018/019 boundaries | yes | NOT RUN | | No external or hardware action |
+| Acceptance entry is synthetic/platform-accurate and default product entry remains unchanged | yes | PASS | 2026-09-09, `e2fe177`; alternate `ENTRY_FILE` Release builds | 019's entry was renamed/generalized and labels `Platform.OS`; it loads only tracked fixtures. `App.tsx`, `index.ts` and app configuration have no 020 diff. Normal Android `index.ts` export passed independently. |
+| Actual Android PDF module opens exactly 40 pages and visibly renders distinct pages 1, 20 and 40 | yes | PASS | 2026-09-09, `genova004_api36`, Android 16/API 36 arm64 | Actual Android `PdfRenderer` returned 40 pages and 1190 x 1684 page images. The [inspected captures](../evidence/020-android-native-pdf/README.md#pixel-inspection) show distinct `SAYFA 1`, `20` and `40` content. Expo Asset prepares the tracked fixture as a local file; this is not service/provider integration. |
+| Actual Android Skia overlay visibly aligns on pages 1 and 40 at base and 150% zoom | yes | PASS | 2026-09-09, actual Android Skia Canvas/Path/Text overlay | Page 1 showed all expected shapes/text at normalized grid positions. Page 40 showed the expected rectangle/note; at 150% the bitmap and overlay scaled together in the inspected scroll viewport. |
+| Invalid page, close cleanup and reopen behave safely without app crash | yes | PASS | 2026-09-09, actual adapter plus Android accessibility/pixel checks | User page 41 was refused; `close()` made the generated-image URI nonexistent; reopen returned 40 pages and regenerated page 40. Crash log was empty. Release `run-as` was refused because the app is not debuggable, so deeper cache state is unverified. The public synthetic Expo Asset cache is not private-file cleanup. |
+| Mobile TypeScript/Jest, normal Android bundle and actual native build/install pass; affected iOS acceptance regresses cleanly | yes | PASS | 2026-09-09, `e2fe177` | Mobile: 14 suites / 73 tests. Normal Android export: 1,312 modules. Android Release: 421 actionable tasks, installed/launched; 40 MiB APK SHA is in evidence. iOS alternate-entry Release rebuild: zero errors/two warnings, installed/launched and page 1/40 visually present. Root gate N/A: no root/shared source changed. |
+| Captures/hashes, scope, local links, status consistency and `git diff --check` pass | yes | PASS | 2026-09-09, documentation review | Eight 1080 x 2400 PNGs, including the retained runtime failure, were inspected and hashed in the evidence index. Generated Android/iOS/Expo output stayed ignored; local links and status records passed; unrelated CLI cache stayed unstaged. Supplemental audit remains FAIL at the known 10 moderate Expo toolchain findings; force downgrade was refused. |
+| Separate code/evidence commits and next-task handoff preserve 004/010/018/019 boundaries | yes | PASS | 2026-09-09, code `e2fe177`; this evidence commit | Product/dependency source and records are separate. No push, deploy, hosted call, real account/data, remote CI or hardware action occurred. 004 remains 25/27; 010 remains 6/7; 018–020 remain local-only. The next brief owns actual 018 service-to-client lifecycle integration. |
 
 ## Rollback, stop conditions and next slice
 
@@ -110,7 +111,8 @@ output cannot be inspected, fixture loading would require a live endpoint, share
 breaks 019, or a broad native/dependency change is needed. Two failed approaches require a
 recorded diagnosis and replan.
 
-After 020, open the next A2 brief for the actual 018 local-service gateway and lifecycle on both
+020 closes only the actual Android-render slice. Open the next A2 brief for the actual 018
+local-service gateway and lifecycle on both
 local platforms: ticket/file retrieval, retry, exit, tenant switch and private-file cleanup. The
 019/020 fixture-only screens cannot close that integration. 004 hardware remains postponed and
 010 fixture recreation remains separately gated.

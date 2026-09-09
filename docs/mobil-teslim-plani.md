@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-09 after local 019 iOS acceptance; originally prepared under
+Updated 2026-09-09 after local 020 Android acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -17,7 +17,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 
 | Milestone | Observable exit | Current evidence |
 |---|---|---|
-| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | 013–019 locally accepted; actual iOS rendering passed, Android/service lifecycle remains unverified |
+| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | 013–020 locally accepted; actual iOS/Android rendering passed, service lifecycle remains unverified |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | Future packages; no implementation acceptance claimed |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
@@ -55,6 +55,9 @@ briefs, not in a second copy here.
 - [019](briefs/019-ios-native-pdf-render-acceptance.md) locally rendered actual PDF-page-image
   bitmaps and Skia overlays on the current iOS simulator from tracked fixtures. Android and the
   018 service-to-client lifecycle remain unrun; 019's alternate entry is not that integration.
+- [020](briefs/020-android-native-pdf-render-acceptance.md) locally rendered the same actual
+  output on the current API 36 arm64 Android emulator and reran the affected iOS build. It keeps
+  the fixture-only boundary; the 018 service-to-client lifecycle remains unrun.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -91,7 +94,7 @@ sequential briefs. Source paths are starting points, not authority for a broad r
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
 | A1 / 015–017 local evidence | **018 COMPLETE locally:** protected-file runtime acceptance. `supabase/functions/repertoire-file/`, shared protected-file client, `supabase/test-support/` | Actual Deno entrypoint and HTTP route passed with synthetic PDF checksum; JWT/current-choir/RLS composition; bad/expired ticket, denied choir, HEAD/206/416, MIME and upstream failure; fixture/source baseline unchanged | Code/test `0b3df6e`; exact evidence and local-only limits in [018](briefs/018-protected-file-runtime-acceptance.md). Deploy, Drive, real accounts and hardware remain unverified |
-| A2 / A1 | **PARTIAL:** [019](briefs/019-ios-native-pdf-render-acceptance.md) accepted actual iOS PDF/Skia output at `2c64e5e`; Android plus actual 018-service lifecycle remains. `apps/mobile/src/repertoire/`, `apps/mobile/src/ui/`, native configuration | iOS pages 1/middle/40, visible annotations, base/150% zoom, invalid-page refusal, close cleanup and reopen passed with inspected captures. Still required: current Android build/output and synthetic local service gateway, retry, exit, tenant switch and private-file cleanup on both platforms | Local/synthetic only. 019's fixture-only alternate entry does not prove service/auth/secure storage or M1 |
+| A2 / A1 | **PARTIAL:** [019](briefs/019-ios-native-pdf-render-acceptance.md) and [020](briefs/020-android-native-pdf-render-acceptance.md) accepted actual iOS/Android PDF/Skia output at `2c64e5e`/`e2fe177`; actual 018-service lifecycle remains. `apps/mobile/src/repertoire/`, `apps/mobile/src/ui/`, native configuration | Both local native platforms visibly passed pages 1/middle/40, annotations, 150% zoom, invalid-page refusal, returned-image cleanup and reopen. Still required: synthetic local service gateway, retry, exit, tenant switch and private-file cleanup on both platforms | Local/synthetic only. Fixture-only alternate entry does not prove service/auth/secure storage or M1 |
 | A3 / A1–A2 | Web compatibility with the new file route. `hooks/useProtectedDriveFileUrl.ts`, `lib/drive-file-url.ts`, `components/repertuvar/` | Local browser PDF, existing audio and offline consumers; refresh/expiry, wrong choir, sign-out and failed download. Verify existing behavior, not pixel equality | Local browser + isolated service. No live route call or remote CI without authority |
 | A4 / A1–A3 | Controlled service/client release and read pilot readiness; release brief based on 015 and 017 | Exact outgoing commits and hosting triggers; Edge deployed/configured before calling web; approved synthetic fixture roles; service and actual domain checks; rollback rehearsal before release | Prepare locally; external execution gated. Failed deployment blocks client rollout; hardware pilot remains separate |
 | A5 / A4 + explicit device authority | M1 device pilot; use 017's checklist and 004's remaining rows | Chef + chorist on both platforms, real rendering/permissions/network/relaunch/secure storage; error and isolation cases with build/device evidence | Postponed. Do not close 004 with emulator evidence or force this as the next user action |
@@ -241,8 +244,9 @@ an explicit change of priority. Report unavoidable unfinished work rather than d
 
 The planning loop itself is finite: source audit → dependency/evidence draft → failure-scenario
 review → link/consistency validation. [WF-006](briefs/WF-006-long-term-execution-plan.md) records
-those iterations. **Next bounded implementation task: finish A2 with current Android PDF/Skia
-output and actual 018-service lifecycle integration on both local platforms.** The first iOS-only
-slice closed locally in [019](briefs/019-ios-native-pdf-render-acceptance.md) at code/test commit
-`2c64e5e`; 013–018's historical local acceptance, 004/010 open criteria and the postponed hardware
+those iterations. **Next bounded implementation task: finish A2 with actual 018-service lifecycle
+integration on both local platforms.** The iOS/Android native-output slices closed locally in
+[019](briefs/019-ios-native-pdf-render-acceptance.md) and
+[020](briefs/020-android-native-pdf-render-acceptance.md) at code/test commits `2c64e5e` and
+`e2fe177`; 013–018's historical local acceptance, 004/010 open criteria and the postponed hardware
 pilot are unchanged.

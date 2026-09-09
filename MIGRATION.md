@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018) ve iOS gerçek PDF/Skia çıktısı (019) kabul edildi; Android + servis yaşam döngüsü, yazma/ses ve canlı pilot bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018) ve iOS/Android gerçek PDF/Skia çıktısı (019/020) kabul edildi; servis yaşam döngüsü, yazma/ses ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -175,8 +175,9 @@ pilotu ertelendi.
 WF-006'nın ilk yerel paketi [018](docs/briefs/018-protected-file-runtime-acceptance.md), gerçek
 izole servis runtime kabulünü 9 Eylül'de `0b3df6e` üzerinde tamamladı. A2'nin ilk dilimi
 [019](docs/briefs/019-ios-native-pdf-render-acceptance.md), iOS simülatörde gerçek PDF/Skia
-çıktısını `2c64e5e` üzerinde kabul etti. Sıradaki yerel paket Android çıktısını ve gerçek 018
-servis yaşam döngüsünü iki yerel platformda tamamlar; ardından web uyumluluğu gelir. Annotation
+çıktısını `2c64e5e` üzerinde kabul etti. [020](docs/briefs/020-android-native-pdf-render-acceptance.md)
+aynı gerçek çıktıyı API 36 arm64 Android emülatörde `e2fe177` üzerinde kabul etti. Sıradaki yerel
+paket gerçek 018 servis yaşam döngüsünü iki yerel platformda tamamlar; ardından web uyumluluğu gelir. Annotation
 writes follow those local integration gates.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.

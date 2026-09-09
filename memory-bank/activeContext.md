@@ -1,6 +1,6 @@
 # Active context
 
-Updated 9 September 2026 after the local 019 code/test commit `2c64e5e`. The recorded
+Updated 9 September 2026 after the local 020 code/test commit `e2fe177`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -50,8 +50,15 @@ inferred. [019](../docs/briefs/019-ios-native-pdf-render-acceptance.md) accepted
 PDF-page-image and Skia output on an iPhone 17 / iOS 26.5 simulator at `2c64e5e`: pages 1/20/40,
 base/150% overlay alignment, page-41 refusal, close cleanup and reopen passed; mobile remained
 14 suites / 73 tests and the normal 1,314-module iOS export passed. Its alternate entry uses only
-tracked fixtures. A2 remains open for Android plus actual 018-service lifecycle integration on
-both local platforms, before A3 web compatibility and annotation writes.
+tracked fixtures. At that point A2 remained open for Android plus actual 018-service lifecycle
+integration. Package
+[020](../docs/briefs/020-android-native-pdf-render-acceptance.md) then accepted the same actual
+PDF/Skia output on the API 36 arm64 Android emulator at `e2fe177`: pages 1/20/40, 150% alignment,
+page-41 refusal, returned-image cleanup and reopen passed; mobile remained 14 suites / 73 tests,
+normal Android export was 1,312 modules, and the affected iOS Release acceptance rebuild passed.
+Expo Asset 57.0.16 prepares only the tracked fixture as a local file after an embedded-asset
+`ENOENT`; product private-file handling is unchanged. A2 now remains open only for actual
+018-service lifecycle integration on both local platforms, before A3 and annotation writes.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

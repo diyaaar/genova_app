@@ -30,6 +30,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 017 non-hardware read-flow acceptance | Local acceptance complete; real pilot NOT RUN | [017](../docs/briefs/017-non-hardware-read-flow-acceptance.md); one synthetic component flow passed signed-out, two-choir selection, catalogue, recovered 40-page PDF/annotation, cache ordering, tenant switch and sign-out. Full mobile gate: 14 suites / 73 tests plus iOS bundle. Live/provider/RLS/account/device evidence is not inferred |
 | 018 protected-file runtime acceptance | Local acceptance complete | [018](../docs/briefs/018-protected-file-runtime-acceptance.md), code/test `0b3df6e`; actual Edge entrypoint passed disposable Auth/RPC/RLS/Storage and HTTP ticket/checksum/range/failure matrix. Root gate: 38 files / 253 tests and build. Local Storage only; deploy, Drive, real accounts, CI and hardware are NOT RUN |
 | 019 iOS native PDF/Skia acceptance | Local acceptance complete; A2 remains open | [019](../docs/briefs/019-ios-native-pdf-render-acceptance.md), code/test `2c64e5e`; actual iOS PDF-page-image and Skia output passed on pages 1/20/40, base/150% alignment, invalid-page refusal, close cleanup and reopen. Mobile: 14 suites / 73 tests plus normal 1,314-module iOS export. Synthetic simulator only; Android, 018 service lifecycle, live/provider/account and hardware are NOT RUN |
+| 020 Android native PDF/Skia acceptance | Local acceptance complete; A2 service lifecycle remains open | [020](../docs/briefs/020-android-native-pdf-render-acceptance.md), code/test `e2fe177`; actual Android PDF-page-image and Skia passed on API 36 arm64 for pages 1/20/40, 150% alignment, invalid-page refusal, returned-image cleanup and reopen. Mobile 14 suites / 73 tests, 1,312-module normal Android export and affected iOS rebuild passed. Synthetic emulator only; service/live/provider/account/hardware remain NOT RUN; known 10 moderate audit findings remain FAIL |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -64,11 +65,11 @@ roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 wi
 device items postponed. The owner has now authorized the local repertoire/PDF sequence;
 WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
 `9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`; 018 is locally
-accepted at `0b3df6e`; 019's iOS-only A2 slice is locally accepted at `2c64e5e`. The
-[canonical long-term plan](../docs/mobil-teslim-plani.md) keeps A2 open for Android and actual
-018-service lifecycle integration, then routes to A3 web compatibility before annotation writes.
+accepted at `0b3df6e`; 019 and 020's iOS/Android render slices are locally accepted at `2c64e5e`
+and `e2fe177`. The [canonical long-term plan](../docs/mobil-teslim-plani.md) keeps A2 open for
+actual 018-service lifecycle integration, then routes to A3 web compatibility before annotation writes.
 No push, deploy, production database operation, Drive call, real choir access, email, remote CI
-or hardware test was performed for 019.
+or hardware test was performed for 020.
 
 WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
 [WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.
