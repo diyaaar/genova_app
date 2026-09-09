@@ -24,6 +24,20 @@ describe('protected repertoire file client', () => {
     });
   });
 
+  it('resolves a proxy-safe relative ticket against the configured endpoint', async () => {
+    const fetcher = vi.fn(async () => Response.json({
+      url: `?fileId=${fileId}&ticket=signed`,
+      expiresAt: 2_000,
+    }));
+    await expect(requestProtectedRepertoireFileTicket({
+      endpoint,
+      accessToken: 'access-token',
+      fileId,
+      fetcher,
+      now: 1_000,
+    })).resolves.toEqual({ url: ticketUrl, expiresAt: 2_000 });
+  });
+
   it('rejects invalid local input without a request', async () => {
     const fetcher = vi.fn();
     await expect(requestProtectedRepertoireFileTicket({ endpoint, accessToken: '', fileId, fetcher }))

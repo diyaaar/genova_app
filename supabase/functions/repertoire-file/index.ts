@@ -1,7 +1,7 @@
-// @ts-nocheck — Deno entrypoint; handler/ticket modules are checked by repository tests.
 import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
 import { resolveSupabasePublicKey } from '../create-choir/create-choir-core.ts';
 import { createRepertoireFileHandler } from './handler.ts';
+import { fetchStorageObject } from './storage.ts';
 import { createRepertoireFileTicket, verifyRepertoireFileTicket } from './ticket.ts';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -75,11 +75,11 @@ const handler = createRepertoireFileHandler({
     return fetch(url, { redirect: 'follow', cache: 'no-store' });
   },
   async fetchStorage(bucket, path) {
-    const { data, error } = await makeAdminClient().storage.from(bucket).download(path);
-    if (error || !data) return new Response(null, { status: 404 });
-    return new Response(data.stream(), {
-      status: 200,
-      headers: { 'Content-Type': data.type || 'application/octet-stream' },
+    return fetchStorageObject({
+      supabaseUrl: requiredEnv('SUPABASE_URL'),
+      serviceRoleKey: requiredEnv('SUPABASE_SERVICE_ROLE_KEY'),
+      bucket,
+      path,
     });
   },
 });

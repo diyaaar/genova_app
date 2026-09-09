@@ -52,7 +52,7 @@ export async function requestProtectedRepertoireFileTicket({
   }
   let ticketUrl: URL;
   try {
-    ticketUrl = new URL(payload.url);
+    ticketUrl = new URL(payload.url, endpointUrl);
   } catch {
     throw new Error('Dosya servisi geçersiz yanıt verdi.');
   }

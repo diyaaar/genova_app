@@ -14,6 +14,10 @@ export default defineConfig([
     extends: [...next],
     rules: {
       "@next/next/no-img-element": "off",
+      // React Compiler is not enabled. Keep its advisory optimization checks
+      // out of the baseline gate until a dedicated compiler-adoption task.
+      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 ]);

@@ -73,7 +73,7 @@ describe('repertoire-file handler', () => {
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
-      url: `${endpoint}?fileId=${fileId}&ticket=signed-ticket`,
+      url: `?fileId=${fileId}&ticket=signed-ticket`,
       expiresAt: 10_000,
     });
     expect(dependencies.authorize).toHaveBeenCalledWith({

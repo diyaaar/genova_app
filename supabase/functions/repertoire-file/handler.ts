@@ -176,11 +176,10 @@ async function issueTicket(request: Request, dependencies: RepertoireFileHandler
     })) return textResponse('Bu dosya türü desteklenmiyor.', 415);
 
     const ticket = await dependencies.createTicket({ fileId, choirId: authorized.choirId });
-    const url = new URL(request.url);
-    url.search = '';
-    url.searchParams.set('fileId', fileId);
-    url.searchParams.set('ticket', ticket.token);
-    return jsonResponse({ url: url.toString(), expiresAt: ticket.expiresAt });
+    const query = new URLSearchParams({ fileId, ticket: ticket.token });
+    // The Edge runtime sees an internal worker URL behind the gateway. Return only
+    // the query so the shared client resolves it against its configured public endpoint.
+    return jsonResponse({ url: `?${query.toString()}`, expiresAt: ticket.expiresAt });
   } catch (error) {
     if (error instanceof Error && error.message === 'Unauthorized') {
       return textResponse('Oturum geçersiz.', 401);
