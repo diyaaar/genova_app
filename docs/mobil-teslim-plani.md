@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-09 after local 020 Android acceptance; originally prepared under
+Updated 2026-09-09 after local 021 mobile service-lifecycle acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -17,7 +17,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 
 | Milestone | Observable exit | Current evidence |
 |---|---|---|
-| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | 013–020 locally accepted; actual iOS/Android rendering passed, service lifecycle remains unverified |
+| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–021; actual local Auth/RLS/Edge/Storage and iOS/Android protected-file lifecycle passed |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | Future packages; no implementation acceptance claimed |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
@@ -32,8 +32,8 @@ Deferral from a release candidate needs an explicit owner decision and remains v
 
 ## Baseline and evidence ownership
 
-Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this planning entry:
-`main / de7e55d`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
+Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this update:
+`main / 404a9ee`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
 snapshot facts, not commands to reset a future checkout. Historical test details belong in their
 briefs, not in a second copy here.
 
@@ -54,10 +54,15 @@ briefs, not in a second copy here.
   cannot prove actual bitmap output. The older Android build predates the PDF dependencies.
 - [019](briefs/019-ios-native-pdf-render-acceptance.md) locally rendered actual PDF-page-image
   bitmaps and Skia overlays on the current iOS simulator from tracked fixtures. Android and the
-  018 service-to-client lifecycle remain unrun; 019's alternate entry is not that integration.
+  018 service-to-client lifecycle remained unrun in that slice; 021 later completed it locally.
 - [020](briefs/020-android-native-pdf-render-acceptance.md) locally rendered the same actual
   output on the current API 36 arm64 Android emulator and reran the affected iOS build. It keeps
-  the fixture-only boundary; the 018 service-to-client lifecycle remains unrun.
+  the fixture-only boundary; 021 later completed the 018 service-to-client lifecycle locally.
+- [021](briefs/021-mobile-protected-file-runtime-acceptance.md) then composed the actual
+  disposable 018 service with the real default mobile Auth, catalogue, private-file and native
+  reader path on both local platforms. First-open refusal/retry, exact 40-page download/render,
+  reader exit/reopen, tenant switch/403/empty catalogue and sign-out cleanup passed at `404a9ee`.
+  This is local synthetic evidence, not M1, deployment, Drive, real accounts or hardware.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -65,10 +70,10 @@ briefs, not in a second copy here.
 
 ## Work selection and authority
 
-The latest request is to prepare this plan. Do not automatically execute its product packages
-in this planning turn. On a continuation request, verify standing local implementation/testing/
-commit authority against the user's current instructions and the brief. These records do not
-invent authority, authorize a different account, or make all roadmap items immediately runnable.
+The owner's 9 September continuing request authorizes the local execution loop one bounded brief
+at a time: select, implement, test, evaluate, record and move to the next ready local package.
+Verify standing authority and the brief before each package. This does not authorize a different
+account or any external, real-data, release, spending or hardware action.
 
 | Class | Work that may be prepared or performed within existing scope | Boundary |
 |---|---|---|
@@ -84,8 +89,8 @@ approval. Preserve any previously granted narrow authorization without asking tw
 
 ## Ordered work packages
 
-Package keys below express dependencies, not preassigned brief numbers. Package 018 closed A1;
-open the A2 implementation brief just before work, using the then-current checkout and
+Package keys below express dependencies, not preassigned brief numbers. Packages 018 and 021
+closed A1 and A2 locally; open each next implementation brief from the current checkout and
 [brief template](briefs/_TEMPLATE.md). A row with several user outcomes must be split into
 sequential briefs. Source paths are starting points, not authority for a broad rewrite.
 
@@ -94,7 +99,7 @@ sequential briefs. Source paths are starting points, not authority for a broad r
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
 | A1 / 015–017 local evidence | **018 COMPLETE locally:** protected-file runtime acceptance. `supabase/functions/repertoire-file/`, shared protected-file client, `supabase/test-support/` | Actual Deno entrypoint and HTTP route passed with synthetic PDF checksum; JWT/current-choir/RLS composition; bad/expired ticket, denied choir, HEAD/206/416, MIME and upstream failure; fixture/source baseline unchanged | Code/test `0b3df6e`; exact evidence and local-only limits in [018](briefs/018-protected-file-runtime-acceptance.md). Deploy, Drive, real accounts and hardware remain unverified |
-| A2 / A1 | **PARTIAL:** [019](briefs/019-ios-native-pdf-render-acceptance.md) and [020](briefs/020-android-native-pdf-render-acceptance.md) accepted actual iOS/Android PDF/Skia output at `2c64e5e`/`e2fe177`; actual 018-service lifecycle remains. `apps/mobile/src/repertoire/`, `apps/mobile/src/ui/`, native configuration | Both local native platforms visibly passed pages 1/middle/40, annotations, 150% zoom, invalid-page refusal, returned-image cleanup and reopen. Still required: synthetic local service gateway, retry, exit, tenant switch and private-file cleanup on both platforms | Local/synthetic only. Fixture-only alternate entry does not prove service/auth/secure storage or M1 |
+| A2 / A1 | **COMPLETE locally:** [019](briefs/019-ios-native-pdf-render-acceptance.md), [020](briefs/020-android-native-pdf-render-acceptance.md) and [021](briefs/021-mobile-protected-file-runtime-acceptance.md); final service lifecycle at `404a9ee`. `apps/mobile/src/repertoire/`, `apps/mobile/src/ui/`, native configuration | Actual local Auth/RPC/RLS/Edge/private Storage composed with both Release apps: first 401, UI retry, fresh ticket, exact 40-page download/render, reader exit/reopen, tenant clear, B-choir 403/empty catalogue and sign-out session/preference cleanup passed | Local/synthetic simulator+emulator only. M1, deploy, Drive, real accounts, device durability and hardware remain unverified |
 | A3 / A1–A2 | Web compatibility with the new file route. `hooks/useProtectedDriveFileUrl.ts`, `lib/drive-file-url.ts`, `components/repertuvar/` | Local browser PDF, existing audio and offline consumers; refresh/expiry, wrong choir, sign-out and failed download. Verify existing behavior, not pixel equality | Local browser + isolated service. No live route call or remote CI without authority |
 | A4 / A1–A3 | Controlled service/client release and read pilot readiness; release brief based on 015 and 017 | Exact outgoing commits and hosting triggers; Edge deployed/configured before calling web; approved synthetic fixture roles; service and actual domain checks; rollback rehearsal before release | Prepare locally; external execution gated. Failed deployment blocks client rollout; hardware pilot remains separate |
 | A5 / A4 + explicit device authority | M1 device pilot; use 017's checklist and 004's remaining rows | Chef + chorist on both platforms, real rendering/permissions/network/relaunch/secure storage; error and isolation cases with build/device evidence | Postponed. Do not close 004 with emulator evidence or force this as the next user action |
@@ -244,9 +249,10 @@ an explicit change of priority. Report unavoidable unfinished work rather than d
 
 The planning loop itself is finite: source audit → dependency/evidence draft → failure-scenario
 review → link/consistency validation. [WF-006](briefs/WF-006-long-term-execution-plan.md) records
-those iterations. **Next bounded implementation task: finish A2 with actual 018-service lifecycle
-integration on both local platforms.** The iOS/Android native-output slices closed locally in
-[019](briefs/019-ios-native-pdf-render-acceptance.md) and
-[020](briefs/020-android-native-pdf-render-acceptance.md) at code/test commits `2c64e5e` and
-`e2fe177`; 013–018's historical local acceptance, 004/010 open criteria and the postponed hardware
-pilot are unchanged.
+those iterations. **Next bounded implementation task: A3 web compatibility with the new file
+route.** A2 closed locally in [021](briefs/021-mobile-protected-file-runtime-acceptance.md) at
+code/test commit `404a9ee`, building on [019](briefs/019-ios-native-pdf-render-acceptance.md) and
+[020](briefs/020-android-native-pdf-render-acceptance.md). The A3 brief must verify existing PDF,
+audio and offline consumers plus refresh/expiry, wrong-choir, sign-out and failed-download behavior
+against an isolated service. 013–021's historical local acceptance, 004/010 open criteria and the
+postponed hardware pilot remain unchanged.

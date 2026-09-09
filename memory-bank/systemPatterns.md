@@ -38,6 +38,12 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
 - Native tenant-cache kayıtları birden çok yaşam-döngüsü sahibi tarafından paylaşılabilir. 017
   ile aynı temizleyici referans sayılır; ekranın unregister işlemi uygulama-sahibi kaydını düşürmez
   ve her koro/kimlik geçişinde temizleyici yalnız bir kez çalışır.
+- Native preference storage preserves the shared key's meaning but not its invalid web punctuation:
+  Expo SecureStore uses `genova.active-choir.<user-id>` while web localStorage keeps the existing
+  colon-delimited key. The preference remains only a hint; server membership is authoritative.
+- Local Android HTTP exceptions are acceptance infrastructure, not product policy. The 021 Expo
+  config plugin requires an explicit flag plus exact loopback scheme/host/port, scopes the generated
+  resource to localhost and actively removes its own manifest/resource changes in ordinary prebuilds.
 
 ## Tek doğru kaynak dağılımı
 

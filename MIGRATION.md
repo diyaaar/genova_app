@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018) ve iOS/Android gerçek PDF/Skia çıktısı (019/020) kabul edildi; servis yaşam döngüsü, yazma/ses ve canlı pilot bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020) ve birleşik mobil servis yaşam döngüsü (021) kabul edildi; web uyumluluğu, yazma/ses ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -78,7 +78,7 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 | `supabase/functions/drive-manager-v2` | v15 canlı; 005 aktif-koro sözleşmesi, `verify_jwt=true` |
 | `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu kabul edildi, test fikstürü daha sonra temizlendi |
 | `supabase/functions/choir-invitations` | canlı; `verify_jwt=true`; 008 kabul edildi, 010'un iptal edilmiş bağlantı ve yanlış hesap ürün yolları açık kaldı |
-| `supabase/functions/repertoire-file` | yerel kabul edildi (015), **canlıya alınmadı**; bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
+| `supabase/functions/repertoire-file` | yerel kabul edildi (015/018/021), **canlıya alınmadı**; gerçek yerel mobil yaşam döngüsü iki simüle platformda geçti. Bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
 | Push (VAPID → FCM/APNs) | Faz 1'de ikinci kanal eklenecek |
@@ -176,9 +176,11 @@ WF-006'nın ilk yerel paketi [018](docs/briefs/018-protected-file-runtime-accept
 izole servis runtime kabulünü 9 Eylül'de `0b3df6e` üzerinde tamamladı. A2'nin ilk dilimi
 [019](docs/briefs/019-ios-native-pdf-render-acceptance.md), iOS simülatörde gerçek PDF/Skia
 çıktısını `2c64e5e` üzerinde kabul etti. [020](docs/briefs/020-android-native-pdf-render-acceptance.md)
-aynı gerçek çıktıyı API 36 arm64 Android emülatörde `e2fe177` üzerinde kabul etti. Sıradaki yerel
-paket gerçek 018 servis yaşam döngüsünü iki yerel platformda tamamlar; ardından web uyumluluğu gelir. Annotation
-writes follow those local integration gates.
+aynı gerçek çıktıyı API 36 arm64 Android emülatörde `e2fe177` üzerinde kabul etti.
+[021](docs/briefs/021-mobile-protected-file-runtime-acceptance.md) then completed A2 locally at
+`404a9ee`: actual disposable Auth/RPC/RLS/Edge/private Storage composed with both Release apps,
+including refusal/retry, 40-page render, reader cleanup/reopen, tenant isolation and sign-out
+cleanup. The next local package is A3 web compatibility; annotation writes follow that gate.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

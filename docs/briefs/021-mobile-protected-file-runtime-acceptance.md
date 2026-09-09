@@ -1,6 +1,7 @@
 # 021 — Mobile protected-file service lifecycle acceptance
 
-Prepared: 2026-09-09. Status: **ACTIVE / NOT YET ACCEPTED**. Single writer: main agent.
+Prepared: 2026-09-09. Status: **LOCAL ACCEPTANCE COMPLETE** at code/test commit `404a9ee`.
+Single writer and self-reviewer: main agent; no independent review is claimed.
 This is the final bounded slice of delivery-plan A2.
 
 ## Outcome and delivery focus
@@ -40,15 +41,38 @@ physical hardware, secure-storage durability across a real device reboot, M1, 00
   platform PDF renderer, Skia overlay, reader close and tenant-cache clearing. A test-only entry
   may expose sanitized cache/step evidence but must compose these production modules rather than
   replace them with fakes.
-- [ ] Revalidate the local runtime, iOS simulator and Android emulator before mutation. The old
-  018 stack was deliberately removed; availability remains NOT RUN until a task-owned disposable
-  stack is recreated. Android loopback transport must be explicitly routed and then removed.
+- [x] Revalidated and used a task-owned `genova-021-runtime` Supabase stack, the iPhone 17 /
+  iOS 26.5 simulator and `genova004_api36` Android 16 / API 36 arm64 emulator. Android's exact
+  `tcp:54321` reverse route was added only for the run and removed before teardown.
+- [x] **2026-09-09 Expo environment scope expansion:** the first iOS Release build succeeded but
+  opened to a fail-closed blank screen with `EXPO_PUBLIC_SUPABASE_URL` missing. Expo production
+  replacement does not support the existing indirect `readClientConfigFromEnv(process.env)`
+  object access. Permit a focused correction in `apps/mobile/src/auth/supabase-client.ts` that
+  keeps the parser but passes direct, statically addressable public-variable properties. Apply the
+  same direct access to the 021 entry's fixture variables. Preserve this failed run as evidence;
+  do not treat it as service or UI acceptance.
+- [x] **2026-09-09 SecureStore preference scope expansion:** two iOS sign-out runs reached the
+  signed-out UI and cleared reader caches, but the explicit persistence check first timed out and
+  then isolated Expo SecureStore's `Invalid key` rejection. The mobile preference adapter passed
+  the shared web key `genova:active-choir:<uuid>` unchanged, while SecureStore permits only
+  alphanumerics plus `.`, `-` and `_`; its existing catch silently made mobile recall a no-op.
+  Permit a mobile-only, deterministic `genova.active-choir.<uuid>` key encoding plus a native-rule
+  regression test. Keep web localStorage's shared key unchanged.
+- [x] **2026-09-09 Android local-transport scope expansion:** the first API 36 Release launch
+  reached the guarded entry but Android correctly rejected cleartext HTTP to `127.0.0.1` before
+  Auth. Permit an Expo config plugin under `apps/mobile/src/acceptance/` plus its `app.json`
+  registration. The plugin must be inert by default, fail unless the explicit 021 flag and public
+  Supabase URL identify loopback, and generate a domain-scoped network-security resource only for
+  the disposable acceptance build. A normal regenerated project must contain no cleartext opt-in.
+  Preserve the refused launch as transport evidence; it is not service-path acceptance.
 
 ## Allowed scope
 
 - `apps/mobile/src/acceptance/`: a guarded local-runtime entry and sanitized acceptance status;
   it may inject only the first-open failure trigger needed to exercise retry. It must use the real
   Auth store/client, catalogue, reader, file store, annotation source and native renderer.
+- `apps/mobile/app.json`: register the inert-by-default local acceptance config plugin. It must not
+  enable cleartext transport in an ordinary build.
 - Focused `apps/mobile/src/auth/`, `apps/mobile/src/repertoire/` and shared client files only for a
   defect reproduced by the combined runtime. Default product behavior and server authorization
   must stay intact; scope expansion is recorded here before an edit.
@@ -115,18 +139,20 @@ review is actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Guarded fixture/runtime uses actual local Auth, current-choir RPC, RLS, Edge route and private Storage bytes; source and target baseline restore | yes | NOT RUN | Pending disposable `genova-021-runtime` execution | Must show loopback/project/issuer guards, renderable fixture checksum, sanitized fixture lifecycle and cleanup; no hosted inference |
-| Default mobile session and catalogue path signs in one synthetic multi-choir user and exposes only its assigned score | yes | NOT RUN | Pending iOS and Android local runs | Must use the real Supabase mobile client/AuthStore/catalogue source, not injected Auth/catalogue doubles |
-| A real refused first open shows the reader error and UI retry then obtains a fresh ticket, downloads the exact 40-page PDF and renders page 1 with actual native PDF/Skia | yes | NOT RUN | Pending both platforms | Must prove service response, downloaded checksum/size and visible output without bundling provider bytes into this entry |
-| Reader exit removes the active private PDF; reopen succeeds without retained rendered images | yes | NOT RUN | Pending both platforms | Verify sanitized filesystem state before/during/after close; public fixture/build assets are not private-cache evidence |
-| Choir switch clears prior score/catalogue state before server selection; the old local file is not reused, a new A-file ticket request is refused while B is active and B cannot see A's score | yes | NOT RUN | Pending both platforms | Observe cleanup ordering/state and actual POST/RLS refusal, not only UI absence. Previously issued bearer-ticket revocation is outside the existing contract |
-| Sign-out clears session preference and all protected-score cache even if the screen is no longer mounted | yes | NOT RUN | Pending both platforms | Verify signed-out UI and sanitized secure/private state; simulator/emulator does not prove physical-device durability |
-| Mobile checks, normal iOS/Android exports and affected native builds pass; no crash or secret-bearing evidence | yes | NOT RUN | Pending implementation | `npm run check`, two normal exports, two local native builds/launches and evidence scan; root gate only if shared/root code changes |
-| Diff, fixture/runtime cleanup, evidence links and separate commits preserve 004/010 and external authority boundaries | yes | NOT RUN | Pending final review | The unowned CLI cache stays unstaged; no live/push/deploy/hardware action; self-review clearly labeled |
+| Guarded fixture/runtime uses actual local Auth, current-choir RPC, RLS, Edge route and private Storage bytes; source and target baseline restore | yes | **PASS** | 2026-09-09, `404a9ee`; guarded `prepare` → final `status` → `cleanup` against `genova-021-runtime` and local PostgreSQL 17 copy | Actual Auth/RPC/RLS/Edge/private Storage passed with two memberships, three annotations and 65,905-byte object SHA-256 `39fc…d6a3`; target baseline restored and source hash unchanged. Local only |
+| Default mobile session and catalogue path signs in one synthetic multi-choir user and exposes only its assigned score | yes | **PASS** | 2026-09-09, iPhone 17 / iOS 26.5 and Android API 36 arm64 Release runs | Real default Supabase client, Auth store, membership RPC and catalogue exposed choir A's one assignment and choir B's empty state; no Auth/catalogue doubles |
+| A real refused first open shows the reader error and UI retry then obtains a fresh ticket, downloads the exact 40-page PDF and renders page 1 with actual native PDF/Skia | yes | **PASS** | 2026-09-09, both Release apps; [visual evidence](../evidence/021-mobile-protected-file-runtime/README.md) | Actual Edge 401 `Oturum geçersiz`, UI retry, fresh ticket, exact 65,905-byte download and visible page 1/40 overlay passed. Storage checksum and iOS cached file matched; Android Release's post-download private path was not externally inspectable |
+| Reader exit removes the active private PDF; reopen succeeds without retained rendered images | yes | **PASS** | 2026-09-09, both platform sequences | In-app `File.exists` reported the score absent after each close and a second fresh-ticket open rendered again. iOS cache directory absence was independently inspected; Android `run-as` correctly refused the non-debuggable Release app |
+| Choir switch clears prior score/catalogue state before server selection; the old local file is not reused, a new A-file ticket request is refused while B is active and B cannot see A's score | yes | **PASS** | 2026-09-09, both platform sequences | Banner ordering showed reader removal then tenant clear; actual new A ticket request under B returned 403 and the real B catalogue was visibly empty. Existing issued-ticket expiry contract is unchanged |
+| Sign-out clears session preference and all protected-score cache even if the screen is no longer mounted | yes | **PASS** | 2026-09-09, both Release apps; explicit post-sign-out probe | Login UI returned; mobile preference read was null and `client.auth.getSession()` had no session after cache cleaners ran. This does not prove physical-device durability |
+| Mobile checks, normal iOS/Android exports and affected native builds pass; no crash or secret-bearing evidence | yes | **PASS** | 2026-09-09, `npm run check`; normal exports; iOS/Android Release builds and bounded logs | 16 suites / 84 tests; normal 1,314-module iOS and 1,312-module Android bundles; both alternate Release apps compiled/launched; no fatal/crash marker or runtime credential in tracked diff/evidence. Root gate N/A because no root/shared product source changed |
+| Diff, fixture/runtime cleanup, evidence links and separate commits preserve 004/010 and external authority boundaries | yes | **PASS** | 2026-09-09, `404a9ee` plus this evidence record | Product/test and documentation commits are separate; exact reverse route, fixture, stack, task emulator and Colima profile were removed. CLI cache remains unstaged; 004 stays 25/27 and 010 stays 6/7; no live/push/deploy/hardware action |
 
 ## Delivery
 
-On complete acceptance, record the product/test commit, documentation commit, exact local
-platform/runtime versions, remaining M1/004/010 limits, rollback and the next ready A3 web
-compatibility brief. If two implementation approaches fail for the same cause, reassess the
-environment/contract and keep the row open rather than weakening it.
+Local A2 acceptance is complete at product/test commit `404a9ee`; exact commands, versions,
+failures, screenshots, hashes and cleanup are in the linked evidence directory. Rollback is this
+product/test commit followed by its separate evidence commit. M1, hosted deployment/Drive,
+real-account/device evidence, 004's two hardware rows and 010's remaining live-product row stay
+open. The next ready local package is A3 web compatibility; it must receive its own brief before
+product edits.
