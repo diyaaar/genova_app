@@ -52,7 +52,12 @@ let cachedClient: SupabaseClient | null = null;
 /** Lazily built so that importing this module never throws in tests or tooling. */
 export function getGenovaClient(): SupabaseClient {
   if (!cachedClient) {
-    const { url, anonKey } = readClientConfigFromEnv(process.env);
+    // Expo replaces only direct `process.env.EXPO_PUBLIC_*` references in production bundles.
+    // Keep parsing testable, but pass a statically addressable object at the bundle boundary.
+    const { url, anonKey } = readClientConfigFromEnv({
+      EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+    });
     cachedClient = createGenovaClient({
       url,
       anonKey,

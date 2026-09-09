@@ -14,6 +14,9 @@
       "package": "com.genesinovachoir.genova",
       "predictiveBackGestureEnabled": false
     },
-    "plugins": ["expo-secure-store"]
+    "plugins": [
+      "expo-secure-store",
+      "./src/acceptance/with-local-loopback-network.js"
+    ]
   }
 }

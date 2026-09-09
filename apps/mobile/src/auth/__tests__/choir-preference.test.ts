@@ -1,15 +1,16 @@
-import { choirPreferenceKey } from '@shared/choir-context-core';
-import { createChoirPreferenceStore } from '../choir-preference';
+import { createChoirPreferenceStore, nativeChoirPreferenceKey } from '../choir-preference';
 import { CHOIR_A, USER_ID, createMemoryKeyValueStore } from '../../test/doubles';
 
 describe('active-choir preference hint', () => {
-  it('stores a validated choir id under the same key as the web client', async () => {
+  it('stores a validated choir id under the mobile-safe form of the shared key', async () => {
     const store = createMemoryKeyValueStore();
     const preferences = createChoirPreferenceStore(store);
 
     await preferences.set(USER_ID, CHOIR_A);
 
-    expect(store.entries.get(choirPreferenceKey(USER_ID))).toBe(CHOIR_A);
+    expect(nativeChoirPreferenceKey(USER_ID)).toBe(`genova.active-choir.${USER_ID}`);
+    expect(nativeChoirPreferenceKey(USER_ID)).toMatch(/^[A-Za-z0-9._-]+$/);
+    expect(store.entries.get(nativeChoirPreferenceKey(USER_ID))).toBe(CHOIR_A);
     expect(await preferences.get(USER_ID)).toBe(CHOIR_A);
   });
 
@@ -24,7 +25,7 @@ describe('active-choir preference hint', () => {
 
   it('ignores a corrupted stored value instead of returning it', async () => {
     const store = createMemoryKeyValueStore();
-    store.entries.set(choirPreferenceKey(USER_ID), 'tampered');
+    store.entries.set(nativeChoirPreferenceKey(USER_ID), 'tampered');
 
     expect(await createChoirPreferenceStore(store).get(USER_ID)).toBeNull();
   });
