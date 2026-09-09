@@ -1,6 +1,7 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-08 under [WF-006](briefs/WF-006-long-term-execution-plan.md).
+Updated 2026-09-09 after local 018 acceptance; originally prepared under
+[WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
 user updates and product copy remain Turkish. [Decisions](../KARARLAR.md) remain authoritative.
@@ -16,7 +17,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 
 | Milestone | Observable exit | Current evidence |
 |---|---|---|
-| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | 013–017 locally accepted; real service/native runtime composition remains unverified |
+| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | 013–018 locally accepted; actual native product rendering remains unverified |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | Future packages; no implementation acceptance claimed |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
@@ -47,9 +48,10 @@ briefs, not in a second copy here.
   [015](briefs/015-shared-protected-repertoire-file.md),
   [016](briefs/016-native-pdf-readonly-annotations.md) and
   [017](briefs/017-non-hardware-read-flow-acceptance.md) own dated local acceptance.
-- 015's Deno entrypoint/provider runtime was not run. 016 compiled on an iOS simulator; 017
-  injects fake auth/data/rendering and cannot prove actual bitmap output. The older Android build
-  predates the PDF dependencies. These are new integration tasks, not retroactive test passes.
+- [018](briefs/018-protected-file-runtime-acceptance.md) locally ran the actual Deno entrypoint
+  through disposable Auth/RPC/RLS/Storage and HTTP; no deployment, Drive, real account or hardware
+  result is inferred. 016 compiled on an iOS simulator; 017 injects fake auth/data/rendering and
+  cannot prove actual bitmap output. The older Android build predates the PDF dependencies.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -76,8 +78,8 @@ approval. Preserve any previously granted narrow authorization without asking tw
 
 ## Ordered work packages
 
-Package keys below express dependencies, not preassigned brief numbers. Only 018 is opened now;
-create each later implementation brief just before work, using the then-current checkout and
+Package keys below express dependencies, not preassigned brief numbers. Package 018 closed A1;
+open the A2 implementation brief just before work, using the then-current checkout and
 [brief template](briefs/_TEMPLATE.md). A row with several user outcomes must be split into
 sequential briefs. Source paths are starting points, not authority for a broad rewrite.
 
@@ -85,7 +87,7 @@ sequential briefs. Source paths are starting points, not authority for a broad r
 
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
-| A1 / 015–017 local evidence | **018: local protected-file runtime acceptance.** `supabase/functions/repertoire-file/`, shared protected-file client, `supabase/test-support/` | Real Deno entrypoint and HTTP route, not only injected handler tests; synthetic PDF checksum; JWT/current-choir/RLS composition; bad/expired ticket, denied choir, HEAD/206/416 and upstream failure; fixture unchanged | Local isolated environment only; exact contract in [018](briefs/018-protected-file-runtime-acceptance.md). Missing runtime stays NOT RUN |
+| A1 / 015–017 local evidence | **018 COMPLETE locally:** protected-file runtime acceptance. `supabase/functions/repertoire-file/`, shared protected-file client, `supabase/test-support/` | Actual Deno entrypoint and HTTP route passed with synthetic PDF checksum; JWT/current-choir/RLS composition; bad/expired ticket, denied choir, HEAD/206/416, MIME and upstream failure; fixture/source baseline unchanged | Code/test `0b3df6e`; exact evidence and local-only limits in [018](briefs/018-protected-file-runtime-acceptance.md). Deploy, Drive, real accounts and hardware remain unverified |
 | A2 / A1 | Actual native product rendering in iOS simulator and Android emulator. `apps/mobile/src/repertoire/`, `apps/mobile/src/ui/`, native configuration | Both current native builds; real PDF module + Skia output for pages 1/middle/40; visible matching annotation; zoom/scroll, retry, exit, tenant switch and private-file cleanup; synthetic local route. Capture output and inspect it, do not only assert a testID | Local/synthetic only. Fake auth may isolate the UI but must be named; it cannot prove real secure storage or M1 |
 | A3 / A1–A2 | Web compatibility with the new file route. `hooks/useProtectedDriveFileUrl.ts`, `lib/drive-file-url.ts`, `components/repertuvar/` | Local browser PDF, existing audio and offline consumers; refresh/expiry, wrong choir, sign-out and failed download. Verify existing behavior, not pixel equality | Local browser + isolated service. No live route call or remote CI without authority |
 | A4 / A1–A3 | Controlled service/client release and read pilot readiness; release brief based on 015 and 017 | Exact outgoing commits and hosting triggers; Edge deployed/configured before calling web; approved synthetic fixture roles; service and actual domain checks; rollback rehearsal before release | Prepare locally; external execution gated. Failed deployment blocks client rollout; hardware pilot remains separate |
@@ -236,7 +238,7 @@ an explicit change of priority. Report unavoidable unfinished work rather than d
 
 The planning loop itself is finite: source audit → dependency/evidence draft → failure-scenario
 review → link/consistency validation. [WF-006](briefs/WF-006-long-term-execution-plan.md) records
-those iterations. **Next bounded implementation task: [018](briefs/018-protected-file-runtime-acceptance.md),
-A1. It is prepared, not executed.** This replaces the earlier automatic annotation-write next step
-with the concrete runtime verification gap found in the 8 September review; 013–017's historical
-local acceptance and the postponed pilot are unchanged.
+those iterations. **Next bounded implementation task: A2, actual native product PDF/Skia rendering
+on current iOS and Android simulator/emulator builds.** A1 closed locally in
+[018](briefs/018-protected-file-runtime-acceptance.md) at code/test commit `0b3df6e`; 013–017's
+historical local acceptance, 004/010 open criteria and the postponed hardware pilot are unchanged.

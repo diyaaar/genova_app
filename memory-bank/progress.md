@@ -1,6 +1,6 @@
 # İlerleme indeksi
 
-8 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
+9 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
 buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı anlamına gelmez.
 
 | İş | Durum | Kanıt / sınır |
@@ -28,6 +28,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 015 shared protected repertoire file | Local acceptance complete | [015](../docs/briefs/015-shared-protected-repertoire-file.md); signed Edge ticket/GET/HEAD/range core, web adoption and isolated role/tenant matrix passed. Root gate: 37 files / 240 tests/build. Deno compile/serve, deploy and live provider/product are NOT RUN |
 | 016 native PDF and read-only annotations | Local acceptance complete | [016](../docs/briefs/016-native-pdf-readonly-annotations.md); private download, bounded 40-page rendering, basic zoom/scroll, shared defensive parser and read-only overlays passed root 244 tests/build, mobile 72 tests/bundle, Expo Doctor 21/21 and an iOS simulator native build. Live Edge/provider/account/hardware are NOT RUN; supplemental dependency audit FAIL remains visible |
 | 017 non-hardware read-flow acceptance | Local acceptance complete; real pilot NOT RUN | [017](../docs/briefs/017-non-hardware-read-flow-acceptance.md); one synthetic component flow passed signed-out, two-choir selection, catalogue, recovered 40-page PDF/annotation, cache ordering, tenant switch and sign-out. Full mobile gate: 14 suites / 73 tests plus iOS bundle. Live/provider/RLS/account/device evidence is not inferred |
+| 018 protected-file runtime acceptance | Local acceptance complete | [018](../docs/briefs/018-protected-file-runtime-acceptance.md), code/test `0b3df6e`; actual Edge entrypoint passed disposable Auth/RPC/RLS/Storage and HTTP ticket/checksum/range/failure matrix. Root gate: 38 files / 253 tests and build. Local Storage only; deploy, Drive, real accounts, CI and hardware are NOT RUN |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -55,18 +56,17 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 8 September 2026
+## Latest handoff — 9 September 2026
 
 [Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
 roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
 device items postponed. The owner has now authorized the local repertoire/PDF sequence;
 WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
-`9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`. The 013–017 read-path
-sequence is locally complete. WF-006 now routes to prepared, unrun
-[018](../docs/briefs/018-protected-file-runtime-acceptance.md) under the
-[canonical long-term plan](../docs/mobil-teslim-plani.md), closing actual runtime/native/web
-integration gaps before annotation writes. Planning completion does not execute 018. No push, deploy, production database operation, real choir
-access, email or hardware test was performed for 017.
+`9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`; 018 is locally
+accepted at `0b3df6e`. The [canonical long-term plan](../docs/mobil-teslim-plani.md) now routes
+to A2 actual native PDF/Skia rendering, then A3 web compatibility, before annotation writes.
+No push, deploy, production database operation, Drive call, real choir access, email, remote CI
+or hardware test was performed for 018.
 
 WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
 [WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.

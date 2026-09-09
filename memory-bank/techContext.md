@@ -21,6 +21,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | Tarayıcı | Kökten `pnpm test:e2e`; testlerin gerçek üyeli akışı kapsayıp kapsamadığını ayrıca belirt |
 | RN product | In `apps/mobile`: `npx tsc --noEmit && npm test && npm run bundle:check`; actual platform builds and hardware acceptance remain separate |
 | DB / Edge | İlgili brief'in ortamı ve yetkisi doğrulanmış kontrolleri; web testi bunların yerine geçmez. 012 için yerel izole kapı: `PGDATABASE=<dedicated-test-copy> bash supabase/test-support/012_regression_runner.sh` |
+| 018 local Edge runtime | Explicit task workdir/context/test-copy variables with `supabase/test-support/018_repertoire_file_runtime_runner.sh`; refuses nonlocal/non-test targets, copies schema only and restores fixtures |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -63,6 +64,13 @@ verify the receiving shell before use and never record an unevaluated gate as pa
 Never run an install against `apps/mobile/node_modules` or the root `node_modules` from a Linux
 shell — both are macOS installs reached through the connected folder, and reinstalling
 invalidates the owner's working setup. Copy the tree out first, as above.
+
+The 9 September 018 environment added task-local Colima/Docker and host Deno tooling, then ran
+Edge Runtime `1.74.1`, GoTrue `2.190.0`, PostgREST `14.13`, Storage API `1.60.20`, Kong `2.8.1`
+and Supabase PostgreSQL `17.6.1.136` with synthetic data only. The reusable runner accepts only
+the loopback API URL and local `supabase-demo` JWT issuer. Colima's host SSH port forwarding was
+observed on a wildcard listener, so this is disposable local evidence, not a hardened shared
+environment. Exact versions, command, failures and cleanup evidence are in [018](../docs/briefs/018-protected-file-runtime-acceptance.md).
 
 When a CI job fails, the log storage host is unreachable from the agent shells, but the GitHub
 API's **check-run annotations** endpoint returns Playwright's failure text, including the

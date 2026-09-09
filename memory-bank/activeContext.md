@@ -1,6 +1,6 @@
 # Active context
 
-Updated 8 September 2026 after the local 017 code/test commit `326aae9`. The recorded
+Updated 9 September 2026 after the local 018 code/test commit `0b3df6e`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -41,12 +41,13 @@ annotations: root passed 244 tests/build; mobile passed 72 tests/bundle; Expo Do
 an iPhone 17 Pro simulator native build passed. The supplemental dependency audit remains FAIL
 with 10 moderate Expo toolchain findings. Package 017 accepted one synthetic continuous flow
 through sign-in, choir selection, catalogue, recovered 40-page PDF/annotation, tenant switch and
-sign-out; mobile passed 73 tests/bundle. The real pilot is NOT RUN. The 013–017 local read-path
-sequence is locally complete. WF-006 subsequently prepared the
-[long-term execution plan](../docs/mobil-teslim-plani.md). The next package is prepared, unrun
-[018](../docs/briefs/018-protected-file-runtime-acceptance.md): actual isolated protected-file
-runtime acceptance, before native rendering/web integration and annotation writes. The latest
-request is planning only; no 018 execution or new external authority is implied.
+sign-out; mobile passed 73 tests/bundle. The real pilot is NOT RUN. Package
+[018](../docs/briefs/018-protected-file-runtime-acceptance.md) then accepted the actual local
+protected-file entrypoint through disposable Auth/RPC/RLS/Storage and HTTP at code/test commit
+`0b3df6e`; root `pnpm check` passed 253 tests/build. It exposed and fixed proxy URL, Storage MIME
+and Deno WebCrypto typing defects. No deploy, Drive, real account, CI or hardware result is
+inferred. The next local package is plan A2: actual native PDF/Skia rendering on current iOS and
+Android simulator/emulator builds, before A3 web compatibility and annotation writes.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

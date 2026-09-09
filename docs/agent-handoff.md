@@ -1,9 +1,9 @@
 # Genova — agent handoff
 
-Snapshot: 8 September 2026. WF-006 prepared the long-term execution plan; product state remains
-017 locally accepted at code/test commit `326aae9`. Planning entry checkout was `de7e55d`.
-The canonical [delivery plan](mobil-teslim-plani.md) now routes next to prepared, unrun
-[018](briefs/018-protected-file-runtime-acceptance.md), before further annotation implementation.
+Snapshot: 9 September 2026. Package 018 locally accepted the actual protected-file runtime at
+code/test commit `0b3df6e`; this documentation commit records its evidence. The canonical
+[delivery plan](mobil-teslim-plani.md) now routes next to A2 actual native PDF/Skia rendering on
+current iOS and Android simulator/emulator builds, before A3 web compatibility.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -78,10 +78,11 @@ listed as permanently WebView in `MIGRATION.md` are not rewritten natively.
 
 013 defined the repertoire contract; 014 locally accepted the native catalogue; 015 locally
 accepted the shared protected-file Edge path and web adoption; 016 locally accepted private PDF
-download/render, basic zoom/scroll and read-only annotation overlays. The new Edge function is not
-deployed, so its Deno/provider/live-product behavior is NOT RUN and the web/native adoption must not
-be released before the function. Package 017 locally accepted the continuous synthetic read flow
-and prepared, but did not execute, the real pilot.
+download/render, basic zoom/scroll and read-only annotation overlays; 017 locally accepted the
+continuous synthetic read flow. Package 018 then ran the actual Edge entrypoint through disposable
+Auth/RPC/RLS/Storage and HTTP, fixing proxy URL, Storage MIME and Deno typing defects. The new Edge
+function is still not deployed; Drive, live-product, real-account and hardware behavior remain NOT
+RUN and web/native adoption must not be released before the function.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -92,6 +93,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 9 Sep, `0b3df6e` | macOS task: guarded disposable Supabase stack; Deno check; actual HTTP Auth/RPC/RLS/Storage matrix; root `pnpm check` | **PASS** — actual entrypoint, ticket/checksum, authorization refusals, HEAD/ranges/416, MIME/upstream failures and cleanup; 38 files / 253 tests plus Next build | Synthetic local Storage only. No deploy, Drive, live/real account, remote CI or hardware evidence. One 8 MiB buffer observation is not a production performance claim |
 | 8 Sep, `326aae9` | macOS task: isolated native product-flow component acceptance; full mobile gate and iOS bundle | **PASS** — signed-out through two-choir selection, catalogue, recovered synthetic 40-page PDF/annotation, tenant switch and sign-out; 14 suites / 73 tests; 1,314-module bundle | Auth/RPC/catalogue/PDF are injected fakes. Live Edge/provider/RLS/account and hardware are NOT RUN; no native rebuild was required or claimed |
 | 8 Sep, `0bbe646` | macOS task: root `pnpm check`; mobile TypeScript/Jest/bundle/Expo Doctor; iOS simulator native build | **PASS** — root 37 files / 244 tests and Next build; mobile 13 suites / 72 tests; 1,314-module iOS export; Expo Doctor 21/21; product compiled/installed on iPhone 17 Pro simulator | Edge/provider/live account flow is NOT RUN. Native build used no Metro or real data; simulator is not hardware. Supplemental production-dependency audit remains **FAIL** with 10 moderate Expo toolchain findings |
 | 8 Sep, `42fc8ff` | macOS task: root `pnpm check`; 015 focused tests; isolated PostgreSQL 17.11 runner | **PASS** — 37 files / 240 tests, build; 4 focused files / 32 tests; chef/leader/assigned/unassigned/no-selection/wrong-choir RLS matrix with unchanged hashes | Deno CLI absent. Deploy, provider integration, live product and native PDF are NOT RUN |
@@ -143,10 +145,9 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. WF-006 planning entry HEAD was `de7e55d`, containing product code/test `326aae9`;
-local `origin/main` remains recorded at `a13f696` (17 commits behind the planning entry).
-The subsequent planning commit changes documentation only. Packages 012 local regression and
-013–017/workflow records are local commits only. No remote refresh or push was attempted. The pre-existing
+Branch `main`. Package 018 code/test is local commit `0b3df6e`; this evidence update is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–018 and
+workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
 The historical release record reports a single writer and owner approval for each production
@@ -183,21 +184,15 @@ snapshots. It is also called by `supabase/test-support/010_step3_runner.sh` for 
 database acceptance runs.
 
 On 8 September the owner authorized local package execution; 013–017 reached their recorded
-local acceptance. The latest request then set a planning goal: prepare a comprehensive long-term
-plan and agent execution directive through advanced mobile work and store readiness. WF-006
-performs that documentation task only; it does not start the future product packages.
+local acceptance. On 9 September the owner set the complete canonical plan as the continuing goal
+and authorized the local execution loop within existing boundaries. Package 018 reached its
+recorded local acceptance at `0b3df6e` without any external or hardware action.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
-The next bounded implementation package is [018](briefs/018-protected-file-runtime-acceptance.md):
-actual protected-file runtime acceptance using isolated Auth/RLS and synthetic provider bytes.
-It is PREPARED, NOT STARTED, with every execution row NOT RUN. First action after source reading:
-verify checkout/ownership, inspect the actual Edge entrypoint/config and installed local runtime,
-and record whether an isolated test topology is available without accessing production.
-
-This replaces the earlier automatic annotation-write next step because Deno/HTTP composition
-and actual product rendering remain unverified. It does not revoke 013–017's historical local
-acceptance. After 018, A2 verifies actual native PDF/Skia output on both local platforms; A3
+The next bounded implementation package is plan A2: actual native product PDF/Skia output on both
+current local platforms, using 018's verified local service and captured visual evidence. Open its
+brief from the current checkout before product edits; fake rendering cannot close it. A3 then
 checks existing web consumers. Independent later local work can continue under existing authority
 while external/device gates remain pending, following the roadmap's dependency rules.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
@@ -210,14 +205,13 @@ while external/device gates remain pending, following the roadmap's dependency r
 > HEAD, working-tree ownership and applicable evidence; assume no access to previous chats.
 >
 > Read the canonical `docs/mobil-teslim-plani.md` for the long-term milestones and execution
-> loop. WF-006 prepared the plan; it did not execute future packages. The next bounded product
-> task is `docs/briefs/018-protected-file-runtime-acceptance.md`, currently NOT STARTED with all
-> runtime acceptance rows NOT RUN. Revalidate existing local implementation/testing/commit
-> authorization before acting. First inspect the actual entrypoint/config and local runtime
-> availability and establish an isolated synthetic test topology; do not call production.
+> loop. Package 018 is locally accepted at code/test commit `0b3df6e`; read its evidence and do
+> not infer deploy, Drive, real-account, CI or hardware proof. The next bounded product task is
+> plan A2: open a brief for actual native PDF/Skia rendering on the current iOS simulator and
+> Android emulator builds using the verified local service and captured visual output.
 >
-> Preserve 013–017's historical local acceptance and distinguish it from unrun Deno/provider
-> integration and real native rendering. Keep 004 at 25/27 and 010 at 6/7; hardware remains
+> Preserve 013–018's historical local acceptance and distinguish it from deployment/Drive and
+> real native rendering. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.
 >
