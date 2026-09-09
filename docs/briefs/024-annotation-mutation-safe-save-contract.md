@@ -1,12 +1,13 @@
 # 024 — Server-authoritative annotation mutation and safe-save contract
 
-Prepared: 2026-09-09. Status: **PLANNED / IN PROGRESS**. Single writer and self-reviewer: main
-agent; no independent review is claimed. This is the first bounded repair after delivery-plan B1.
+Prepared and executed: 2026-09-09. Status: **LOCAL ACCEPTANCE COMPLETE** at code/test commit
+`1755803`. This documentation-only update records the evidence. Single writer and self-reviewer:
+main agent; no independent review is claimed. This is the first bounded repair after B1.
 
 ## Outcome and delivery focus
 
-Replace the web data adapter's select-then-write annotation mutation with one server-authoritative,
-revision-checked contract and carry lossless-write metadata through the existing read adapter. This
+Introduce a server-authoritative, revision-checked web data adapter beside the current
+select-then-write compatibility path and carry lossless-write metadata through the read adapter. This
 package closes the database-side causes of silent stale overwrite, false zero-row success, spoofed
 audit identity and mismatched same-choir song/file references before any native writer is added.
 
@@ -118,7 +119,8 @@ status and tenant-exit behavior. Until then, current web editing remains unsafe 
    refusal; insert/update/delete revision transitions; stale/duplicate/missing conflict; server
    relation/audit derivation; direct-write revision compatibility; and down/forward restoration.
 4. Update the web annotation data adapter to parse per-layer write metadata, refuse lossy layers,
-   call only the RPC and return the new revision/deletion result. Unit-test malformed results,
+   expose the RPC-only safe-save entry point and return the new revision/deletion result. Keep the
+   current workspace entry point explicitly marked for 025 removal. Unit-test malformed results,
    unsupported content, error mapping and exact RPC arguments.
 5. Run focused TypeScript tests, the guarded PostgreSQL runner and root `pnpm check`. Inspect the
    complete diff, commit code/test separately, then record acceptance and route to package 025.
@@ -130,16 +132,22 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Forward migration refuses pre-existing file/song mismatch, adds positive revision, derives file/song/choir and secure audit fields, and grants only the intended RPC surface | yes | **NOT RUN** | Dedicated PostgreSQL 17 copy | Hosted state is not inferred from local migration success |
-| Chef, section leader and chorist permitted layer mutations pass; wrong role/voice/choir, unresolved session and anonymous cases fail without row change or existence leak | yes | **NOT RUN** | Transactional SQL role matrix | Test both thrown denial and unchanged row state |
-| Insert/update/delete obey absence-or-exact-revision CAS; duplicate create, stale update/delete and missing row cannot report success | yes | **NOT RUN** | SQL concurrency/lifecycle scenarios | Whole-layer only; no merge claim |
-| Existing direct writes receive server-derived relation/audit and revision increment, while the down migration restores the prior trigger/column/function/grants and forward reapplies cleanly | yes | **NOT RUN** | Guarded forward → down → forward runner | Source and fixture baselines must be unchanged |
-| Web read adapter exposes row/revision/lossless metadata per logical layer; unsupported/malformed/future content is displayed defensively but refused before mutation | yes | **NOT RUN** | Focused Vitest adapter tests | Workspace adoption remains 025 |
-| Web save adapter sends no song/choir/member/audit identity, supplies expected revision, parses the returned revision/deletion result and maps conflict/permission errors visibly | yes | **NOT RUN** | Focused Vitest adapter tests | No UI lifecycle acceptance in 024 |
-| Root `pnpm check`, SQL guard, diff review and cleanup pass; no product UI/native/live/external change is included | yes | **NOT RUN** | macOS workspace and isolated local DB | Record exact counts/versions and any historical-only evidence |
+| Forward migration refuses pre-existing file/song mismatch, adds positive revision, derives file/song/choir and secure audit fields, and grants only the intended RPC surface | yes | **PASS** | 2026-09-09, `1755803`; guarded runner on `genova_024_mismatch_test` and `genova_024_test_restore`, PostgreSQL 17.11 | Deliberate mismatch failed with the expected preflight error and left no partial 024 schema. RPC execution is authenticated-only. Hosted state NOT RUN |
+| Chef, section leader and chorist permitted layer mutations pass; wrong role/voice/choir, unresolved session and anonymous cases fail without row change or existence leak | yes | **PASS** | 2026-09-09, transactional `024_repertoire_pdf_annotation_safe_save.sql` | Chorist personal, leader own-Alto and chef shared-all/other-voice passed. Chorist shared, leader other-voice/all, wrong-choir, unresolved and anonymous paths failed. Existing versus missing foreign file both return permission denial for authenticated direct callers |
+| Insert/update/delete obey absence-or-exact-revision CAS; duplicate create, stale update/delete and missing row cannot report success | yes | **PASS** | 2026-09-09, same PostgreSQL 17.11 role/revision matrix | Absence insert returned 1, exact update returned 2, stale update/delete and duplicate create preserved the row, exact delete removed it, and a positive-revision missing delete conflicted. Whole-layer local SQL only; no merge claim |
+| Existing direct writes receive server-derived relation/audit and revision increment, while the down migration restores the prior trigger/column/function/grants and forward reapplies cleanly | yes | **PASS** | 2026-09-09 20:30 UTC, guarded forward → down → forward runner | Crafted direct insert/update could not retain spoofed song/creator/updater/revision. Down restored the exact prior trigger hash and removed RPC/column/private schema; forward and SQL matrix passed again. Stable source/target table hashes matched |
+| Web read adapter exposes row/revision/lossless metadata per logical layer; unsupported/malformed/future content is displayed defensively but refused before mutation | yes | **PASS** | 2026-09-09, focused Vitest; 2 files / 16 tests | Exact schema-v1 rows are writable. Unknown item, future field, future schema, clamped value and invalid revision are read defensively but blocked. Current workspace does not consume this metadata until 025 |
+| Web save adapter sends no song/choir/member/audit identity, supplies expected revision, parses the returned revision/deletion result and maps conflict/permission errors visibly | yes | **PASS** | 2026-09-09, `annotations.test.ts` | Exact RPC arguments/result parsing, delete result, client-side loss refusal, conflict, permission, invalid request, missing RPC and malformed response passed. This new safe entry point is not yet called by the workspace |
+| Root `pnpm check`, SQL guard, diff review and cleanup pass; no product UI/native/live/external change is included | yes | **PASS** | 2026-09-09, macOS; Node 24.13.1, pnpm 11.9.0; final root gate and SQL runner | Lint/type passed; 39 files / 262 tests, coverage thresholds, Service Worker syntax and Next 15.5.25 production build passed. Dedicated 15 MB target and mismatch databases were removed after source equality; only the unowned CLI cache remains |
 
 ## Delivery
 
-Planning is a separate documentation commit before implementation. If all mandatory rows pass,
-commit schema/adapter/tests together as 024 code/test, then create a documentation-only acceptance
-commit. Route next to 025 workspace safe-save lifecycle; do not call B2 complete or deploy 024.
+Planning is separate commit `a4d770a`; schema/adapter/tests are code/test commit `1755803`. This
+documentation-only update completes 024 locally. Rollback is this evidence update, then `1755803`,
+then the planning commit; a database rollback uses the tested 024 down migration only after a
+separately authorized deployment. No hosted query, migration or release was performed.
+
+The current workspace still calls the explicitly marked compatibility save path and therefore
+retains cover-page, debounce/unmount, zero-row and status-race defects. The next bounded package is
+025 workspace safe-save lifecycle adoption. B2, hosted schema, web release and native writing remain
+open; none is inferred from this local foundation.

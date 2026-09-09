@@ -1,6 +1,6 @@
 # Active context
 
-Updated 9 September 2026 after 023 accepted the B1 annotation-write contract inventory. The recorded
+Updated 9 September 2026 after local 024 annotation mutation acceptance at `1755803`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -72,8 +72,12 @@ repair was required. A1–A3 are complete locally. Release execution and hardwar
 row/delete/audit/version and web/native lifecycle behavior. It found six blocking web save risks,
 including cover-page offset, cancelled debounce, unsupported-content overwrite, no CAS and
 unchecked zero-row writes. Four new collaboration/exit UX choices remain explicit owner decisions.
-The next bounded local package is 024 safe-save repair; it can enforce no-loss behavior without
-choosing those product semantics. Release execution and hardware remain gated.
+[024](../docs/briefs/024-annotation-mutation-safe-save-contract.md) locally added the positive
+revision/CAS RPC, server-derived relation/audit trigger, reversible SQL guard and per-layer
+lossless-write metadata/safe web adapter. PostgreSQL role/tenant/revision/down-forward tests and
+the root 39-file/262-test build gate passed. The current workspace still calls the old compatibility
+save entry point, so the next bounded package is 025 page/debounce/status/tenant-exit adoption.
+No hosted migration/release occurred; release execution and hardware remain gated.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

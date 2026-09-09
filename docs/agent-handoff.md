@@ -1,10 +1,10 @@
 # Genova — agent handoff
 
-Snapshot: 9 September 2026. Package 023 documentation-accepted the B1 annotation-write contract
-inventory after planning commit `cf44312`. It maps the current item/layer, role/RLS,
-delete/audit/version and lifecycle behavior and records six blocking web save-safety defects. The
-canonical [delivery plan](mobil-teslim-plani.md) now routes to the bounded 024 safe-save repair
-before native writing; release execution and hardware remain gated.
+Snapshot: 9 September 2026. Package 024 locally accepted the revision-safe annotation mutation
+server/adapter foundation at code/test commit `1755803`. Its PostgreSQL role/tenant/revision and
+down/forward guard plus root 39-file/262-test build gate passed. The current workspace still uses
+the marked compatibility save path, so the canonical [delivery plan](mobil-teslim-plani.md) now
+routes to 025 workspace lifecycle adoption; release execution and hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -104,7 +104,12 @@ ordered migrations and a read-only local PostgreSQL 17.11 metadata transaction. 
 misaddressing, cancelled pending saves, unsupported-content overwrite, absent compare-and-swap,
 unchecked zero-row writes and global save-status races. No product/schema/live change was made;
 four new collaboration and exit semantics remain owner decisions. The 022 evidence remains local
-and synthetic; the new Edge function is still not deployed.
+and synthetic; the new Edge function is still not deployed. Package 024 then added a positive row
+revision, authenticated invoker RPC, server-derived file/song/choir and audit trigger, exact down
+migration and lossless per-layer web read/save adapter. Local synthetic role, tenant, conflict,
+direct-write and mismatch-preflight tests passed at `1755803`. Its disposable PostgreSQL copies
+were removed after source equality. The migration is not hosted and the current workspace has not
+adopted the safe entry point; 025 owns that page/debounce/status/tenant-exit work.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -115,6 +120,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 9 Sep, `1755803` | Dedicated PostgreSQL 17.11 copies; guarded mismatch + forward/down/forward role/revision matrix; focused adapter tests; root gate | **PASS** — authenticated-only CAS RPC, role/voice/tenant denials, server relation/audit derivation, exact trigger restoration; 2 focused files / 16 tests; root 39 files / 262 tests and build; stable source/target hashes | Local synthetic self-review only. Current workspace remains on compatibility save until 025. No hosted migration, HTTP/PostgREST runtime, deploy, real account/data, hardware or independent review. See [024](briefs/024-annotation-mutation-safe-save-contract.md) |
 | 9 Sep, `fb4a6a2` | Disposable local Supabase Auth/RLS/Edge/private Storage; production Next; installed Chrome 152 through Playwright 1.62.1; root gate | **PASS** — exact 65,905-byte PDF and 160,044-byte WAV, 206 Range playback, explicit offline caches, ticket renewal, visible 502, B-choir 403/empty catalogue, switch/sign-out cleanup; 38 files / 253 tests and build; fixture/source baselines restored | Local synthetic self-review only. No deploy, Drive, hosted/real account, remote CI, hardware or independent review. See [022 evidence](evidence/022-web-protected-file-compatibility/README.md) |
 | 9 Sep, `404a9ee` | Disposable local Supabase Auth/RPC/RLS/Edge/private Storage; iPhone 17 / iOS 26.5 and Android API 36 arm64 alternate-entry Release apps; mobile gate and normal exports | **PASS** — real 401/retry/fresh ticket, exact 65,905-byte 40-page PDF/native overlay, reader remove/reopen, B-choir 403/empty catalogue and sign-out session/preference cleanup; 16 suites / 84 tests; 1,314-module iOS and 1,312-module Android normal bundles; fixture/source baselines restored | Local synthetic self-review only. Android Release private directory was not externally inspectable; in-app existence probe passed. No deploy, Drive, hosted/real account, hardware, remote CI or independent review. See [021 evidence](evidence/021-mobile-protected-file-runtime/README.md) |
 | 9 Sep, `e2fe177` | Pixel 7 API 36 arm64 emulator; alternate-entry Android Release; actual PDF-page-image + Skia; mobile check, normal Android export and affected iOS rebuild | **PASS** — Android pages 1/20/40 at 1190 x 1684; base/150% annotations aligned; page 41 refused; close/reopen passed; 14 suites / 73 tests, 1,312-module normal Android bundle; iOS regression passed | Tracked synthetic fixtures only. Android Release private cache was not inspectable with `run-as`; returned image URI was deleted. No 018 service, live/provider/account, secure-storage, remote CI or hardware proof. Supplemental audit remains FAIL with the known 10 moderate toolchain findings |
@@ -171,8 +177,8 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 023 planning is local commit `cf44312`; its acceptance record is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–023 and
+Branch `main`. Package 024 code/test is local commit `1755803`; this acceptance record is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–024 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -216,16 +222,18 @@ recorded local acceptance at `0b3df6e`; 019 and 020 accepted actual iOS and Andr
 `2c64e5e` and `e2fe177`. Package 021 completed the combined local service lifecycle at `404a9ee`.
 Package 022 completed production-browser compatibility at `fb4a6a2`, without any external or
 hardware action. Package 023 then accepted the B1 source/contract inventory without product,
-schema or external changes.
+schema or external changes. Package 024 accepted its first local server/adapter repair at
+`1755803`; no hosted migration, release or external action occurred.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
-The immediate local read path A1–A3 and the B1 inventory are complete. A4 release preparation may
-be written locally, but push/deploy/hosted checks remain externally gated and A5 hardware remains
-postponed. Following the roadmap's blocker rule, the next bounded package is 024: repair the current
-web annotation save path so wrong-page, interrupted, incompatible, stale and zero-row writes fail
-safely before native writing is added. The repair may enforce no-loss behavior, but it must not
-silently choose the unresolved shared-authorship, conflict, tenant-exit or deletion UX semantics.
+The immediate local read path A1–A3, B1 inventory and 024 server/adapter foundation are complete.
+A4 release preparation may be written locally, but push/deploy/hosted checks remain externally
+gated and A5 hardware remains postponed. Following the roadmap's blocker rule, the next bounded
+package is 025: make the web workspace consume per-layer lossless/revision metadata and the safe
+RPC, correct cover-page identity, serialize pending saves and prevent silent unmount/tenant-exit
+loss. It may enforce fail-closed behavior, but must not silently choose the unresolved shared
+authorship, conflict, deletion or final exit UX semantics.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -237,12 +245,12 @@ silently choose the unresolved shared-authorship, conflict, tenant-exit or delet
 >
 > Read the canonical `docs/mobil-teslim-plani.md` for the long-term milestones and execution
 > loop. Package 022 locally completed A3 at code/test commit `fb4a6a2`; read its brief and evidence
-> without inferring deploy, Drive, real-account, CI or hardware proof. Package 023 then
-> documentation-accepted the B1 annotation-write contract inventory after planning commit
-> `cf44312`; read its brief for the verified defects and explicit owner decisions. The next bounded
-> local task is 024: open a brief for the smallest safe-save repair before native writing.
+> without inferring deploy, Drive, real-account, CI or hardware proof. Package 023 then accepted B1,
+> and package 024 locally accepted the revision-safe annotation server/adapter foundation at
+> `1755803`; read both briefs for verified defects, boundaries and explicit owner decisions. The
+> next bounded local task is 025: open a brief for web workspace safe-save lifecycle adoption.
 >
-> Preserve 013–023's historical local acceptance and distinguish it from deployment/Drive and
+> Preserve 013–024's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.
