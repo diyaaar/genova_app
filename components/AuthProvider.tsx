@@ -29,6 +29,9 @@ import { clearRepertoireMetadataCaches } from '@/lib/repertuvar/cache';
 import { clearProtectedDriveFileCaches } from '@/lib/repertuvar/offline';
 import { createRealtimeTopic } from '@/lib/realtime';
 import { clearMainNotificationCaches } from '@/lib/notification-cache';
+import { annotationSaveQueue } from '@/lib/repertuvar/annotation-save-runtime';
+import { commitAnnotationTenantTransition } from '@/lib/repertuvar/annotation-tenant-transition';
+import { useToast } from '@/components/ToastProvider';
 
 type MemberWithRelations = ChoirMember & {
   schools?: { name: string } | null;
@@ -78,6 +81,7 @@ function toCanonicalRole(value: string): UserRole | null {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const requestVersionRef = useRef(0);
   const activeUserIdRef = useRef<string | null>(null);
   const switchInFlightRef = useRef(false);
@@ -136,6 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setActiveChoir(currentChoir);
 
       if (!currentChoir) {
+        annotationSaveQueue.discardAll();
         setMember(null);
         setRoles([]);
         return;
@@ -223,6 +228,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (nextUser) {
         if (previousUserId && previousUserId !== nextUser.id) {
           clearPreferredChoirId(previousUserId);
+          annotationSaveQueue.discardAll();
           void clearTenantData();
           setMember(null);
           setRoles([]);
@@ -233,6 +239,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       requestVersionRef.current += 1;
       if (previousUserId) clearPreferredChoirId(previousUserId);
+      annotationSaveQueue.discardAll();
       void clearTenantData();
       setChoirs([]);
       setActiveChoir(null);
@@ -304,7 +311,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsSwitchingChoir(true);
     setContextError(null);
     try {
-      await activateChoir(supabase, choirId);
+      await commitAnnotationTenantTransition(
+        annotationSaveQueue,
+        member?.id ?? null,
+        () => activateChoir(supabase, choirId),
+      );
       if (activeUserIdRef.current !== user.id) return;
       setPreferredChoirId(user.id, choirId);
       setMember(null);
@@ -319,7 +330,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       switchInFlightRef.current = false;
       setIsSwitchingChoir(false);
     }
-  }, [activeChoir?.choir_id, choirs, clearTenantData, fetchMemberData, user]);
+  }, [activeChoir?.choir_id, choirs, clearTenantData, fetchMemberData, member?.id, user]);
 
   const refreshChoirContext = useCallback(async () => {
     if (!user) return;
@@ -338,10 +349,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    try {
+      await commitAnnotationTenantTransition(
+        annotationSaveQueue,
+        member?.id ?? null,
+        async () => {
+          const { error } = await supabase.auth.signOut();
+          if (error) throw new Error(error.message);
+        },
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Notlar kaydedilemedi.';
+      setContextError(message);
+      toast.error(message, 'Çıkış yapılamadı');
+      return;
+    }
+
     requestVersionRef.current += 1;
     if (user?.id) clearPreferredChoirId(user.id);
     await clearTenantData();
-    await supabase.auth.signOut();
     setChoirs([]);
     setActiveChoir(null);
     setMember(null);

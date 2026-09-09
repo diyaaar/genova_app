@@ -32,12 +32,17 @@ import { Document, Page, pdfjs } from 'react-pdf';
 
 import { AnnotationStage } from '@/components/repertuvar/AnnotationStage';
 import { ChefCommentSection } from '@/components/repertuvar/ChefCommentSection';
+import { useToast } from '@/components/ToastProvider';
 import { useProtectedDriveFileUrl } from '@/hooks/useProtectedDriveFileUrl';
 import { getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
+import { loadAnnotationReadResultForFile } from '@/lib/repertuvar/annotations';
+import { annotationSaveQueue } from '@/lib/repertuvar/annotation-save-runtime';
 import {
-  loadAnnotationReadResultForFile,
-  saveLayerSnapshot,
-} from '@/lib/repertuvar/annotations';
+  applyAnnotationBeforeUnloadGuard,
+  getAnnotationCompatibilityWarning,
+  getStoredPdfPageNumber,
+  mergeLoadedAndPendingAnnotationLayers,
+} from '@/lib/repertuvar/annotation-workspace-lifecycle';
 import {
   buildOfflineSongVersion,
   buildRuntimeDriveFileVersion,
@@ -1185,6 +1190,7 @@ export function RepertoireWorkspace({
   isChef,
   isSectionLeader,
 }: RepertoireWorkspaceProps) {
+  const toast = useToast();
   const memoizedPdfOptions = useMemo(() => ({
     cMapUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/cmaps/`,
     standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${pdfjs.version}/standard_fonts/`,
@@ -1199,9 +1205,6 @@ export function RepertoireWorkspace({
   const floatingBarAnimationRef = useRef<number | null>(null);
   const floatingBarScrollRafRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const saveTimersRef = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
-  const savePayloadRef = useRef<Record<string, QueuedSavePayload>>({});
-  const saveStateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const attemptedAutoSyncVersionRef = useRef<string | null>(null);
   const zoomRenderTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const latestZoomLevelRef = useRef(1.0);
@@ -1231,6 +1234,7 @@ export function RepertoireWorkspace({
   const [isOnline, setIsOnline] = useState(true);
   const [recentAnnotationColors, setRecentAnnotationColors] = useState<AnnotationColor[]>([]);
   const [isColorPaletteOpen, setColorPaletteOpen] = useState(false);
+  const [saveQueueVersion, setSaveQueueVersion] = useState(0);
   const store = useRepertoireWorkspaceStore();
   const {
     selectedPdfId,
@@ -1277,6 +1281,34 @@ export function RepertoireWorkspace({
     reset,
   } = store;
   const normalizedVoiceGroup = asVoiceGroup(voiceGroup);
+
+  useEffect(
+    () => annotationSaveQueue.subscribe(() => {
+      setSaveQueueVersion((version) => version + 1);
+    }),
+    [],
+  );
+
+  useEffect(() => {
+    if (!memberId) {
+      setSaveState('idle');
+      return;
+    }
+    const ownerStatus = annotationSaveQueue.getOwnerStatus(memberId);
+    setSaveState(ownerStatus.phase, ownerStatus.error ?? undefined);
+  }, [memberId, saveQueueVersion, setSaveState]);
+
+  useEffect(() => {
+    if (!memberId) return;
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      applyAnnotationBeforeUnloadGuard(
+        event,
+        annotationSaveQueue.hasUnresolved(memberId),
+      );
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [memberId]);
 
   const sheetFiles = useMemo(
     () => [...(song.files ?? [])]
@@ -1362,10 +1394,11 @@ export function RepertoireWorkspace({
   const canGoPrevPage = Boolean(selectedPdf) && currentPage > 1;
   const canGoNextPage = totalDisplayPages > 0 && currentPage < totalDisplayPages;
   const isCoverPage = hasCoverPage && currentPage === 1;
-  const activePdfPageNumber =
-    selectedPdf && (!hasCoverPage || currentPage > 1)
-      ? (hasCoverPage ? currentPage - 1 : currentPage)
-      : null;
+  const activePdfPageNumber = getStoredPdfPageNumber(
+    currentPage,
+    hasCoverPage,
+    Boolean(selectedPdf),
+  );
 
   const sharedPreviewGroup: PreviewVoiceGroup = (isChef || isSectionLeader)
     ? previewVoiceGroup
@@ -1543,12 +1576,22 @@ export function RepertoireWorkspace({
   const activeLayerFuture = activeContextKey
     ? futureByLayerPage[activeContextKey] ?? []
     : [];
+  const activeQueueSnapshot = activeContextKey
+    ? annotationSaveQueue.getContextSnapshot(activeContextKey)
+    : null;
+  const activeLayerWritable = activeQueueSnapshot?.writableWithoutLoss ?? true;
+  const ownerTransitionPending = memberId
+    ? annotationSaveQueue.isOwnerExiting(memberId)
+    : false;
 
   const canEdit =
     editableLayerOptions.length > 0 &&
     Boolean(selectedPdf) &&
     Boolean(memberId) &&
-    Boolean(activePdfPageNumber);
+    Boolean(activePdfPageNumber) &&
+    activeLayerWritable &&
+    !ownerTransitionPending &&
+    !annotationLoading;
   const stageAspectRatio = pageAspectRatio ?? DEFAULT_PAGE_ASPECT_RATIO;
   const pdfRenderBaseKey = selectedPdfSource && selectedPdf && activePdfPageNumber && viewerWidth > 0
     ? `${selectedPdf.id}:${activePdfPageNumber}:${viewerWidth}:${selectedPdfSource}`
@@ -2217,12 +2260,17 @@ export function RepertoireWorkspace({
 
   useEffect(() => {
     reset();
-    const timerMap = saveTimersRef.current;
 
     return () => {
-      Object.values(timerMap).forEach((timer) => clearTimeout(timer));
-      if (saveStateTimeoutRef.current) {
-        clearTimeout(saveStateTimeoutRef.current);
+      if (memberId) {
+        void annotationSaveQueue.flushOwner(memberId)
+          .then(() => annotationSaveQueue.pruneSettled(memberId))
+          .catch((error: unknown) => {
+            toast.error(
+              error instanceof Error ? error.message : 'Notlar kaydedilemedi.',
+              'Notlar beklemede',
+            );
+          });
       }
       if (zoomRenderTimerRef.current) {
         clearTimeout(zoomRenderTimerRef.current);
@@ -2230,7 +2278,7 @@ export function RepertoireWorkspace({
       }
       reset();
     };
-  }, [reset, song.id]);
+  }, [memberId, reset, song.id, toast]);
 
   useEffect(() => {
     if (!selectedPdfId && defaultSheetFile) {
@@ -2270,6 +2318,12 @@ export function RepertoireWorkspace({
   }, [activeLayerKey, editableLayerOptions, isEditMode, setActiveLayerKey, setActiveTool, setEditMode]);
 
   useEffect(() => {
+    if (activeLayerWritable || !isEditMode) return;
+    setEditMode(false);
+    setActiveTool(null);
+  }, [activeLayerWritable, isEditMode, setActiveTool, setEditMode]);
+
+  useEffect(() => {
     if (!selectedPdf) {
       return;
     }
@@ -2290,21 +2344,40 @@ export function RepertoireWorkspace({
     setAnnotationLoading(true);
     setAnnotationError(null);
 
-    loadAnnotationReadResultForFile(selectedPdf.id)
-      .then(({ layers, skippedCount }) => {
+    void annotationSaveQueue.flushOwner(memberId)
+      .catch(() => {
+        // Loading may continue; pending browser snapshots are overlaid below.
+      })
+      .then(() => {
+        annotationSaveQueue.pruneSettled(memberId);
+        return loadAnnotationReadResultForFile(selectedPdf.id);
+      })
+      .then(({ layers, writeMetadata, skippedCount, blockedLayerCount }) => {
         if (cancelled) {
           return;
         }
-        replaceFileLayers(selectedPdf.id, layers);
-        if (skippedCount > 0) {
-          setAnnotationError(`${skippedCount} desteklenmeyen veya bozuk not öğesi atlandı.`);
-        }
+        Object.entries(writeMetadata).forEach(([contextKey, metadata]) => {
+          annotationSaveQueue.registerContext(memberId, contextKey, {
+            revision: metadata.revision,
+            writableWithoutLoss: metadata.writableWithoutLoss,
+            hadStoredRow: true,
+          });
+        });
+        const pendingLayers = annotationSaveQueue.getPendingSnapshots(memberId, selectedPdf.id);
+        replaceFileLayers(
+          selectedPdf.id,
+          mergeLoadedAndPendingAnnotationLayers(layers, pendingLayers),
+        );
+        setAnnotationError(getAnnotationCompatibilityWarning(skippedCount, blockedLayerCount));
       })
       .catch((error: unknown) => {
         if (cancelled) {
           return;
         }
-        replaceFileLayers(selectedPdf.id, {});
+        replaceFileLayers(
+          selectedPdf.id,
+          annotationSaveQueue.getPendingSnapshots(memberId, selectedPdf.id),
+        );
         setAnnotationError(error instanceof Error ? error.message : 'Notlar yüklenemedi.');
       })
       .finally(() => {
@@ -2343,17 +2416,6 @@ export function RepertoireWorkspace({
     }
   }, [isCoverPage, isEditMode, setActiveTool, setEditMode]);
 
-  function setTransientSavedState() {
-    if (saveStateTimeoutRef.current) {
-      clearTimeout(saveStateTimeoutRef.current);
-    }
-
-    setSaveState('saved');
-    saveStateTimeoutRef.current = setTimeout(() => {
-      setSaveState('idle');
-    }, 1500);
-  }
-
   function queueSave(payload: QueuedSavePayload) {
     if (!memberId) {
       return;
@@ -2365,96 +2427,88 @@ export function RepertoireWorkspace({
       layerKey: payload.layerKey,
     });
 
-    savePayloadRef.current[contextKey] = {
-      ...payload,
-      items: cloneAnnotationItems(payload.items),
-    };
-
-    if (saveTimersRef.current[contextKey]) {
-      clearTimeout(saveTimersRef.current[contextKey]);
+    if (!annotationSaveQueue.getContextSnapshot(contextKey)) {
+      annotationSaveQueue.registerContext(memberId, contextKey, {
+        revision: null,
+        writableWithoutLoss: true,
+        hadStoredRow: false,
+      });
     }
 
-    setSaveState('saving');
-
-    saveTimersRef.current[contextKey] = setTimeout(async () => {
-      const queuedPayload = savePayloadRef.current[contextKey];
-
-      if (!queuedPayload) {
-        return;
-      }
-
-      try {
-        await saveLayerSnapshot({
-          songId: song.id,
-          repertoireFileId: queuedPayload.fileId,
-          pageNumber: queuedPayload.pageNumber,
-          layerKey: queuedPayload.layerKey,
-          annotations: queuedPayload.items,
-          memberId,
-        });
-
-        delete savePayloadRef.current[contextKey];
-        setTransientSavedState();
-      } catch (error) {
-        setSaveState(
-          'error',
-          error instanceof Error ? error.message : 'Notlar kaydedilemedi.',
-        );
-      }
-    }, 500);
+    try {
+      annotationSaveQueue.enqueue({
+        ownerKey: memberId,
+        contextKey,
+        ...payload,
+        items: cloneAnnotationItems(payload.items),
+      });
+    } catch (error) {
+      setSaveState(
+        'error',
+        error instanceof Error ? error.message : 'Notlar kaydedilemedi.',
+      );
+    }
   }
 
   function commitActiveItems(items: AnnotationItem[]) {
-    if (!selectedPdf || !activeContextKey) {
+    if (!selectedPdf || !activeContextKey || !activePdfPageNumber) {
       return;
     }
 
     commitLayerItems(activeContextKey, items);
     queueSave({
       fileId: selectedPdf.id,
-      pageNumber: currentPage,
+      pageNumber: activePdfPageNumber,
       layerKey: activeLayerKey,
       items,
     });
   }
 
   function handleUndo() {
-    if (!selectedPdf || !activeContextKey) {
+    if (!selectedPdf || !activeContextKey || !activePdfPageNumber) {
       return;
     }
 
     undoLayer(activeContextKey);
     queueSave({
       fileId: selectedPdf.id,
-      pageNumber: currentPage,
+      pageNumber: activePdfPageNumber,
       layerKey: activeLayerKey,
       items: getLayerItemsFromStore(activeContextKey),
     });
   }
 
   function handleRedo() {
-    if (!selectedPdf || !activeContextKey) {
+    if (!selectedPdf || !activeContextKey || !activePdfPageNumber) {
       return;
     }
 
     redoLayer(activeContextKey);
     queueSave({
       fileId: selectedPdf.id,
-      pageNumber: currentPage,
+      pageNumber: activePdfPageNumber,
       layerKey: activeLayerKey,
       items: getLayerItemsFromStore(activeContextKey),
     });
   }
 
   function handleClearPage() {
-    if (!selectedPdf || !activeContextKey) {
+    if (!selectedPdf || !activeContextKey || !activePdfPageNumber) {
+      return;
+    }
+
+    if (activeQueueSnapshot?.hadStoredRow) {
+      setSaveState(
+        'error',
+        'Kayıtlı not katmanını tamamen silme kararı henüz verilmedi. Sunucudaki katman değiştirilmedi.',
+      );
       return;
     }
 
     commitLayerItems(activeContextKey, []);
     queueSave({
       fileId: selectedPdf.id,
-      pageNumber: currentPage,
+      pageNumber: activePdfPageNumber,
       layerKey: activeLayerKey,
       items: [],
     });
