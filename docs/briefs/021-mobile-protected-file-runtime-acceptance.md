@@ -66,9 +66,11 @@ physical hardware, secure-storage durability across a real device reboot, M1, 00
   service-role credential to the app.
 - The only fixture content is the tracked 40-page synthetic score and synthetic annotations.
   Use two synthetic choirs and one local multi-membership account so cache isolation is observable.
-- The initial failure must come from a real authorization boundary (for example an inactive/wrong
-  choir or a deliberately short-lived/refused request), then retry after the permitted local state
-  correction. Do not falsify service success with an injected byte response.
+- The initial failure must come from the actual service authorization boundary, then UI retry must
+  obtain a fresh permitted ticket. Do not falsify service success with an injected byte response.
+- An issued ticket is an intentionally sessionless, expiring bearer URL for GET/HEAD. Choir-switch
+  acceptance therefore does not invent immediate ticket revocation. It requires the app to discard
+  the old URL/file and proves that a new A-file ticket request is refused while choir B is active.
 - No hosted Supabase/Drive call, real identity/data, push, deployment, migration, remote CI,
   payment, email/message, physical device or 010 fixture recreation. Emulator/simulator evidence
   cannot close 004 or M1.
@@ -117,7 +119,7 @@ review is actually performed.
 | Default mobile session and catalogue path signs in one synthetic multi-choir user and exposes only its assigned score | yes | NOT RUN | Pending iOS and Android local runs | Must use the real Supabase mobile client/AuthStore/catalogue source, not injected Auth/catalogue doubles |
 | A real refused first open shows the reader error and UI retry then obtains a fresh ticket, downloads the exact 40-page PDF and renders page 1 with actual native PDF/Skia | yes | NOT RUN | Pending both platforms | Must prove service response, downloaded checksum/size and visible output without bundling provider bytes into this entry |
 | Reader exit removes the active private PDF; reopen succeeds without retained rendered images | yes | NOT RUN | Pending both platforms | Verify sanitized filesystem state before/during/after close; public fixture/build assets are not private-cache evidence |
-| Choir switch clears prior score/catalogue state before server selection; prior-choir ticket/file cannot be reused and the second choir cannot see the first score | yes | NOT RUN | Pending both platforms | Must observe ordering/state and actual service/RLS refusal, not only UI absence |
+| Choir switch clears prior score/catalogue state before server selection; the old local file is not reused, a new A-file ticket request is refused while B is active and B cannot see A's score | yes | NOT RUN | Pending both platforms | Observe cleanup ordering/state and actual POST/RLS refusal, not only UI absence. Previously issued bearer-ticket revocation is outside the existing contract |
 | Sign-out clears session preference and all protected-score cache even if the screen is no longer mounted | yes | NOT RUN | Pending both platforms | Verify signed-out UI and sanitized secure/private state; simulator/emulator does not prove physical-device durability |
 | Mobile checks, normal iOS/Android exports and affected native builds pass; no crash or secret-bearing evidence | yes | NOT RUN | Pending implementation | `npm run check`, two normal exports, two local native builds/launches and evidence scan; root gate only if shared/root code changes |
 | Diff, fixture/runtime cleanup, evidence links and separate commits preserve 004/010 and external authority boundaries | yes | NOT RUN | Pending final review | The unowned CLI cache stays unstaged; no live/push/deploy/hardware action; self-review clearly labeled |
