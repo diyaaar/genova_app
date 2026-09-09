@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { registerRootComponent } from 'expo';
+import { Asset } from 'expo-asset';
 import { File } from 'expo-file-system';
 import {
   ActivityIndicator,
   Image,
+  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -68,10 +70,10 @@ function imageExists(uri: string): boolean {
   }
 }
 
-export function NativePdfIosAcceptanceApp() {
+export function NativePdfAcceptanceApp() {
   const { width: viewportWidth, height: viewportHeight } = useWindowDimensions();
   const annotations = useMemo(() => buildAnnotations(ANNOTATION_FIXTURE), []);
-  const pdfUri = useMemo(() => Image.resolveAssetSource(PDF_ASSET)?.uri ?? '', []);
+  const [pdfUri, setPdfUri] = useState('');
   const [status, setStatus] = useState<Status>('opening');
   const [page, setPage] = useState<(typeof EVIDENCE_PAGES)[number]>(1);
   const [pageCount, setPageCount] = useState<number | null>(null);
@@ -82,6 +84,20 @@ export function NativePdfIosAcceptanceApp() {
   const [cleanupResult, setCleanupResult] = useState('NOT RUN');
   const operation = useRef(0);
   const opened = useRef(false);
+
+  const preparePdfAsset = useCallback(async () => {
+    setStatus('opening');
+    setError(null);
+    try {
+      const asset = await Asset.fromModule(PDF_ASSET).downloadAsync();
+      const localUri = asset.localUri ?? asset.uri;
+      if (!localUri) throw new Error('Sentetik PDF yerel dosyaya hazırlanamadı.');
+      setPdfUri(localUri);
+    } catch (assetError) {
+      setError(assetError instanceof Error ? assetError.message : 'Sentetik PDF hazırlanamadı.');
+      setStatus('error');
+    }
+  }, []);
 
   const renderPage = useCallback(async (
     requestedPage: (typeof EVIDENCE_PAGES)[number],
@@ -116,6 +132,11 @@ export function NativePdfIosAcceptanceApp() {
   }, [pdfUri]);
 
   useEffect(() => {
+    void preparePdfAsset();
+  }, [preparePdfAsset]);
+
+  useEffect(() => {
+    if (!pdfUri) return;
     void renderPage(1, true);
     return () => {
       operation.current += 1;
@@ -164,7 +185,7 @@ export function NativePdfIosAcceptanceApp() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>SYNTHETIC · iOS NATIVE ACCEPTANCE</Text>
+        <Text style={styles.eyebrow}>SYNTHETIC · {Platform.OS.toUpperCase()} NATIVE ACCEPTANCE</Text>
         <Text style={styles.title}>PDF + Skia gerçek çıktı</Text>
         <Text style={styles.diagnostics} testID="native-pdf-diagnostics">
           page={page}/{pageCount ?? '—'} · image={image ? `${image.width}×${image.height}` : '—'} · zoom={Math.round(zoom * 100)}% · skipped={annotations.skippedCount}
@@ -197,14 +218,14 @@ export function NativePdfIosAcceptanceApp() {
       ) : status === 'error' ? (
         <View style={styles.center}>
           <Text style={styles.error}>{error}</Text>
-          <Pressable accessibilityRole="button" onPress={() => void renderPage(page, true)} style={styles.button}>
+          <Pressable accessibilityRole="button" onPress={() => void (pdfUri ? renderPage(page, true) : preparePdfAsset())} style={styles.button}>
             <Text style={styles.buttonText}>Yeniden aç</Text>
           </Pressable>
         </View>
       ) : status === 'closed' ? (
         <View style={styles.center}>
           <Text style={styles.pass}>{cleanupResult}</Text>
-          <Pressable accessibilityRole="button" onPress={() => void renderPage(page, true)} style={styles.button}>
+          <Pressable accessibilityRole="button" onPress={() => void (pdfUri ? renderPage(page, true) : preparePdfAsset())} style={styles.button}>
             <Text style={styles.buttonText}>Yeniden aç</Text>
           </Pressable>
         </View>
@@ -255,4 +276,4 @@ const styles = StyleSheet.create({
   footerText: { color: '#cbd5e1', fontSize: 10, fontWeight: '700' },
 });
 
-registerRootComponent(NativePdfIosAcceptanceApp);
+registerRootComponent(NativePdfAcceptanceApp);
