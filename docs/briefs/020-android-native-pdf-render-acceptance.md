@@ -36,12 +36,25 @@ platforms.
   `329fb458f559ba7ea61db378ba4acdada3feb4b2756bef31833fc344044fea35`. The generated Android project
   exists and is ignored. The current Android native adapter renders through `PdfRenderer`, writes
   page images to app cache, and deletes tracked generated images on `close()`.
+- [x] **2026-09-09 asset-resolution finding and scope expansion:** the first corrected Release
+  build succeeded, installed and launched the platform-accurate acceptance entry, but actual
+  `open()` returned `ENOENT`. Pixel/UI evidence showed the Android bundle asset URI was not a
+  directly readable filesystem path; the native PDF module supports content/file/http/data input,
+  not Android embedded-resource paths. The app already links Expo Asset `57.0.16` transitively.
+  Add that exact SDK-matched package as a direct mobile dependency and have the acceptance harness
+  copy its bundled fixture to a local cache URI before native `open()`. This is acceptance fixture
+  preparation, not a live/provider fallback or a change to product private-file handling. The
+  earlier absolute `ENTRY_FILE` attempt also failed before assembly because Android expects a
+  project-relative entry; the corrected command uses `src/acceptance/native-pdf.tsx`.
 
 ## Allowed scope
 
 - `apps/mobile/src/acceptance/`: factor the 019 UI into one platform-neutral synthetic acceptance
   component with tiny platform entrypoints if required. Default `App.tsx` and `index.ts` remain
   unchanged and unconditional.
+- `apps/mobile/package.json` and `package-lock.json`: add only exact Expo Asset `57.0.16`, already
+  installed/transitively linked by Expo, so the acceptance harness can use its public local-asset
+  API. No other dependency or generated native configuration change is allowed.
 - Focused repertoire adapter/overlay files and tests only for a defect reproduced by the actual
   Android run. A native module patch or dependency replacement requires a recorded scope expansion.
 - `docs/evidence/020-android-native-pdf/`, this brief and minimal status/handoff indexes.
