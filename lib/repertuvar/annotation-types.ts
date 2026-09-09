@@ -311,6 +311,40 @@ export function parseAnnotationSchemaPayload(
   return parseAnnotationItems(value);
 }
 
+function annotationJsonValuesEqual(left: unknown, right: unknown): boolean {
+  if (left === right) return true;
+
+  if (Array.isArray(left) || Array.isArray(right)) {
+    if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) {
+      return false;
+    }
+    return left.every((value, index) => annotationJsonValuesEqual(value, right[index]));
+  }
+
+  if (isRecord(left) || isRecord(right)) {
+    if (!isRecord(left) || !isRecord(right)) return false;
+    const leftKeys = Object.keys(left).sort();
+    const rightKeys = Object.keys(right).sort();
+    if (!annotationJsonValuesEqual(leftKeys, rightKeys)) return false;
+    return leftKeys.every((key) => annotationJsonValuesEqual(left[key], right[key]));
+  }
+
+  return false;
+}
+
+/**
+ * True only when the current shared parser can round-trip every field and value.
+ * Readers may still display the defensive subset when this returns false, but a
+ * writer must refuse the payload so future, malformed or clamped data is not lost.
+ */
+export function isAnnotationPayloadLosslesslyWritable(
+  value: unknown,
+  schemaVersion: number,
+): boolean {
+  const parsed = parseAnnotationSchemaPayload(value, schemaVersion);
+  return parsed.skippedCount === 0 && annotationJsonValuesEqual(value, parsed.items);
+}
+
 export function normalizePoint(x: number, y: number, width: number, height: number): NormalizedPoint {
   return clampNormalizedPoint({
     x: width > 0 ? x / width : 0,

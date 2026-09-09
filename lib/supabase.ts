@@ -125,6 +125,7 @@ export interface RepertoirePdfAnnotationRow {
   target_voice_group: string | null;
   annotations_json: unknown;
   schema_version: number;
+  revision: number;
   created_by: string | null;
   updated_by: string | null;
   created_at: string;

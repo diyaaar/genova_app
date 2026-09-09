@@ -5,6 +5,7 @@ import {
   MAX_ANNOTATION_STROKE_WIDTH_PX,
   MIN_ANNOTATION_STROKE_WIDTH_PX,
   clampAnnotationStrokeWidthPx,
+  isAnnotationPayloadLosslesslyWritable,
   parseAnnotationItems,
   parseAnnotationSchemaPayload,
   resolveAnnotationColor,
@@ -68,6 +69,31 @@ describe('parseAnnotationItems', () => {
       { id: 'future-b' },
     ], 2)).toEqual({ items: [], skippedCount: 2 });
     expect(parseAnnotationSchemaPayload([], 2)).toEqual({ items: [], skippedCount: 1 });
+  });
+});
+
+describe('isAnnotationPayloadLosslesslyWritable', () => {
+  const validItem = {
+    id: 'known',
+    type: 'text',
+    color: 'red',
+    position: { x: 0.25, y: 0.5 },
+    text: 'Nota',
+    width: 0.4,
+  };
+
+  it('accepts an exact schema-v1 round trip regardless of object key order', () => {
+    expect(isAnnotationPayloadLosslesslyWritable([validItem], 1)).toBe(true);
+    expect(isAnnotationPayloadLosslesslyWritable([{ ...validItem, color: '#12ABef' }], 1)).toBe(true);
+  });
+
+  it('refuses future fields, unknown items, future schemas and clamped values', () => {
+    expect(isAnnotationPayloadLosslesslyWritable([{ ...validItem, futureField: true }], 1)).toBe(false);
+    expect(isAnnotationPayloadLosslesslyWritable([{ ...validItem, type: 'ellipse' }], 1)).toBe(false);
+    expect(isAnnotationPayloadLosslesslyWritable([validItem], 2)).toBe(false);
+    expect(isAnnotationPayloadLosslesslyWritable([
+      { ...validItem, position: { x: -1, y: 2 } },
+    ], 1)).toBe(false);
   });
 });
 
