@@ -1,9 +1,9 @@
 # Genova — agent handoff
 
-Snapshot: 9 September 2026. Package 018 locally accepted the actual protected-file runtime at
-code/test commit `0b3df6e`; this documentation commit records its evidence. The canonical
-[delivery plan](mobil-teslim-plani.md) now routes next to A2 actual native PDF/Skia rendering on
-current iOS and Android simulator/emulator builds, before A3 web compatibility.
+Snapshot: 9 September 2026. Package 019 locally accepted actual iOS PDF-page-image and Skia
+output at code/test commit `2c64e5e`; this documentation commit records its visual evidence.
+The canonical [delivery plan](mobil-teslim-plani.md) keeps A2 open for Android output and actual
+018-service lifecycle integration on both local platforms, before A3 web compatibility.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -82,7 +82,10 @@ download/render, basic zoom/scroll and read-only annotation overlays; 017 locall
 continuous synthetic read flow. Package 018 then ran the actual Edge entrypoint through disposable
 Auth/RPC/RLS/Storage and HTTP, fixing proxy URL, Storage MIME and Deno typing defects. The new Edge
 function is still not deployed; Drive, live-product, real-account and hardware behavior remain NOT
-RUN and web/native adoption must not be released before the function.
+RUN and web/native adoption must not be released before the function. Package 019 then used an
+explicit fixture-only alternate entry to render actual iOS PDF bitmaps and Skia overlays on pages
+1, 20 and 40, including zoom, invalid-page refusal, close cleanup and reopen. It does not prove
+Android or the 018 service-to-client lifecycle.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -93,6 +96,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 9 Sep, `2c64e5e` | iPhone 17 / iOS 26.5 simulator; alternate-entry Release build; actual PDF-page-image + Skia; mobile check and normal iOS bundle | **PASS** — pages 1/20/40 returned 1190 x 1684 output; base/150% annotations visibly aligned; page 41 refused; close deleted output; reopen passed; 14 suites / 73 tests and 1,314-module normal bundle | Tracked synthetic fixtures and simulator only. No Android, 018 service gateway, live/Drive/account, secure-storage, remote CI or hardware proof |
 | 9 Sep, `0b3df6e` | macOS task: guarded disposable Supabase stack; Deno check; actual HTTP Auth/RPC/RLS/Storage matrix; root `pnpm check` | **PASS** — actual entrypoint, ticket/checksum, authorization refusals, HEAD/ranges/416, MIME/upstream failures and cleanup; 38 files / 253 tests plus Next build | Synthetic local Storage only. No deploy, Drive, live/real account, remote CI or hardware evidence. One 8 MiB buffer observation is not a production performance claim |
 | 8 Sep, `326aae9` | macOS task: isolated native product-flow component acceptance; full mobile gate and iOS bundle | **PASS** — signed-out through two-choir selection, catalogue, recovered synthetic 40-page PDF/annotation, tenant switch and sign-out; 14 suites / 73 tests; 1,314-module bundle | Auth/RPC/catalogue/PDF are injected fakes. Live Edge/provider/RLS/account and hardware are NOT RUN; no native rebuild was required or claimed |
 | 8 Sep, `0bbe646` | macOS task: root `pnpm check`; mobile TypeScript/Jest/bundle/Expo Doctor; iOS simulator native build | **PASS** — root 37 files / 244 tests and Next build; mobile 13 suites / 72 tests; 1,314-module iOS export; Expo Doctor 21/21; product compiled/installed on iPhone 17 Pro simulator | Edge/provider/live account flow is NOT RUN. Native build used no Metro or real data; simulator is not hardware. Supplemental production-dependency audit remains **FAIL** with 10 moderate Expo toolchain findings |
@@ -145,8 +149,8 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 018 code/test is local commit `0b3df6e`; this evidence update is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–018 and
+Branch `main`. Package 019 code/test is local commit `2c64e5e`; this evidence update is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–019 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -186,14 +190,15 @@ database acceptance runs.
 On 8 September the owner authorized local package execution; 013–017 reached their recorded
 local acceptance. On 9 September the owner set the complete canonical plan as the continuing goal
 and authorized the local execution loop within existing boundaries. Package 018 reached its
-recorded local acceptance at `0b3df6e` without any external or hardware action.
+recorded local acceptance at `0b3df6e`, and 019 accepted the first A2 slice at `2c64e5e`, without
+any external or hardware action.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
-The next bounded implementation package is plan A2: actual native product PDF/Skia output on both
-current local platforms, using 018's verified local service and captured visual evidence. Open its
-brief from the current checkout before product edits; fake rendering cannot close it. A3 then
-checks existing web consumers. Independent later local work can continue under existing authority
+The next bounded implementation package remains plan A2: actual Android PDF/Skia output and the
+018 local-service gateway/lifecycle on both local platforms. Open its brief from the current
+checkout before product edits; 019's fixture-only iOS screen cannot close that integration. A3
+then checks existing web consumers. Independent later local work can continue under existing authority
 while external/device gates remain pending, following the roadmap's dependency rules.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
@@ -205,13 +210,13 @@ while external/device gates remain pending, following the roadmap's dependency r
 > HEAD, working-tree ownership and applicable evidence; assume no access to previous chats.
 >
 > Read the canonical `docs/mobil-teslim-plani.md` for the long-term milestones and execution
-> loop. Package 018 is locally accepted at code/test commit `0b3df6e`; read its evidence and do
-> not infer deploy, Drive, real-account, CI or hardware proof. The next bounded product task is
-> plan A2: open a brief for actual native PDF/Skia rendering on the current iOS simulator and
-> Android emulator builds using the verified local service and captured visual output.
+> loop. Package 019 is locally accepted at code/test commit `2c64e5e`; read its evidence and do
+> not infer Android, service integration, deploy, Drive, real-account, CI or hardware proof. The
+> next bounded product task remains plan A2: open a brief for actual Android PDF/Skia rendering
+> and the verified 018 local-service gateway/lifecycle on both local platforms.
 >
-> Preserve 013–018's historical local acceptance and distinguish it from deployment/Drive and
-> real native rendering. Keep 004 at 25/27 and 010 at 6/7; hardware remains
+> Preserve 013–019's historical local acceptance and distinguish it from deployment/Drive and
+> unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.
 >

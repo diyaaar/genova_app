@@ -1,6 +1,6 @@
 # Active context
 
-Updated 9 September 2026 after the local 018 code/test commit `0b3df6e`. The recorded
+Updated 9 September 2026 after the local 019 code/test commit `2c64e5e`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -46,8 +46,12 @@ sign-out; mobile passed 73 tests/bundle. The real pilot is NOT RUN. Package
 protected-file entrypoint through disposable Auth/RPC/RLS/Storage and HTTP at code/test commit
 `0b3df6e`; root `pnpm check` passed 253 tests/build. It exposed and fixed proxy URL, Storage MIME
 and Deno WebCrypto typing defects. No deploy, Drive, real account, CI or hardware result is
-inferred. The next local package is plan A2: actual native PDF/Skia rendering on current iOS and
-Android simulator/emulator builds, before A3 web compatibility and annotation writes.
+inferred. [019](../docs/briefs/019-ios-native-pdf-render-acceptance.md) accepted actual iOS
+PDF-page-image and Skia output on an iPhone 17 / iOS 26.5 simulator at `2c64e5e`: pages 1/20/40,
+base/150% overlay alignment, page-41 refusal, close cleanup and reopen passed; mobile remained
+14 suites / 73 tests and the normal 1,314-module iOS export passed. Its alternate entry uses only
+tracked fixtures. A2 remains open for Android plus actual 018-service lifecycle integration on
+both local platforms, before A3 web compatibility and annotation writes.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

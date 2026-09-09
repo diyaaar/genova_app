@@ -1,7 +1,8 @@
 # 019 — Actual iOS native PDF and Skia render acceptance
 
-Prepared: 2026-09-09. Status: **PREPARED / all execution criteria NOT RUN**.
-Single writer: main agent. This is the first bounded slice of delivery-plan A2.
+Prepared and executed: 2026-09-09. Status: **LOCAL ACCEPTANCE COMPLETE** at code/test
+commit `2c64e5e`; this documentation-only commit records its evidence. Single writer: main agent.
+This is the first bounded slice of delivery-plan A2.
 
 ## Outcome and delivery focus
 
@@ -82,13 +83,13 @@ review is actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Alternate acceptance entry is explicit, synthetic-only and leaves default product entry/flow unchanged | yes | NOT RUN | | Diff plus build command; release path must remain `App.tsx` |
-| Actual native PDF module opens exactly 40 pages and visibly renders nonblank, distinct pages 1, 20 and 40 | yes | NOT RUN | | Current iOS simulator; inspect captured pixels and returned dimensions |
-| Actual Skia overlay visibly matches fixture annotations on pages 1 and 40 at base and zoomed layout | yes | NOT RUN | | Compare expected normalized placement/content; Jest output is insufficient |
-| Page selection, bounded zoom, close/reopen and controlled render failure remain usable | yes | NOT RUN | | No blank stage counted as success; record cleanup observability limit |
-| Mobile TypeScript/Jest and the actual iOS native build/install pass | yes | NOT RUN | | Simulator is not hardware; root gate only if root/shared files change |
-| Captures/hashes, scope, local links, status consistency and `git diff --check` pass | yes | NOT RUN | | Generated native/build/cache output remains untracked; unrelated CLI cache unstaged |
-| Separate code/evidence commits and next-task handoff preserve 004/010/018 boundaries | yes | NOT RUN | | No external or hardware action |
+| Alternate acceptance entry is explicit, synthetic-only and leaves default product entry/flow unchanged | yes | PASS | 2026-09-09, `2c64e5e`; alternate `ENTRY_FILE` Release build | One acceptance file registers its own root and loads only tracked fixtures. The screen labels itself synthetic. `App.tsx`, `index.ts` and app configuration have no 019 diff; the normal `index.ts` bundle export passed after the alternate build. |
+| Actual native PDF module opens exactly 40 pages and visibly renders nonblank, distinct pages 1, 20 and 40 | yes | PASS | 2026-09-09, iPhone 17 / iOS 26.5 simulator | Actual `PdfPageImage` returned page count 40 and 1190 x 1684 images. Pixel inspection found the distinct page labels and grids in [pages 1, 20 and 40](../evidence/019-ios-native-pdf/README.md#pixel-inspection). This is simulator/synthetic evidence, not hardware or service integration. |
+| Actual Skia overlay visibly matches fixture annotations on pages 1 and 40 at base and zoomed layout | yes | PASS | 2026-09-09, actual Skia Canvas/Path/Text overlay | Page 1 visibly showed all expected annotation kinds at their normalized grid positions. Page 40 showed the expected rectangle/note; at 150% the PDF and overlay scaled together without coordinate drift in the inspected viewport. |
+| Page selection, bounded zoom, close/reopen and controlled render failure remain usable | yes | PASS | 2026-09-09, acceptance controls and actual adapter | Direct 1/20/40 selection, 100/150% zoom, invalid user page 41 refusal, close, generated-file deletion and reopen all passed. The returned file URI ceased to exist and the app temp directory was empty after close. Deeper OS/native caches are not observable or claimed. |
+| Mobile TypeScript/Jest and the actual iOS native build/install pass | yes | PASS | 2026-09-09, `2c64e5e`; mobile check, bundle and Release build | `npm run check`: 14 suites / 73 tests. Normal iOS export: 1,314 modules. Alternate-entry Xcode Release build: zero errors, two warnings; installed and opened on the named simulator. Root gate N/A because no root/shared code changed. Simulator is not hardware. |
+| Captures/hashes, scope, local links, status consistency and `git diff --check` pass | yes | PASS | 2026-09-09, documentation review | Seven 1206 x 2622 PNG captures were inspected and hashed in the [evidence index](../evidence/019-ios-native-pdf/README.md). Generated `ios/` and `.expo/` outputs remained ignored. Local links and status records passed their checks; the unrelated CLI cache remained unstaged. |
+| Separate code/evidence commits and next-task handoff preserve 004/010/018 boundaries | yes | PASS | 2026-09-09, code `2c64e5e`; this evidence commit | Product acceptance source and records are separate commits. No push, deploy, hosted call, real data/account, remote CI or hardware action occurred. 004 remains 25/27; 010 remains 6/7; 018 remains local-only. The next brief owns Android plus actual 018 local-service lifecycle integration. |
 
 ## Rollback, stop conditions and next slice
 
@@ -98,6 +99,8 @@ startup, the fixture is not exact, the simulator target changes unexpectedly, a 
 requires a broad upgrade, or visible output cannot be inspected. Two failed approaches require a
 recorded diagnosis and replan.
 
-After 019, prepare the next A2 slice for Android emulator output and actual 018 local-service
-gateway/lifecycle acceptance on both local platforms. 004 hardware remains postponed and 010
-fixture recreation remains separately gated.
+019 closes only the actual iOS-render slice. The next A2 brief owns Android emulator output and
+the actual 018 local-service gateway/lifecycle acceptance on both local platforms. It must cover
+retry, exit, tenant switch and private-file cleanup without reclassifying the 019 fixture-only
+screen as service integration. 004 hardware remains postponed and 010 fixture recreation remains
+separately gated.
