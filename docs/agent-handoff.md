@@ -1,9 +1,10 @@
 # Genova — agent handoff
 
-Snapshot: 9 September 2026. Package 021 locally completed A2 at code/test commit `404a9ee` by
-composing the actual disposable protected-file service with both Release apps; this documentation
-commit records its visual and cleanup evidence. The canonical [delivery plan](mobil-teslim-plani.md)
-now routes to A3 web compatibility.
+Snapshot: 9 September 2026. Package 022 locally completed A3 at code/test commit `fb4a6a2` by
+composing the actual disposable protected-file service with the existing production-browser PDF,
+audio and offline consumers; this documentation commit records its visual and cleanup evidence.
+The canonical [delivery plan](mobil-teslim-plani.md) now routes to B1 annotation-write contract
+inventory while release execution and hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -94,7 +95,11 @@ path with default mobile Auth, catalogue, private-file and reader modules on bot
 catalogue and post-sign-out session/preference cleanup passed. Expo environment lookup and native
 SecureStore key defects were fixed; Android's local cleartext exception is generated only under
 exact guarded 021 settings and removed from ordinary prebuilds. This remains simulator/emulator
-only; the new Edge function is still not deployed.
+only. Package 022 then ran the existing web product in production Chrome against a fresh
+disposable Auth/RLS/Edge/private Storage stack. Exact PDF/audio bytes, HTTP 206 playback,
+explicit Service Worker offline caches, near-expiry renewal, visible missing-object 502,
+wrong-choir 403 and switch/sign-out teardown passed at `fb4a6a2`; no web product repair was
+required. This remains local synthetic evidence; the new Edge function is still not deployed.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -105,6 +110,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 9 Sep, `fb4a6a2` | Disposable local Supabase Auth/RLS/Edge/private Storage; production Next; installed Chrome 152 through Playwright 1.62.1; root gate | **PASS** — exact 65,905-byte PDF and 160,044-byte WAV, 206 Range playback, explicit offline caches, ticket renewal, visible 502, B-choir 403/empty catalogue, switch/sign-out cleanup; 38 files / 253 tests and build; fixture/source baselines restored | Local synthetic self-review only. No deploy, Drive, hosted/real account, remote CI, hardware or independent review. See [022 evidence](evidence/022-web-protected-file-compatibility/README.md) |
 | 9 Sep, `404a9ee` | Disposable local Supabase Auth/RPC/RLS/Edge/private Storage; iPhone 17 / iOS 26.5 and Android API 36 arm64 alternate-entry Release apps; mobile gate and normal exports | **PASS** — real 401/retry/fresh ticket, exact 65,905-byte 40-page PDF/native overlay, reader remove/reopen, B-choir 403/empty catalogue and sign-out session/preference cleanup; 16 suites / 84 tests; 1,314-module iOS and 1,312-module Android normal bundles; fixture/source baselines restored | Local synthetic self-review only. Android Release private directory was not externally inspectable; in-app existence probe passed. No deploy, Drive, hosted/real account, hardware, remote CI or independent review. See [021 evidence](evidence/021-mobile-protected-file-runtime/README.md) |
 | 9 Sep, `e2fe177` | Pixel 7 API 36 arm64 emulator; alternate-entry Android Release; actual PDF-page-image + Skia; mobile check, normal Android export and affected iOS rebuild | **PASS** — Android pages 1/20/40 at 1190 x 1684; base/150% annotations aligned; page 41 refused; close/reopen passed; 14 suites / 73 tests, 1,312-module normal Android bundle; iOS regression passed | Tracked synthetic fixtures only. Android Release private cache was not inspectable with `run-as`; returned image URI was deleted. No 018 service, live/provider/account, secure-storage, remote CI or hardware proof. Supplemental audit remains FAIL with the known 10 moderate toolchain findings |
 | 9 Sep, `2c64e5e` | iPhone 17 / iOS 26.5 simulator; alternate-entry Release build; actual PDF-page-image + Skia; mobile check and normal iOS bundle | **PASS** — pages 1/20/40 returned 1190 x 1684 output; base/150% annotations visibly aligned; page 41 refused; close deleted output; reopen passed; 14 suites / 73 tests and 1,314-module normal bundle | Tracked synthetic fixtures and simulator only. No Android, 018 service gateway, live/Drive/account, secure-storage, remote CI or hardware proof |
@@ -154,14 +160,14 @@ receiving-agent test is claimed anywhere.
 - **`apps/mobile/node_modules` is a macOS install** shared through the connected folder. Never
   run an install against it from a Linux shell; copy the tree outside the folder instead, which
   is how the gate was run here.
-- **Uncommitted and not ours:** `supabase/.temp/cli-latest` is modified (empty → `v2.116.0`).
+- **Uncommitted and not ours:** `supabase/.temp/cli-latest` is modified (empty → `v2.117.0`).
   It is a Supabase CLI version cache the CLI rewrites on its own. It was left unstaged
   deliberately in every commit of this stretch. Do not commit it as part of unrelated work.
 
 ## Checkout and ownership
 
-Branch `main`. Package 021 code/test is local commit `404a9ee`; this evidence update is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–021 and
+Branch `main`. Package 022 code/test is local commit `fb4a6a2`; this evidence update is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–022 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -202,16 +208,18 @@ On 8 September the owner authorized local package execution; 013–017 reached t
 local acceptance. On 9 September the owner set the complete canonical plan as the continuing goal
 and authorized the local execution loop within existing boundaries. Package 018 reached its
 recorded local acceptance at `0b3df6e`; 019 and 020 accepted actual iOS and Android rendering at
-`2c64e5e` and `e2fe177`. Package 021 completed the combined local service lifecycle at `404a9ee`,
-without any external or hardware action.
+`2c64e5e` and `e2fe177`. Package 021 completed the combined local service lifecycle at `404a9ee`.
+Package 022 completed production-browser compatibility at `fb4a6a2`, without any external or
+hardware action.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
-The next bounded implementation package is plan A3: web compatibility with the new file route.
-Open its brief from the current checkout before product edits and verify existing PDF, audio and
-offline consumers plus refresh/expiry, wrong-choir, sign-out and failed-download behavior against
-an isolated service. Independent later local work can continue under existing authority
-while external/device gates remain pending, following the roadmap's dependency rules.
+The immediate local read path A1–A3 is complete. A4 release preparation may be written locally,
+but push/deploy/hosted checks remain externally gated and A5 hardware remains postponed. Following
+the roadmap's dependency rule, the next independently ready local package is B1: annotation-write
+contract and role/layer inventory. Open its own brief before product edits; map existing ownership,
+visibility, edit/delete and version behavior, and stop for owner decisions on genuinely new product
+semantics before dependent implementation.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -222,11 +230,12 @@ while external/device gates remain pending, following the roadmap's dependency r
 > HEAD, working-tree ownership and applicable evidence; assume no access to previous chats.
 >
 > Read the canonical `docs/mobil-teslim-plani.md` for the long-term milestones and execution
-> loop. Package 021 locally completed A2 at code/test commit `404a9ee`; read its brief and evidence
-> without inferring deploy, Drive, real-account, CI or hardware proof. The next bounded product
-> task is plan A3: open a brief for web compatibility with the new protected-file route.
+> loop. Package 022 locally completed A3 at code/test commit `fb4a6a2`; read its brief and evidence
+> without inferring deploy, Drive, real-account, CI or hardware proof. The immediate local read
+> path A1–A3 is complete. The next independently ready local task is B1: open a brief for the
+> annotation-write contract and role/layer inventory.
 >
-> Preserve 013–021's historical local acceptance and distinguish it from deployment/Drive and
+> Preserve 013–022's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.

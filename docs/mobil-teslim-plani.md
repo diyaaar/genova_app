@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-09 after local 021 mobile service-lifecycle acceptance; originally prepared under
+Updated 2026-09-09 after local 022 web protected-file acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -17,7 +17,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 
 | Milestone | Observable exit | Current evidence |
 |---|---|---|
-| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–021; actual local Auth/RLS/Edge/Storage and iOS/Android protected-file lifecycle passed |
+| M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | Future packages; no implementation acceptance claimed |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
@@ -63,6 +63,11 @@ briefs, not in a second copy here.
   reader path on both local platforms. First-open refusal/retry, exact 40-page download/render,
   reader exit/reopen, tenant switch/403/empty catalogue and sign-out cleanup passed at `404a9ee`.
   This is local synthetic evidence, not M1, deployment, Drive, real accounts or hardware.
+- [022](briefs/022-web-protected-file-compatibility.md) completed A3 locally at `fb4a6a2`.
+  Production Chrome exercised the existing PDF, audio and explicit-offline consumers through the
+  disposable protected-file service: exact bytes, ticket renewal, visible missing-object failure,
+  wrong-choir refusal and tenant/sign-out cache teardown passed. No product repair was needed.
+  Hosted routing, Drive, real accounts, deployment, remote CI and hardware remain unverified.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -89,8 +94,8 @@ approval. Preserve any previously granted narrow authorization without asking tw
 
 ## Ordered work packages
 
-Package keys below express dependencies, not preassigned brief numbers. Packages 018 and 021
-closed A1 and A2 locally; open each next implementation brief from the current checkout and
+Package keys below express dependencies, not preassigned brief numbers. Packages 018, 021 and 022
+closed A1, A2 and A3 locally; open each next implementation brief from the current checkout and
 [brief template](briefs/_TEMPLATE.md). A row with several user outcomes must be split into
 sequential briefs. Source paths are starting points, not authority for a broad rewrite.
 
@@ -100,7 +105,7 @@ sequential briefs. Source paths are starting points, not authority for a broad r
 |---|---|---|---|
 | A1 / 015–017 local evidence | **018 COMPLETE locally:** protected-file runtime acceptance. `supabase/functions/repertoire-file/`, shared protected-file client, `supabase/test-support/` | Actual Deno entrypoint and HTTP route passed with synthetic PDF checksum; JWT/current-choir/RLS composition; bad/expired ticket, denied choir, HEAD/206/416, MIME and upstream failure; fixture/source baseline unchanged | Code/test `0b3df6e`; exact evidence and local-only limits in [018](briefs/018-protected-file-runtime-acceptance.md). Deploy, Drive, real accounts and hardware remain unverified |
 | A2 / A1 | **COMPLETE locally:** [019](briefs/019-ios-native-pdf-render-acceptance.md), [020](briefs/020-android-native-pdf-render-acceptance.md) and [021](briefs/021-mobile-protected-file-runtime-acceptance.md); final service lifecycle at `404a9ee`. `apps/mobile/src/repertoire/`, `apps/mobile/src/ui/`, native configuration | Actual local Auth/RPC/RLS/Edge/private Storage composed with both Release apps: first 401, UI retry, fresh ticket, exact 40-page download/render, reader exit/reopen, tenant clear, B-choir 403/empty catalogue and sign-out session/preference cleanup passed | Local/synthetic simulator+emulator only. M1, deploy, Drive, real accounts, device durability and hardware remain unverified |
-| A3 / A1–A2 | Web compatibility with the new file route. `hooks/useProtectedDriveFileUrl.ts`, `lib/drive-file-url.ts`, `components/repertuvar/` | Local browser PDF, existing audio and offline consumers; refresh/expiry, wrong choir, sign-out and failed download. Verify existing behavior, not pixel equality | Local browser + isolated service. No live route call or remote CI without authority |
+| A3 / A1–A2 | **COMPLETE locally:** [022](briefs/022-web-protected-file-compatibility.md), code/test `fb4a6a2`. Existing web protected-file consumers plus guarded browser/runtime acceptance | Production Chrome passed exact PDF/audio bytes, Range playback, explicit offline Service Worker caches, ticket renewal, visible 502, wrong-choir 403 and switch/sign-out teardown | Local synthetic browser + isolated service only. No product repair, live route, Drive, deploy, real account or remote CI evidence |
 | A4 / A1–A3 | Controlled service/client release and read pilot readiness; release brief based on 015 and 017 | Exact outgoing commits and hosting triggers; Edge deployed/configured before calling web; approved synthetic fixture roles; service and actual domain checks; rollback rehearsal before release | Prepare locally; external execution gated. Failed deployment blocks client rollout; hardware pilot remains separate |
 | A5 / A4 + explicit device authority | M1 device pilot; use 017's checklist and 004's remaining rows | Chef + chorist on both platforms, real rendering/permissions/network/relaunch/secure storage; error and isolation cases with build/device evidence | Postponed. Do not close 004 with emulator evidence or force this as the next user action |
 
@@ -249,10 +254,9 @@ an explicit change of priority. Report unavoidable unfinished work rather than d
 
 The planning loop itself is finite: source audit → dependency/evidence draft → failure-scenario
 review → link/consistency validation. [WF-006](briefs/WF-006-long-term-execution-plan.md) records
-those iterations. **Next bounded implementation task: A3 web compatibility with the new file
-route.** A2 closed locally in [021](briefs/021-mobile-protected-file-runtime-acceptance.md) at
-code/test commit `404a9ee`, building on [019](briefs/019-ios-native-pdf-render-acceptance.md) and
-[020](briefs/020-android-native-pdf-render-acceptance.md). The A3 brief must verify existing PDF,
-audio and offline consumers plus refresh/expiry, wrong-choir, sign-out and failed-download behavior
-against an isolated service. 013–021's historical local acceptance, 004/010 open criteria and the
-postponed hardware pilot remain unchanged.
+those iterations. A3 closed locally in [022](briefs/022-web-protected-file-compatibility.md) at
+code/test commit `fb4a6a2`; the immediate local read critical path A1–A3 is complete. A4 may now be
+prepared locally, but any release execution remains separately gated and A5 hardware stays
+postponed. Per the dependency rule above, **the next independently ready local package is B1:
+annotation-write contract and role/layer inventory.** 013–022's historical local acceptance,
+004/010 open criteria and the postponed hardware pilot remain unchanged.

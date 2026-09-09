@@ -1,0 +1,58 @@
+{
+  "browser": "installed Google Chrome via Playwright 1.62.1",
+  "pdf": {
+    "size": 65905,
+    "sha256": "39fcafaec0263d8c2429a66d4ea941180692a99749be398a1d48c8fd5397d6a3",
+    "ticketPosts": 4
+  },
+  "audio": {
+    "size": 160044,
+    "sha256": "b43dde9816f8047e0c351a5a756f99d75433396ce8f4ac0b36dc1d825f26127e",
+    "durationSeconds": 10,
+    "rangeStatus": 206
+  },
+  "cachesBeforeFailure": {
+    "names": [
+      "genova-runtime-drive-files-v1",
+      "genova-runtime-drive-meta-v1",
+      "genova-offline-repertoire-files-v1",
+      "genova-offline-repertoire-meta-v1"
+    ],
+    "entries": {
+      "genova-offline-repertoire-files-v1": 2,
+      "genova-offline-repertoire-meta-v1": 1,
+      "genova-runtime-drive-files-v1": 2,
+      "genova-runtime-drive-meta-v1": 2
+    }
+  },
+  "afterSwitchCaches": {
+    "names": [],
+    "entries": {}
+  },
+  "wrongChoirStatus": 403,
+  "edgeResponseSummary": [
+    [
+      "POST 200",
+      8
+    ],
+    [
+      "GET 206",
+      2
+    ],
+    [
+      "GET 200",
+      2
+    ],
+    [
+      "POST 403",
+      1
+    ]
+  ],
+  "expectedFailureConsoleErrors": 0,
+  "pageErrors": [],
+  "limits": [
+    "local synthetic service/browser only",
+    "Storage provider substitute; not Drive",
+    "no hosted, real-user, hardware or publication evidence"
+  ]
+}

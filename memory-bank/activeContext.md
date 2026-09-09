@@ -1,6 +1,6 @@
 # Active context
 
-Updated 9 September 2026 after the local 021 code/test commit `404a9ee`. The recorded
+Updated 9 September 2026 after the local 022 code/test commit `fb4a6a2`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -62,8 +62,13 @@ Expo Asset 57.0.16 prepares only the tracked fixture as a local file after an em
 `404a9ee`: the actual disposable Auth/RPC/RLS/Edge/private Storage route composed with default
 mobile Auth, catalogue, private-file and native reader modules on iOS and Android. Real 401/retry,
 fresh tickets, the exact 40-page render, reader removal/reopen, B-choir 403/empty catalogue and
-sign-out session/preference cleanup passed. Fixture and source baselines were restored. The next
-local package is A3 web compatibility before annotation writes.
+sign-out session/preference cleanup passed. Fixture and source baselines were restored. Package
+[022](../docs/briefs/022-web-protected-file-compatibility.md) then completed A3 locally at
+`fb4a6a2`: production Chrome used the actual disposable Auth/RLS/Edge/private Storage path for
+the current PDF, audio and explicit-offline consumers. Exact-byte/cache checks, ticket renewal,
+visible missing-object 502, wrong-choir 403 and switch/sign-out teardown passed; no web product
+repair was required. A1–A3 are complete locally. Release execution and hardware remain gated;
+B1 annotation-write contract inventory is the next independently ready local package.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

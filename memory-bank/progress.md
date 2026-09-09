@@ -32,6 +32,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 019 iOS native PDF/Skia acceptance | Local acceptance complete; 021 later completed A2 | [019](../docs/briefs/019-ios-native-pdf-render-acceptance.md), code/test `2c64e5e`; actual iOS PDF-page-image and Skia output passed on pages 1/20/40, base/150% alignment, invalid-page refusal, close cleanup and reopen. Mobile: 14 suites / 73 tests plus normal 1,314-module iOS export. That slice was synthetic simulator only; 021 owns later service integration |
 | 020 Android native PDF/Skia acceptance | Local acceptance complete; 021 later completed A2 | [020](../docs/briefs/020-android-native-pdf-render-acceptance.md), code/test `e2fe177`; actual Android PDF-page-image and Skia passed on API 36 arm64 for pages 1/20/40, 150% alignment, invalid-page refusal, returned-image cleanup and reopen. Mobile 14 suites / 73 tests, 1,312-module normal Android export and affected iOS rebuild passed. That slice was synthetic emulator only; known 10 moderate audit findings remain FAIL |
 | 021 mobile protected-file lifecycle | Local acceptance complete; A2 complete locally | [021](../docs/briefs/021-mobile-protected-file-runtime-acceptance.md), code/test `404a9ee`; actual disposable Auth/RPC/RLS/Edge/private Storage composed with both Release apps. Real 401/retry, fresh ticket, exact 65,905-byte 40-page render, reader cleanup/reopen, B-choir 403/empty catalogue and sign-out session/preference cleanup passed. Mobile 16 suites / 84 tests plus normal iOS/Android exports; fixture/source baselines restored. No deploy, Drive, real account, CI or hardware proof |
+| 022 web protected-file compatibility | Local acceptance complete; A3 complete locally | [022](../docs/briefs/022-web-protected-file-compatibility.md), code/test `fb4a6a2`; production Chrome composed actual local Auth/RLS/Edge/private Storage with existing PDF/audio/offline consumers. Exact bytes, Range playback, ticket renewal, visible 502, wrong-choir 403 and switch/sign-out cleanup passed. Root 38 files / 253 tests/build; fixtures and source baseline restored. No deploy, Drive, real account, remote CI or hardware proof |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -67,11 +68,11 @@ device items postponed. The owner has now authorized the local repertoire/PDF se
 WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
 `9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`; 018 is locally
 accepted at `0b3df6e`; 019 and 020's iOS/Android render slices are locally accepted at `2c64e5e`
-and `e2fe177`; 021 completed A2 locally at `404a9ee`. The
-[canonical long-term plan](../docs/mobil-teslim-plani.md) now routes to A3 web compatibility before
-annotation writes.
+and `e2fe177`; 021 completed A2 locally at `404a9ee`; 022 completed A3 locally at `fb4a6a2`.
+The [canonical long-term plan](../docs/mobil-teslim-plani.md) now routes to B1 annotation-write
+contract inventory while release execution and hardware remain gated.
 No push, deploy, production database operation, Drive call, real choir access, email, remote CI
-or hardware test was performed for 021.
+or hardware test was performed for 022.
 
 WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
 [WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.

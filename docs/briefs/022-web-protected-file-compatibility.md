@@ -1,7 +1,8 @@
 # 022 — Web protected-file compatibility acceptance
 
-Prepared: 2026-09-09. Status: **PLANNED / NOT RUN**. Single writer and self-reviewer:
-main agent; no independent review is claimed. This is delivery-plan package A3.
+Prepared: 2026-09-09. Status: **LOCAL ACCEPTANCE COMPLETE** at code/test commit `fb4a6a2`.
+Single writer and self-reviewer: main agent; no independent review is claimed. This is
+delivery-plan package A3.
 
 ## Outcome and delivery focus
 
@@ -119,18 +120,22 @@ review is actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Guarded fixture/runtime uses actual local Auth, current-choir RPC, RLS, Edge route and private Storage PDF/audio bytes; source and target baseline restore | yes | **NOT RUN** | Run dedicated 022 prepare → browser matrix → cleanup | Must record exact service versions, fixture sizes/hashes and local-only boundary |
-| Production-mode product browser signs in the synthetic multi-choir user and exposes only choir A's assigned protected PDF/audio consumers | yes | **NOT RUN** | Actual local Chrome through `@playwright/test` | DOM mocks or direct service calls do not satisfy this row |
-| Actual protected PDF bytes render or are consumed by the existing viewer, and actual protected audio bytes reach the existing audio consumer with supported playback/range behavior | yes | **NOT RUN** | Product UI + Edge/Storage network evidence | Record exact bytes/checksums; autoplay policy may require an explicit browser gesture but is not a reason to skip the audio consumer |
-| Explicit offline action stores and serves the authorized file through the real service worker; runtime and offline statuses remain distinct | yes | **NOT RUN** | Production Service Worker + Cache Storage + `/offline-drive/` | Must not infer from helper tests or claim general offline authorization revocation |
-| Expired/stale ticket or refused first request renews safely; failed/missing upstream download has bounded UI behavior without stale cross-tenant bytes or secret leakage | yes | **NOT RUN** | Actual HTTP/browser retry and failure scenarios | Same-tenant offline fallback, if retained, must be observed and distinguished from tenant isolation |
-| Wrong-choir request is refused and choir switch removes every A-owned protected URL/PDF/audio/runtime/offline cache before B state is consumed | yes | **NOT RUN** | Actual RPC/RLS/Edge + browser storage/cache inspection | Existing issued-ticket expiry contract remains unchanged; browser teardown is the acceptance boundary |
-| Sign-out clears protected caches, ticket state, choir preference and authenticated session even when repertoire consumers are no longer mounted | yes | **NOT RUN** | Product sign-out + browser storage/cache/session inspection | Must include all protected service-worker cache namespaces and audio state |
-| Focused tests, service-worker syntax, production browser run and root `pnpm check` pass without secret-bearing evidence | yes | **NOT RUN** | Root and guarded 022 commands | Native gates N/A unless shared/mobile source changes; hosted/remote CI remains NOT RUN outside this brief |
-| Diff, fixture/runtime cleanup, links, separate commits and authority boundaries preserve 004/010 and historical acceptance | yes | **NOT RUN** | Final self-review | 004 remains 25/27 and 010 remains 6/7; unrelated CLI cache stays unstaged |
+| Guarded fixture/runtime uses actual local Auth, current-choir RPC, RLS, Edge route and private Storage PDF/audio bytes; source and target baseline restore | yes | **PASS** | 2026-09-09, `fb4a6a2`; dedicated 022 prepare → final status → cleanup, Supabase CLI 2.117.0 / PostgreSQL major 17 | Two memberships, three annotations, exact PDF/WAV hashes; target baseline restored and source snapshot unchanged. Exact observed versions and local-only limits are in [evidence](../evidence/022-web-protected-file-compatibility/README.md) |
+| Production-mode product browser signs in the synthetic multi-choir user and exposes only choir A's assigned protected PDF/audio consumers | yes | **PASS** | 2026-09-09, installed Chrome 152.0.7977.83 through Playwright 1.62.1 against production Next | Actual product Auth/choir/catalogue UI; no DOM or service double. Local synthetic account only |
+| Actual protected PDF bytes render or are consumed by the existing viewer, and actual protected audio bytes reach the existing audio consumer with supported playback/range behavior | yes | **PASS** | 2026-09-09, product PDF canvas and shared audio player through Edge/private Storage | PDF 65,905 bytes / `39fc…d6a3`; WAV 160,044 bytes / `b43d…6127`; audio GET returned 206 after explicit play gesture |
+| Explicit offline action stores and serves the authorized file through the real service worker; runtime and offline statuses remain distinct | yes | **PASS** | 2026-09-09, production Service Worker + Cache Storage + `/offline-drive/` | Exact PDF/audio bytes and hashes returned; explicit caches held 2 files / 1 metadata row, transient runtime caches 2 / 2. No general offline revocation claim |
+| Expired/stale ticket or refused first request renews safely; failed/missing upstream download has bounded UI behavior without stale cross-tenant bytes or secret leakage | yes | **PASS** | 2026-09-09, near-expiry PDF ticket plus missing existing audio object | Fresh ticket POST was observed; missing object produced visible `022-korunan-440hz.wav indirilemedi (502)`. Tracked evidence contains no ticket, JWT, credential or Storage locator |
+| Wrong-choir request is refused and choir switch removes every A-owned protected URL/PDF/audio/runtime/offline cache before B state is consumed | yes | **PASS** | 2026-09-09, actual switch to choir B plus authenticated Edge request | All four protected cache namespaces and old audio controls were absent; B catalogue empty; A file request under B returned 403 without locator disclosure |
+| Sign-out clears protected caches, ticket state, choir preference and authenticated session even when repertoire consumers are no longer mounted | yes | **PASS** | 2026-09-09, product profile-menu sign-out + browser inspection | Login UI returned; protected caches, auth token, choir/offline preferences and player controls were empty |
+| Focused tests, service-worker syntax, production browser run and root `pnpm check` pass without secret-bearing evidence | yes | **PASS** | 2026-09-09, `fb4a6a2`; root gate then guarded 022 build/browser run | Root: 38 files / 253 tests, lint/typecheck/SW/build PASS. Final guarded production build and browser matrix PASS. Native N/A: no shared/mobile source changed; hosted CI NOT RUN |
+| Diff, fixture/runtime cleanup, links, separate commits and authority boundaries preserve 004/010 and historical acceptance | yes | **PASS** | 2026-09-09, `fb4a6a2` plus this evidence record | Synthetic Auth/rows/objects and stack removed; task runtime moved to Trash; task VM's orphan disk removed. CLI cache unstaged; 004 stays 25/27 and 010 stays 6/7 |
 
 ## Delivery
 
-No acceptance is claimed at planning time. The final record must name the code/test commit, separate
-evidence commit, rollback order, exact retained limitations and next ready package. A3 cannot be
-closed by helper tests alone or by reusing A2's mobile evidence.
+Local A3 acceptance is complete at code/test commit `fb4a6a2`; exact commands, versions, browser
+captures, failure history, hashes and cleanup are in the linked evidence directory. Rollback is
+that code/test commit followed by its separate evidence commit. No product repair was required:
+the existing web path passed. A4 release preparation may proceed locally, but its external
+execution and A5 hardware pilot remain gated; B1 is the next independently ready local design
+package while those gates wait. Deployment, Drive, hosted/real-user behavior, remote CI and
+offline authorization revocation remain unverified.
