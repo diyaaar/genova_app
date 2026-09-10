@@ -25,6 +25,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 021 mobile service lifecycle | `supabase/test-support/021_mobile_runtime_runner.sh` retains guarded fixtures through two platform runs, then proves target/source cleanup. Android loopback cleartext is generated only with the exact 021 flag and URL; ordinary prebuild removes it |
 | 022 web protected-file lifecycle | `supabase/test-support/022_web_runtime_runner.sh` retains guarded PDF/audio fixtures for a production browser run; `022_web_browser_acceptance.ts` verifies real Service Worker/Cache Storage, ticket renewal, Range audio, failure, tenant switch and sign-out before explicit cleanup |
 | 026 native foreground audio | In `apps/mobile`, run type/Jest/iOS export/Expo Doctor and the brief's guarded alternate-entry Release builds. `audio-server.mjs` refuses use without the exact acceptance flag and loopback URL; it serves deterministic WAV/corrupt bytes only. Simulator/emulator decode is not hardware or provider evidence |
+| 027 native shell audio | Reuse 026's guarded alternate entry/server, but navigate shell → repertoire → full → repertoire/home mini → full and prove no navigation ticket. Inspect compact loading/error/disabled/clear states, exact Release apps and accessibility trees. This remains foreground simulator/emulator evidence |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -113,3 +114,11 @@ tenant-cache boundary. Local acceptance passed mobile 20 suites / 100 tests, a 1
 export, Expo Doctor 21/21, iOS arm64-simulator and Android API 36 arm64 Release builds, plus root
 42 files / 279 tests and Next build. Exact runtime evidence and limitations are in
 [026](../docs/briefs/026-native-repertoire-audio-playback.md).
+
+Package 027 adds no dependency or background capability. It moves the sole Expo Audio hook beneath
+authenticated `ReadyShell` and projects it through full and compact views. Local acceptance passed
+mobile 21 suites / 104 tests, a 1,330-module normal iOS export, Expo Doctor 21/21 and exact iOS
+arm64-simulator plus Android API 36 arm64 Release builds. The loopback server returned the same
+160,044-byte WAV through iOS 206 Range and Android 200; navigation retained 0:10 and 1.25x without
+a new ticket, while tenant clear removed the compact surface. Exact visual evidence and limitations
+are in [027 evidence](../docs/evidence/027-native-audio-shell-mini-player/README.md).

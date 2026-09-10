@@ -55,8 +55,8 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Ekran | ≈ satır | Hedef | Durum | Faz |
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
-| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026 ekran-sahipli foreground ses oynatmayı ekledi, kabuk-sahipli mini player/nav ve push bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses oynatma (026) kabul edildi; native yazma/senkronizasyon, mini player ve canlı pilot bekliyor | 2 |
+| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026 foreground ses oynatmayı, 027 tek kabuk sahibi + repertuvar/ana sayfa mini player sürekliliğini yerelde kabul etti; kalıcı nav/WebView bridge ve push bekliyor | 1 |
+| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -78,7 +78,7 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 | `supabase/functions/drive-manager-v2` | v15 canlı; 005 aktif-koro sözleşmesi, `verify_jwt=true` |
 | `supabase/functions/create-choir` | v1 canlı; `verify_jwt=true`; gerçek operatör başarı yolu kabul edildi, test fikstürü daha sonra temizlendi |
 | `supabase/functions/choir-invitations` | canlı; `verify_jwt=true`; 008 kabul edildi, 010'un iptal edilmiş bağlantı ve yanlış hesap ürün yolları açık kaldı |
-| `supabase/functions/repertoire-file` | yerel kabul edildi (015/018/021/022/026), **canlıya alınmadı**; gerçek yerel mobil dosya/PDF yaşam döngüsü ve foreground native ses iki simüle platformda, mevcut web PDF/ses/offline yolu üretim Chrome'da geçti. Bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
+| `supabase/functions/repertoire-file` | yerel kabul edildi (015/018/021/022/026/027), **canlıya alınmadı**; gerçek yerel mobil dosya/PDF yaşam döngüsü ve foreground native ses/mini-player iki simüle platformda, mevcut web PDF/ses/offline yolu üretim Chrome'da geçti. Bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
 | Push (VAPID → FCM/APNs) | Faz 1'de ikinci kanal eklenecek |
@@ -190,9 +190,12 @@ workspace adoption at `42c2fbb`: correct PDF-page identity, lossless metadata, s
 saves and tenant-exit refusal. Final native annotation UX remains decision-gated. Package 026 then
 locally accepted protected foreground native audio at `c30b3b1`: both Release simulators decoded
 the same 160,044-byte WAV; iOS used Range reads, expiry renewal, seek/speed, corrupt/unsupported
-states and tenant/source teardown passed. This is not hardware, background/lock-screen, hosted or
-release proof. Package 027 is the next ready B4 slice: one shell-owned foreground player and compact
-mini player across repertoire ↔ shell navigation. Release and hardware remain gated.
+states and tenant/source teardown passed. Package 027 then completed foreground B4 navigation at
+`dc25938`: one provider under the authenticated shell retains source, position and rate through
+repertoire and home compact views; both Release apps passed expiry, failure and tenant-clear paths.
+This is not hardware, background/lock-screen, hosted or release proof. Package 028 is the next ready
+C1 slice: inventory permanent-WebView bridge and native/WebView route ownership before
+implementation. Release and hardware remain gated.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-10 after local 026 foreground native-audio acceptance; originally prepared under
+Updated 2026-09-10 after local 027 shell-owned native-audio acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -19,7 +19,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 |---|---|---|
 | M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
-| M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation, 025 web lifecycle and 026 foreground native audio accepted locally; native writing, sync and navigation-persistent mini-player remain open |
+| M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation, 025 web lifecycle and 026–027 foreground native audio/navigation accepted locally; native writing and recoverable sync remain open |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
 | M4: release candidate | Multi-choir limits, data lifecycle, provider exit, security/accessibility and distribution requirements pass | Future packages; no current store eligibility claim |
 | M5: released and operable | Approved beta/public release verified at actual destination; support and recovery exercised | NOT RUN; publication and spending remain separately gated |
@@ -33,7 +33,7 @@ Deferral from a release candidate needs an explicit owner decision and remains v
 ## Baseline and evidence ownership
 
 Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this update:
-`main / c30b3b1`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
+`main / dc25938`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
 snapshot facts, not commands to reset a future checkout. Historical test details belong in their
 briefs, not in a second copy here.
 
@@ -86,8 +86,14 @@ briefs, not in a second copy here.
   `c30b3b1`: current-session protected tickets, stale-request cancellation, one native foreground
   owner, play/pause/seek/0.5–2x speed, expiry renewal, corrupt/unsupported errors and tenant teardown
   passed unit/integration tests and actual iOS/Android Release decoding of deterministic local WAV
-  bytes. Navigation persistence, compact mini-player, background/interruptions, hardware, hosted
-  service and release remain open.
+  bytes. That slice left navigation persistence, compact mini-player, background/interruptions,
+  hardware, hosted service and release open; 027 below closes only the first two locally.
+- [027](briefs/027-native-audio-shell-mini-player.md) locally completed foreground B4 navigation
+  integration at `dc25938`: one provider beneath authenticated `ReadyShell` owns the player and
+  signed source; full and compact views preserve source/position/rate through repertoire and home.
+  Both local Release apps passed expiry renewal, real WAV playback, corrupt/unsupported failure and
+  tenant teardown; [visual evidence](evidence/027-native-audio-shell-mini-player/README.md) is
+  retained. Background/interruption/lock-screen/audio-route and hardware remain B5.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -141,7 +147,7 @@ provisioned, preserve the failing/unrun layer and solve that bounded environment
 | B1 / A1–A3 | **DOCUMENTATION ACCEPTED:** [023](briefs/023-annotation-write-contract-inventory.md). Shared item/layer, role/RLS, delete/audit/version, web lifecycle and native read-only boundaries mapped | Six current web safety defects recorded; unsupported content must be preserved/refused, stale writes must fail visibly and tenant exit cannot silently lose or replay a save | No product/schema/live change. Four new collaboration/UX semantics remain explicit owner decisions before final B2 UX |
 | B2 / B1 | **IN PROGRESS:** [024](briefs/024-annotation-mutation-safe-save-contract.md) locally accepted the revision-safe server/adapter foundation and [025](briefs/025-web-annotation-safe-save-lifecycle.md) locally accepted web lifecycle adoption. Native editing and final owner UX decisions remain | Web writes → native reads and native writes → web reads; coordinates/page indexing/undo/redo; denied writes; stale session/choir switch; interrupted save visible; no dropped unknown content | 024/025 are local isolated SQL/unit/web acceptance only. Shared-schema changes require old-client compatibility, not a parallel schema; no hosted migration is authorized |
 | B3 / B2 | Recoverable annotation sync/offline queue under an explicit conflict contract | Retry idempotence; two clients editing; reconnect and process restart; revoked permission; tenant-scoped queue and sign-out disposition; no silent last-writer data loss | Conflict policy and unsaved-work UX decided before implementation. No hardware durability claim from fakes |
-| B4 / A3, read contract | **IN PROGRESS:** [026](briefs/026-native-repertoire-audio-playback.md) locally accepted native foreground playback/seek at `c30b3b1`; navigation-persistent ownership and compact mini-player remain. `lib/shared-audio.ts`, repertoire consumers, `apps/mobile/` | Actual local WAV bytes, iOS Range reads, expiry renewal, cancellation, one foreground owner, tenant teardown and corrupt/unsupported states passed; next prove one owner across repertoire ↔ shell navigation | Local simulator/emulator self-review only. MIDI/MusicXML support is inventoried separately; background/interruption/lock-screen and hardware remain B5; decision #14 filter stays |
+| B4 / A3, read contract | **COMPLETE locally:** [026](briefs/026-native-repertoire-audio-playback.md) accepted protected foreground playback/seek at `c30b3b1`; [027](briefs/027-native-audio-shell-mini-player.md) accepted shell ownership and compact navigation persistence at `dc25938`. `lib/shared-audio.ts`, repertoire consumers, `apps/mobile/` | Actual local WAV bytes, iOS Range reads, expiry renewal, cancellation, one shell owner, repertoire/home state continuity, compact controls, tenant teardown and corrupt/unsupported states passed | Local simulator/emulator self-review only. MIDI/MusicXML support is inventoried separately; background/interruption/lock-screen/audio-route and hardware remain B5; decision #14 filter stays |
 | B5 / B2–B4 + device authority | Stylus/gesture and audio lifecycle acceptance | Pressure/palm rejection, layout alignment, long-score memory and latency; interruptions/background/lock-screen and permission denial on real devices; measured before/after for performance claims | Hardware/provider capability and background behavior remain NOT RUN until actual execution |
 
 Persistent offline library/user controls are a separate brief after B3/B4: explicit download,
@@ -280,9 +286,11 @@ prepared locally, but any release execution remains separately gated and A5 hard
 postponed. Package 024 accepted the server/revision and safe-adapter foundation locally at
 `1755803`; package 025 accepted web lifecycle adoption at `42c2fbb`. Final B2/native-editing UX
 remains gated by the four unresolved 023 owner choices and hosted rollout is separately gated.
-Package 026 accepted the first B4 foreground native-audio slice at `c30b3b1`. Per the blocker rule,
-**the next bounded ready package is 027: lift audio ownership into the existing native shell and add
-a compact foreground mini-player that survives repertoire ↔ shell navigation while preserving one
-player and tenant teardown.** Background/interruption/lock-screen behavior remains B5 and hardware
-gated. 013–026's historical local acceptance, 004/010 open criteria and the postponed hardware pilot
-remain unchanged.
+Package 026 accepted the first B4 foreground native-audio slice at `c30b3b1`; package 027 completed
+foreground B4 navigation integration at `dc25938` with one authenticated-shell owner and a compact
+player that preserves source, position and rate across repertoire and home. Background,
+interruption, lock-screen and audio-route behavior remains B5 and hardware-gated. With B2/B3 still
+blocked by the four unresolved 023 owner semantics and B5/A5 hardware postponed, **the next bounded
+ready package is 028: inventory the permanent-WebView bridge and native/WebView route-ownership
+contract for C1 before implementing either side.** 013–027's historical local acceptance, 004/010
+open criteria and the postponed hardware pilot remain unchanged.

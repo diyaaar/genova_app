@@ -1,7 +1,8 @@
 # 027 — Native audio shell ownership and compact mini player
 
-Prepared: 2026-09-10. Status: **PLANNED / NOT RUN**. Single writer and self-reviewer: main agent;
-no independent review is claimed. This is the second bounded B4 package.
+Prepared and locally accepted: 2026-09-10. Status: **COMPLETE LOCALLY**. Planning commit
+`0c30e33`; code/test commit `dc25938`. Single writer and self-reviewer: main agent; no independent
+review is claimed. This is the second bounded B4 package.
 
 ## Outcome and delivery focus
 
@@ -109,16 +110,27 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Repertoire opens a shell-owned audio session and full player without creating a second Expo Audio owner; PDF and catalogue routes remain unchanged | yes | **NOT RUN** | — | Provider/integration evidence required |
-| Back to repertoire and then home preserves the same source, position, rate and play/pause state; navigation alone requests no fresh ticket | yes | **NOT RUN** | — | Flow test plus actual native observation required |
-| Compact player mirrors song/track/time/loading/error state and its open/play/pause/close controls operate the same owner | yes | **NOT RUN** | — | Component plus native runtime evidence required |
-| Close, choir switch, sign-out, external session loss and provider unmount pause/remove source, invalidate stale work and remove the compact surface before tenant transition | yes | **NOT RUN** | — | Ordering/integration and actual clear evidence required |
-| Expiry renewal, track switch, retry and corrupt/unsupported media preserve 026's visible fail-closed semantics across full/compact navigation | yes | **NOT RUN** | — | Focused failure tests and native corrupt/unsupported observation required |
-| Full and compact controls have semantic labels/roles, 44-point targets, visible disabled/pressed state, long-label truncation and usable safe-area docking | yes | **NOT RUN** | — | Source/test review and local visual inspection required |
-| Mobile typecheck/tests, iOS bundle, Expo Doctor and applicable local iOS/Android Release builds pass; background playback remains disabled and no web/shared regression is introduced | yes | **NOT RUN** | — | Exact commands/revisions required; root gate required only if root/shared code changes |
+| Repertoire opens a shell-owned audio session and full player without creating a second Expo Audio owner; PDF and catalogue routes remain unchanged | yes | **PASS** | 2026-09-10, `dc25938`; provider/repertoire/AppRoot source review and integration tests | `AudioPlaybackProvider` is the sole `useAudioPlayer` owner under authenticated `ReadyShell`; repertoire emits a stable session intent. Existing catalogue/PDF tests remained green. This is local code evidence, not a real account |
+| Back to repertoire and then home preserves the same source, position, rate and play/pause state; navigation alone requests no fresh ticket | yes | **PASS** | 2026-09-10; iPhone 17 / iOS 26.5 simulator and API 36 arm64 emulator, exact alternate-entry Release apps | Both apps retained the same 0:10/0:10 source and 1.25x rate in repertoire and home mini views, then reopened full view at that state. The runtime event stayed on navigation rather than issuing ticket 3; integration tests also require one gateway open |
+| Compact player mirrors song/track/time/loading/error state and its open/play/pause/close controls operate the same owner | yes | **PASS** | 2026-09-10, `dc25938`; 2 mini tests, shell flow test and both Release apps | Loading/disabled, playing/paused time, open, pause and close are projected from provider state. Eight platform screenshots and their scope are in [027 evidence](../evidence/027-native-audio-shell-mini-player/README.md) |
+| Close, choir switch, sign-out, external session loss and provider unmount pause/remove source, invalidate stale work and remove the compact surface before tenant transition | yes | **PASS** | 2026-09-10, `dc25938`; tenant/provider tests, existing AuthStore ordering matrix, unmount test and Release clear action | Close and provider unmount call one owner clear/pause; AuthStore already clears the shared registry before choir RPC, sign-out and null-session transition. On both Release apps, tenant clear removed the mini surface and exposed `tenant clear PASS mini removed`. No real-account transition was run |
+| Expiry renewal, track switch, retry and corrupt/unsupported media preserve 026's visible fail-closed semantics across full/compact navigation | yes | **PASS** | 2026-09-10, `dc25938`; 6 focused player tests plus iOS/Android Release observations | After ticket 1 expired, play requested ticket 2 before native playback on both platforms. Android corrupt bytes produced the bounded retry error and disabled controls; unsupported data produced a non-retryable error on both, mirrored by a disabled compact player. Denial/retry and stale completion are focused-test evidence, not hosted-provider evidence |
+| Full and compact controls have semantic labels/roles, 44-point targets, visible disabled/pressed state, long-label truncation and usable safe-area docking | yes | **PASS** | 2026-09-10, `dc25938`; source/tests, accessibility trees and visual inspection of both Release apps | Full and compact controls use 44–48 point minimums, roles/labels, explicit pressed/disabled styles and one-line tail truncation. Repertoire/home/error/cleared states were inspected on both platforms. No hardware screen-reader or independent accessibility audit was run; React Native reports its built-in `SafeAreaView` deprecation as a non-failing test warning |
+| Mobile typecheck/tests, iOS bundle, Expo Doctor and applicable local iOS/Android Release builds pass; background playback remains disabled and no web/shared regression is introduced | yes | **PASS** | 2026-09-10, `dc25938`; `npm run check`, normal iOS export, `npx expo-doctor`, iOS arm64 simulator `xcodebuild`, Android `assembleRelease`, manifest/config inspection | Mobile 21/21 suites and 104/104 tests; normal iOS export 1,330 modules; Expo Doctor 21/21; both exact Release builds installed/launched. Loopback served 160,044-byte WAV as iOS HTTP 206 Range and Android HTTP 200; no fatal/crash log match. Background playback/recording and microphone remain disabled. Root/shared code did not change, so root `pnpm check` is N/A rather than rerun |
 
 ## Delivery
 
-Not executed. On local acceptance, record separate code/test and documentation commits, remaining
-risks, rollback order and the next ready package. Do not convert foreground simulator/emulator
-navigation into background, lock-screen, hardware, hosted-service or release proof.
+027 is complete within its local foreground navigation scope. One provider beneath the authenticated
+shell now owns the protected source, native player, rate, position, timers and tenant teardown. The
+full and compact views consume that owner; repertoire only emits a stable song session. Navigation
+does not reload or mint a new ticket, while close/auth boundaries invalidate and remove the source.
+
+The deterministic loopback fixture retained 026's 160,044-byte WAV with SHA-256
+`b43dde9816f8047e0c351a5a756f99d75433396ce8f4ac0b36dc1d825f26127e`; iOS exercised HTTP 206
+Range reads and Android HTTP 200. Rollback order is this documentation record, code/test `dc25938`,
+then planning `0c30e33`; reverting code returns to 026's screen-owned player. B4 foreground
+navigation integration is now complete locally. Background/interruption/lock-screen/audio-route
+behavior remains B5 and hardware-gated. No hosted migration, deployment, push, real account/data,
+remote CI, hardware or independent review was performed or inferred. The next ready local package
+is 028, a source-grounded C1 permanent-WebView bridge/route-ownership contract inventory before
+implementation.
