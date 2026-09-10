@@ -28,6 +28,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 027 native shell audio | Reuse 026's guarded alternate entry/server, but navigate shell → repertoire → full → repertoire/home mini → full and prove no navigation ticket. Inspect compact loading/error/disabled/clear states, exact Release apps and accessibility trees. This remains foreground simulator/emulator evidence |
 | 028 WebView inventory | Documentation only: source-route/action coverage, current primary WebView/Supabase API comparison, installed-client construction probe, local links/consistency and `git diff --check`. No package, browser, WebView or provider runtime |
 | 029 WebView pure policy | Root `pnpm check` plus mobile `npx tsc --noEmit && npm test -- --runInBand`; focused `lib/mobile-webview-bridge.test.ts` covers exact route/message/replay/redaction vectors. No WebView/browser/provider/runtime claim |
+| 030 dormant web embedded adapter | Root `pnpm check`; focused runtime/Supabase/provider/Auth/layout/profile/navigation/cache tests. Final gate: 55 files / 462 tests, configured coverage, service-worker syntax and Next production build. No native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware or release claim |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -125,7 +126,7 @@ arm64-simulator plus Android API 36 arm64 Release builds. The loopback server re
 a new ticket, while tenant clear removed the compact surface. Exact visual evidence and limitations
 are in [027 evidence](../docs/evidence/027-native-audio-shell-mini-player/README.md).
 
-## Permanent WebView contract state — 10 September 2026
+## Permanent WebView contract state — 11 September 2026
 
 Package 028 adds no product dependency. The current mobile app has no direct
 `react-native-webview`; web Supabase is 2.112.4 and native is 2.115.0. Both installed clients expose
@@ -137,4 +138,13 @@ CSP, embedded browser behavior, platform files/back/accessibility, hosted origin
 NOT RUN. Package 029 accepted the framework-free policy at `4289da4`: 107 focused Vitest cases, full
 root 43 files / 386 tests and Next build, plus mobile 22 suites / 105 tests and typecheck passed. The
 mobile test imports the exact root module through `@shared`; it is not a native callback or WebView
-runtime. Package 030 next adds the dormant web adapter and locked-before-proof seams.
+runtime. Package 030 accepted the dormant web adapter at `c7d09d3` under the root
+55-file/462-test/build gate. No dependency was added. The browser Supabase client is now lazy;
+exact embedded detection selects a separate `accessToken` client with Auth persistence, refresh and
+URL detection disabled. Guarded fetches rewrite the current bearer and enforce renewal mutation
+freeze; serialized Realtime auth operations make synchronous clear win over late installation.
+Initial embedded isolation removes prior Supabase Auth keys, Genova tenant caches and service-worker
+registrations before `bridge.ready`. These are unit/jsdom and build facts, not actual WebView,
+hosted CSP, provider or device evidence. Package 031 must select and install the Expo 57/RN 0.86
+compatible native WebView and independently run mobile type/tests/doctor/exports plus exact iOS and
+Android Release builds.

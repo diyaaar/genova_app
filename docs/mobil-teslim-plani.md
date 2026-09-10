@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-10 after the 029 permanent-WebView pure-policy acceptance; originally prepared under
+Updated 2026-09-11 after the 030 dormant web embedded-adapter acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -20,7 +20,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 | M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation, 025 web lifecycle and 026–027 foreground native audio/navigation accepted locally; native writing and recoverable sync remain open |
-| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | 028 accepted the inventory/contract and 029 accepted shared route/message/replay/redaction policy locally; web/native WebView runtime and C3–C5 remain future |
+| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | 028 accepted the inventory/contract, 029 the shared policy and 030 the dormant web adapter locally; native WebView/runtime composition and C3–C5 remain future |
 | M4: release candidate | Multi-choir limits, data lifecycle, provider exit, security/accessibility and distribution requirements pass | Future packages; no current store eligibility claim |
 | M5: released and operable | Approved beta/public release verified at actual destination; support and recovery exercised | NOT RUN; publication and spending remain separately gated |
 
@@ -159,7 +159,7 @@ that product/security boundary before shipping. Offline support is not implied b
 
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
-| C1 / stable A read flow | **Foundation in progress:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) locally accepted the shared framework-free route/message/replay/redaction core at `4289da4`. Package 030 is the dormant web embedded adapter. `apps/mobile/src/ui/`, `MIGRATION.md`, existing auth code | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of announcements, chorists, profile/change requests or attendance; native alone owns refresh token; no token in URLs/logs; 029 is pure tests, not runtime proof |
+| C1 / stable A read flow | **Foundation in progress:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted the shared framework-free policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted the dormant locked-before-proof web adapter at `c7d09d3`. Package 031 is the native WebView shell. `apps/mobile/src/ui/`, `MIGRATION.md`, existing auth code | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of announcements, chorists, profile/change requests or attendance; native alone owns refresh token; no token in URLs/logs; 030 is jsdom/local build evidence, not actual WebView, hosted or provider proof |
 | C2 / C1 | Notification/deep-link contract, then native delivery. `lib/server/push-notifications.ts`, current subscribe/unsubscribe routes | Correct account/device token lifecycle; permission refusal; foreground/background tap routing; destination rechecks tenant/role; unsubscribe/sign-out; duplicate delivery handling | Local payload tests first. Provider keys, push delivery and real recipients separately authorized |
 | C3 / C1 + chat inventory | Native chat, split list/read → send/retry → media/remaining features. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and other inventoried features; RLS on every read/write; realtime reconnect/order/dedup; offline retry; inaccessible room and choir switch | Inventory before scope. Dart UI and Socket.IO from the old reference app are not reusable RN/Supabase code |
 | C4 / C1 + file/upload contract | Native assignments, split read → submission → review. `lib/assignment-scope.ts`, `app/(main)/odevler/`, existing assignment APIs | Existing role/deadline/lock/withdrawal/review rules; authorized upload completion, failed/resumed submission, hidden review, wrong tenant and audit behavior | Native server logic moves to shared Edge paths; web uses the same path. Any schema change requires DB gates |
@@ -293,7 +293,10 @@ interruption, lock-screen and audio-route behavior remains B5 and hardware-gated
 blocked by the four unresolved 023 owner semantics and B5/A5 hardware postponed, package 028 accepted
 the permanent-WebView source, route, native-owned refresh-token/access-lease, capability and failure
 contract without product changes. Package 029 then accepted the shared framework-free
-route/message/replay/redaction policy at `4289da4` under root and mobile pure tests. **The next bounded
-ready package is 030: implement the dormant web embedded adapter, locked-before-proof lifecycle and
-regular-browser compatibility without installing a native WebView.** 013–029's historical local
+route/message/replay/redaction policy at `4289da4` under root and mobile pure tests. Package 030 then
+accepted the dormant web adapter at `c7d09d3`: locked bootstrap/proof, memory-only bearer, renewal
+freeze, synchronous clear, browser parity, nine-route shell suppression and navigation/capability
+seams passed the 55-file/462-test root gate and production build. **The next bounded ready package is
+031: install and build the Expo-compatible native WebView shell, implement the native challenge/state
+machine plus route/external/back/theme handlers, and retain redacted diagnostics.** 013–030's historical local
 acceptance, 004/010 open criteria and the postponed hardware pilot remain unchanged.

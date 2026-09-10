@@ -1,6 +1,6 @@
 # Active context
 
-Updated 10 September 2026 after the 029 permanent-WebView pure-policy acceptance. The recorded
+Updated 11 September 2026 after the 030 dormant web embedded-adapter acceptance. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -100,9 +100,15 @@ refresh token and active choir; embedded web receives only a challenged in-memor
 and must re-prove the server-current choir before rendering. Package
 [029](../docs/briefs/029-permanent-webview-policy-core.md) then accepted the shared framework-free
 route/message/replay/redaction core at `4289da4`: 107 focused cases, root 43 files / 386 tests/build
-and mobile 22 suites / 105 tests/typecheck passed. No WebView package, session transport, browser,
-provider or hardware runtime was used. Package 030 is the next ready local C1 slice: the dormant web
-embedded adapter, locked-before-proof lifecycle and regular-browser compatibility.
+and mobile 22 suites / 105 tests/typecheck passed. Package
+[030](../docs/briefs/030-web-embedded-adapter.md) then accepted the dormant web half at `c7d09d3`:
+locked exact bootstrap/challenge, explicit-token Auth/current-membership proof, a non-persisting
+guarded Supabase lease, mutation renewal freeze, synchronous clear over pending proof/Realtime work,
+cache/service-worker isolation, nine-route shell/navigation boundaries and regular-browser parity
+passed the root 55-file/462-test/build gate. No dependency or native WebView was installed; browser
+E2E, hosted CSP/provider/account, simulator/hardware and release remain NOT RUN. Package 031 is the
+next ready local C1 slice: select/install the Expo-compatible native WebView shell, implement its
+challenge/state machine plus route/external/back/theme handlers, and prove both Release builds.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

@@ -1,13 +1,14 @@
 # Genova — agent handoff
 
-Snapshot: 10 September 2026. Package 029 accepted the shared framework-free permanent-WebView policy
-core at code/test commit `4289da4`, following the 028
-[bridge contract](webview-bridge-contract.md). Exact route/initial-source/external URL ownership,
-every v1 envelope/payload, bounded replay/tenant epochs and allowlisted diagnostics passed 107 focused
-cases plus full root/mobile gates. This is pure policy: no WebView dependency, session transport or
-runtime exists yet. Final native annotation UX remains owner-decision-gated; the canonical
-[delivery plan](mobil-teslim-plani.md) routes next to package 030 for the dormant web embedded adapter,
-locked-before-proof lifecycle and regular-browser compatibility. Release execution and hardware remain gated.
+Snapshot: 11 September 2026. Package 030 accepted the dormant web half of the permanent-WebView
+contract at code/test commit `c7d09d3`, after 029's shared policy at `4289da4`. Exact locked
+bootstrap/challenge, explicit-token user/current-choir proof, a non-persisting guarded bearer,
+renewal/clear race handling, cache/Realtime/service-worker teardown, nine-route shell/navigation
+boundaries, native-owned controls and regular-browser parity passed the 55-file/462-test root gate
+and production build. No native WebView dependency or runtime exists yet. Final native annotation UX
+remains owner-decision-gated; the canonical [delivery plan](mobil-teslim-plani.md) routes next to
+package 031 for the Expo-compatible native WebView shell and challenge/state-machine handlers.
+Release execution and hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -143,6 +144,18 @@ all v1 message payloads/directions, replay capacity, instance/epoch invalidation
 redaction passed 107 focused cases. Full root passed 43 files / 386 tests and Next build; mobile
 passed 22 suites / 105 tests and typecheck. It performs no navigation/auth capability and proves no
 browser, WebView, Supabase session, hosted origin or hardware behavior.
+Package 030 then implemented the dormant web adapter at `c7d09d3`. `AppProviders` locks exact bridge
+loads before `AuthProvider`; a lazy browser client preserves ordinary session behavior while the
+embedded client accepts only a short-lived module-local lease proved with explicit-token Auth and
+the server-current active membership. Guarded Data/Storage/Functions/Realtime and API calls rewrite
+the current bearer, freeze mutations during renewal, centralize 401 handling and serialize Realtime
+auth so synchronous clear wins over late proof/install work. Initial isolation removes stale
+Supabase Auth keys, tenant caches and service workers before `bridge.ready`. All nine web route
+families suppress the browser shell, block popup/programmatic escapes and use exact native/external/
+file/back/theme/password/sign-out/clipboard messages; ordinary-browser Auth/navigation/forms remain.
+Root `pnpm check` passed 55 files / 462 tests, configured coverage, service-worker syntax and the Next
+production build. This is unit/jsdom/build self-review, not a native WebView, browser E2E, hosted CSP,
+provider/account, simulator/hardware, CI or release result.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -153,6 +166,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 11 Sep, `c7d09d3` | macOS task; focused runtime/Supabase/provider/Auth/layout/profile/navigation/cache Vitest; root `pnpm check`; diff/direct-auth/secret/scope self-review | **PASS** — exact lock/proof/replay/stale-work gates, current bearer + mutation freeze, clear-over-install race, cache/SW isolation, nine route families, browser parity and native-owned control seams; root 55 files / 462 tests, configured coverage/service-worker syntax/Next build | Dormant web adapter only. No native WebView dependency/mount, browser E2E, real Supabase/provider/account, hosted origin/CSP, simulator/emulator composition, hardware, CI, push/deploy or independent review. See [030](briefs/030-web-embedded-adapter.md) |
 | 10 Sep, `4289da4` | macOS task; focused route/message/replay/redaction Vitest; root `pnpm check`; mobile TypeScript/full Jest; diff and forbidden-import/secret-marker self-review | **PASS** — 107 focused cases; root 43 files / 386 tests, coverage/service-worker/Next build; mobile 22 suites / 105 tests. Same `@shared` module classifies initial/navigation routes, exact v1 payloads, HTTPS, bounded replay/epochs and allowlisted diagnostics | Pure policy only. No WebView dependency/mount, session/token transport, browser, Supabase/provider call, hosted origin/CSP, simulator/emulator composition, hardware, CI, push/deploy or independent review. See [029](briefs/029-permanent-webview-policy-core.md) |
 | 10 Sep, planning `97ba303` + 028 record | macOS task; nine-route/source dependency inventory, official WebView/Supabase API review, installed Supabase 2.112.4/2.115.0 construction probes, local link/consistency/route-coverage checks and `git diff --check` | **PASS** — route/action matrix, native-only refresh token, challenged memory-only access lease, v1 envelope, navigation/capability/failure rules and 029–033 split are recorded | Documentation/self-review only. No dependency, product code, browser/WebView, Supabase call, hosted origin, real account, hardware, CI, push/deploy or independent review. See [028](briefs/028-permanent-webview-bridge-inventory.md) and [contract](webview-bridge-contract.md) |
 | 10 Sep, `dc25938` | macOS task; mobile TypeScript/Jest, normal iOS export, Expo Doctor; exact iOS arm64-simulator and Android API 36 arm64 alternate-entry Release builds/runtime; config and crash-log inspection | **PASS** — mobile 21 suites / 104 tests, 1,330-module iOS export, Expo Doctor 21/21; actual 160,044-byte WAV, expiry ticket 1→2, iOS 206 Range/Android 200, same 0:10 and 1.25x through full→repertoire→home→full, compact controls/error, corrupt/unsupported failures and tenant-clear removal | Local synthetic simulator/emulator self-review only. Root/shared code did not change, so root gate was N/A. No hosted service, provider/real account, hardware, background/lock-screen/audio-route, remote CI, deploy or independent review. See [027](briefs/027-native-audio-shell-mini-player.md) and [evidence](evidence/027-native-audio-shell-mini-player/README.md) |
@@ -215,7 +229,7 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 029 code/test is local commit `4289da4`; this acceptance record is
+Branch `main`. Package 030 code/test is local commit `c7d09d3`; this acceptance record is
 documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–029 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
@@ -264,20 +278,22 @@ schema or external changes. Package 024 accepted its first local server/adapter 
 `1755803`; package 025 adopted it in the web lifecycle at `42c2fbb`; package 026 accepted the first
 B4 foreground native-audio slice at `c30b3b1`; package 027 completed foreground shell ownership
 and compact navigation at `dc25938`; package 028 accepted the permanent-WebView source/route/session
-contract without product changes; package 029 implemented its shared pure policy at `4289da4`.
+contract without product changes; package 029 implemented its shared pure policy at `4289da4`;
+package 030 accepted the dormant web adapter at `c7d09d3`.
 No hosted migration, release or external action occurred.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
 The immediate local read path A1–A3, B1 inventory, 024 server/adapter foundation, 025 web
-lifecycle adoption, 026–027 foreground audio slices, 028 WebView contract inventory and 029 pure
-policy core are complete locally.
+lifecycle adoption, 026–027 foreground audio slices, 028 WebView contract inventory, 029 pure
+policy core and 030 dormant web adapter are complete locally.
 A4 release preparation may be written locally, but push/deploy/hosted checks remain externally
 gated and A5 hardware remains postponed. The unresolved shared authorship, stale conflict,
 deletion and final exit UX choices gate final B2/native editing semantics. Following the roadmap's
-blocker rule, 029 accepted the framework-free policy and the next bounded ready package is 030:
-implement the dormant web embedded adapter, locked-before-proof lifecycle, in-memory token-provider
-seams and regular-browser regression tests. It does not install or run a native WebView.
+blocker rule, 030 accepted the dormant web half and the next bounded ready package is 031: verify the
+current primary React Native WebView release against Expo 57/RN 0.86, install it, implement the native
+challenge/state machine plus route/external/back/theme handlers and redacted diagnostics, then run
+mobile type/tests/doctor/exports and both exact Release builds. It does not perform hosted/device acceptance.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -295,12 +311,14 @@ seams and regular-browser regression tests. It does not install or run a native 
 > first foreground native-audio slice at `c30b3b1`, and package 027 completed shell ownership plus
 > compact navigation at `dc25938`. Package 028 then accepted `docs/webview-bridge-contract.md` as a
 > documentation-only route/session/capability inventory; package 029 implemented its shared pure
-> route/message/replay/redaction policy at `4289da4`. Read both briefs without inferring WebView
-> runtime. Final native annotation UX remains decision-gated. The next bounded local task is 030:
-> implement the dormant web embedded adapter, locked-before-proof context seam and regular-browser
-> regression tests. Do not install or mount a native WebView in 030.
+> route/message/replay/redaction policy at `4289da4`; package 030 accepted the dormant web adapter at
+> `c7d09d3` under the root 55-file/462-test/build gate. Read all three briefs without inferring native,
+> hosted or provider runtime. Final native annotation UX remains decision-gated. The next bounded
+> local task is 031: select and install the Expo 57/RN 0.86 compatible native WebView, implement its
+> exact challenge/state machine plus route/external/back/theme handlers and redacted diagnostics,
+> then prove mobile gates and both exact Release builds. Do not perform hosted/device acceptance in 031.
 >
-> Preserve 013–029's historical local acceptance and distinguish it from deployment/Drive and
+> Preserve 013–030's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.

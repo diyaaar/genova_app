@@ -1,6 +1,6 @@
 # İlerleme indeksi
 
-10 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
+11 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
 buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı anlamına gelmez.
 
 | İş | Durum | Kanıt / sınır |
@@ -39,7 +39,8 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 026 native repertoire foreground audio | Local acceptance complete; first B4 slice only | [026](../docs/briefs/026-native-repertoire-audio-playback.md), code/test `c30b3b1`; current-session ticket gateway, stale cancellation, one foreground player, play/pause/seek/0.5–2x speed, ticket renewal, visible corrupt/unsupported failure and tenant teardown passed mobile 20 suites / 100 tests, iOS/Android alternate-entry Release decoding, Expo Doctor 21/21, iOS bundle and root 42 files / 279 tests/build. Simulator/emulator self-review only; mini player, background/lock-screen, hosted service, hardware and release remain open |
 | 027 native audio shell ownership + mini player | Local acceptance complete; foreground B4 complete | [027](../docs/briefs/027-native-audio-shell-mini-player.md), code/test `dc25938`; one authenticated-shell provider retains protected source, 0:10 position and 1.25x rate through full→repertoire→home→full without a navigation ticket. Compact controls/errors, expiry renewal, corrupt/unsupported failure and tenant clear passed mobile 21 suites / 104 tests, normal 1,330-module iOS export, Expo Doctor 21/21 and both exact Release apps. [Visual evidence](../docs/evidence/027-native-audio-shell-mini-player/README.md) is local simulator/emulator only; background/lock-screen/audio-route, hosted service, hardware and release remain open |
 | 028 permanent WebView bridge inventory | Documentation accepted; C1 runtime NOT RUN | [028](../docs/briefs/028-permanent-webview-bridge-inventory.md) and [contract](../docs/webview-bridge-contract.md); all nine permanent routes, preserved roles/writes/Realtime/files, native exits, versioned protocol and fail-closed tenant lifecycle are mapped. Native remains sole refresh-token owner; embedded web gets only a challenged in-memory access lease. No dependency/product/browser/provider/hardware action |
-| 029 permanent WebView pure policy | Local acceptance complete; C1 runtime still NOT RUN | [029](../docs/briefs/029-permanent-webview-policy-core.md), code/test `4289da4`; shared framework-free route/initial-source/external URL, exact v1 envelope/payload, bounded replay/tenant epoch and allowlisted diagnostics passed 107 focused cases, root 43 files / 386 tests/build and mobile 22 suites / 105 tests/typecheck. No dependency, WebView, browser, session transport, provider, hosted or hardware proof; 030 web adapter is next |
+| 029 permanent WebView pure policy | Local acceptance complete; C1 runtime still NOT RUN at this revision | [029](../docs/briefs/029-permanent-webview-policy-core.md), code/test `4289da4`; shared framework-free route/initial-source/external URL, exact v1 envelope/payload, bounded replay/tenant epoch and allowlisted diagnostics passed 107 focused cases, root 43 files / 386 tests/build and mobile 22 suites / 105 tests/typecheck. No dependency, WebView, browser, session transport, provider, hosted or hardware proof; 030 subsequently adopted it |
+| 030 dormant web embedded adapter | Local acceptance complete; native/composed C1 runtime still NOT RUN | [030](../docs/briefs/030-web-embedded-adapter.md), code/test `c7d09d3`; exact locked bootstrap/challenge, explicit-token user/current-choir proof, memory-only guarded bearer, renewal/clear race refusal, cache/SW teardown, nine-route shell/navigation boundaries, native-owned controls and browser parity passed root 55 files / 462 tests, coverage/service-worker syntax and Next build. No dependency/native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware, CI or release proof; 031 native shell is next |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -67,7 +68,7 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 10 September 2026
+## Latest handoff — 11 September 2026
 
 [Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
 roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
@@ -80,11 +81,13 @@ and `e2fe177`; 021 completed A2 locally at `404a9ee`; 022 completed A3 locally a
 025 accepted the web safe-save lifecycle at `42c2fbb`, 026 accepted the first B4 foreground
 native-audio slice at `c30b3b1`, and 027 completed foreground shell ownership plus compact
 navigation at `dc25938`. Package 028 accepted the source-grounded permanent-WebView contract without
-product changes; package 029 accepted its shared framework-free policy at `4289da4`. Because final
+product changes; package 029 accepted its shared framework-free policy at `4289da4`; package 030
+accepted the dormant web embedded adapter at `c7d09d3`. Because final
 native annotation UX is still gated by four owner decisions and hardware audio is postponed, the
-[canonical long-term plan](../docs/mobil-teslim-plani.md) routes next to package 030's dormant web
-embedded adapter. No WebView install/runtime, session transport, push, deploy, production database
-operation, Drive call, real choir access, email, remote CI or hardware test was performed for 029.
+[canonical long-term plan](../docs/mobil-teslim-plani.md) routes next to package 031's native WebView
+shell. No native WebView install/runtime, hosted CSP/provider/account, push, deploy, production
+database operation, Drive call, real choir access, email, remote CI or hardware test was performed
+for 030.
 
 WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
 [WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.

@@ -1,6 +1,6 @@
 # Sistem desenleri ve sınırlar
 
-Son karşılaştırma: 10 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
+Son karşılaştırma: 11 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
 
 - Web: Next.js istemci/sunucu; mevcut API'ler ekran göçüne kadar korunur.
   Native'e taşınan ekranın yeni sunucu mantığı Supabase Edge Function'a gider;
@@ -60,7 +60,15 @@ Son karşılaştırma: 10 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   envelope/payload validation, external HTTPS classification, bounded replay/tenant-epoch guards and
   allowlisted diagnostics in framework-free [`lib/mobile-webview-bridge.ts`](../lib/mobile-webview-bridge.ts).
   Parsing has no navigation/auth side effect; callers must accept the message in the guard before a
-  capability. Product runtime begins with 030. See [the contract](../docs/webview-bridge-contract.md).
+  capability. Package 030 implements the dormant web half at `c7d09d3`: exact bridge detection locks
+  before child/Auth render, a lazy browser client preserves ordinary web behavior, a separate
+  non-persisting Supabase client rewrites every request to the current module-local lease, mutations
+  freeze during renewal, and clear wins synchronously over pending proof/Realtime work. Embedded mode
+  removes stale Supabase/session and tenant caches, disables persistent repertoire caches/service
+  workers, suppresses the browser shell/platform notifications and routes native/external/file/back,
+  theme/password/sign-out/clipboard boundaries through exact messages. This is jsdom/local-build
+  acceptance; actual WebView/native/hosted/provider behavior begins with 031. See
+  [the contract](../docs/webview-bridge-contract.md) and [030](../docs/briefs/030-web-embedded-adapter.md).
 
 ## Tek doğru kaynak dağılımı
 

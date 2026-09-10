@@ -1,7 +1,8 @@
 # 030 — Dormant web embedded adapter
 
-Prepared: 2026-09-10. Status: **READY FOR LOCAL IMPLEMENTATION**. Single writer and reviewer: main
-agent; no independent review is claimed.
+Prepared: 2026-09-10. Accepted locally: 2026-09-11. Status: **LOCALLY ACCEPTED** at product
+code/test revision `c7d09d3`. Single writer and reviewer: main agent; no independent review is
+claimed.
 
 ## Outcome and delivery focus
 
@@ -12,7 +13,7 @@ then render the existing page. The adapter must also own renewal freeze, synchro
 Realtime teardown, cross-boundary navigation commands and native-owned session/theme/password
 capabilities while leaving an ordinary browser on its existing auth and navigation path.
 
-This closes only the **web half** of C1. It does not install or mount a native WebView, construct a
+This closes only the locally tested **web half** of C1. It does not install or mount a native WebView, construct a
 native lease, run a device/simulator, deploy a hosted build or prove actual platform file/password
 capabilities.
 
@@ -163,21 +164,21 @@ file is allowed in this package.
 
 ## Definition of done
 
-- [ ] Exact bootstrap enters locked embedded mode without a secret, URL/storage/log write or browser
+- [x] Exact bootstrap enters locked embedded mode without a secret, URL/storage/log write or browser
   session read; absent bootstrap preserves ordinary browser behavior.
-- [ ] Challenge ordering, exact v1 validation/replay/epoch binding and explicit-token user plus exact
+- [x] Challenge ordering, exact v1 validation/replay/epoch binding and explicit-token user plus exact
   server-current choir/member proof gate all tenant rendering.
-- [ ] Embedded Data/Storage/Functions/Realtime use the current memory lease; every inventoried bearer
+- [x] Embedded Data/Storage/Functions/Realtime use the current memory lease; every inventoried bearer
   consumer uses the environment-neutral capability; browser Auth remains functional and separate.
-- [ ] Renewal freezes mutations and coalesces once; accepted newer proof resumes; timeout, second 401,
+- [x] Renewal freezes mutations and coalesces once; accepted newer proof resumes; timeout, second 401,
   expiry, mismatch, stale work and context clear synchronously blank and fully tear down.
-- [ ] All nine route families render their existing child behind the same gate, suppress duplicate
+- [x] All nine route families render their existing child behind the same gate, suppress duplicate
   shell, preserve permanent history, and emit exact native/external/file/back requests when embedded.
-- [ ] Embedded profile sign-out/theme/password controls are native-owned; ordinary browser shell,
+- [x] Embedded profile sign-out/theme/password controls are native-owned; ordinary browser shell,
   sign-in/selection/switch, navigation/rich links, writes and password form retain current behavior.
-- [ ] Locked/error UI is nonblank, announces status/error, has visible-focus retry/close paths and
+- [x] Locked/error UI is nonblank, announces status/error, has visible-focus retry/close paths and
   respects reduced motion; manual VoiceOver/TalkBack remains honestly NOT RUN.
-- [ ] Focused tests, direct-auth source guard, full `pnpm check`, diff/scope/secret scan pass; native,
+- [x] Focused tests, direct-auth source guard, full `pnpm check`, diff/scope/secret scan pass; native,
   hosted, provider, real-account, simulator, hardware and release layers remain explicitly NOT RUN.
 
 ## Mandatory acceptance evidence
@@ -187,16 +188,17 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Bootstrap is exact and secret-free; embedded content locks before any browser session/data read while no-bootstrap browser behavior is unchanged | yes | **NOT RUN** | Planned local Vitest/jsdom | Must include top-frame, invalid JSON/extra key, invalid route and storage/URL/log spies |
-| Challenge and v1 message order plus explicit-token user and exact server-current choir/member proof gate tenant rendering; mismatch/stale/replay inputs have no side effect | yes | **NOT RUN** | Planned deterministic unit/integration tests | Synthetic doubles only; no real token or hosted Supabase call |
-| Embedded Data API/Storage/Functions/Realtime and all inventoried bearer consumers use only the current in-memory lease; browser Auth is separate and unchanged | yes | **NOT RUN** | Planned focused client/call-site tests and source inventory guard | No provider network call; installed client behavior tested locally |
-| Renewal coalesces, freezes mutations and resumes only after newer proof; timeout/second 401/expiry/clear synchronously blank and remove lease, Query/protected/Realtime/listener state | yes | **NOT RUN** | Planned fake-clock lifecycle tests | Renderer/process/device lifecycle remains future native proof |
-| Nine permanent route families share the embedded gate, preserve child behavior, suppress duplicate shell and route back/native/external/file/clipboard boundaries exactly | yes | **NOT RUN** | Planned parameterized page/layout and navigation tests | No actual WebView, picker, clipboard, system browser or native navigation |
-| Embedded profile sign-out/theme/password requests contain no refresh token/password; ordinary browser shell/auth/navigation/writes/password form regressions pass | yes | **NOT RUN** | Planned component tests plus full root regression | Existing RLS/provider and real browser behavior remain outside jsdom proof |
-| Locked/error/recovery surfaces are nonblank and accessible in source/jsdom; full root gate and final security/scope review pass | yes | **NOT RUN** | Planned focused accessibility assertions and `pnpm check` | Manual assistive technology, hosted CSP and runtime accessibility NOT RUN |
+| Bootstrap is exact and secret-free; embedded content locks before any browser session/data read while no-bootstrap browser behavior is unchanged | yes | **PASS** | 2026-09-11, `c7d09d3`, macOS Vitest/jsdom and source scan | Exact top-frame/bootstrap/route cases, lazy browser client, stale Supabase auth-key/theme removal and no token URL/storage/log sink passed. Synthetic DOM only |
+| Challenge and v1 message order plus explicit-token user and exact server-current choir/member proof gate tenant rendering; mismatch/stale/replay inputs have no side effect | yes | **PASS** | 2026-09-11, `c7d09d3`, runtime/provider/Auth focused tests | Explicit-token user/current-membership proof, inactive/detail mismatch, replay and clear-during-proof/install races passed. No real token, account or provider network |
+| Embedded Data API/Storage/Functions/Realtime and all inventoried bearer consumers use only the current in-memory lease; browser Auth is separate and unchanged | yes | **PASS** | 2026-09-11, `c7d09d3`, Supabase/call-site tests and source inventory guard | Current bearer is rewritten at guarded fetch, browser client remains lazy/separate, all client bearer headers are centralized. Installed SDK behavior is locally exercised with doubles; no hosted call |
+| Renewal coalesces, freezes mutations and resumes only after newer proof; timeout/second 401/expiry/clear synchronously blank and remove lease, Query/protected/Realtime/listener state | yes | **PASS** | 2026-09-11, `c7d09d3`, deterministic lifecycle/fake-clock/race tests | Mutation freeze, one renewal, newer lease, timeout, second 401, expiry, synchronous blanking, queued Realtime teardown, cache/SW removal and stale completion refusal passed. Process/device lifecycle NOT RUN |
+| Nine permanent route families share the embedded gate, preserve child behavior, suppress duplicate shell and route back/native/external/file/clipboard boundaries exactly | yes | **PASS** | 2026-09-11, `c7d09d3`, parameterized layout/navigation/component tests | Nine route families, browser shell parity, history/popup/programmatic escape refusal, native/external/file/back and clipboard messages passed in jsdom. No actual WebView/platform side effect |
+| Embedded profile sign-out/theme/password requests contain no refresh token/password; ordinary browser shell/auth/navigation/writes/password form regressions pass | yes | **PASS** | 2026-09-11, `c7d09d3`, focused profile/Auth/notification tests plus root regression | Native-owned commands, resolved nonpersistent theme, no embedded password fields, browser password fields/Auth flow and native-only OS notification ownership passed locally. Provider/RLS and real browser remain unverified |
+| Locked/error/recovery surfaces are nonblank and accessible in source/jsdom; full root gate and final security/scope review pass | yes | **PASS** | 2026-09-11, `c7d09d3`, `pnpm check`; `git diff --check`; direct-auth/secret/scope scans | Lint/typecheck, 55 files / 462 tests with configured coverage, service-worker syntax and Next production build passed. Visible status/error, retry/close, focus and reduced-motion source assertions passed; VoiceOver/TalkBack, CSP/hosted runtime and independent review NOT RUN |
 
 ## Delivery boundary
 
-030 is not accepted at planning time. Every required row is NOT RUN. Local implementation may start;
-native package 031 must not consume this adapter as accepted until the code/test revision and separate
-dated record prove every row PASS under the stated local boundary.
+030 is locally accepted at product revision `c7d09d3` under the bounded evidence above. The adapter
+remains dormant in ordinary browsers and has not run inside a WebView. Package 031 may now consume
+the documented protocol, but it must independently install/build and prove the native shell; this
+record grants no hosted, provider, account, device, release or deployment result.
