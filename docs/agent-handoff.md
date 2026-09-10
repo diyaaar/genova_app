@@ -1,11 +1,12 @@
 # Genova — agent handoff
 
-Snapshot: 10 September 2026. Package 025 locally accepted web annotation safe-save lifecycle
-adoption at code/test commit `42c2fbb`. PDF-page identity, lossless/revision metadata, serialized
-retryable saves, remount/unload behavior and tenant-exit ordering passed 24 focused tests plus the
-root 42-file/279-test build gate. Final native annotation UX remains owner-decision-gated, so the
-canonical [delivery plan](mobil-teslim-plani.md) routes to independent package 026 for the first B4
-native audio playback/seek slice; release execution and hardware remain gated.
+Snapshot: 10 September 2026. Package 026 locally accepted foreground native repertoire audio at
+code/test commit `c30b3b1`. Current-session protected tickets, stale cancellation, one foreground
+player, seek/speed, expiry renewal, corrupt/unsupported states and tenant teardown passed mobile
+tests plus actual local iOS/Android Release decoding. Final native annotation UX remains
+owner-decision-gated; the canonical [delivery plan](mobil-teslim-plani.md) routes next to package
+027 for one shell-owned foreground player and compact mini-player integration. Release execution
+and hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -114,6 +115,12 @@ were removed after source equality. Package 025 then adopted the safe path in th
 across remounts, refused lossy/delete writes and flushed before choir/sign-out boundaries. The
 migration is not hosted; real account/browser, native writing and persistent offline recovery are
 not inferred.
+Package 026 then added the first B4 foreground native-audio slice at `c30b3b1`. Expo Audio owns a
+single source, the protected-ticket gateway cancels stale work, and expiry renewal, seek/speed,
+corrupt/unsupported states plus tenant/unmount teardown passed focused/full tests. Exact local
+Release builds on iPhone 17 / iOS 26.5 simulator and API 36 arm64 emulator decoded the same
+160,044-byte WAV; iOS exercised Range reads. This remains local synthetic self-review: no hosted
+service, real account, hardware, background/lock-screen behavior, remote CI or release is inferred.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -124,6 +131,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 10 Sep, `c30b3b1` | macOS task; mobile TypeScript/Jest/iOS export/Expo Doctor; exact iOS arm64-simulator and Android API 36 arm64 alternate-entry Release builds; root gate | **PASS** — mobile 20 suites / 100 tests, 1,328-module iOS export, Expo Doctor 21/21; actual 160,044-byte WAV playback, expiry renewal, iOS Range/seek/1.25x, Android playback, corrupt/unsupported states and source-null tenant teardown; root 42 files / 279 tests plus Next build | Local synthetic simulator/emulator self-review only. Denial is component/gateway evidence. No hosted service, provider/real account, hardware, background/lock-screen, remote CI, deploy or independent review. See [026](briefs/026-native-repertoire-audio-playback.md) |
 | 10 Sep, `42c2fbb` | macOS task; deterministic queue/page/load/unload/tenant-transition seams; workspace/Auth source integration; root `pnpm check` | **PASS** — 4 focused files / 24 tests; PDF-page mapping, lossless metadata refusal, latest/in-flight revision ordering, independent errors/retry, remount overlay, unload guard, transition lock/flush/discard and stored-empty refusal; root 42 files / 279 tests and Next build | Local self-review only. No hosted 024 migration/RPC, signed-in browser/account, deploy, native write, persistent offline queue, hardware or independent review. See [025](briefs/025-web-annotation-safe-save-lifecycle.md) |
 | 9 Sep, `1755803` | Dedicated PostgreSQL 17.11 copies; guarded mismatch + forward/down/forward role/revision matrix; focused adapter tests; root gate | **PASS** — authenticated-only CAS RPC, role/voice/tenant denials, server relation/audit derivation, exact trigger restoration; 2 focused files / 16 tests; root 39 files / 262 tests and build; stable source/target hashes | Local synthetic self-review only. Current workspace remains on compatibility save until 025. No hosted migration, HTTP/PostgREST runtime, deploy, real account/data, hardware or independent review. See [024](briefs/024-annotation-mutation-safe-save-contract.md) |
 | 9 Sep, `fb4a6a2` | Disposable local Supabase Auth/RLS/Edge/private Storage; production Next; installed Chrome 152 through Playwright 1.62.1; root gate | **PASS** — exact 65,905-byte PDF and 160,044-byte WAV, 206 Range playback, explicit offline caches, ticket renewal, visible 502, B-choir 403/empty catalogue, switch/sign-out cleanup; 38 files / 253 tests and build; fixture/source baselines restored | Local synthetic self-review only. No deploy, Drive, hosted/real account, remote CI, hardware or independent review. See [022 evidence](evidence/022-web-protected-file-compatibility/README.md) |
@@ -182,8 +190,8 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 025 code/test is local commit `42c2fbb`; this acceptance record is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–025 and
+Branch `main`. Package 026 code/test is local commit `c30b3b1`; this acceptance record is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–026 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -228,18 +236,19 @@ recorded local acceptance at `0b3df6e`; 019 and 020 accepted actual iOS and Andr
 Package 022 completed production-browser compatibility at `fb4a6a2`, without any external or
 hardware action. Package 023 then accepted the B1 source/contract inventory without product,
 schema or external changes. Package 024 accepted its first local server/adapter repair at
-`1755803`; package 025 adopted it in the web lifecycle at `42c2fbb`. No hosted migration, release
-or external action occurred.
+`1755803`; package 025 adopted it in the web lifecycle at `42c2fbb`; package 026 accepted the first
+B4 foreground native-audio slice at `c30b3b1`. No hosted migration, release or external action
+occurred.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
-The immediate local read path A1–A3, B1 inventory, 024 server/adapter foundation and 025 web
-lifecycle adoption are complete locally.
+The immediate local read path A1–A3, B1 inventory, 024 server/adapter foundation, 025 web
+lifecycle adoption and 026 foreground audio slice are complete locally.
 A4 release preparation may be written locally, but push/deploy/hosted checks remain externally
 gated and A5 hardware remains postponed. The unresolved shared authorship, stale conflict,
 deletion and final exit UX choices gate final B2/native editing semantics. Following the roadmap's
-blocker rule, the next bounded ready package is 026: inventory and implement the first local B4
-native audio playback/seek slice while preserving current web behavior.
+blocker rule, the next bounded ready package is 027: lift the single audio owner into the existing
+native shell and add a compact foreground mini player across repertoire ↔ shell navigation.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -253,12 +262,14 @@ native audio playback/seek slice while preserving current web behavior.
 > loop. Package 022 locally completed A3 at code/test commit `fb4a6a2`; read its brief and evidence
 > without inferring deploy, Drive, real-account, CI or hardware proof. Package 023 then accepted B1,
 > package 024 locally accepted the revision-safe annotation server/adapter foundation at
-> `1755803`, and package 025 adopted it in the web lifecycle at `42c2fbb`; read all three briefs for
-> verified behavior, boundaries and explicit owner decisions. Final native annotation UX remains
-> decision-gated. The next bounded local task is 026: open a brief for the first B4 native audio
-> playback/seek slice, starting with a source-faithful web/native behavior inventory.
+> `1755803`, package 025 adopted it in the web lifecycle at `42c2fbb`, and package 026 accepted the
+> first foreground native-audio slice at `c30b3b1`; read their briefs for verified behavior,
+> boundaries and explicit owner decisions. Final native annotation UX remains decision-gated. The
+> next bounded local task is 027: lift the existing single foreground audio owner into the native
+> shell and add a compact mini player across repertoire ↔ shell navigation without enabling
+> background or lock-screen behavior.
 >
-> Preserve 013–025's historical local acceptance and distinguish it from deployment/Drive and
+> Preserve 013–026's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.

@@ -1,7 +1,8 @@
 # 026 — Native repertoire foreground audio playback
 
-Prepared: 2026-09-10. Status: **PLANNED / NOT RUN**. Single writer and self-reviewer:
-main agent; no independent review is claimed. This is the first bounded B4 package.
+Prepared and locally accepted: 2026-09-10. Status: **COMPLETE LOCALLY**. Planning commit
+`e1b9615`; code/test commit `c30b3b1`. Single writer and self-reviewer: main agent; no independent
+review is claimed. This is the first bounded B4 package.
 
 ## Outcome and delivery focus
 
@@ -114,16 +115,25 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Accessible audio files are filtered, stably ordered and labelled like web; PDF paths and MusicXML filtering remain unchanged | yes | **NOT RUN** | — | Unit/integration evidence required |
-| Protected source uses current token + file UUID; newer selection cancels/invalidates stale work; retry gets a fresh ticket | yes | **NOT RUN** | — | Gateway and runtime request evidence required |
-| One native foreground owner plays/pauses, switches tracks, seeks within actual duration and changes speed between 0.5x and 2x | yes | **NOT RUN** | — | Actual native decode/seek evidence required; component mocks alone are insufficient |
-| Ticket loading, buffering/loading, denial, corrupt/unsupported media and retry are visible and recover safely | yes | **NOT RUN** | — | Failure-path tests plus native corrupt/unsupported observation required |
-| Screen exit, choir switch, sign-out and external session loss stop/remove source and erase ticket state before tenant transition | yes | **NOT RUN** | — | Ordering and integration evidence required |
-| Controls have semantic labels/roles, 44-point targets, visible disabled/pressed state and existing theme/safe-area behavior | yes | **NOT RUN** | — | Component/source review and local visual inspection required |
-| Mobile typecheck/tests, iOS bundle, Expo Doctor and applicable local iOS/Android native builds pass with no web/shared regression | yes | **NOT RUN** | — | Exact commands/revisions required; hardware/live/remote CI remain outside 026 |
+| Accessible audio files are filtered, stably ordered and labelled like web; PDF paths and MusicXML filtering remain unchanged | yes | **PASS** | 2026-09-10, `c30b3b1`; `audio-contract` and repertoire integration tests | MP3/WAV audio ordering, label fallback, unsupported OGG, unchanged PDF route and audio route/back passed. This does not broaden the MP3 product upload policy |
+| Protected source uses current token + file UUID; newer selection cancels/invalidates stale work; retry gets a fresh ticket | yes | **PASS** | 2026-09-10, `c30b3b1`; gateway/client tests and both local Release apps | AbortSignal and generation guard reject stale completion. Expired ticket 1 was replaced by ticket 2 before native playback on iOS and Android; local server received only the selected UUID plus synthetic ticket query |
+| One native foreground owner plays/pauses, switches tracks, seeks within actual duration and changes speed between 0.5x and 2x | yes | **PASS** | 2026-09-10; iPhone 17 / iOS 26.5 simulator and API 36 arm64 emulator, exact alternate-entry Release builds | Both native decoders played the generated 10-second 440 Hz WAV. iOS visibly advanced to 0:02, seek returned to 0 and 1.25x was applied; Android visibly advanced/completed. Hook-owned source replacement releases the old player. This is simulator/emulator evidence, not hardware or audio-output quality proof |
+| Ticket loading, buffering/loading, denial, corrupt/unsupported media and retry are visible and recover safely | yes | **PASS** | 2026-09-10, `c30b3b1`; 5 focused player tests plus Release runtime observations | Loading and ticket failures have Turkish states; corrupt 27-byte data produced the bounded retry state on both platforms, unsupported OGG produced a non-retryable format message, and no silent success was accepted. Denial is component/gateway evidence; no hosted account denial was run |
+| Screen exit, choir switch, sign-out and external session loss stop/remove source and erase ticket state before tenant transition | yes | **PASS** | 2026-09-10, `c30b3b1`; repertoire back/unmount, tenant-cache and existing AuthStore ordering tests; Release clear action | Repertoire back unmounted the owner and called gateway clear; tenant clear paused the native owner, changed source to null and disabled controls at 0:00/0:00 on both platforms. AuthStore already invokes the same cleaner before choir RPC/sign-out/session-loss transition. No real-account transition was run |
+| Controls have semantic labels/roles, 44-point targets, visible disabled/pressed state and existing theme/safe-area behavior | yes | **PASS** | 2026-09-10, `c30b3b1`; source review, component tests and local visual inspection of both Release apps | Radio track selector, adjustable seek and labelled buttons use 44–48 point targets, theme colors and explicit disabled/pressed styles. Playing, cleared, corrupt and unsupported states were visually inspected; no independent accessibility audit or hardware screen-reader run |
+| Mobile typecheck/tests, iOS bundle, Expo Doctor and applicable local iOS/Android native builds pass with no web/shared regression | yes | **PASS** | 2026-09-10, `c30b3b1`; `npx tsc --noEmit && npm test -- --runInBand`, `npm run bundle:check`, `npx expo-doctor`, Android `assembleRelease`, iOS `xcodebuild` arm64 simulator, root `pnpm check` | Mobile 20/20 suites and 100/100 tests; focused post-review 2 suites/12 tests; 1,328-module iOS export; Expo Doctor 21/21; both Release builds installed/launched; root 42/42 files and 279/279 tests plus Next build. No hardware, hosted service, deploy, remote CI or production account |
 
 ## Delivery
 
-Not executed. On local acceptance, record separate code/test and documentation commits, remaining
-risks, rollback order and the next ready B4 package. Do not convert simulator/emulator evidence into
-hardware, background playback, hosted service or release proof.
+026 is complete within its local foreground scope. The implementation adds SDK-compatible
+`expo-audio`, a cancellable protected-ticket gateway, one source-owning native player and the
+repertoire entry while preserving PDF and web behavior. The deterministic loopback fixture served
+160,044-byte WAV data with SHA-256
+`b43dde9816f8047e0c351a5a756f99d75433396ce8f4ac0b36dc1d825f26127e`; iOS exercised HTTP 206
+Range reads and Android exercised full HTTP 200 reads. Tenant clear and unmount remove the source.
+
+Rollback order is documentation record, code/test `c30b3b1`, then planning `e1b9615`; removing the
+dependency/player restores the PDF-only mobile surface. Remaining B4 work is navigation-persistent
+foreground ownership and compact mini-player integration. Background/interruption/lock-screen
+behavior remains B5/hardware-gated. No hosted migration, deployment, Drive, real account/data,
+remote CI, hardware or independent review was performed or inferred.

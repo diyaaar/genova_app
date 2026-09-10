@@ -44,6 +44,11 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
 - Local Android HTTP exceptions are acceptance infrastructure, not product policy. The 021 Expo
   config plugin requires an explicit flag plus exact loopback scheme/host/port, scopes the generated
   resource to localhost and actively removes its own manifest/resource changes in ordinary prebuilds.
+- Native protected audio separates ticket acquisition from player ownership. Package 026 keeps the
+  signed URL only in the active source state, aborts/invalidates older requests, lets
+  `useAudioPlayer(source)` release the old native object on source identity change, and registers
+  pause/source removal at the shared tenant boundary. A future mini player must lift that same
+  single owner into the shell; it must not mount a second player or enable background mode implicitly.
 
 ## Tek doğru kaynak dağılımı
 

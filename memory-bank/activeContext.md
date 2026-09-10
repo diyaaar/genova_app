@@ -1,6 +1,6 @@
 # Active context
 
-Updated 10 September 2026 after local 025 web annotation lifecycle acceptance at `42c2fbb`. The recorded
+Updated 10 September 2026 after local 026 foreground native-audio acceptance at `c30b3b1`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -79,8 +79,16 @@ the root 39-file/262-test build gate passed. [025](../docs/briefs/025-web-annota
 then adopted that path in the web workspace at `42c2fbb`: correct PDF-page identity, lossless row
 guards, serialized retryable saves, pending remount overlay, unload warning and flush-before-tenant
 exit passed 24 focused tests and the root 42-file/279-test build gate. No hosted migration/account
-browser/release occurred. Final native annotation UX remains owner-decision-gated, so 026 starts
-the independent B4 native audio playback/seek slice; release execution and hardware remain gated.
+browser/release occurred. Final native annotation UX remains owner-decision-gated. Package
+[026](../docs/briefs/026-native-repertoire-audio-playback.md) then accepted the first B4 slice at
+`c30b3b1`: SDK-compatible `expo-audio`, current-session protected tickets, stale-request
+cancellation, one foreground player, seek/speed, expiry renewal, visible corrupt/unsupported
+failures and tenant teardown passed 20 suites / 100 tests plus actual iOS/Android Release decoding
+of a deterministic 160,044-byte WAV. The root 42-file/279-test build gate also passed. This is
+local simulator/emulator self-review only; hosted service, real accounts, hardware, background,
+lock-screen and release remain unverified. Package 027 is the next ready local B4 slice: move the
+single foreground owner into the existing shell and add a compact mini player across repertoire ↔
+shell navigation.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

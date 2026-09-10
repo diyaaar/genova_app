@@ -24,6 +24,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 018 local Edge runtime | Explicit task workdir/context/test-copy variables with `supabase/test-support/018_repertoire_file_runtime_runner.sh`; refuses nonlocal/non-test targets, copies schema only and restores fixtures |
 | 021 mobile service lifecycle | `supabase/test-support/021_mobile_runtime_runner.sh` retains guarded fixtures through two platform runs, then proves target/source cleanup. Android loopback cleartext is generated only with the exact 021 flag and URL; ordinary prebuild removes it |
 | 022 web protected-file lifecycle | `supabase/test-support/022_web_runtime_runner.sh` retains guarded PDF/audio fixtures for a production browser run; `022_web_browser_acceptance.ts` verifies real Service Worker/Cache Storage, ticket renewal, Range audio, failure, tenant switch and sign-out before explicit cleanup |
+| 026 native foreground audio | In `apps/mobile`, run type/Jest/iOS export/Expo Doctor and the brief's guarded alternate-entry Release builds. `audio-server.mjs` refuses use without the exact acceptance flag and loopback URL; it serves deterministic WAV/corrupt bytes only. Simulator/emulator decode is not hardware or provider evidence |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -100,3 +101,15 @@ This is a dependency-maintenance risk, not proof of an exploitable product path.
 Package 017 added no dependency, build setting or native source. Its isolated acceptance and full
 mobile gate passed 14 suites / 73 tests plus the 1,314-module iOS bundle. Root build, Expo Doctor
 and native simulator build were correctly left N/A for 017 rather than relabeling 016 evidence.
+
+## Native foreground audio dependency state — 10 September 2026
+
+Package 026 added Expo SDK 57-compatible `expo-audio ~57.0.4` and aligned Expo to `~57.0.21`.
+The plugin explicitly disables microphone permission, Android recording, background recording and
+background playback. `useAudioPlayer(source)` owns and releases the native object when the source
+identity changes; do not revive the old source with an empty `replace` call. Protected ticket
+requests accept AbortSignal, keep URLs only in component state and clear them through the existing
+tenant-cache boundary. Local acceptance passed mobile 20 suites / 100 tests, a 1,328-module iOS
+export, Expo Doctor 21/21, iOS arm64-simulator and Android API 36 arm64 Release builds, plus root
+42 files / 279 tests and Next build. Exact runtime evidence and limitations are in
+[026](../docs/briefs/026-native-repertoire-audio-playback.md).

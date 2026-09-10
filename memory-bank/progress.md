@@ -36,6 +36,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 023 annotation-write contract inventory | Documentation accepted; B1 complete | [023](../docs/briefs/023-annotation-write-contract-inventory.md); shared item/layer, role/RLS, row/delete/audit/version and lifecycle contract mapped from source plus read-only PostgreSQL 17.11 metadata. Six blocking current web save risks and four unresolved owner semantics are explicit. No product, schema, live DB or external action |
 | 024 annotation mutation safe-save contract | Local acceptance complete; B2 foundation only | [024](../docs/briefs/024-annotation-mutation-safe-save-contract.md), code/test `1755803`; positive revision/CAS RPC, server-derived file/song/choir/audit trigger, authenticated role matrix, mismatch refusal, exact down/forward restoration and lossless-read/safe-save adapter passed on a dedicated PostgreSQL 17.11 copy. Root 39 files / 262 tests/build passed. 025 later completed workspace adoption; hosted migration/release and native writing remain open |
 | 025 web annotation safe-save lifecycle | Local acceptance complete; B2 web slice only | [025](../docs/briefs/025-web-annotation-safe-save-lifecycle.md), code/test `42c2fbb`; PDF-page identity, lossless/revision metadata, serialized per-key latest-snapshot queue, pending remount overlay, unload guard and flush-before-switch/sign-out passed 24 focused tests and root 42 files / 279 tests/build. Hosted RPC/account/browser, native writing, persistent offline recovery and final owner UX remain open |
+| 026 native repertoire foreground audio | Local acceptance complete; first B4 slice only | [026](../docs/briefs/026-native-repertoire-audio-playback.md), code/test `c30b3b1`; current-session ticket gateway, stale cancellation, one foreground player, play/pause/seek/0.5–2x speed, ticket renewal, visible corrupt/unsupported failure and tenant teardown passed mobile 20 suites / 100 tests, iOS/Android alternate-entry Release decoding, Expo Doctor 21/21, iOS bundle and root 42 files / 279 tests/build. Simulator/emulator self-review only; mini player, background/lock-screen, hosted service, hardware and release remain open |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -73,11 +74,12 @@ WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted
 accepted at `0b3df6e`; 019 and 020's iOS/Android render slices are locally accepted at `2c64e5e`
 and `e2fe177`; 021 completed A2 locally at `404a9ee`; 022 completed A3 locally at `fb4a6a2`.
 023 accepted B1, 024 locally accepted the revision-safe server/adapter foundation at `1755803`,
-and 025 accepted the web safe-save lifecycle at `42c2fbb`. Because final native annotation UX is
-still gated by four owner decisions, the [canonical long-term plan](../docs/mobil-teslim-plani.md)
-routes to independent package 026 for the first B4 native audio playback/seek slice.
+025 accepted the web safe-save lifecycle at `42c2fbb`, and 026 accepted the first B4 foreground
+native-audio slice at `c30b3b1`. Because final native annotation UX is still gated by four owner
+decisions, the [canonical long-term plan](../docs/mobil-teslim-plani.md) routes next to package 027:
+one shell-owned foreground player and compact mini player across repertoire ↔ shell navigation.
 No push, deploy, production database operation, Drive call, real choir access, email, remote CI
-or hardware test was performed for 025.
+or hardware test was performed for 026.
 
 WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
 [WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.
