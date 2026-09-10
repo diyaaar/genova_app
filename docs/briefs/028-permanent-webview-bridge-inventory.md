@@ -1,6 +1,6 @@
 # 028 — Permanent WebView bridge and route-ownership inventory
 
-Prepared: 2026-09-10. Status: **PLANNED / NOT RUN**. Single writer and self-reviewer: main agent;
+Prepared: 2026-09-10. Status: **COMPLETE LOCALLY (DOCUMENTATION)**. Single writer and self-reviewer: main agent;
 no independent review is claimed. This is the first bounded C1 package and is documentation-only.
 
 ## Outcome and delivery focus
@@ -100,16 +100,18 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Every permanent route family, nested route, role-only action, read/mutation/Realtime/file dependency and cross-boundary link is mapped to an owner and preservation rule | yes | **NOT RUN** | — | Source matrix required |
-| Native auth/active-choir authority and a fail-closed web bootstrap/refresh/sign-out/tenant-change state machine are explicit, with no credential in URL/log/analytics | yes | **NOT RUN** | — | Contract and source/API comparison required |
-| Versioned message envelope, origin/type/payload validation, route allowlists and unknown-message behavior are exact enough to unit test before a WebView is installed | yes | **NOT RUN** | — | Protocol table and test vectors required |
-| Back/history, native-route exit, external URL, popup, download, upload/file-picker and expired-session behavior has one explicit safe owner and failure path | yes | **NOT RUN** | — | Navigation/capability matrix required |
-| Theme/safe-area/accessibility/loading/error requirements and staged implementation/rollback/acceptance gates preserve existing web/native behavior | yes | **NOT RUN** | — | Future evidence matrix required; no runtime pass inferred |
-| Repository records distinguish verified source facts, official API feasibility, proposed contract, unresolved decisions and runtime NOT RUN layers | yes | **NOT RUN** | — | Self-review required |
-| Documentation links, route/plan/MIGRATION consistency and `git diff --check` pass with no product or unrelated change | yes | **NOT RUN** | — | Document gate required |
+| Every permanent route family, nested route, role-only action, read/mutation/Realtime/file dependency and cross-boundary link is mapped to an owner and preservation rule | yes | **PASS** | 2026-09-10; planning revision `97ba303`; nine route files plus imported feature sources enumerated with `find`, `wc` and targeted `rg`/source reads | [Contract route and feature matrices](../webview-bridge-contract.md#route-ownership-and-canonicalization) cover all nine routes, browser/native transitions, tables/APIs/Realtime, rich links, files and visible states. This is source inventory, not feature runtime |
+| Native auth/active-choir authority and a fail-closed web bootstrap/refresh/sign-out/tenant-change state machine are explicit, with no credential in URL/log/analytics | yes | **PASS** | 2026-09-10; compared current web/native clients/Auth owners with official Supabase session/JWT docs and installed `2.112.4`/`2.115.0` construction probes | [State machine](../webview-bridge-contract.md#session-and-tenant-state-machine) keeps refresh token and refresh ownership native, grants only an in-memory access-token lease after challenge, rechecks server-current choir and clears before tenant change. No session handoff was run |
+| Versioned message envelope, origin/type/payload validation, route allowlists and unknown-message behavior are exact enough to unit test before a WebView is installed | yes | **PASS** | 2026-09-10; official React Native WebView reference/guide plus current event types; contract self-review | [Version 1 protocol](../webview-bridge-contract.md#version-1-bridge-protocol) fixes envelope keys, size/order/dedup/epoch/source checks, message payloads, redaction and minimum 029 vectors. The package is still absent |
+| Back/history, native-route exit, external URL, popup, download, upload/file-picker and expired-session behavior has one explicit safe owner and failure path | yes | **PASS** | 2026-09-10; current `useBackOrHome`, `SwipeBack`, rich-text, target-blank, profile/announcement file and protected-submission paths traced | [Navigation and capability rules](../webview-bridge-contract.md#navigation-back-and-capability-rules) assign every boundary and deny unaccepted camera/file behavior. Platform behavior remains NOT RUN |
+| Theme/safe-area/accessibility/loading/error requirements and staged implementation/rollback/acceptance gates preserve existing web/native behavior | yes | **PASS** | 2026-09-10; current native shell/theme and web main-layout/page states compared; self-review | [UI/failure rules and package split](../webview-bridge-contract.md#ui-accessibility-and-failure-behavior) retain web forms/states while native owns safe area/theme/shell; future unit, web, Release, hosted and hardware gates stay explicit |
+| Repository records distinguish verified source facts, official API feasibility, proposed contract, unresolved decisions and runtime NOT RUN layers | yes | **PASS** | 2026-09-10; final brief/contract/plan/MIGRATION/handoff/memory self-review | The contract opens with the evidence legend and ends with ten future evidence rows. It does not promote API documentation or local construction probes to embedded runtime proof |
+| Documentation links, route/plan/MIGRATION consistency and `git diff --check` pass with no product or unrelated change | yes | **PASS** | 2026-09-10; repository-local link validator, canonical phrase checks, route-source coverage script, `git diff --check`; final rerun before commit | Product sources and dependencies are unchanged. The pre-existing `supabase/.temp/cli-latest` modification remains unstaged and unowned |
 
 ## Delivery
 
-Not executed. On documentation acceptance, record the contract and updated canonical indexes in a
-separate commit, preserve every runtime layer as NOT RUN and select the smallest ready implementation
-brief. Do not install or implement the WebView inside 028.
+Accepted as documentation in the 028 record commit after planning commit `97ba303`. The authoritative
+output is [the permanent WebView bridge contract](../webview-bridge-contract.md). No dependency,
+product, DB/Edge or external change was made; all runtime layers remain NOT RUN. The next ready local
+package is 029, the framework-free route/protocol/redaction policy core and pure tests. It deliberately
+does not install or mount a WebView and cannot close C1 runtime acceptance.

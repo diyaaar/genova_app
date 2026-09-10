@@ -1,6 +1,6 @@
 # Active context
 
-Updated 10 September 2026 after local 027 shell-owned native-audio acceptance at `dc25938`. The recorded
+Updated 10 September 2026 after the 028 permanent-WebView contract inventory. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -92,9 +92,14 @@ at `dc25938`: one provider under authenticated `ReadyShell` retained the same so
 rate across full, repertoire and home compact views. Mobile 21 suites / 104 tests, normal iOS
 export, Expo Doctor and both exact Release apps passed expiry, actual WAV, failure and tenant-clear
 paths; [visual evidence](../docs/evidence/027-native-audio-shell-mini-player/README.md) is retained.
-This remains local simulator/emulator self-review. Package 028 is the next ready local C1 slice: a
-permanent-WebView bridge and native/WebView route-ownership contract inventory before product
-implementation.
+This remains local simulator/emulator self-review. Package
+[028](../docs/briefs/028-permanent-webview-bridge-inventory.md) then accepted the
+[permanent WebView contract](../docs/webview-bridge-contract.md) as documentation: all nine routes,
+role/mutation/Realtime/file behavior and native/native-future exits are mapped. Native alone owns the
+refresh token and active choir; embedded web receives only a challenged in-memory access-token lease
+and must re-prove the server-current choir before rendering. No WebView package/product/browser/live
+runtime was used. Package 029 is the next ready local C1 slice: shared framework-free route,
+message-envelope and redacted-diagnostic policy plus exhaustive pure tests.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

@@ -52,6 +52,12 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   boundaries and provider unmount pause, invalidate and remove the source through the shared
   tenant registry. This foreground pattern does not enable background mode or authorize a second
   owner.
+- Permanent WebView auth is not a second persisted Supabase session. Package 028 fixes native as the
+  sole refresh-token/active-choir owner; after an exact-origin challenge, embedded web may hold only a
+  short-lived access-token lease in memory and must re-prove user plus server-current choir before
+  rendering. Refresh tokens, credentials in URLs/headers/cookies, independent web refresh and web
+  `/` fallback are prohibited. Route/message validation is shared and framework-free; product runtime
+  begins after 029 pure policy acceptance. See [the contract](../docs/webview-bridge-contract.md).
 
 ## Tek doğru kaynak dağılımı
 

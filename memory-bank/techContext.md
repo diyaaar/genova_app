@@ -26,6 +26,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 022 web protected-file lifecycle | `supabase/test-support/022_web_runtime_runner.sh` retains guarded PDF/audio fixtures for a production browser run; `022_web_browser_acceptance.ts` verifies real Service Worker/Cache Storage, ticket renewal, Range audio, failure, tenant switch and sign-out before explicit cleanup |
 | 026 native foreground audio | In `apps/mobile`, run type/Jest/iOS export/Expo Doctor and the brief's guarded alternate-entry Release builds. `audio-server.mjs` refuses use without the exact acceptance flag and loopback URL; it serves deterministic WAV/corrupt bytes only. Simulator/emulator decode is not hardware or provider evidence |
 | 027 native shell audio | Reuse 026's guarded alternate entry/server, but navigate shell → repertoire → full → repertoire/home mini → full and prove no navigation ticket. Inspect compact loading/error/disabled/clear states, exact Release apps and accessibility trees. This remains foreground simulator/emulator evidence |
+| 028 WebView inventory | Documentation only: source-route/action coverage, current primary WebView/Supabase API comparison, installed-client construction probe, local links/consistency and `git diff --check`. No package, browser, WebView or provider runtime |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -122,3 +123,14 @@ arm64-simulator plus Android API 36 arm64 Release builds. The loopback server re
 160,044-byte WAV through iOS 206 Range and Android 200; navigation retained 0:10 and 1.25x without
 a new ticket, while tenant clear removed the compact surface. Exact visual evidence and limitations
 are in [027 evidence](../docs/evidence/027-native-audio-shell-mini-player/README.md).
+
+## Permanent WebView contract state — 10 September 2026
+
+Package 028 adds no product dependency. The current mobile app has no direct
+`react-native-webview`; web Supabase is 2.112.4 and native is 2.115.0. Both installed clients expose
+an `accessToken` provider and Realtime token update, but that mode intentionally disables the Auth
+namespace. The accepted [contract](../docs/webview-bridge-contract.md) therefore keeps refresh token
+and refresh ownership in native SecureStore, gives embedded web only a challenged in-memory access
+lease, and routes sign-out/theme/password capabilities through native ownership. WebView package,
+CSP, embedded browser behavior, platform files/back/accessibility, hosted origin and hardware are all
+NOT RUN. Package 029 next implements only the framework-free route/message/redaction policy and tests.
