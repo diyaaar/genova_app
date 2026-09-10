@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
-import { supabase } from '@/lib/supabase';
+import { browserSupabase } from '@/lib/supabase';
 import { invitationCommand, invitationTokenFromHash } from '@/lib/choir-invitations';
 import {
   browserInviteTokenStorage,
@@ -41,7 +41,7 @@ export default function AcceptInvitationPage() {
     setBusy(true); setMessage('');
     try {
       if (register) {
-        const result = await supabase.auth.signUp({
+        const result = await browserSupabase.auth.signUp({
           email,
           password,
           // Without this the provider returns to the site root, where a member

@@ -5,11 +5,14 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('@/lib/supabase', () => ({
-  supabase: {
+  browserSupabase: {
     auth: {
       getSession: mocks.getSession,
     },
   },
+  getEmbeddedLeaseSnapshot: () => ({ mode: 'browser', phase: 'browser' }),
+  notifyEmbeddedUnauthorized: vi.fn(),
+  requireEmbeddedAccess: vi.fn(),
 }));
 
 import {
@@ -56,8 +59,8 @@ describe('protected Drive URL cache', () => {
     expect(first).toBe('/api/drive-file/drive-file-1?token=fresh');
     expect(second).toBe(first);
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(fetchMock.mock.calls[0]?.[1]?.headers).toMatchObject({ Authorization: 'Bearer token-a' });
-    expect(fetchMock.mock.calls[1]?.[1]?.headers).toMatchObject({ Authorization: 'Bearer token-b' });
+    expect((fetchMock.mock.calls[0]?.[1]?.headers as Headers).get('Authorization')).toBe('Bearer token-a');
+    expect((fetchMock.mock.calls[1]?.[1]?.headers as Headers).get('Authorization')).toBe('Bearer token-b');
     expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({
       driveFileId: file.drive_file_id,
       fileName: file.file_name,
@@ -102,7 +105,7 @@ describe('protected Drive URL cache', () => {
 
   it('keeps Edge repertoire tickets user-scoped and checks the session before cache use', async () => {
     fetchMock.mockImplementation((_input, init) => Promise.resolve(Response.json({
-      url: `https://project.supabase.co/functions/v1/repertoire-file?fileId=${file.id}&ticket=${(init?.headers as Record<string, string>).Authorization.slice(-1)}`,
+      url: `https://project.supabase.co/functions/v1/repertoire-file?fileId=${file.id}&ticket=${(init?.headers as Headers).get('Authorization')?.slice(-1)}`,
       expiresAt: Date.now() + 60_000,
     })));
     mocks.getSession

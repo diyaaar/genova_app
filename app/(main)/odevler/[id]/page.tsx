@@ -33,6 +33,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { supabase, type Assignment, type AssignmentSubmission } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 import { FileUploadModal } from '@/components/FileUploadModal';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { ReviewNoteDialog } from '@/components/ReviewNoteDialog';
@@ -487,20 +488,10 @@ interface LockAssignmentResponse {
   locked_by: string | null;
 }
 
-async function getAccessToken() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !sessionData.session?.access_token) {
-    throw new Error('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
-  }
-  return sessionData.session.access_token;
-}
-
 async function postJsonWithAuth<T>(url: string, payload: Record<string, unknown>) {
-  const accessToken = await getAccessToken();
-  const response = await fetch(url, {
+  const response = await authenticatedWebFetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
@@ -515,12 +506,8 @@ async function postJsonWithAuth<T>(url: string, payload: Record<string, unknown>
 }
 
 async function postFormWithAuth<T>(url: string, formData: FormData) {
-  const accessToken = await getAccessToken();
-  const response = await fetch(url, {
+  const response = await authenticatedWebFetch(url, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
     body: formData,
   });
 

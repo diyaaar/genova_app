@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNavigationStore } from '@/store/useNavigationStore';
+import { useEmbeddedWebBridge } from '@/components/EmbeddedWebBridgeProvider';
 
 const NOTIFICATION_BACK_PARAM = 'fromNotification';
 const RETURN_TO_PARAM = 'returnTo';
@@ -67,9 +68,15 @@ function getInternalReturnToPath() {
 export function useBackOrHome(homePath = '/') {
   const router = useRouter();
   const setDirection = useNavigationStore((s) => s.setDirection);
+  const embeddedBridge = useEmbeddedWebBridge();
 
   return useCallback(() => {
     setDirection('back');
+
+    if (embeddedBridge.isEmbedded) {
+      embeddedBridge.navigateBack();
+      return;
+    }
 
     const returnToPath = getInternalReturnToPath();
     if (returnToPath) {
@@ -83,5 +90,5 @@ export function useBackOrHome(homePath = '/') {
     }
 
     router.back();
-  }, [homePath, router, setDirection]);
+  }, [embeddedBridge, homePath, router, setDirection]);
 }

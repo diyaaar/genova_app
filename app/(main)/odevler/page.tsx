@@ -27,6 +27,7 @@ import { getAssignmentCacheKey, readAssignmentCache, writeAssignmentCache } from
 import { formatAssignmentScopeLabel } from '@/lib/assignment-scope';
 import { createSlugLookup, getAssignmentPath } from '@/lib/internalPageLinks';
 import { createRealtimeTopic } from '@/lib/realtime';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 type AssignmentChoirMember =
   | Assignment['choir_members']
@@ -789,20 +790,10 @@ function isReviewerAssignmentCompleted(item: ReviewerAssignmentSummary): boolean
   return item.total > 0 && item.completed >= item.total;
 }
 
-async function getAccessToken() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !sessionData.session?.access_token) {
-    throw new Error('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
-  }
-  return sessionData.session.access_token;
-}
-
 async function postJsonWithAuth<T>(url: string, payload: Record<string, unknown>) {
-  const accessToken = await getAccessToken();
-  const response = await fetch(url, {
+  const response = await authenticatedWebFetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),

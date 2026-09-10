@@ -1,4 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import {
+  EmbeddedLeaseVault,
+  activateEmbeddedRuntime,
+  verifyEmbeddedContext,
+  type EmbeddedAccessKind,
+  type EmbeddedContextCandidate,
+  type EmbeddedContextProofDependencies,
+  type EmbeddedLeaseSnapshot,
+} from '@/lib/embedded-web-runtime';
+import { loadMyChoirs } from '@/lib/choir-context-core';
 
 export {
   normalizeRepertoireSong,
@@ -13,11 +23,171 @@ export {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  realtime: {
-    params: { eventsPerSecond: 10 },
+let browserClient: SupabaseClient | null = null;
+
+function getBrowserClient(): SupabaseClient {
+  if (!browserClient) {
+    browserClient = createClient(supabaseUrl, supabaseAnonKey, {
+      realtime: {
+        params: { eventsPerSecond: 10 },
+      },
+    });
+  }
+  return browserClient;
+}
+
+/** Lazy proxy so an embedded renderer can lock before GoTrue reads browser persistence. */
+export const browserSupabase = new Proxy({} as SupabaseClient, {
+  get(_target, property) {
+    const client = getBrowserClient();
+    const value = Reflect.get(client, property, client) as unknown;
+    return typeof value === 'function' ? value.bind(client) : value;
   },
 });
+
+const embeddedLeaseVault = new EmbeddedLeaseVault();
+let embeddedSupabase: SupabaseClient | null = null;
+let embeddedUnauthorizedHandler: (() => void) | null = null;
+let embeddedAuthGeneration = 0;
+let embeddedRealtimeQueue: Promise<void> = Promise.resolve();
+
+function enqueueEmbeddedRealtime<T>(operation: () => Promise<T>): Promise<T> {
+  const queued = embeddedRealtimeQueue.then(operation, operation);
+  embeddedRealtimeQueue = queued.then(() => undefined, () => undefined);
+  return queued;
+}
+
+function requestMethod(input: RequestInfo | URL, init?: RequestInit): string {
+  if (init?.method) return init.method.toUpperCase();
+  if (typeof Request !== 'undefined' && input instanceof Request) return input.method.toUpperCase();
+  return 'GET';
+}
+
+async function embeddedFetch(input: RequestInfo | URL, init?: RequestInit) {
+  const method = requestMethod(input, init);
+  const kind: EmbeddedAccessKind = method === 'GET' || method === 'HEAD' ? 'read' : 'mutation';
+  const access = embeddedLeaseVault.requireAccess(kind);
+  const headers = new Headers(init?.headers ?? (typeof Request !== 'undefined' && input instanceof Request ? input.headers : undefined));
+  headers.set('Authorization', `Bearer ${access.accessToken}`);
+  const response = await fetch(input, { ...init, headers });
+  if (response.status === 401) notifyEmbeddedUnauthorized();
+  return response;
+}
+
+function createEmbeddedDataClient(accessToken: () => Promise<string | null>, guardedFetch: typeof fetch): SupabaseClient {
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    accessToken,
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+    global: { fetch: guardedFetch },
+    realtime: {
+      params: { eventsPerSecond: 10 },
+    },
+  });
+}
+
+/** Live data binding: browser by default, non-persisting bearer client after exact bridge detection. */
+export let supabase: SupabaseClient = browserSupabase;
+
+export function enterEmbeddedSupabaseMode(): EmbeddedLeaseSnapshot {
+  activateEmbeddedRuntime();
+  embeddedLeaseVault.enterEmbeddedMode();
+  if (!embeddedSupabase) {
+    embeddedSupabase = createEmbeddedDataClient(
+      async () => {
+        try {
+          return embeddedLeaseVault.requireAccess('read').accessToken;
+        } catch {
+          return null;
+        }
+      },
+      embeddedFetch,
+    );
+  }
+  supabase = embeddedSupabase;
+  return embeddedLeaseVault.snapshot();
+}
+
+export function getEmbeddedLeaseSnapshot(): EmbeddedLeaseSnapshot {
+  return embeddedLeaseVault.snapshot();
+}
+
+export function subscribeEmbeddedLease(listener: (snapshot: EmbeddedLeaseSnapshot) => void): () => void {
+  return embeddedLeaseVault.subscribe(listener);
+}
+
+export function setEmbeddedUnauthorizedHandler(handler: (() => void) | null): () => void {
+  embeddedUnauthorizedHandler = handler;
+  return () => {
+    if (embeddedUnauthorizedHandler === handler) embeddedUnauthorizedHandler = null;
+  };
+}
+
+export function notifyEmbeddedUnauthorized(): void {
+  if (embeddedLeaseVault.snapshot().mode === 'embedded') embeddedUnauthorizedHandler?.();
+}
+
+export function requireEmbeddedAccess(kind: EmbeddedAccessKind = 'read') {
+  return embeddedLeaseVault.requireAccess(kind);
+}
+
+export async function installEmbeddedLease(candidate: EmbeddedContextCandidate): Promise<EmbeddedLeaseSnapshot> {
+  const generation = ++embeddedAuthGeneration;
+  return enqueueEmbeddedRealtime(async () => {
+    if (generation !== embeddedAuthGeneration) throw new Error('embedded-install-stale');
+    await embeddedSupabase?.realtime.setAuth(candidate.accessToken);
+    if (generation !== embeddedAuthGeneration) throw new Error('embedded-install-stale');
+    embeddedLeaseVault.install(candidate);
+    return embeddedLeaseVault.snapshot();
+  });
+}
+
+export function beginEmbeddedLeaseRenewal(): boolean {
+  return embeddedLeaseVault.beginRenewal();
+}
+
+/** Clears the credential before awaiting channel/socket cleanup; embedded mode never falls back to browser Auth. */
+export async function clearEmbeddedSupabaseContext(): Promise<void> {
+  embeddedAuthGeneration += 1;
+  embeddedLeaseVault.clear();
+  if (!embeddedSupabase) return;
+  await enqueueEmbeddedRealtime(async () => {
+    await embeddedSupabase?.removeAllChannels();
+    await embeddedSupabase?.realtime.setAuth(null);
+  });
+}
+
+function createDefaultEmbeddedProofDependencies(): EmbeddedContextProofDependencies {
+  const authVerifier = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
+  });
+  return {
+    nowSeconds: () => Math.floor(Date.now() / 1000),
+    verifyUser: async (accessToken) => {
+      const { data, error } = await authVerifier.auth.getUser(accessToken);
+      if (error) throw new Error('embedded-auth-proof-failed');
+      return data.user ? { id: data.user.id } : null;
+    },
+    loadMemberships: async (accessToken) => {
+      const candidateClient = createEmbeddedDataClient(async () => accessToken, fetch.bind(globalThis));
+      return loadMyChoirs(candidateClient);
+    },
+  };
+}
+
+export async function verifyEmbeddedSupabaseContext(
+  candidate: EmbeddedContextCandidate,
+  dependencies: EmbeddedContextProofDependencies = createDefaultEmbeddedProofDependencies(),
+) {
+  return verifyEmbeddedContext(candidate, dependencies);
+}
 
 // Supabase Edge Function helper — JWT otomatik eklenir
 export async function callDriveFunction<T = unknown>(

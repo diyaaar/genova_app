@@ -6,11 +6,13 @@ import Link from 'next/link';
 import { useAuth } from '@/components/AuthProvider';
 import { getRoleDisplayLabel } from '@/lib/role-labels';
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+import { browserSupabase, supabase } from '@/lib/supabase';
 import { normalizeProfileChangeValue, type ProfileChangeValue } from '@/lib/profile-change-requests';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ToastProvider';
 import { SwipeBack } from '@/components/SwipeBack';
+import { useEmbeddedWebBridge } from '@/components/EmbeddedWebBridgeProvider';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 /* ---------- Statik veriler (idealde DB'den gelir) ---------- */
 const SCHOOLS = [
@@ -86,6 +88,7 @@ export default function ProfilDuzenle() {
   const { member, user, roles, isLoading } = useAuth();
   const router = useRouter();
   const toast = useToast();
+  const embeddedBridge = useEmbeddedWebBridge();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [form, setForm] = useState<Record<FieldKey, string>>({
@@ -176,16 +179,11 @@ export default function ProfilDuzenle() {
 
     setUploadingPhoto(true);
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const accessToken = sessionData.session?.access_token;
-      if (!accessToken) throw new Error('Oturum bulunamadı. Lütfen tekrar giriş yapın.');
-
       const formData = new FormData();
       formData.append('file', file);
 
-      const res = await fetch('/api/profile-photo', {
+      const res = await authenticatedWebFetch('/api/profile-photo', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}` },
         body: formData,
       });
 
@@ -237,14 +235,9 @@ export default function ProfilDuzenle() {
 
     setStatus('saving');
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const accessToken = sessionData.session?.access_token;
-      if (!accessToken) throw new Error('Oturum bulunamadı. Lütfen tekrar giriş yapın.');
-
-      const response = await fetch('/api/profile-change-requests/submit', {
+      const response = await authenticatedWebFetch('/api/profile-change-requests/submit', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ changes, note }),
@@ -300,13 +293,13 @@ export default function ProfilDuzenle() {
 
     setPasswordStatus('saving');
     try {
-      const { error: reauthError } = await supabase.auth.signInWithPassword({
+      const { error: reauthError } = await browserSupabase.auth.signInWithPassword({
         email: member.email,
         password: oldPassword,
       });
       if (reauthError) throw new Error('Eski şifre yanlış.');
 
-      const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
+      const { error: updateError } = await browserSupabase.auth.updateUser({ password: newPassword });
       if (updateError) throw updateError;
 
       setOldPassword('');
@@ -472,6 +465,32 @@ export default function ProfilDuzenle() {
       </form>
 
       {/* Şifre Değiştir */}
+      {embeddedBridge.isEmbedded ? (
+        <motion.section
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="glass-panel p-5 space-y-3 mt-4"
+          aria-labelledby="embedded-password-title"
+        >
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-soft-bg)] text-[var(--color-accent)]">
+              <LockKeyhole size={14} aria-hidden="true" />
+            </div>
+            <div>
+              <p id="embedded-password-title" className="text-[0.82rem] font-semibold text-[var(--color-text-high)]">Şifre Değiştir</p>
+              <p className="mt-1 text-xs leading-5 text-[var(--color-text-medium)]">Şifren güvenli mobil ekranda güncellenir.</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={embeddedBridge.requestPasswordChange}
+            className="mt-1 flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-[var(--color-accent-soft)] bg-[var(--color-accent-soft)] px-6 py-3 text-[var(--color-accent)] font-serif font-bold text-[0.9rem] outline-none transition-all hover:bg-[#C0B283]/10 focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+          >
+            Güvenli şifre ekranını aç
+          </button>
+        </motion.section>
+      ) : (
       <motion.form
         onSubmit={handlePasswordChange}
         initial={{ opacity: 0, y: 10 }}
@@ -538,6 +557,7 @@ export default function ProfilDuzenle() {
           {passwordStatus === 'done' ? 'Şifre Güncellendi' : passwordStatus === 'saving' ? 'Güncelleniyor...' : 'Şifreyi Güncelle'}
         </button>
       </motion.form>
+      )}
     </main>
     </SwipeBack>
   );

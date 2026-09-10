@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/components/AuthProvider';
 import { invitationCommand, invitationStatus, type ChoirInvitation } from '@/lib/choir-invitations';
+import { useEmbeddedWebBridge } from '@/components/EmbeddedWebBridgeProvider';
 
 export default function InvitationManager() {
   const { activeChoir, isAdmin } = useAuth();
+  const embeddedBridge = useEmbeddedWebBridge();
   const choirId = activeChoir?.choir_id;
   const allowed = isAdmin();
   const [busy, setBusy] = useState(false);
@@ -45,6 +47,19 @@ export default function InvitationManager() {
     } catch (error) { setMessage(error instanceof Error ? error.message : 'İşlem başarısız.'); }
     finally { setBusy(false); }
   }
+  async function copyInvitationLink() {
+    if (embeddedBridge.isEmbedded) {
+      if (embeddedBridge.requestClipboardWrite(link)) setMessage('Bağlantı mobil uygulamaya gönderildi.');
+      else setMessage('Bağlantıyı seçip elle kopyalayabilirsiniz.');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(link);
+      setMessage('Bağlantı kopyalandı.');
+    } catch {
+      setMessage('Bağlantıyı seçip elle kopyalayabilirsiniz.');
+    }
+  }
   const inputStyle = 'w-full rounded border border-[var(--color-border)] bg-transparent p-3';
   return <section className="space-y-5">
     <h1 className="font-serif text-2xl">Koro davetleri</h1>
@@ -62,7 +77,7 @@ export default function InvitationManager() {
     {message && <p role="status">{message}</p>}
     {link && <div className="space-y-2">
       <label className="block">Davet bağlantısı<input readOnly value={link} className={inputStyle} onFocus={event => event.target.select()} /></label>
-      <button onClick={() => navigator.clipboard.writeText(link).then(() => setMessage('Bağlantı kopyalandı.')).catch(() => setMessage('Bağlantıyı seçip elle kopyalayabilirsiniz.'))}>Bağlantıyı kopyala</button>
+      <button onClick={() => void copyInvitationLink()}>Bağlantıyı kopyala</button>
     </div>}
     {query.isLoading && <p role="status">Davetler yükleniyor…</p>}
     {query.error && <p role="alert">{query.error.message} <button onClick={() => void query.refetch()}>Yeniden dene</button></p>}

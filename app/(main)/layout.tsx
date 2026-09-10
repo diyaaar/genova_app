@@ -18,9 +18,20 @@ import { getRepertoireRoleScope } from '@/lib/repertuvar/cache';
 import { getRepertoireCatalogQueryKey, loadRepertoireCatalog } from '@/lib/repertuvar/queries';
 import { supabase } from '@/lib/supabase';
 import { createRealtimeTopic } from '@/lib/realtime';
+import { useEmbeddedWebBridge } from '@/components/EmbeddedWebBridgeProvider';
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
-  const { session, member, isLoading, isAdmin, isSectionLeader } = useAuth();
+  const {
+    authMode,
+    isAuthenticated,
+    member,
+    contextError,
+    isLoading,
+    isAdmin,
+    isSectionLeader,
+    refreshChoirContext,
+  } = useAuth();
+  const embeddedBridge = useEmbeddedWebBridge();
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();
@@ -33,13 +44,13 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
 
   useEffect(() => {
-    if (!isLoading && !session) {
+    if (authMode === 'browser' && !isLoading && !isAuthenticated) {
       router.replace('/login');
     }
-  }, [session, isLoading, router]);
+  }, [authMode, isAuthenticated, isLoading, router]);
 
   useEffect(() => {
-    if (isLoading || !session || !memberId) {
+    if (authMode === 'embedded' || isLoading || !isAuthenticated || !memberId) {
       return;
     }
 
@@ -49,10 +60,10 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       staleTime: 30_000,
       gcTime: 24 * 60 * 60_000,
     });
-  }, [isLoading, memberId, queryClient, roleScope, session]);
+  }, [authMode, isAuthenticated, isLoading, memberId, queryClient, roleScope]);
 
   useEffect(() => {
-    if (isLoading || !session || !memberId) {
+    if (isLoading || !isAuthenticated || !memberId) {
       return;
     }
 
@@ -72,7 +83,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isLoading, memberId, session, queryClient]);
+  }, [isAuthenticated, isLoading, memberId, queryClient]);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development' || typeof window === 'undefined' || !('serviceWorker' in navigator)) {
@@ -100,14 +111,48 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--color-background)]">
-        <Loader2 className="animate-spin text-[var(--color-accent)]" size={32} />
+      <div
+        className="flex min-h-screen items-center justify-center bg-[var(--color-background)]"
+        role="status"
+        aria-label="Koro bilgileri yükleniyor"
+      >
+        <Loader2 className="motion-safe:animate-spin text-[var(--color-accent)]" size={32} aria-hidden="true" />
       </div>
     );
   }
 
-  if (!session) return null;
-  if (!member) return <ChoirSelectionGate />;
+  if (!isAuthenticated) return null;
+  if (!member && authMode === 'browser') return <ChoirSelectionGate />;
+  if (!member) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[var(--color-background)] px-5 py-10">
+        <section className="glass-panel w-full max-w-md p-6 text-center" aria-labelledby="embedded-member-error">
+          <h1 id="embedded-member-error" className="font-serif text-2xl text-[var(--color-text-high)]">
+            Koro bilgileri açılamadı
+          </h1>
+          <p role="alert" className="mt-3 text-sm leading-6 text-[var(--color-text-medium)]">
+            {contextError ?? 'Aktif koro üyeliği doğrulanamadı.'}
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <button
+              type="button"
+              onClick={() => void refreshChoirContext()}
+              className="min-h-12 rounded-xl bg-[var(--color-accent)] px-5 py-3 text-sm font-semibold text-black outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+            >
+              Yeniden dene
+            </button>
+            <button
+              type="button"
+              onClick={embeddedBridge.navigateBack}
+              className="min-h-12 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-soft-bg)] px-5 py-3 text-sm font-semibold text-[var(--color-text-high)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent)]"
+            >
+              Kapat
+            </button>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   const isProfilePage = pathname.startsWith('/profil');
   const isChatPage = pathname.startsWith('/chat');
@@ -115,8 +160,8 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      {showFadeOverlays && <div className="fade-overlay fade-overlay-top" />}
-      {showNavigation && !isProfilePage && <TopBar />}
+      {!embeddedBridge.isEmbedded && showFadeOverlays && <div className="fade-overlay fade-overlay-top" />}
+      {!embeddedBridge.isEmbedded && showNavigation && !isProfilePage && <TopBar />}
       {showNavigation ? (
         <motion.div
           className="tab-swipe-container"
@@ -128,11 +173,11 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       ) : (
         <PageTransition>{children}</PageTransition>
       )}
-      <FloatingMiniPlayer hasBottomNav={showNavigation} />
-      {showNavigation && <BottomNav />}
-      {showFadeOverlays && <div className="fade-overlay fade-overlay-bottom" />}
+      {!embeddedBridge.isEmbedded && <FloatingMiniPlayer hasBottomNav={showNavigation} />}
+      {!embeddedBridge.isEmbedded && showNavigation && <BottomNav />}
+      {!embeddedBridge.isEmbedded && showFadeOverlays && <div className="fade-overlay fade-overlay-bottom" />}
       <ProfileChangeRequestNotifier />
-      <NotificationPrompt />
+      {!embeddedBridge.isEmbedded && <NotificationPrompt />}
     </>
   );
 }

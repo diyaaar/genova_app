@@ -8,12 +8,14 @@ import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { useAuth } from '@/components/AuthProvider';
 import { getRoleDisplayLabel } from '@/lib/role-labels';
+import { useEmbeddedWebBridge } from '@/components/EmbeddedWebBridgeProvider';
 
 const Lottie = dynamic(() => import('lottie-react'), { ssr: false });
 
 export default function Profil() {
   const { member, roles, signOut, isLoading } = useAuth();
   const { resolvedTheme, setTheme } = useTheme();
+  const embeddedBridge = useEmbeddedWebBridge();
   const [todayTimestamp] = useState(() => Date.now());
   const [menuOpen, setMenuOpen] = useState(false);
   const [celebrationAnimation, setCelebrationAnimation] = useState<any>(null);
@@ -150,7 +152,11 @@ export default function Profil() {
 
               <button
                 type="button"
-                onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                onClick={() => {
+                  const nextTheme = isDark ? 'light' : 'dark';
+                  if (embeddedBridge.isEmbedded) embeddedBridge.requestTheme(nextTheme);
+                  else setTheme(nextTheme);
+                }}
                 className="mt-1 flex w-full items-center justify-between rounded-xl border border-transparent bg-[var(--color-soft-bg)] px-3 py-2.5 text-left hover:border-[var(--color-border)] hover:bg-[var(--color-soft-bg-hover)]"
               >
                 <div className="flex items-center gap-2.5">

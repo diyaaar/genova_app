@@ -15,6 +15,7 @@ import {
   type ProfileChangeMap,
   type ProfileChangeValue,
 } from '@/lib/profile-change-requests';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 interface PersonSummary extends Partial<Record<ProfileChangeKey, ProfileChangeValue>> {
   first_name: string;
@@ -191,17 +192,9 @@ function getBlockingRequest(req: ChangeRequest, requests: ChangeRequest[]) {
 }
 
 async function reviewRequest(params: { requestId: string; action: 'approve' | 'reject'; rejectReason?: string }) {
-  const { data } = await supabase.auth.getSession();
-  const accessToken = data.session?.access_token;
-
-  if (!accessToken) {
-    throw new Error('Oturum bulunamadı. Lütfen tekrar giriş yapın.');
-  }
-
-  const response = await fetch('/api/profile-change-requests/review', {
+  const response = await authenticatedWebFetch('/api/profile-change-requests/review', {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(params),

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-import { supabase } from '@/lib/supabase';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
@@ -22,21 +22,10 @@ function urlBase64ToUint8Array(base64String: string) {
   return outputArray;
 }
 
-async function getAccessToken() {
-  const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
-}
-
 async function postWithAuth(url: string, payload: unknown) {
-  const accessToken = await getAccessToken();
-  if (!accessToken) {
-    throw new Error('Oturum bulunamadı.');
-  }
-
-  const response = await fetch(url, {
+  const response = await authenticatedWebFetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),

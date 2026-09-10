@@ -15,6 +15,7 @@ import { createRealtimeTopic } from '@/lib/realtime';
 import { supabase, type Announcement } from '@/lib/supabase';
 import { useBackOrHome } from '@/hooks/useBackOrHome';
 import { SwipeBack } from '@/components/SwipeBack';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 const ICON_MAP: Record<string, React.ElementType> = {
   megaphone: Megaphone,
@@ -36,21 +37,10 @@ function formatDate(iso: string) {
   });
 }
 
-async function getAccessToken() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !sessionData.session?.access_token) {
-    throw new Error('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
-  }
-
-  return sessionData.session.access_token;
-}
-
 async function postJsonWithAuth<T>(url: string, payload: Record<string, unknown>) {
-  const accessToken = await getAccessToken();
-  const response = await fetch(url, {
+  const response = await authenticatedWebFetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),

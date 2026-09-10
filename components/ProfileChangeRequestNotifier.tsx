@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useAuth } from '@/components/AuthProvider';
+import { useEmbeddedWebBridge } from '@/components/EmbeddedWebBridgeProvider';
 import { useToast } from '@/components/ToastProvider';
 import { supabase } from '@/lib/supabase';
 
@@ -56,6 +57,7 @@ function showForegroundNotification(record: ProfileChangeRealtimeRecord) {
 
 export function ProfileChangeRequestNotifier() {
   const { member, isChorist } = useAuth();
+  const { isEmbedded } = useEmbeddedWebBridge();
   const toast = useToast();
   const handledEventKeysRef = useRef<Set<string>>(new Set());
   const choristView = isChorist();
@@ -102,7 +104,7 @@ export function ProfileChangeRequestNotifier() {
 
           const content = buildToastContent(nextRecord);
           toast.info(content.description, content.title);
-          showForegroundNotification(nextRecord);
+          if (!isEmbedded) showForegroundNotification(nextRecord);
         },
       )
       .subscribe();
@@ -110,7 +112,7 @@ export function ProfileChangeRequestNotifier() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [choristView, member?.id, toast]);
+  }, [choristView, isEmbedded, member?.id, toast]);
 
   return null;
 }

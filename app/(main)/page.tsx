@@ -31,6 +31,7 @@ import { supabase, type Announcement, type Attendance, type Rehearsal } from '@/
 import { sanitizeRichText } from '@/lib/richText';
 import { createRealtimeTopic } from '@/lib/realtime';
 import { CreateAnnouncementModal } from '@/components/CreateAnnouncementModal';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 const ICON_MAP: Record<string, ElementType> = {
   megaphone: Megaphone,
@@ -290,15 +291,9 @@ export default function Dashboard() {
       const rehearsalId = todayRehearsalQuery.data.rehearsal.id;
 
       if (autoApprove) {
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError || !sessionData.session?.access_token) {
-          throw new Error('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
-        }
-
-        const response = await fetch('/api/rehearsals/attendance/update', {
+        const response = await authenticatedWebFetch('/api/rehearsals/attendance/update', {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${sessionData.session.access_token}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({

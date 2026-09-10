@@ -25,6 +25,7 @@ import { sanitizeRichText } from '@/lib/richText';
 import { useAuth } from './AuthProvider';
 import { RichTextEditor } from './RichTextEditor';
 import { useToast } from './ToastProvider';
+import { authenticatedWebFetch } from '@/lib/web-auth-capability';
 
 const ICONS = [
   { key: 'megaphone', Icon: Megaphone },
@@ -69,21 +70,10 @@ interface PublishAnnouncementPayload {
   target_voice_groups: string[];
 }
 
-async function getAccessToken() {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !sessionData.session?.access_token) {
-    throw new Error('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
-  }
-
-  return sessionData.session.access_token;
-}
-
 async function postJsonWithAuth<TResponse, TPayload = unknown>(url: string, payload: TPayload) {
-  const accessToken = await getAccessToken();
-  const response = await fetch(url, {
+  const response = await authenticatedWebFetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),

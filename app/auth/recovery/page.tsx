@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { browserSupabase } from '@/lib/supabase';
 import {
   RECOVERY_PASSWORD_MAX_LENGTH,
   RECOVERY_PASSWORD_MIN_LENGTH,
@@ -34,7 +34,7 @@ export default function PasswordRecoveryPage() {
     let recoveryObserved = false;
     const hasRecoveryMarker = new URLSearchParams(window.location.search).get('recovery') === '1';
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = browserSupabase.auth.onAuthStateChange((event, session) => {
       if (!active) return;
       if (event === 'PASSWORD_RECOVERY' || (hasRecoveryMarker && session)) {
         recoveryObserved = true;
@@ -42,7 +42,7 @@ export default function PasswordRecoveryPage() {
       }
     });
 
-    void supabase.auth.getSession().then(({ data, error: sessionError }) => {
+    void browserSupabase.auth.getSession().then(({ data, error: sessionError }) => {
       if (!active) return;
       if (!sessionError && hasRecoveryMarker && data.session) {
         setState('ready');
@@ -74,7 +74,7 @@ export default function PasswordRecoveryPage() {
 
     setState('requesting');
     try {
-      const { error: requestError } = await supabase.auth.resetPasswordForEmail(validation.email, {
+      const { error: requestError } = await browserSupabase.auth.resetPasswordForEmail(validation.email, {
         redirectTo: `${window.location.origin}/auth/recovery?recovery=1`,
       });
       if (requestError?.status === 429) {
@@ -103,14 +103,14 @@ export default function PasswordRecoveryPage() {
     }
 
     setState('saving');
-    const { error: updateError } = await supabase.auth.updateUser({ password });
+    const { error: updateError } = await browserSupabase.auth.updateUser({ password });
     if (updateError) {
       setError('Şifre güncellenemedi. Kurtarma bağlantısı eskimiş olabilir.');
       setState('ready');
       return;
     }
 
-    await supabase.auth.signOut({ scope: 'global' });
+    await browserSupabase.auth.signOut({ scope: 'global' });
     setPassword('');
     setConfirmation('');
     setState('complete');

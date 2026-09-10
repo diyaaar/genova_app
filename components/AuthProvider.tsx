@@ -11,7 +11,7 @@ import {
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { useQueryClient } from '@tanstack/react-query';
-import { supabase, type ChoirMember, type UserRole } from '@/lib/supabase';
+import { browserSupabase, supabase, type ChoirMember, type UserRole } from '@/lib/supabase';
 import { clearAssignmentCaches } from '@/lib/assignment-cache';
 import { clearChatCaches } from '@/lib/chat-cache';
 import {
@@ -32,6 +32,7 @@ import { clearMainNotificationCaches } from '@/lib/notification-cache';
 import { annotationSaveQueue } from '@/lib/repertuvar/annotation-save-runtime';
 import { commitAnnotationTenantTransition } from '@/lib/repertuvar/annotation-tenant-transition';
 import { useToast } from '@/components/ToastProvider';
+import { useEmbeddedWebBridge, type EmbeddedIdentityContext } from '@/components/EmbeddedWebBridgeProvider';
 
 type MemberWithRelations = ChoirMember & {
   schools?: { name: string } | null;
@@ -40,6 +41,8 @@ type MemberWithRelations = ChoirMember & {
 };
 
 interface AuthContextValue {
+  authMode: 'browser' | 'embedded';
+  isAuthenticated: boolean;
   session: Session | null;
   user: User | null;
   member: ChoirMember | null;
@@ -82,6 +85,8 @@ function toCanonicalRole(value: string): UserRole | null {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const embeddedBridge = useEmbeddedWebBridge();
+  const failEmbeddedContext = embeddedBridge.failContext;
   const requestVersionRef = useRef(0);
   const activeUserIdRef = useRef<string | null>(null);
   const switchInFlightRef = useRef(false);
@@ -109,9 +114,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchMemberData = useCallback(async (
     userId: string,
-    options: { showLoader?: boolean; usePreference?: boolean } = {},
+    options: {
+      showLoader?: boolean;
+      usePreference?: boolean;
+      expectedEmbeddedContext?: EmbeddedIdentityContext;
+    } = {},
   ) => {
     const requestVersion = ++requestVersionRef.current;
+    let embeddedFailureCode: 'choir-context-changed' | 'member-context-failed' = 'member-context-failed';
     if (options.showLoader) setIsLoading(true);
     setContextError(null);
 
@@ -119,7 +129,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let membershipOptions = await loadMyChoirs(supabase);
       let currentChoir = findCurrentChoir(membershipOptions);
 
-      if (!currentChoir) {
+      if (options.expectedEmbeddedContext) {
+        const expected = options.expectedEmbeddedContext;
+        if (!currentChoir || !currentChoir.member_is_active
+          || currentChoir.choir_id !== expected.choirId
+          || currentChoir.member_id !== expected.memberId) {
+          embeddedFailureCode = 'choir-context-changed';
+          throw new Error('Gömülü koro bağlamı doğrulanamadı.');
+        }
+      }
+
+      if (!currentChoir && !options.expectedEmbeddedContext) {
         const preferredChoir = options.usePreference === false
           ? null
           : findPreferredMembership(membershipOptions, getPreferredChoirId(userId));
@@ -146,7 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      setPreferredChoirId(userId, currentChoir.choir_id);
+      if (!options.expectedEmbeddedContext) setPreferredChoirId(userId, currentChoir.choir_id);
       const memberResult = await supabase
         .from('choir_members')
         .select(`
@@ -168,6 +188,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (memberResult.error) throw new Error(memberResult.error.message);
       if (!memberResult.data) throw new Error('Aktif koro üyeliği yüklenemedi.');
+      if (options.expectedEmbeddedContext && !memberResult.data.is_active) {
+        embeddedFailureCode = 'choir-context-changed';
+        throw new Error('Gömülü koro üyeliği artık aktif değil.');
+      }
 
       const memberData = memberResult.data;
       memberData.school_name = memberData.schools?.name ?? null;
@@ -202,6 +226,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setRoles(Array.from(canonicalRoles));
     } catch (error) {
       if (requestVersionRef.current !== requestVersion) return;
+      if (options.expectedEmbeddedContext) {
+        failEmbeddedContext(embeddedFailureCode);
+        return;
+      }
       setChoirs([]);
       setActiveChoir(null);
       setMember(null);
@@ -212,10 +240,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [failEmbeddedContext]);
 
   useEffect(() => {
     let active = true;
+
+    if (embeddedBridge.isEmbedded) {
+      const embeddedIdentity = embeddedBridge.identity;
+      setSession(null);
+      if (!embeddedIdentity) {
+        setUser(null);
+        setMember(null);
+        setRoles([]);
+        setChoirs([]);
+        setActiveChoir(null);
+        setIsLoading(true);
+        return () => {
+          active = false;
+          requestVersionRef.current += 1;
+        };
+      }
+
+      activeUserIdRef.current = embeddedIdentity.userId;
+      setUser({
+        id: embeddedIdentity.userId,
+        aud: 'authenticated',
+        app_metadata: {},
+        user_metadata: {},
+        created_at: '',
+      } as User);
+      void fetchMemberData(embeddedIdentity.userId, {
+        showLoader: true,
+        usePreference: false,
+        expectedEmbeddedContext: embeddedIdentity,
+      });
+      return () => {
+        active = false;
+        requestVersionRef.current += 1;
+      };
+    }
 
     const applySession = (nextSession: Session | null) => {
       if (!active) return;
@@ -249,8 +312,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     };
 
-    void supabase.auth.getSession().then(({ data }) => applySession(data.session));
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    void browserSupabase.auth.getSession().then(({ data }) => applySession(data.session));
+    const { data: { subscription } } = browserSupabase.auth.onAuthStateChange((_event, nextSession) => {
       applySession(nextSession);
     });
 
@@ -259,7 +322,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       requestVersionRef.current += 1;
       subscription.unsubscribe();
     };
-  }, [clearTenantData, fetchMemberData]);
+  }, [clearTenantData, embeddedBridge.identity, embeddedBridge.isEmbedded, fetchMemberData]);
 
   useEffect(() => {
     if (!user?.id) return;
@@ -275,7 +338,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           filter: `auth_user_id=eq.${user.id}`,
         },
         () => {
-          void fetchMemberData(user.id);
+          void fetchMemberData(user.id, embeddedBridge.isEmbedded && embeddedBridge.identity
+            ? { usePreference: false, expectedEmbeddedContext: embeddedBridge.identity }
+            : {});
         },
       );
 
@@ -289,7 +354,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           filter: `member_id=eq.${member.id}`,
         },
         () => {
-          void fetchMemberData(user.id);
+          void fetchMemberData(user.id, embeddedBridge.isEmbedded && embeddedBridge.identity
+            ? { usePreference: false, expectedEmbeddedContext: embeddedBridge.identity }
+            : {});
         },
       );
     }
@@ -298,9 +365,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [user?.id, member?.id, fetchMemberData]);
+  }, [embeddedBridge.identity, embeddedBridge.isEmbedded, user?.id, member?.id, fetchMemberData]);
 
   const selectChoir = useCallback(async (choirId: string) => {
+    if (embeddedBridge.isEmbedded) {
+      setContextError('Koro değişikliği mobil uygulamadan yapılır.');
+      return;
+    }
     if (!user || activeChoir?.choir_id === choirId || switchInFlightRef.current) return;
     if (!choirs.some((option) => option.choir_id === choirId)) {
       setContextError('Bu hesap için seçilen koro üyeliği bulunamadı.');
@@ -330,12 +401,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       switchInFlightRef.current = false;
       setIsSwitchingChoir(false);
     }
-  }, [activeChoir?.choir_id, choirs, clearTenantData, fetchMemberData, member?.id, user]);
+  }, [activeChoir?.choir_id, choirs, clearTenantData, embeddedBridge.isEmbedded, fetchMemberData, member?.id, user]);
 
   const refreshChoirContext = useCallback(async () => {
     if (!user) return;
-    await fetchMemberData(user.id, { showLoader: true });
-  }, [fetchMemberData, user]);
+    await fetchMemberData(user.id, {
+      showLoader: true,
+      ...(embeddedBridge.isEmbedded && embeddedBridge.identity
+        ? { usePreference: false, expectedEmbeddedContext: embeddedBridge.identity }
+        : {}),
+    });
+  }, [embeddedBridge.identity, embeddedBridge.isEmbedded, fetchMemberData, user]);
 
   const isAdmin = () => roles.includes('Şef');
   const isSectionLeader = () => roles.includes('Partisyon Şefi') || roles.includes('Şef');
@@ -343,18 +419,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const getVoiceGroup = () => member?.voice_group ?? null;
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (embeddedBridge.isEmbedded) return { error: 'Giriş mobil uygulamadan yapılır.' };
+    const { error } = await browserSupabase.auth.signInWithPassword({ email, password });
     if (error) return { error: error.message };
     return { error: null };
   };
 
   const signOut = async () => {
+    if (embeddedBridge.isEmbedded) {
+      embeddedBridge.requestSignOut();
+      return;
+    }
     try {
       await commitAnnotationTenantTransition(
         annotationSaveQueue,
         member?.id ?? null,
         async () => {
-          const { error } = await supabase.auth.signOut();
+          const { error } = await browserSupabase.auth.signOut();
           if (error) throw new Error(error.message);
         },
       );
@@ -378,6 +459,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider value={{
+      authMode: embeddedBridge.isEmbedded ? 'embedded' : 'browser',
+      isAuthenticated: embeddedBridge.isEmbedded ? Boolean(embeddedBridge.identity) : Boolean(session),
       session,
       user,
       member,

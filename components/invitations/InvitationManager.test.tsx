@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks=vi.hoisted(() => ({ command:vi.fn(), admin:true }));
 vi.mock('@/components/AuthProvider',()=>({useAuth:()=>({activeChoir:{choir_id:'choir-a',choir_name:'Test Korosu'},isAdmin:()=>mocks.admin})}));
+vi.mock('@/components/EmbeddedWebBridgeProvider',()=>({useEmbeddedWebBridge:()=>({isEmbedded:false,requestClipboardWrite:vi.fn()})}));
 vi.mock('@/lib/choir-invitations',()=>({invitationCommand:mocks.command,invitationStatus:()=> 'Bekliyor'}));
 import InvitationManager from './InvitationManager';
 function mount(){return render(<QueryClientProvider client={new QueryClient({defaultOptions:{queries:{retry:false}}})}><InvitationManager /></QueryClientProvider>);}

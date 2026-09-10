@@ -1,5 +1,6 @@
 import { getRepertoireRoleScope } from '@/lib/repertuvar/catalog-core';
 import type { RepertoireCatalogData, RepertoireRoleScope } from '@/lib/repertuvar/catalog-core';
+import { isEmbeddedRuntimeActive } from '@/lib/embedded-web-runtime';
 
 export type { RepertoireCatalogData, RepertoireRoleScope } from '@/lib/repertuvar/catalog-core';
 
@@ -10,6 +11,10 @@ const LEGACY_REPERTOIRE_CACHE_PREFIXES = [
 
 function isBrowserEnvironment() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+}
+
+function canUsePersistentCatalogCache() {
+  return isBrowserEnvironment() && !isEmbeddedRuntimeActive();
 }
 
 export { getRepertoireRoleScope };
@@ -38,7 +43,7 @@ function isCatalogData(value: unknown): value is RepertoireCatalogData {
 }
 
 export function readRepertoireCatalogCache(scope: string): RepertoireCatalogData | null {
-  if (!isBrowserEnvironment()) {
+  if (!canUsePersistentCatalogCache()) {
     return null;
   }
 
@@ -65,7 +70,7 @@ export function readRepertoireCatalogCache(scope: string): RepertoireCatalogData
 }
 
 export function writeRepertoireCatalogCache(scope: string, data: RepertoireCatalogData) {
-  if (!isBrowserEnvironment()) {
+  if (!canUsePersistentCatalogCache()) {
     return;
   }
 
@@ -81,7 +86,7 @@ export function updateRepertoireCatalogCache(
   updater: (current: RepertoireCatalogData | null) => RepertoireCatalogData | null,
 ) {
   const next = updater(readRepertoireCatalogCache(scope));
-  if (!next || !isBrowserEnvironment()) {
+  if (!next || !canUsePersistentCatalogCache()) {
     return next;
   }
 

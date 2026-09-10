@@ -1,4 +1,5 @@
 import type { RepertoireFile } from '@/lib/supabase';
+import { isEmbeddedRuntimeActive } from '@/lib/embedded-web-runtime';
 
 const OFFLINE_SETTINGS_STORAGE_KEY = 'genova.repertoire.offline.v1';
 const OFFLINE_DRIVE_ROUTE_PREFIX = '/offline-drive/';
@@ -70,7 +71,7 @@ function isBrowserEnvironment() {
 }
 
 export function isRepertoireOfflineSupported() {
-  if (!isBrowserEnvironment() || IS_DEVELOPMENT) {
+  if (!isBrowserEnvironment() || IS_DEVELOPMENT || isEmbeddedRuntimeActive()) {
     return false;
   }
 

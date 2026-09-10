@@ -5,6 +5,7 @@
  */
 
 import { supabase, DriveFolderResult, RepertoireFile, AssignmentSubmission } from './supabase';
+import { authenticatedWebFetch } from './web-auth-capability';
 
 // Dosyayı base64 string'e çevir (browser-safe)
 async function fileToBase64(file: File): Promise<string> {
@@ -68,11 +69,6 @@ async function uploadSubmissionViaApi(
   file: File,
   note?: string,
 ): Promise<AssignmentSubmission> {
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError || !sessionData.session?.access_token) {
-    throw new Error('Oturum doğrulanamadı. Lütfen tekrar giriş yapın.');
-  }
-
   const formData = new FormData();
   formData.set('assignmentId', assignmentId);
   formData.set('file', file);
@@ -80,11 +76,8 @@ async function uploadSubmissionViaApi(
     formData.set('note', note.trim());
   }
 
-  const response = await fetch('/api/assignment-submissions/upload', {
+  const response = await authenticatedWebFetch('/api/assignment-submissions/upload', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${sessionData.session.access_token}`,
-    },
     body: formData,
   });
 
