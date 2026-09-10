@@ -1,7 +1,9 @@
 # 025 — Web annotation safe-save lifecycle adoption
 
-Prepared: 2026-09-09. Status: **PLANNED / IN PROGRESS**. Single writer and self-reviewer: main
-agent; no independent review is claimed. This is the second bounded B2 repair after 024.
+Prepared: 2026-09-09; executed: 2026-09-10. Status: **LOCAL ACCEPTANCE COMPLETE** at code/test
+commit `42c2fbb`. This documentation-only update records the evidence. Single writer and
+self-reviewer: main agent; no independent review is claimed. This is the second bounded B2 repair
+after 024.
 
 ## Outcome and delivery focus
 
@@ -126,16 +128,23 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Commit, undo, redo and clear use one-based PDF page identity with and without a cover; cover itself cannot be edited or saved | yes | **NOT RUN** | Pure/component tests | Display page is never a stored page substitute |
-| Exact 024 row/revision/lossless metadata drives the workspace; unsupported/future/malformed rows remain visible but every mutation is refused before RPC | yes | **NOT RUN** | Focused component/data tests | No destructive parse-and-save |
-| Same-key debounce and in-flight successor serialize correctly with returned revisions; independent keys retain independent errors and retryable latest snapshots | yes | **NOT RUN** | Deterministic queue tests | No automatic merge or background retry claim |
-| Unmount/internal navigation does not cancel pending data; same-tenant remount preserves/overlays it and browser unload warns only while unresolved work remains | yes | **NOT RUN** | Queue/component/browser test | Process crash durability is N/A and not claimed |
-| Choir switch and user sign-out flush before state change, block visibly on failure and erase old-tenant queue only after success; external session loss erases without stale retry | yes | **NOT RUN** | Auth transition tests | No cross-tenant replay or retained private draft |
-| Stored-row empty transition is refused pending owner deletion UX; absence-empty is a safe no-op and no server row is silently deleted | yes | **NOT RUN** | Queue/adapter tests | Final confirmation/recovery semantics remain unresolved |
-| Existing workspace no longer imports/calls legacy `saveLayerSnapshot`; focused tests and root `pnpm check` pass with no SQL/native/live/external change | yes | **NOT RUN** | Source assertion and macOS root gate | Hosted RPC/HTTP and real browser account flow remain NOT RUN unless separately authorized |
+| Commit, undo, redo and clear use one-based PDF page identity with and without a cover; cover itself cannot be edited or saved | yes | **PASS** | 2026-09-10, `42c2fbb`; `annotation-workspace-lifecycle.test.ts` plus handler source review | No-cover pages stay one-based; a cover maps display 2/41 to PDF 1/40 and display 1 to null. All four mutation handlers now require and send `activePdfPageNumber`; no `pageNumber: currentPage` remains |
+| Exact 024 row/revision/lossless metadata drives the workspace; unsupported/future/malformed rows remain visible but every mutation is refused before RPC | yes | **PASS** | 2026-09-10, focused adapter/lifecycle tests and workspace source integration | Loaded rows register exact revision/lossless metadata; pending local snapshots overlay server reads. Non-lossless rows remain in `layers` with a read-only warning; edit mode and the queue both refuse mutation. No hosted RPC call was made |
+| Same-key debounce and in-flight successor serialize correctly with returned revisions; independent keys retain independent errors and retryable latest snapshots | yes | **PASS** | 2026-09-10, deterministic `annotation-save-queue.test.ts` | Same-key debounce keeps latest; an in-flight successor uses the returned revision; failure retains the newest snapshot/revision while another key may save. Memory-only whole-layer queue; no merge/automatic background retry claim |
+| Unmount/internal navigation does not cancel pending data; same-tenant remount preserves/overlays it and browser unload warns only while unresolved work remains | yes | **PASS** | 2026-09-10, queue/lifecycle tests plus cleanup/load source review | Cleanup requests immediate owner flush and never cancels queue data; failure remains retryable and produces a global toast. Reload overlay and the before-unload event seam passed. Actual signed-in production-browser interaction was NOT RUN; process crash durability is N/A and not claimed |
+| Choir switch and user sign-out flush before state change, block visibly on failure and erase old-tenant queue only after success; external session loss erases without stale retry | yes | **PASS** | 2026-09-10, `annotation-tenant-transition.test.ts`, queue tests and AuthProvider source review | Tested order is owner lock → flush → transition → discard. Flush/transition failure unlocks and preserves data; new writes are blocked during transition. External session/user loss discards without replay. No real account/session was used |
+| Stored-row empty transition is refused pending owner deletion UX; absence-empty is a safe no-op and no server row is silently deleted | yes | **PASS** | 2026-09-10, deterministic queue and adapter tests | Stored-row clear is refused before local commit in the workspace and again in the queue; empty absence calls no adapter. Final confirmation/recovery semantics remain unresolved |
+| Existing workspace no longer imports/calls legacy `saveLayerSnapshot`; focused tests and root `pnpm check` pass with no SQL/native/live/external change | yes | **PASS** | 2026-09-10, `42c2fbb`; source assertion; focused Vitest 4 files / 24 tests; root `pnpm check` | No legacy call/timer/display-page save remains in the workspace. Root lint/type passed; 42 files / 279 tests, coverage thresholds, Service Worker syntax and Next 15.5.25 build passed. Hosted RPC/HTTP, real browser account, deploy, SQL/native and hardware remain NOT RUN |
 
 ## Delivery
 
-Planning is a separate documentation commit before product edits. If all mandatory rows pass,
-commit web code/tests separately, then record acceptance and route the next ready work without
-calling B2/native writing complete. Any required FAIL/NOT RUN remains explicit.
+Planning is separate commit `5947074`; web lifecycle code/tests are commit `42c2fbb`. This
+documentation-only update completes 025 locally. Rollback is this evidence update, then `42c2fbb`,
+then the planning commit. No hosted query/migration, live account/data, push/deploy, remote CI,
+message, spending or hardware action occurred.
+
+025 removes the known unsafe web lifecycle but does not complete B2: 024 is still unapplied to the
+hosted project, native remains read-only, and the four 023 collaboration/exit/deletion choices are
+unresolved. Those choices prevent claiming the final B2 editing UX. Per the roadmap's blocker rule,
+the next independent ready local package is 026, the first bounded B4 native audio playback/seek
+slice; it must inventory and preserve current web audio behavior before product changes.

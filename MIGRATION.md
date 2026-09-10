@@ -56,7 +56,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); nav/tema/push/player bekliyor | 1 |
-| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023) ve yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024) kabul edildi; 025 web yaşam döngüsü, native yazma/ses ve canlı pilot bekliyor | 2 |
+| Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024) ve web güvenli-kaydet yaşam döngüsü (025) kabul edildi; native yazma/ses ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
@@ -185,9 +185,10 @@ cleanup. [022](docs/briefs/022-web-protected-file-compatibility.md) completed A3
 wrong-choir 403 and switch/sign-out cache cleanup without a product repair. The next independent
 local package [023](docs/briefs/023-annotation-write-contract-inventory.md) accepted the B1
 contract inventory and exposed six blocking web write-safety defects. Package 024 then locally
-accepted the revision-safe server/adapter foundation at `1755803`. The next bounded
-package is 025 workspace adoption for correct PDF-page identity, lossless metadata, serialized
-pending saves and tenant-exit refusal; release and hardware remain gated.
+accepted the revision-safe server/adapter foundation at `1755803`. Package 025 accepted web
+workspace adoption at `42c2fbb`: correct PDF-page identity, lossless metadata, serialized pending
+saves and tenant-exit refusal. Final native annotation UX remains decision-gated; 026 routes to the
+independent native audio playback/seek slice. Release and hardware remain gated.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

@@ -1,6 +1,6 @@
 # Active context
 
-Updated 9 September 2026 after local 024 annotation mutation acceptance at `1755803`. The recorded
+Updated 10 September 2026 after local 025 web annotation lifecycle acceptance at `42c2fbb`. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -75,9 +75,12 @@ unchecked zero-row writes. Four new collaboration/exit UX choices remain explici
 [024](../docs/briefs/024-annotation-mutation-safe-save-contract.md) locally added the positive
 revision/CAS RPC, server-derived relation/audit trigger, reversible SQL guard and per-layer
 lossless-write metadata/safe web adapter. PostgreSQL role/tenant/revision/down-forward tests and
-the root 39-file/262-test build gate passed. The current workspace still calls the old compatibility
-save entry point, so the next bounded package is 025 page/debounce/status/tenant-exit adoption.
-No hosted migration/release occurred; release execution and hardware remain gated.
+the root 39-file/262-test build gate passed. [025](../docs/briefs/025-web-annotation-safe-save-lifecycle.md)
+then adopted that path in the web workspace at `42c2fbb`: correct PDF-page identity, lossless row
+guards, serialized retryable saves, pending remount overlay, unload warning and flush-before-tenant
+exit passed 24 focused tests and the root 42-file/279-test build gate. No hosted migration/account
+browser/release occurred. Final native annotation UX remains owner-decision-gated, so 026 starts
+the independent B4 native audio playback/seek slice; release execution and hardware remain gated.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

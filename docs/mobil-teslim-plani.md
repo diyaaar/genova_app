@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-09 after local 024 annotation mutation acceptance; originally prepared under
+Updated 2026-09-10 after local 025 web annotation lifecycle acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -19,7 +19,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 |---|---|---|
 | M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
-| M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation accepted locally; workspace lifecycle, native writing, sync and audio remain open |
+| M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation and 025 web lifecycle accepted locally; native writing, sync and audio remain open |
 | M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | Future packages; store feature selection follows pilot findings |
 | M4: release candidate | Multi-choir limits, data lifecycle, provider exit, security/accessibility and distribution requirements pass | Future packages; no current store eligibility claim |
 | M5: released and operable | Approved beta/public release verified at actual destination; support and recovery exercised | NOT RUN; publication and spending remain separately gated |
@@ -33,7 +33,7 @@ Deferral from a release candidate needs an explicit owner decision and remains v
 ## Baseline and evidence ownership
 
 Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this update:
-`main / 1755803`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
+`main / 42c2fbb`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
 snapshot facts, not commands to reset a future checkout. Historical test details belong in their
 briefs, not in a second copy here.
 
@@ -76,8 +76,12 @@ briefs, not in a second copy here.
 - [024](briefs/024-annotation-mutation-safe-save-contract.md) locally accepted the first repair at
   `1755803`: positive revision/CAS, server-derived file/song/choir and audit identity, authenticated
   role/layer mutation, exact down/forward restoration and a lossless-read/safe-save web adapter.
-  The current workspace deliberately still uses its compatibility path; 025 must adopt the safe
-  metadata/RPC and repair page/debounce/tenant-exit status. No hosted migration or release occurred.
+  No hosted migration or release occurred.
+- [025](briefs/025-web-annotation-safe-save-lifecycle.md) locally accepted web adoption at
+  `42c2fbb`: PDF-page identity, lossless/revision metadata, per-key serialized retryable saves,
+  pending remount overlay, unload warning and flush-before-switch/sign-out passed focused tests and
+  the root 42-file/279-test build gate. The hosted RPC, real account/browser flow, release, native
+  writing, persistent offline recovery and final owner UX choices remain open.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -129,7 +133,7 @@ provisioned, preserve the failing/unrun layer and solve that bounded environment
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
 | B1 / A1–A3 | **DOCUMENTATION ACCEPTED:** [023](briefs/023-annotation-write-contract-inventory.md). Shared item/layer, role/RLS, delete/audit/version, web lifecycle and native read-only boundaries mapped | Six current web safety defects recorded; unsupported content must be preserved/refused, stale writes must fail visibly and tenant exit cannot silently lose or replay a save | No product/schema/live change. Four new collaboration/UX semantics remain explicit owner decisions before final B2 UX |
-| B2 / B1 | **IN PROGRESS:** [024](briefs/024-annotation-mutation-safe-save-contract.md) locally accepted the revision-safe server/adapter foundation. 025 owns web workspace adoption; native editing follows that proven path | Web writes → native reads and native writes → web reads; coordinates/page indexing/undo/redo; denied writes; stale session/choir switch; interrupted save visible; no dropped unknown content | 024 was local isolated SQL/unit acceptance only. Shared-schema changes require old-client compatibility, not a parallel schema; no hosted migration is authorized |
+| B2 / B1 | **IN PROGRESS:** [024](briefs/024-annotation-mutation-safe-save-contract.md) locally accepted the revision-safe server/adapter foundation and [025](briefs/025-web-annotation-safe-save-lifecycle.md) locally accepted web lifecycle adoption. Native editing and final owner UX decisions remain | Web writes → native reads and native writes → web reads; coordinates/page indexing/undo/redo; denied writes; stale session/choir switch; interrupted save visible; no dropped unknown content | 024/025 are local isolated SQL/unit/web acceptance only. Shared-schema changes require old-client compatibility, not a parallel schema; no hosted migration is authorized |
 | B3 / B2 | Recoverable annotation sync/offline queue under an explicit conflict contract | Retry idempotence; two clients editing; reconnect and process restart; revoked permission; tenant-scoped queue and sign-out disposition; no silent last-writer data loss | Conflict policy and unsaved-work UX decided before implementation. No hardware durability claim from fakes |
 | B4 / A3, read contract | Native audio playback/seek, then mini-player integration. `lib/shared-audio.ts`, repertoire consumers, `apps/mobile/` | Actual local audio bytes, seek/range, expiry renewal, cancellation; one active playback owner; switch/sign-out stops and clears; corrupt/unsupported format states | Local first. MIDI/MusicXML support is inventoried separately; decision #14 active-content filter stays |
 | B5 / B2–B4 + device authority | Stylus/gesture and audio lifecycle acceptance | Pressure/palm rejection, layout alignment, long-score memory and latency; interruptions/background/lock-screen and permission denial on real devices; measured before/after for performance claims | Hardware/provider capability and background behavior remain NOT RUN until actual execution |
@@ -268,8 +272,8 @@ those iterations. A3 closed locally in [022](briefs/022-web-protected-file-compa
 code/test commit `fb4a6a2`; the immediate local read critical path A1–A3 is complete. A4 may now be
 prepared locally, but any release execution remains separately gated and A5 hardware stays
 postponed. Package 024 accepted the server/revision and safe-adapter foundation locally at
-`1755803`. Per the blocker rule, **the next bounded package is 025: adopt that safe contract in the
-web workspace and repair page/debounce/tenant-exit save lifecycle before native writing.** It must
-not choose the unresolved shared authorship/conflict/deletion UX on the owner's behalf. Independent
-B4 audio remains ready if a later B2 decision gate pauses dependent annotation work. 013–024's historical
+`1755803`; package 025 accepted web lifecycle adoption at `42c2fbb`. Final B2/native-editing UX
+remains gated by the four unresolved 023 owner choices and hosted rollout is separately gated. Per
+the blocker rule, **the next bounded ready package is 026: inventory and implement the first local
+B4 native audio playback/seek slice while preserving existing web behavior.** 013–025's historical
 local acceptance, 004/010 open criteria and the postponed hardware pilot remain unchanged.
