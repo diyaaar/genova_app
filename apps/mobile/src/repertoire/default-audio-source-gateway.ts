@@ -1,5 +1,4 @@
 import { readClientConfigFromEnv, getGenovaClient } from '../auth/supabase-client';
-import { registerTenantCache } from '../auth/tenant-cache';
 import { createNativeAudioSourceGateway, type NativeAudioSourceGateway } from './audio-source-gateway';
 
 let gateway: NativeAudioSourceGateway | null = null;
@@ -18,7 +17,6 @@ export function getDefaultAudioSourceGateway(): NativeAudioSourceGateway {
         },
       },
     });
-    registerTenantCache(() => gateway?.clear());
   }
   return gateway;
 }

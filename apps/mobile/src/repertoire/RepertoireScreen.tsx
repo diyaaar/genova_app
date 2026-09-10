@@ -10,9 +10,7 @@ import {
 } from 'react-native';
 import { filterRepertoireCatalogSongs } from '@shared/repertuvar/catalog-core';
 import { theme } from '../ui/theme';
-import { getNativeAudioTracks, type NativeAudioTrack } from './audio-contract';
-import type { NativeAudioSourceGateway } from './audio-source-gateway';
-import { AudioPlayerScreen } from './AudioPlayerScreen';
+import { getNativeAudioTracks, type NativeAudioSession } from './audio-contract';
 import type { NativeRepertoireCatalog, NativeRepertoireGateway } from './catalog-gateway';
 import { registerRepertoireGatewayCache } from './cache-registration';
 import { getDefaultRepertoireGateway } from './default-gateway';
@@ -25,7 +23,7 @@ interface RepertoireScreenProps {
   choirName: string;
   gateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
-  audioGateway?: NativeAudioSourceGateway;
+  onOpenAudio: (session: NativeAudioSession) => void;
   canSwitchChoir: boolean;
   onBack: () => void;
   onSwitchChoir: () => void;
@@ -38,7 +36,7 @@ export function RepertoireScreen({
   choirName,
   gateway: suppliedGateway,
   readerGateway,
-  audioGateway,
+  onOpenAudio,
   canSwitchChoir,
   onBack,
   onSwitchChoir,
@@ -55,7 +53,6 @@ export function RepertoireScreen({
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<import('@shared/repertuvar/catalog-core').RepertoireFile | null>(null);
-  const [selectedAudio, setSelectedAudio] = useState<{ songTitle: string; tracks: NativeAudioTrack[] } | null>(null);
   const requestVersion = useRef(0);
 
   const load = useCallback(async (force: boolean) => {
@@ -122,17 +119,6 @@ export function RepertoireScreen({
         file={selectedFile}
         gateway={readerGateway}
         onBack={() => setSelectedFile(null)}
-      />
-    );
-  }
-
-  if (selectedAudio) {
-    return (
-      <AudioPlayerScreen
-        songTitle={selectedAudio.songTitle}
-        tracks={selectedAudio.tracks}
-        gateway={audioGateway}
-        onBack={() => setSelectedAudio(null)}
       />
     );
   }
@@ -224,7 +210,7 @@ export function RepertoireScreen({
                     ))}
                     {audioTracks.length > 0 ? (
                       <Pressable
-                        onPress={() => setSelectedAudio({ songTitle: song.title, tracks: audioTracks })}
+                        onPress={() => onOpenAudio({ songId: song.id, songTitle: song.title, tracks: audioTracks })}
                         accessibilityRole="button"
                         accessibilityLabel={`${song.title} ses kayıtlarını aç`}
                         style={({ pressed }) => [styles.fileButton, pressed && styles.pressed]}

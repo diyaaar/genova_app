@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import type { RepertoireFile } from '@shared/repertuvar/catalog-core';
 import { clearTenantCaches } from '../../auth/tenant-cache';
+import { AudioPlaybackProvider, useAudioPlayback } from '../AudioPlaybackProvider';
 import { AudioPlayerScreen } from '../AudioPlayerScreen';
-import type { NativeAudioTrack } from '../audio-contract';
+import type { NativeAudioSession, NativeAudioTrack } from '../audio-contract';
 import type { NativeAudioSourceGateway } from '../audio-source-gateway';
 
 const audioMock = jest.requireMock('expo-audio') as {
@@ -49,11 +51,27 @@ const tracks: NativeAudioTrack[] = [
   { file: file('33333333-3333-4333-8333-333333333333', 'tenor.ogg'), label: 'Tenor', supported: false },
 ];
 
+const session: NativeAudioSession = { songId: 'song-a', songTitle: 'Mavi Nota', tracks };
+
 function gateway(open: NativeAudioSourceGateway['open']): NativeAudioSourceGateway & {
   open: jest.Mock;
   clear: jest.Mock;
 } {
   return { open: jest.fn(open), clear: jest.fn() };
+}
+
+function PlayerHarness({ onBack }: { onBack: () => void }) {
+  const playback = useAudioPlayback();
+  useEffect(() => { void playback.openSession(session); }, [playback.openSession]);
+  return playback.session ? <AudioPlayerScreen onBack={onBack} /> : null;
+}
+
+function playerElement(source: NativeAudioSourceGateway, onBack = jest.fn()) {
+  return (
+    <AudioPlaybackProvider gateway={source}>
+      <PlayerHarness onBack={onBack} />
+    </AudioPlaybackProvider>
+  );
 }
 
 describe('AudioPlayerScreen', () => {
@@ -76,15 +94,14 @@ describe('AudioPlayerScreen', () => {
       url: `https://project.invalid/audio?fileId=${fileId}`,
       expiresAt: 9_999_999_999_999,
     }));
-    const props = { songTitle: 'Mavi Nota', tracks, gateway: source, onBack: jest.fn() };
-    const view = await render(<AudioPlayerScreen {...props} />);
+    const view = await render(playerElement(source));
 
     await waitFor(() => expect(audioMock.useAudioPlayer).toHaveBeenLastCalledWith({
       uri: expect.stringContaining(tracks[0]!.file.id),
       name: 'Soprano',
     }, { updateInterval: 250 }));
     Object.assign(audioMock.__mockStatus, { isLoaded: true, duration: 90, currentTime: 20 });
-    await view.rerender(<AudioPlayerScreen {...props} />);
+    await view.rerender(playerElement(source));
 
     await fireEvent.press(screen.getByTestId('audio-play-pause'));
     expect(audioMock.__mockPlayer.play).toHaveBeenCalledTimes(1);
@@ -110,7 +127,7 @@ describe('AudioPlayerScreen', () => {
     const source = gateway(jest.fn()
       .mockRejectedValueOnce(new Error('Bu dosyaya erişim yetkiniz yok.'))
       .mockResolvedValueOnce({ url: 'https://project.invalid/fresh', expiresAt: 9_999_999_999_999 }));
-    await render(<AudioPlayerScreen songTitle="Mavi Nota" tracks={tracks} gateway={source} onBack={jest.fn()} />);
+    await render(playerElement(source));
 
     expect(await screen.findByText('Bu dosyaya erişim yetkiniz yok.')).toBeTruthy();
     await fireEvent.press(screen.getByTestId('audio-retry'));
@@ -127,15 +144,14 @@ describe('AudioPlayerScreen', () => {
     expect(source.open).toHaveBeenCalledTimes(2);
   });
 
-  it('renews an expired ticket before play and clears playback at the tenant boundary', async () => {
+  it('renews an expired ticket before play and removes the shell session at the tenant boundary', async () => {
     const source = gateway(jest.fn()
       .mockResolvedValueOnce({ url: 'https://project.invalid/expired', expiresAt: 1 })
       .mockResolvedValueOnce({ url: 'https://project.invalid/renewed', expiresAt: 9_999_999_999_999 }));
-    const props = { songTitle: 'Mavi Nota', tracks, gateway: source, onBack: jest.fn() };
-    const view = await render(<AudioPlayerScreen {...props} />);
+    const view = await render(playerElement(source));
     await waitFor(() => expect(source.open).toHaveBeenCalledTimes(1));
     Object.assign(audioMock.__mockStatus, { isLoaded: true, duration: 90, currentTime: 35 });
-    await view.rerender(<AudioPlayerScreen {...props} />);
+    await view.rerender(playerElement(source));
 
     await fireEvent.press(screen.getByTestId('audio-play-pause'));
     await waitFor(() => expect(source.open).toHaveBeenCalledTimes(2));
@@ -147,20 +163,29 @@ describe('AudioPlayerScreen', () => {
     expect(audioMock.__mockPlayer.pause).toHaveBeenCalled();
     expect(audioMock.useAudioPlayer).toHaveBeenLastCalledWith(null, { updateInterval: 250 });
     expect(audioMock.__mockPlayer.replace).not.toHaveBeenCalled();
-    await waitFor(() => expect(screen.getByTestId('audio-play-pause').props.accessibilityState.disabled).toBe(true));
-    expect(screen.getByTestId('audio-seek').props.accessibilityValue.text).toBe('0:00 / 0:00');
-    expect(screen.getByTestId('audio-back-10').props.accessibilityState.disabled).toBe(true);
-    expect(screen.getByTestId('audio-forward-10').props.accessibilityState.disabled).toBe(true);
-    expect(screen.getByTestId('audio-speed').props.accessibilityState.disabled).toBe(true);
+    expect(screen.queryByTestId('audio-player-screen')).toBeNull();
+  });
+
+  it('stops and invalidates the private source when the shell owner unmounts', async () => {
+    const source = gateway(async () => ({
+      url: 'https://project.invalid/private',
+      expiresAt: 9_999_999_999_999,
+    }));
+    const view = await render(playerElement(source));
+    await waitFor(() => expect(source.open).toHaveBeenCalledTimes(1));
+
+    await act(async () => { view.unmount(); });
+
+    expect(source.clear).toHaveBeenCalledTimes(1);
+    expect(audioMock.__mockPlayer.pause).toHaveBeenCalled();
   });
 
   it('surfaces native media errors with a bounded retry action', async () => {
     const source = gateway(async () => ({ url: 'https://project.invalid/corrupt', expiresAt: 9_999_999_999_999 }));
-    const props = { songTitle: 'Mavi Nota', tracks, gateway: source, onBack: jest.fn() };
-    const view = await render(<AudioPlayerScreen {...props} />);
+    const view = await render(playerElement(source));
     await waitFor(() => expect(source.open).toHaveBeenCalled());
     Object.assign(audioMock.__mockStatus, { error: 'decoder failed', isLoaded: false });
-    await view.rerender(<AudioPlayerScreen {...props} />);
+    await view.rerender(playerElement(source));
     expect(await screen.findByText('Ses dosyası oynatılamadı. Yeniden deneyin.')).toBeTruthy();
     expect(screen.getByLabelText('Ses dosyasını yeniden yükle')).toBeTruthy();
   });
@@ -169,7 +194,7 @@ describe('AudioPlayerScreen', () => {
     jest.useFakeTimers();
     try {
       const source = gateway(async () => ({ url: 'https://project.invalid/corrupt', expiresAt: 9_999_999_999_999 }));
-      await render(<AudioPlayerScreen songTitle="Mavi Nota" tracks={tracks} gateway={source} onBack={jest.fn()} />);
+      await render(playerElement(source));
       await waitFor(() => expect(source.open).toHaveBeenCalled());
 
       await fireEvent.press(screen.getByTestId('audio-play-pause'));

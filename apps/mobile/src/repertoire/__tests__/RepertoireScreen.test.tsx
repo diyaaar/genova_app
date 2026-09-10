@@ -2,9 +2,9 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import type { RepertoireFile, RepertoireSong, RepertoireTag } from '@shared/repertuvar/catalog-core';
 import { clearTenantCaches, resetTenantCacheRegistry } from '../../auth/tenant-cache';
 import { RepertoireScreen } from '../RepertoireScreen';
+import type { NativeAudioSession } from '../audio-contract';
 import type { NativeRepertoireCatalog, NativeRepertoireGateway } from '../catalog-gateway';
 import type { NativeScoreReaderGateway } from '../reader-contract';
-import type { NativeAudioSourceGateway } from '../audio-source-gateway';
 
 const concertTag: RepertoireTag = {
   id: 'tag-concert',
@@ -53,7 +53,7 @@ function gateway(load: NativeRepertoireGateway['load']): NativeRepertoireGateway
 async function renderScreen(
   preparedGateway: NativeRepertoireGateway,
   readerGateway?: NativeScoreReaderGateway,
-  audioGateway?: NativeAudioSourceGateway,
+  onOpenAudio: (session: NativeAudioSession) => void = jest.fn(),
 ) {
   return await render(
     <RepertoireScreen
@@ -62,7 +62,7 @@ async function renderScreen(
       choirName="Genova A"
       gateway={preparedGateway}
       readerGateway={readerGateway}
-      audioGateway={audioGateway}
+      onOpenAudio={onOpenAudio}
       canSwitchChoir
       onBack={jest.fn()}
       onSwitchChoir={jest.fn()}
@@ -209,21 +209,17 @@ describe('RepertoireScreen', () => {
       created_at: '2026-09-08T00:00:00Z',
       updated_at: '2026-09-08T00:00:00Z',
     };
-    const audioGateway: NativeAudioSourceGateway = {
-      open: jest.fn(async () => ({ url: 'https://project.invalid/audio', expiresAt: 9_999_999_999_999 })),
-      clear: jest.fn(),
-    };
+    const onOpenAudio = jest.fn();
     const preparedGateway = gateway(async () => catalogue({ songs: [song({ files: [audioFile] })] }));
-    await renderScreen(preparedGateway, undefined, audioGateway);
+    await renderScreen(preparedGateway, undefined, onOpenAudio);
     await screen.findByTestId('repertoire-list');
 
     await fireEvent.press(screen.getByTestId('repertoire-open-audio-song-a'));
-    expect(await screen.findByTestId('audio-player-screen')).toBeTruthy();
-    expect(screen.getAllByText('Alto çalışma')).toHaveLength(2);
-    expect(audioGateway.open).toHaveBeenCalledWith(audioFile.id);
-
-    await fireEvent.press(screen.getByTestId('audio-player-back'));
-    expect(await screen.findByTestId('repertoire-list')).toBeTruthy();
-    expect(audioGateway.clear).toHaveBeenCalledTimes(1);
+    expect(onOpenAudio).toHaveBeenCalledWith({
+      songId: 'song-a',
+      songTitle: 'Mavi Nota',
+      tracks: [{ file: audioFile, label: 'Alto çalışma', supported: true }],
+    });
+    expect(screen.getByTestId('repertoire-list')).toBeTruthy();
   });
 });

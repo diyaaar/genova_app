@@ -9,6 +9,12 @@ export interface NativeAudioTrack {
   supported: boolean;
 }
 
+export interface NativeAudioSession {
+  songId: string;
+  songTitle: string;
+  tracks: NativeAudioTrack[];
+}
+
 function extensionOf(fileName: string) {
   const finalDot = fileName.lastIndexOf('.');
   return finalDot > 0 ? fileName.slice(finalDot + 1).toLocaleLowerCase('en-US') : '';

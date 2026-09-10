@@ -1,11 +1,17 @@
 import { useMemo, useState } from 'react';
 import { registerRootComponent } from 'expo';
 import { Platform, Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import type { ChoirMembershipOption } from '@shared/choir-context-core';
 import type { RepertoireFile } from '@shared/repertuvar/catalog-core';
 import { clearTenantCaches } from '../auth/tenant-cache';
+import { AudioPlaybackProvider, useAudioPlayback } from '../repertoire/AudioPlaybackProvider';
 import { AudioPlayerScreen } from '../repertoire/AudioPlayerScreen';
-import type { NativeAudioTrack } from '../repertoire/audio-contract';
+import { MiniAudioPlayer } from '../repertoire/MiniAudioPlayer';
+import { RepertoireScreen } from '../repertoire/RepertoireScreen';
+import type { NativeAudioSession, NativeAudioTrack } from '../repertoire/audio-contract';
 import type { NativeAudioSourceGateway } from '../repertoire/audio-source-gateway';
+import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
+import { ShellScreen } from '../ui/ShellScreen';
 import { readAudioRuntimeAcceptanceConfig } from './audio-runtime-config';
 
 const config = readAudioRuntimeAcceptanceConfig({
@@ -37,6 +43,87 @@ const tracks: NativeAudioTrack[] = [
   { file: file('33333333-3333-4333-8333-333333333333', 'unsupported.ogg', 'audio/ogg'), label: 'Desteklenmeyen ses', supported: false },
 ];
 
+const activeChoir: ChoirMembershipOption = {
+  choir_id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  member_id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  choir_name: '027 Sentetik Koro',
+  choir_slug: '027-synthetic',
+  member_is_active: true,
+  is_current: true,
+};
+
+const catalogueGateway: NativeRepertoireGateway = {
+  async load() {
+    return {
+      version: 1,
+      versionUpdatedAt: '2026-09-10T00:00:00Z',
+      cachedAt: Date.now(),
+      songs: [{
+        id: '026-synthetic-song',
+        title: '027 Sentetik Prova',
+        composer: 'Yerel kabul',
+        drive_folder_id: 'synthetic-folder',
+        is_visible: true,
+        created_at: '2026-09-10T00:00:00Z',
+        files: tracks.map((track) => track.file),
+        tags: [],
+      }],
+      tags: [],
+      userParts: {},
+      assignedSongIds: ['026-synthetic-song'],
+      roleScope: 'chorist',
+      scopeKey: `${activeChoir.choir_id}:${activeChoir.member_id}:chorist`,
+    };
+  },
+  clear() {},
+};
+
+function AudioRuntimeRoutes({ setEvent }: { setEvent: (event: string) => void }) {
+  const playback = useAudioPlayback();
+  const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio'>('home');
+  const openAudio = (session: NativeAudioSession) => {
+    setEvent('navigation PASS full owner');
+    void playback.openSession(session);
+    setScreen('audio');
+  };
+
+  let content;
+  if (screen === 'audio' && playback.session) {
+    content = <AudioPlayerScreen onBack={() => { setEvent('navigation PASS repertoire mini'); setScreen('repertoire'); }} />;
+  } else if (screen !== 'home') {
+    content = (
+      <RepertoireScreen
+        choirId={activeChoir.choir_id}
+        memberId={activeChoir.member_id}
+        choirName={activeChoir.choir_name}
+        gateway={catalogueGateway}
+        canSwitchChoir={false}
+        onOpenAudio={openAudio}
+        onBack={() => { setEvent('navigation PASS home mini'); setScreen('home'); }}
+        onSwitchChoir={() => {}}
+        onSignOut={() => {}}
+      />
+    );
+  } else {
+    content = (
+      <ShellScreen
+        activeChoir={activeChoir}
+        canSwitchChoir={false}
+        onOpenRepertoire={() => setScreen('repertoire')}
+        onSwitchChoir={() => {}}
+        onSignOut={() => void clearTenantCaches()}
+      />
+    );
+  }
+
+  return (
+    <View style={styles.app}>
+      {content}
+      {screen !== 'audio' ? <MiniAudioPlayer onOpen={() => setScreen('audio')} /> : null}
+    </View>
+  );
+}
+
 export function AudioRuntimeAcceptanceApp() {
   const [event, setEvent] = useState('guard PASS loopback+synthetic');
   const gateway = useMemo<NativeAudioSourceGateway>(() => {
@@ -53,7 +140,7 @@ export function AudioRuntimeAcceptanceApp() {
       },
       clear() {
         version += 1;
-        setEvent(`tenant clear PASS owner stopped ${version}`);
+        setEvent(`source clear PASS owner stopped ${version}`);
       },
     };
   }, []);
@@ -62,21 +149,23 @@ export function AudioRuntimeAcceptanceApp() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.banner}>
         <View style={styles.bannerRow}>
-          <Text style={styles.bannerTitle}>026 · LOCAL SYNTHETIC AUDIO · {Platform.OS}</Text>
+          <Text style={styles.bannerTitle}>027 · LOCAL SHELL AUDIO · {Platform.OS}</Text>
           <Pressable
-            onPress={() => void clearTenantCaches()}
+            onPress={() => {
+              void clearTenantCaches().then(() => setEvent('tenant clear PASS mini removed'));
+            }}
             accessibilityRole="button"
             accessibilityLabel="Tenant ses durumunu temizle"
-            testID="runtime-026-clear"
+            testID="runtime-027-clear"
           >
             <Text style={styles.bannerAction}>Temizle</Text>
           </Pressable>
         </View>
-        <Text style={styles.event} testID="runtime-026-event">{event}</Text>
+        <Text style={styles.event} testID="runtime-027-event">{event}</Text>
       </View>
-      <View style={styles.app}>
-        <AudioPlayerScreen songTitle="026 Sentetik Prova" tracks={tracks} gateway={gateway} onBack={() => setEvent('back PASS player closed')} />
-      </View>
+      <AudioPlaybackProvider gateway={gateway}>
+        <AudioRuntimeRoutes setEvent={setEvent} />
+      </AudioPlaybackProvider>
     </SafeAreaView>
   );
 }

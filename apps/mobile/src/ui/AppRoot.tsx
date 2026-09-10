@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, View } from 'react-native';
 import type { ChoirMembershipOption } from '@shared/choir-context-core';
 import { useAuth } from '../auth/AuthProvider';
+import { AudioPlaybackProvider, useAudioPlayback } from '../repertoire/AudioPlaybackProvider';
+import { AudioPlayerScreen } from '../repertoire/AudioPlayerScreen';
+import { MiniAudioPlayer } from '../repertoire/MiniAudioPlayer';
 import { RepertoireScreen } from '../repertoire/RepertoireScreen';
+import type { NativeAudioSession } from '../repertoire/audio-contract';
+import type { NativeAudioSourceGateway } from '../repertoire/audio-source-gateway';
 import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
 import type { NativeScoreReaderGateway } from '../repertoire/reader-contract';
 import { registerTenantCache } from '../auth/tenant-cache';
@@ -10,30 +16,47 @@ import { ChoirSelectScreen } from './ChoirSelectScreen';
 import { ShellScreen } from './ShellScreen';
 import { SignInScreen } from './SignInScreen';
 import { StatusScreen } from './StatusScreen';
+import { theme } from './theme';
 
 /**
  * Single place that maps auth phase to screen. Only the `ready` phase may reach a data
  * screen; every other phase renders sign-in, a choice or an explicit status.
  */
-function ReadyShell({
+interface ReadyShellProps {
+  activeChoir: ChoirMembershipOption;
+  canSwitchChoir: boolean;
+  repertoireGateway?: NativeRepertoireGateway;
+  readerGateway?: NativeScoreReaderGateway;
+  audioGateway?: NativeAudioSourceGateway;
+  onSwitchChoir: () => void;
+  onSignOut: () => void;
+}
+
+function ReadyShellRoutes({
   activeChoir,
   canSwitchChoir,
   repertoireGateway,
   readerGateway,
   onSwitchChoir,
   onSignOut,
-}: {
-  activeChoir: ChoirMembershipOption;
-  canSwitchChoir: boolean;
-  repertoireGateway?: NativeRepertoireGateway;
-  readerGateway?: NativeScoreReaderGateway;
-  onSwitchChoir: () => void;
-  onSignOut: () => void;
-}) {
-  const [screen, setScreen] = useState<'home' | 'repertoire'>('home');
+}: Omit<ReadyShellProps, 'audioGateway'>) {
+  const playback = useAudioPlayback();
+  const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio'>('home');
 
-  if (screen === 'repertoire') {
-    return (
+  useEffect(() => {
+    if (screen === 'audio' && !playback.session) setScreen('repertoire');
+  }, [playback.session, screen]);
+
+  const openAudio = (session: NativeAudioSession) => {
+    void playback.openSession(session);
+    setScreen('audio');
+  };
+
+  let content;
+  if (screen === 'audio' && playback.session) {
+    content = <AudioPlayerScreen onBack={() => setScreen('repertoire')} />;
+  } else if (screen !== 'home') {
+    content = (
       <RepertoireScreen
         choirId={activeChoir.choir_id}
         memberId={activeChoir.member_id}
@@ -41,7 +64,18 @@ function ReadyShell({
         gateway={repertoireGateway}
         readerGateway={readerGateway}
         canSwitchChoir={canSwitchChoir}
+        onOpenAudio={openAudio}
         onBack={() => setScreen('home')}
+        onSwitchChoir={onSwitchChoir}
+        onSignOut={onSignOut}
+      />
+    );
+  } else {
+    content = (
+      <ShellScreen
+        activeChoir={activeChoir}
+        canSwitchChoir={canSwitchChoir}
+        onOpenRepertoire={() => setScreen('repertoire')}
         onSwitchChoir={onSwitchChoir}
         onSignOut={onSignOut}
       />
@@ -49,19 +83,25 @@ function ReadyShell({
   }
 
   return (
-    <ShellScreen
-      activeChoir={activeChoir}
-      canSwitchChoir={canSwitchChoir}
-      onOpenRepertoire={() => setScreen('repertoire')}
-      onSwitchChoir={onSwitchChoir}
-      onSignOut={onSignOut}
-    />
+    <View style={styles.readyShell} testID="ready-shell">
+      {content}
+      {screen !== 'audio' ? <MiniAudioPlayer onOpen={() => setScreen('audio')} /> : null}
+    </View>
   );
 }
 
-export function AppRoot({ repertoireGateway, readerGateway }: {
+function ReadyShell({ audioGateway, ...routeProps }: ReadyShellProps) {
+  return (
+    <AudioPlaybackProvider gateway={audioGateway}>
+      <ReadyShellRoutes {...routeProps} />
+    </AudioPlaybackProvider>
+  );
+}
+
+export function AppRoot({ repertoireGateway, readerGateway, audioGateway }: {
   repertoireGateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
+  audioGateway?: NativeAudioSourceGateway;
 } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
@@ -146,6 +186,7 @@ export function AppRoot({ repertoireGateway, readerGateway }: {
           canSwitchChoir={auth.choirs.length > 1}
           repertoireGateway={repertoireGateway}
           readerGateway={readerGateway}
+          audioGateway={audioGateway}
           onSwitchChoir={() => setSwitching(true)}
           onSignOut={() => void auth.signOut()}
         />
@@ -155,3 +196,7 @@ export function AppRoot({ repertoireGateway, readerGateway }: {
 
   return <StatusScreen title="Genova" message="Hazırlanıyor…" busy testID="fallback-screen" />;
 }
+
+const styles = StyleSheet.create({
+  readyShell: { flex: 1, backgroundColor: theme.colors.background },
+});
