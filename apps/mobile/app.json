@@ -16,7 +16,16 @@
     },
     "plugins": [
       "expo-secure-store",
-      "./src/acceptance/with-local-loopback-network.js"
+      "./src/acceptance/with-local-loopback-network.js",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ]
     ]
   }
 }

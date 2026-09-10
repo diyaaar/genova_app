@@ -31,6 +31,32 @@ jest.mock('@shopify/react-native-skia', () => {
   };
 });
 
+jest.mock('expo-audio', () => {
+  const player = {
+    play: jest.fn(),
+    pause: jest.fn(),
+    replace: jest.fn(),
+    seekTo: jest.fn(async () => {}),
+    setPlaybackRate: jest.fn(),
+  };
+  const status = {
+    id: 'test-player',
+    currentTime: 0,
+    duration: 0,
+    playing: false,
+    isBuffering: false,
+    isLoaded: false,
+    playbackRate: 1,
+    error: null,
+  };
+  return {
+    useAudioPlayer: jest.fn(() => player),
+    useAudioPlayerStatus: jest.fn(() => status),
+    __mockPlayer: player,
+    __mockStatus: status,
+  };
+});
+
 beforeEach(() => {
   resetTenantCacheRegistry();
 });

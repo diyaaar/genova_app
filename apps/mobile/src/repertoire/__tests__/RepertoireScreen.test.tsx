@@ -4,6 +4,7 @@ import { clearTenantCaches, resetTenantCacheRegistry } from '../../auth/tenant-c
 import { RepertoireScreen } from '../RepertoireScreen';
 import type { NativeRepertoireCatalog, NativeRepertoireGateway } from '../catalog-gateway';
 import type { NativeScoreReaderGateway } from '../reader-contract';
+import type { NativeAudioSourceGateway } from '../audio-source-gateway';
 
 const concertTag: RepertoireTag = {
   id: 'tag-concert',
@@ -49,7 +50,11 @@ function gateway(load: NativeRepertoireGateway['load']): NativeRepertoireGateway
   return { load: jest.fn(load), clear: jest.fn() };
 }
 
-async function renderScreen(preparedGateway: NativeRepertoireGateway, readerGateway?: NativeScoreReaderGateway) {
+async function renderScreen(
+  preparedGateway: NativeRepertoireGateway,
+  readerGateway?: NativeScoreReaderGateway,
+  audioGateway?: NativeAudioSourceGateway,
+) {
   return await render(
     <RepertoireScreen
       choirId="choir-a"
@@ -57,6 +62,7 @@ async function renderScreen(preparedGateway: NativeRepertoireGateway, readerGate
       choirName="Genova A"
       gateway={preparedGateway}
       readerGateway={readerGateway}
+      audioGateway={audioGateway}
       canSwitchChoir
       onBack={jest.fn()}
       onSwitchChoir={jest.fn()}
@@ -185,5 +191,39 @@ describe('RepertoireScreen', () => {
 
     await fireEvent.press(screen.getByTestId('score-reader-back'));
     expect(await screen.findByTestId('repertoire-list')).toBeTruthy();
+  });
+
+  it('opens accessible native audio without changing the score route', async () => {
+    const audioFile: RepertoireFile = {
+      id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      song_id: 'song-a',
+      file_name: 'alto.mp3',
+      file_type: 'audio',
+      partition_label: 'Alto çalışma',
+      drive_file_id: 'provider-id',
+      drive_web_view_link: null,
+      drive_download_link: null,
+      mime_type: 'audio/mpeg',
+      file_size_bytes: 64_000,
+      uploaded_by: null,
+      created_at: '2026-09-08T00:00:00Z',
+      updated_at: '2026-09-08T00:00:00Z',
+    };
+    const audioGateway: NativeAudioSourceGateway = {
+      open: jest.fn(async () => ({ url: 'https://project.invalid/audio', expiresAt: 9_999_999_999_999 })),
+      clear: jest.fn(),
+    };
+    const preparedGateway = gateway(async () => catalogue({ songs: [song({ files: [audioFile] })] }));
+    await renderScreen(preparedGateway, undefined, audioGateway);
+    await screen.findByTestId('repertoire-list');
+
+    await fireEvent.press(screen.getByTestId('repertoire-open-audio-song-a'));
+    expect(await screen.findByTestId('audio-player-screen')).toBeTruthy();
+    expect(screen.getAllByText('Alto çalışma')).toHaveLength(2);
+    expect(audioGateway.open).toHaveBeenCalledWith(audioFile.id);
+
+    await fireEvent.press(screen.getByTestId('audio-player-back'));
+    expect(await screen.findByTestId('repertoire-list')).toBeTruthy();
+    expect(audioGateway.clear).toHaveBeenCalledTimes(1);
   });
 });

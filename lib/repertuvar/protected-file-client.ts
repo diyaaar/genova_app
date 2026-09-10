@@ -11,12 +11,14 @@ export async function requestProtectedRepertoireFileTicket({
   fileId,
   fetcher = fetch,
   now = Date.now(),
+  signal,
 }: {
   endpoint: string;
   accessToken: string;
   fileId: string;
   fetcher?: typeof fetch;
   now?: number;
+  signal?: AbortSignal;
 }): Promise<ProtectedRepertoireFileTicket> {
   if (!accessToken) throw new Error('Oturum bulunamadı. Lütfen tekrar giriş yapın.');
   if (!UUID_PATTERN.test(fileId)) throw new Error('Dosya kimliği geçersiz.');
@@ -40,6 +42,7 @@ export async function requestProtectedRepertoireFileTicket({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ fileId }),
+    signal,
   });
   if (!response.ok) {
     const message = (await response.text()).trim();

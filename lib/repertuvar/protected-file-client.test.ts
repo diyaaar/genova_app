@@ -8,12 +8,14 @@ const ticketUrl = `${endpoint}?fileId=${fileId}&ticket=signed`;
 describe('protected repertoire file client', () => {
   it('sends only the repository file ID with bearer authorization', async () => {
     const fetcher = vi.fn(async () => Response.json({ url: ticketUrl, expiresAt: 2_000 }));
+    const controller = new AbortController();
     const result = await requestProtectedRepertoireFileTicket({
       endpoint,
       accessToken: 'access-token',
       fileId,
       fetcher,
       now: 1_000,
+      signal: controller.signal,
     });
 
     expect(result).toEqual({ url: ticketUrl, expiresAt: 2_000 });
@@ -21,6 +23,7 @@ describe('protected repertoire file client', () => {
       method: 'POST',
       headers: { Authorization: 'Bearer access-token', 'Content-Type': 'application/json' },
       body: JSON.stringify({ fileId }),
+      signal: controller.signal,
     });
   });
 

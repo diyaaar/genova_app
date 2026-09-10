@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import { filterRepertoireCatalogSongs } from '@shared/repertuvar/catalog-core';
 import { theme } from '../ui/theme';
+import { getNativeAudioTracks, type NativeAudioTrack } from './audio-contract';
+import type { NativeAudioSourceGateway } from './audio-source-gateway';
+import { AudioPlayerScreen } from './AudioPlayerScreen';
 import type { NativeRepertoireCatalog, NativeRepertoireGateway } from './catalog-gateway';
 import { registerRepertoireGatewayCache } from './cache-registration';
 import { getDefaultRepertoireGateway } from './default-gateway';
@@ -22,6 +25,7 @@ interface RepertoireScreenProps {
   choirName: string;
   gateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
+  audioGateway?: NativeAudioSourceGateway;
   canSwitchChoir: boolean;
   onBack: () => void;
   onSwitchChoir: () => void;
@@ -34,6 +38,7 @@ export function RepertoireScreen({
   choirName,
   gateway: suppliedGateway,
   readerGateway,
+  audioGateway,
   canSwitchChoir,
   onBack,
   onSwitchChoir,
@@ -50,6 +55,7 @@ export function RepertoireScreen({
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<import('@shared/repertuvar/catalog-core').RepertoireFile | null>(null);
+  const [selectedAudio, setSelectedAudio] = useState<{ songTitle: string; tracks: NativeAudioTrack[] } | null>(null);
   const requestVersion = useRef(0);
 
   const load = useCallback(async (force: boolean) => {
@@ -120,6 +126,17 @@ export function RepertoireScreen({
     );
   }
 
+  if (selectedAudio) {
+    return (
+      <AudioPlayerScreen
+        songTitle={selectedAudio.songTitle}
+        tracks={selectedAudio.tracks}
+        gateway={audioGateway}
+        onBack={() => setSelectedAudio(null)}
+      />
+    );
+  }
+
   return (
     <View style={styles.container} testID="repertoire-screen">
       <View style={styles.header}>
@@ -186,6 +203,7 @@ export function RepertoireScreen({
             <ScrollView contentContainerStyle={styles.list} testID="repertoire-list">
               {songs.map((song) => {
                 const scoreFiles = getScorePdfFiles(song.files);
+                const audioTracks = getNativeAudioTracks(song.files);
                 return (
                 <View key={song.id} style={styles.card} testID={`repertoire-song-${song.id}`}>
                   <View style={styles.cardText}>
@@ -204,6 +222,17 @@ export function RepertoireScreen({
                         <Text style={styles.action}>{file.partition_label?.trim() || 'Notayı aç'}</Text>
                       </Pressable>
                     ))}
+                    {audioTracks.length > 0 ? (
+                      <Pressable
+                        onPress={() => setSelectedAudio({ songTitle: song.title, tracks: audioTracks })}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${song.title} ses kayıtlarını aç`}
+                        style={({ pressed }) => [styles.fileButton, pressed && styles.pressed]}
+                        testID={`repertoire-open-audio-${song.id}`}
+                      >
+                        <Text style={styles.action}>{audioTracks.length === 1 ? 'Sesi aç' : `${audioTracks.length} sesi aç`}</Text>
+                      </Pressable>
+                    ) : null}
                   </View>
                 </View>
               );})}
@@ -247,6 +276,8 @@ const styles = StyleSheet.create({
   meta: { color: theme.colors.textMuted, fontSize: 12 },
   part: { color: theme.colors.accent, fontSize: 12, fontWeight: '700' },
   fileActions: { alignItems: 'flex-end', gap: 6 },
+  fileButton: { minHeight: 44, minWidth: 48, justifyContent: 'center', alignItems: 'flex-end' },
+  pressed: { opacity: 0.7 },
   noScore: { color: theme.colors.textMuted, fontSize: 11 },
   footer: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: theme.spacing(1.5) },
 });
