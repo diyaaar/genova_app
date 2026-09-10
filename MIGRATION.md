@@ -55,15 +55,15 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Ekran | ≈ satır | Hedef | Durum | Faz |
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
-| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini yerelde kabul etti; 028 kalıcı WebView sahiplik ve güvenli access-token lease sözleşmesini belgeledi, runtime/kalıcı nav/push bekliyor | 1 |
+| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini yerelde kabul etti; 028 WebView sözleşmesini, 029 ortak saf route/message/replay/redaction politikasını kabul etti; runtime/kalıcı nav/push bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
-| Duyurular | 977 | **WebView — kalıcı** | 028 route/özellik koruma envanteri kabul edildi; runtime yok | — |
-| Koristler | 2.511 | **WebView — kalıcı** | 028 route/rol/dosya envanteri kabul edildi; runtime yok | — |
-| Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | 028 auth/tema/yazma envanteri kabul edildi; runtime yok | — |
-| Devamsızlık | 1.461 | **WebView — kalıcı** | 028 route/rol/Realtime envanteri kabul edildi; runtime yok | — |
+| Duyurular | 977 | **WebView — kalıcı** | 028 route/özellik envanteri + 029 ortak saf politika kabul edildi; adapter/runtime yok | — |
+| Koristler | 2.511 | **WebView — kalıcı** | 028 route/rol/dosya envanteri + 029 ortak saf politika kabul edildi; adapter/runtime yok | — |
+| Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | 028 auth/tema/yazma envanteri + 029 ortak saf politika kabul edildi; adapter/runtime yok | — |
+| Devamsızlık | 1.461 | **WebView — kalıcı** | 028 route/rol/Realtime envanteri + 029 ortak saf politika kabul edildi; adapter/runtime yok | — |
 
 Kalıcı WebView ekranları native yeniden yazılmaz. Oturum, geri navigasyon,
 erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık varsayılmaz.
@@ -196,9 +196,10 @@ repertoire and home compact views; both Release apps passed expiry, failure and 
 This is not hardware, background/lock-screen, hosted or release proof. Package 028 then accepted the
 [permanent WebView contract](docs/webview-bridge-contract.md): all nine web-owned routes and preserved
 actions are inventoried; native keeps the refresh token and supplies only a challenged, in-memory
-access-token lease. No WebView was installed or run. Package 029 is the next ready C1 slice: implement
-the shared framework-free route/message/redaction policy core and pure tests before dependency
-integration. Release and hardware remain gated.
+access-token lease. Package 029 accepted the shared framework-free route/message/replay/redaction
+policy at `4289da4` under 107 focused, full root and full mobile tests. No WebView was installed or
+run. Package 030 is the next ready C1 slice: implement the dormant web embedded adapter and locked
+session/tenant proof seam while preserving regular browsers. Release and hardware remain gated.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

@@ -1,13 +1,13 @@
 # Genova — agent handoff
 
-Snapshot: 10 September 2026. Package 028 accepted the documentation-only
-[permanent WebView bridge contract](webview-bridge-contract.md) after planning commit `97ba303`.
-It maps all nine permanent routes and their role/write/Realtime/file behavior, fixes native as the
-sole refresh-token and active-choir owner, and permits embedded web only a challenged in-memory
-access-token lease after server context proof. No WebView dependency or runtime exists yet. Final
-native annotation UX remains owner-decision-gated; the canonical [delivery plan](mobil-teslim-plani.md)
-routes next to package 029 for the shared framework-free route/message/redaction policy core and pure
-tests. Release execution and hardware remain gated.
+Snapshot: 10 September 2026. Package 029 accepted the shared framework-free permanent-WebView policy
+core at code/test commit `4289da4`, following the 028
+[bridge contract](webview-bridge-contract.md). Exact route/initial-source/external URL ownership,
+every v1 envelope/payload, bounded replay/tenant epochs and allowlisted diagnostics passed 107 focused
+cases plus full root/mobile gates. This is pure policy: no WebView dependency, session transport or
+runtime exists yet. Final native annotation UX remains owner-decision-gated; the canonical
+[delivery plan](mobil-teslim-plani.md) routes next to package 030 for the dormant web embedded adapter,
+locked-before-proof lifecycle and regular-browser compatibility. Release execution and hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -137,6 +137,12 @@ and active choir stay native, while a challenged in-memory access-token lease is
 the server-current choir before render. The versioned envelope, route allowlists, redacted logs,
 failure matrix and packages 029–033 are explicit. This is documentation and local package-construction
 evidence only; dependency, browser, embedded, hosted and hardware behavior are NOT RUN.
+Package 029 then implemented that contract's dependency-free policy core at `4289da4`. Root and
+mobile import the same module; exact route ownership/canonicalization, initial source, external HTTPS,
+all v1 message payloads/directions, replay capacity, instance/epoch invalidation and diagnostic
+redaction passed 107 focused cases. Full root passed 43 files / 386 tests and Next build; mobile
+passed 22 suites / 105 tests and typecheck. It performs no navigation/auth capability and proves no
+browser, WebView, Supabase session, hosted origin or hardware behavior.
 Hosting/Drive exit is separate preparation ([altyapi](altyapi-2026-09-04.md)); Vercel remains
 the verified live host and Railway preparation is not a completed move.
 
@@ -147,6 +153,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 10 Sep, `4289da4` | macOS task; focused route/message/replay/redaction Vitest; root `pnpm check`; mobile TypeScript/full Jest; diff and forbidden-import/secret-marker self-review | **PASS** — 107 focused cases; root 43 files / 386 tests, coverage/service-worker/Next build; mobile 22 suites / 105 tests. Same `@shared` module classifies initial/navigation routes, exact v1 payloads, HTTPS, bounded replay/epochs and allowlisted diagnostics | Pure policy only. No WebView dependency/mount, session/token transport, browser, Supabase/provider call, hosted origin/CSP, simulator/emulator composition, hardware, CI, push/deploy or independent review. See [029](briefs/029-permanent-webview-policy-core.md) |
 | 10 Sep, planning `97ba303` + 028 record | macOS task; nine-route/source dependency inventory, official WebView/Supabase API review, installed Supabase 2.112.4/2.115.0 construction probes, local link/consistency/route-coverage checks and `git diff --check` | **PASS** — route/action matrix, native-only refresh token, challenged memory-only access lease, v1 envelope, navigation/capability/failure rules and 029–033 split are recorded | Documentation/self-review only. No dependency, product code, browser/WebView, Supabase call, hosted origin, real account, hardware, CI, push/deploy or independent review. See [028](briefs/028-permanent-webview-bridge-inventory.md) and [contract](webview-bridge-contract.md) |
 | 10 Sep, `dc25938` | macOS task; mobile TypeScript/Jest, normal iOS export, Expo Doctor; exact iOS arm64-simulator and Android API 36 arm64 alternate-entry Release builds/runtime; config and crash-log inspection | **PASS** — mobile 21 suites / 104 tests, 1,330-module iOS export, Expo Doctor 21/21; actual 160,044-byte WAV, expiry ticket 1→2, iOS 206 Range/Android 200, same 0:10 and 1.25x through full→repertoire→home→full, compact controls/error, corrupt/unsupported failures and tenant-clear removal | Local synthetic simulator/emulator self-review only. Root/shared code did not change, so root gate was N/A. No hosted service, provider/real account, hardware, background/lock-screen/audio-route, remote CI, deploy or independent review. See [027](briefs/027-native-audio-shell-mini-player.md) and [evidence](evidence/027-native-audio-shell-mini-player/README.md) |
 | 10 Sep, `c30b3b1` | macOS task; mobile TypeScript/Jest/iOS export/Expo Doctor; exact iOS arm64-simulator and Android API 36 arm64 alternate-entry Release builds; root gate | **PASS** — mobile 20 suites / 100 tests, 1,328-module iOS export, Expo Doctor 21/21; actual 160,044-byte WAV playback, expiry renewal, iOS Range/seek/1.25x, Android playback, corrupt/unsupported states and source-null tenant teardown; root 42 files / 279 tests plus Next build | Local synthetic simulator/emulator self-review only. Denial is component/gateway evidence. No hosted service, provider/real account, hardware, background/lock-screen, remote CI, deploy or independent review. See [026](briefs/026-native-repertoire-audio-playback.md) |
@@ -208,8 +215,8 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 028 planning is local commit `97ba303`; its contract/acceptance record is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–028 and
+Branch `main`. Package 029 code/test is local commit `4289da4`; this acceptance record is
+documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–029 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -257,19 +264,20 @@ schema or external changes. Package 024 accepted its first local server/adapter 
 `1755803`; package 025 adopted it in the web lifecycle at `42c2fbb`; package 026 accepted the first
 B4 foreground native-audio slice at `c30b3b1`; package 027 completed foreground shell ownership
 and compact navigation at `dc25938`; package 028 accepted the permanent-WebView source/route/session
-contract without product changes. No hosted migration, release or external action occurred.
+contract without product changes; package 029 implemented its shared pure policy at `4289da4`.
+No hosted migration, release or external action occurred.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
 local/external work selection and the execution loop. Do not duplicate its backlog here.
 The immediate local read path A1–A3, B1 inventory, 024 server/adapter foundation, 025 web
-lifecycle adoption, 026–027 foreground audio slices and 028 WebView contract inventory are complete
-locally.
+lifecycle adoption, 026–027 foreground audio slices, 028 WebView contract inventory and 029 pure
+policy core are complete locally.
 A4 release preparation may be written locally, but push/deploy/hosted checks remain externally
 gated and A5 hardware remains postponed. The unresolved shared authorship, stale conflict,
 deletion and final exit UX choices gate final B2/native editing semantics. Following the roadmap's
-blocker rule, 028 accepted that inventory and the next bounded ready package is 029: implement the
-shared framework-free route/message/redaction policy core and exhaustive pure tests. It does not
-install or run a WebView.
+blocker rule, 029 accepted the framework-free policy and the next bounded ready package is 030:
+implement the dormant web embedded adapter, locked-before-proof lifecycle, in-memory token-provider
+seams and regular-browser regression tests. It does not install or run a native WebView.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -286,12 +294,13 @@ install or run a WebView.
 > `1755803`, package 025 adopted it in the web lifecycle at `42c2fbb`, package 026 accepted the
 > first foreground native-audio slice at `c30b3b1`, and package 027 completed shell ownership plus
 > compact navigation at `dc25938`. Package 028 then accepted `docs/webview-bridge-contract.md` as a
-> documentation-only route/session/capability inventory; read its brief and contract without inferring
-> WebView runtime. Final native annotation UX remains decision-gated. The next bounded local task is
-> 029: implement the shared framework-free route/message/redaction policy core and pure tests. Do not
-> install or mount a WebView in 029.
+> documentation-only route/session/capability inventory; package 029 implemented its shared pure
+> route/message/replay/redaction policy at `4289da4`. Read both briefs without inferring WebView
+> runtime. Final native annotation UX remains decision-gated. The next bounded local task is 030:
+> implement the dormant web embedded adapter, locked-before-proof context seam and regular-browser
+> regression tests. Do not install or mount a native WebView in 030.
 >
-> Preserve 013–028's historical local acceptance and distinguish it from deployment/Drive and
+> Preserve 013–029's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains
 > postponed and no new live fixture is authorized. Follow the plan one brief at a time and
 > retain every required FAIL/NOT RUN. A fake or build cannot substitute for another layer.

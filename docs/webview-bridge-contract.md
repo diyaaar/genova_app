@@ -363,7 +363,7 @@ complete while a required preservation row or runtime layer is FAIL/NOT RUN.
 
 | Layer | Required proof | Current status |
 |---|---|---|
-| shared policy unit | valid/invalid route, URL, query, envelope, size, version, duplicate, epoch and redaction vectors | **NOT RUN** |
+| shared policy unit | valid/invalid route, URL, query, envelope, size, version, duplicate, epoch and redaction vectors | **PASS locally — [029](briefs/029-permanent-webview-policy-core.md), `4289da4`; pure policy only** |
 | web unit/integration | locked-before-proof, explicit-token user/choir match, renewal, teardown, all auth call-site adapters and nine route families | **NOT RUN** |
 | regular browser regression | existing login, choir selection/switch, all permanent writes, rich links and browser back remain unchanged | **NOT RUN** |
 | CSP/security | release header observed; no unsafe credential sink, URL/query/log/analytics/storage/service-worker token; popup/origin/message attacks fail closed | **NOT RUN** |

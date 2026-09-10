@@ -27,6 +27,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 026 native foreground audio | In `apps/mobile`, run type/Jest/iOS export/Expo Doctor and the brief's guarded alternate-entry Release builds. `audio-server.mjs` refuses use without the exact acceptance flag and loopback URL; it serves deterministic WAV/corrupt bytes only. Simulator/emulator decode is not hardware or provider evidence |
 | 027 native shell audio | Reuse 026's guarded alternate entry/server, but navigate shell → repertoire → full → repertoire/home mini → full and prove no navigation ticket. Inspect compact loading/error/disabled/clear states, exact Release apps and accessibility trees. This remains foreground simulator/emulator evidence |
 | 028 WebView inventory | Documentation only: source-route/action coverage, current primary WebView/Supabase API comparison, installed-client construction probe, local links/consistency and `git diff --check`. No package, browser, WebView or provider runtime |
+| 029 WebView pure policy | Root `pnpm check` plus mobile `npx tsc --noEmit && npm test -- --runInBand`; focused `lib/mobile-webview-bridge.test.ts` covers exact route/message/replay/redaction vectors. No WebView/browser/provider/runtime claim |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -133,4 +134,7 @@ namespace. The accepted [contract](../docs/webview-bridge-contract.md) therefore
 and refresh ownership in native SecureStore, gives embedded web only a challenged in-memory access
 lease, and routes sign-out/theme/password capabilities through native ownership. WebView package,
 CSP, embedded browser behavior, platform files/back/accessibility, hosted origin and hardware are all
-NOT RUN. Package 029 next implements only the framework-free route/message/redaction policy and tests.
+NOT RUN. Package 029 accepted the framework-free policy at `4289da4`: 107 focused Vitest cases, full
+root 43 files / 386 tests and Next build, plus mobile 22 suites / 105 tests and typecheck passed. The
+mobile test imports the exact root module through `@shared`; it is not a native callback or WebView
+runtime. Package 030 next adds the dormant web adapter and locked-before-proof seams.

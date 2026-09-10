@@ -1,6 +1,6 @@
 # 029 — Framework-free permanent WebView policy core
 
-Prepared: 2026-09-10. Status: **PLANNED / NOT RUN**. Single writer and self-reviewer: main agent;
+Prepared: 2026-09-10. Status: **COMPLETE LOCALLY (PURE POLICY)**. Single writer and self-reviewer: main agent;
 no independent review is claimed.
 
 ## Outcome and delivery focus
@@ -91,18 +91,18 @@ prerequisite of C1; it does not install, mount or simulate a WebView and it tran
 
 ## Definition of done
 
-- [ ] All nine permanent routes and specified native/auth/unknown routes classify exactly; initial
+- [x] All nine permanent routes and specified native/auth/unknown routes classify exactly; initial
   source and subsequent navigation use the same independently callable policy.
-- [ ] Lookalike origin, scheme/port/userinfo, encoded separator/traversal, query/fragment, malformed
+- [x] Lookalike origin, scheme/port/userinfo, encoded separator/traversal, query/fragment, malformed
   UUID/date and overlong cases fail closed with stable reason codes.
-- [ ] Every v1 message type accepts one exact payload and rejects malformed JSON/object/envelope,
+- [x] Every v1 message type accepts one exact payload and rejects malformed JSON/object/envelope,
   extra keys, wrong direction/channel/version/instance/epoch, duplicate ID and invalid payload.
-- [ ] External policy returns canonical HTTPS plus display host only; diagnostics and their serialized
+- [x] External policy returns canonical HTTPS plus display host only; diagnostics and their serialized
   forms never contain seeded secrets/IDs/full URLs/queries/provider errors.
-- [ ] Epoch change rejects previously queued/message work and the bounded replay guard cannot grow
+- [x] Epoch change rejects previously queued/message work and the bounded replay guard cannot grow
   without limit or share IDs across instances accidentally.
-- [ ] The same root module passes both root Vitest and mobile Jest/TypeScript without framework imports.
-- [ ] Migration guide checks, root `pnpm check`, mobile `npx tsc --noEmit && npm test`, diff review and
+- [x] The same root module passes both root Vitest and mobile Jest/TypeScript without framework imports.
+- [x] Migration guide checks, root `pnpm check`, mobile `npx tsc --noEmit && npm test`, diff review and
   scope/secret scan pass; all runtime/external layers remain explicitly NOT RUN.
 
 ## Mandatory acceptance evidence
@@ -112,18 +112,18 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact web/native/auth/unknown route ownership, canonicalization and independent initial-source validation pass the full valid/hostile vector matrix | yes | **NOT RUN** | — | Root focused tests required |
-| All v1 direction/type payloads accept exactly; malformed/extra/oversize/wrong-context/replay cases fail before a caller side effect | yes | **NOT RUN** | — | Root focused tests required; parser itself is side-effect free |
-| External HTTPS classification exposes canonical URL to the caller but only a query-free display host; forbidden schemes/authority forms fail closed | yes | **NOT RUN** | — | Root focused tests required |
-| Redacted diagnostic construction cannot serialize seeded access/refresh tokens, passwords, UUIDs, invitation URLs, queries or provider errors | yes | **NOT RUN** | — | Root focused tests and source review required |
-| Bounded replay and tenant-epoch policy rejects duplicate, stale and pre-transition queued work while permitting a fresh instance/epoch | yes | **NOT RUN** | — | Deterministic root tests required |
-| Shared module executes from both root and mobile without framework/WebView/Supabase imports or source duplication | yes | **NOT RUN** | — | Root focused tests plus mobile typecheck/Jest required |
-| Root `pnpm check`, mobile `npx tsc --noEmit && npm test`, diff/scope/secret review pass; runtime and external layers remain correctly unclaimed | yes | **NOT RUN** | — | Full local gates required |
+| Exact web/native/auth/unknown route ownership, canonicalization and independent initial-source validation pass the full valid/hostile vector matrix | yes | **PASS** | 2026-09-10; code/test `4289da4`; macOS; focused `pnpm exec vitest run lib/mobile-webview-bridge.test.ts` and full root gate | All nine web routes, native ownership/availability, auth/unknown, UUID/date and hostile authority/path/query/fragment/length vectors are included in the 107 focused cases. No navigation ran |
+| All v1 direction/type payloads accept exactly; malformed/extra/oversize/wrong-context/replay cases fail before a caller side effect | yes | **PASS** | 2026-09-10; `4289da4`; deterministic Vitest matrix | Every W→N/N→W type has an accepted vector; wrong direction/channel/version/instance/epoch, UTF-8 size, source, ID, duplicate, extra key and payload cases reject with stable codes. Parser returns data only |
+| External HTTPS classification exposes canonical URL to the caller but only a query-free display host; forbidden schemes/authority forms fail closed | yes | **PASS** | 2026-09-10; `4289da4`; deterministic Vitest external URL table | Canonical HTTPS/query/fragment is retained for a future confirmed launch; only normalized hostname is display metadata. HTTP, protocol-relative, userinfo, explicit ports, custom schemes, backslash and overlength reject. System browser was NOT RUN |
+| Redacted diagnostic construction cannot serialize seeded access/refresh tokens, passwords, UUIDs, invitation URLs, queries or provider errors | yes | **PASS** | 2026-09-10; `4289da4`; seeded serialization test plus source scan | Constructor copies only validated direction/type/outcome/reason/family. Seeded secrets and arbitrary extra fields were absent from JSON; invalid reason falls back to `invalid-diagnostic`. This does not inspect future caller logs |
+| Bounded replay and tenant-epoch policy rejects duplicate, stale and pre-transition queued work while permitting a fresh instance/epoch | yes | **PASS** | 2026-09-10; `4289da4`; deterministic guard tests | Duplicate and capacity refusal pass; instance replacement and epoch 7→8 invalidate old stamps/IDs; epoch rollback refuses. Guard state only, not asynchronous WebView work |
+| Shared module executes from both root and mobile without framework/WebView/Supabase imports or source duplication | yes | **PASS** | 2026-09-10; `4289da4`; root TypeScript/Vitest; mobile `npx tsc --noEmit && npm test -- --runInBand` | Mobile imports the root source through `@shared` and parses a native-route request. Full mobile gate: 22 suites / 105 tests. No WebView dependency/runtime exists |
+| Root `pnpm check`, mobile `npx tsc --noEmit && npm test`, diff/scope/secret review pass; runtime and external layers remain correctly unclaimed | yes | **PASS** | 2026-09-10; `4289da4`; macOS Node/pnpm workspace; full gates and final self-review | Root: 43 files / 386 tests, coverage thresholds, service-worker syntax and Next production build PASS. Mobile: 22 suites / 105 tests and typecheck PASS. Existing SafeAreaView/punycode warnings remain non-failing. No browser/WebView/Supabase/provider/hosted/hardware/CI/deploy |
 
 ## Delivery boundary
 
-029 may be marked complete only when all seven rows are PASS with dated local evidence. Even then it
-proves pure policy only: dependency selection, embedded web, session/tenant proof, native callbacks,
-browser regression, CSP, hosted service, real account, simulator/emulator composition, hardware,
-accessibility and release remain NOT RUN. The next intended package is 030, not permission to execute
-external work.
+Accepted locally at code/test commit `4289da4`; the record commit follows separately. All seven rows
+are PASS under the stated local boundary. This proves pure policy only: dependency selection,
+embedded web, session/tenant proof, native callbacks, browser regression, CSP, hosted service, real
+account, simulator/emulator composition, hardware, accessibility and release remain NOT RUN. The
+next ready package is 030, the dormant web embedded adapter; it is not permission for external work.

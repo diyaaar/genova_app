@@ -1,6 +1,6 @@
 # Sistem desenleri ve sınırlar
 
-Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
+Son karşılaştırma: 10 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
 
 - Web: Next.js istemci/sunucu; mevcut API'ler ekran göçüne kadar korunur.
   Native'e taşınan ekranın yeni sunucu mantığı Supabase Edge Function'a gider;
@@ -56,8 +56,11 @@ Son karşılaştırma: 5 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   sole refresh-token/active-choir owner; after an exact-origin challenge, embedded web may hold only a
   short-lived access-token lease in memory and must re-prove user plus server-current choir before
   rendering. Refresh tokens, credentials in URLs/headers/cookies, independent web refresh and web
-  `/` fallback are prohibited. Route/message validation is shared and framework-free; product runtime
-  begins after 029 pure policy acceptance. See [the contract](../docs/webview-bridge-contract.md).
+  `/` fallback are prohibited. Package 029 implements route ownership/canonicalization, v1 exact
+  envelope/payload validation, external HTTPS classification, bounded replay/tenant-epoch guards and
+  allowlisted diagnostics in framework-free [`lib/mobile-webview-bridge.ts`](../lib/mobile-webview-bridge.ts).
+  Parsing has no navigation/auth side effect; callers must accept the message in the guard before a
+  capability. Product runtime begins with 030. See [the contract](../docs/webview-bridge-contract.md).
 
 ## Tek doğru kaynak dağılımı
 

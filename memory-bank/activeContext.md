@@ -1,6 +1,6 @@
 # Active context
 
-Updated 10 September 2026 after the 028 permanent-WebView contract inventory. The recorded
+Updated 10 September 2026 after the 029 permanent-WebView pure-policy acceptance. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -97,9 +97,12 @@ This remains local simulator/emulator self-review. Package
 [permanent WebView contract](../docs/webview-bridge-contract.md) as documentation: all nine routes,
 role/mutation/Realtime/file behavior and native/native-future exits are mapped. Native alone owns the
 refresh token and active choir; embedded web receives only a challenged in-memory access-token lease
-and must re-prove the server-current choir before rendering. No WebView package/product/browser/live
-runtime was used. Package 029 is the next ready local C1 slice: shared framework-free route,
-message-envelope and redacted-diagnostic policy plus exhaustive pure tests.
+and must re-prove the server-current choir before rendering. Package
+[029](../docs/briefs/029-permanent-webview-policy-core.md) then accepted the shared framework-free
+route/message/replay/redaction core at `4289da4`: 107 focused cases, root 43 files / 386 tests/build
+and mobile 22 suites / 105 tests/typecheck passed. No WebView package, session transport, browser,
+provider or hardware runtime was used. Package 030 is the next ready local C1 slice: the dormant web
+embedded adapter, locked-before-proof lifecycle and regular-browser compatibility.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
