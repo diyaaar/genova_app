@@ -1,7 +1,7 @@
 # 031 — Native permanent-WebView shell
 
-Prepared: 2026-09-11. Status: **READY FOR LOCAL IMPLEMENTATION**. Single writer and reviewer: main
-agent; no independent review is claimed.
+Prepared and accepted locally: 2026-09-11. Status: **LOCALLY ACCEPTED** at product code/test
+revision `0217ac8`. Single writer and reviewer: main agent; no independent review is claimed.
 
 ## Outcome and delivery focus
 
@@ -168,19 +168,19 @@ permission, generated `ios/` or `android/`, deployment or provider file is allow
 
 ## Definition of done
 
-- [ ] Expo-selected WebView resolves/builds on SDK 57/RN 0.86; production/dev initial-origin policy is
+- [x] Expo-selected WebView resolves/builds on SDK 57/RN 0.86; production/dev initial-origin policy is
   exact and a rejected initial source never mounts.
-- [ ] Challenge/ack/context and renewal/clear state transitions are source/replay/instance/epoch bound;
+- [x] Challenge/ack/context and renewal/clear state transitions are source/replay/instance/epoch bound;
   native refresh is serialized and no refresh token crosses any boundary.
-- [ ] Permanent/native/unavailable/external/auth/unknown navigation, popup and back cases stop or route
+- [x] Permanent/native/unavailable/external/auth/unknown navigation, popup and back cases stop or route
   exactly, with an explicit external-host confirmation and no real launch in automated acceptance.
-- [ ] Theme preference/resolution and WebView chrome work; 032 commands fail visibly with stable codes;
+- [x] Theme preference/resolution and WebView chrome work; 032 commands fail visibly with stable codes;
   process/load/session failures have bounded retry/close and redacted diagnostics.
-- [ ] Existing native auth/choir/repertoire/PDF/audio/mini-player behavior remains green; accessibility
+- [x] Existing native auth/choir/repertoire/PDF/audio/mini-player behavior remains green; accessibility
   semantics/target sizes are source/test-verified without claiming manual screen-reader proof.
-- [ ] `npm run check`, both platform exports, `npx expo-doctor`, exact iOS/Android Release builds,
+- [x] `npm run check`, both platform exports, `npx expo-doctor`, exact iOS/Android Release builds,
   dependency/config/security scans and `git diff --check` pass on the final product content.
-- [ ] Diff review finds no out-of-scope change; canonical handoff/status/evidence records are updated in
+- [x] Diff review finds no out-of-scope change; canonical handoff/status/evidence records are updated in
   a separate commit while 004 remains 25/27 and 010 remains 6/7.
 
 ## Mandatory acceptance evidence
@@ -190,16 +190,18 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact Expo-compatible dependency resolves and both native Release projects compile; invalid production/dev initial origin or route never mounts | yes | **NOT RUN** | — | Expo recommends 13.16.1, but install/export/native compile and product policy are not yet run |
-| Challenge/ack/context, refresh/renew/clear and retry/process lifecycle are source/replay/instance/epoch bound; only an access-token lease crosses | yes | **NOT RUN** | — | Contract and existing native session/current-choir behavior are historical inputs, not 031 evidence |
-| Permanent/native/unavailable/external/auth/unknown navigation plus popup and back handling obey one parser; external launch requires normalized-host confirmation | yes | **NOT RUN** | — | No native handler or WebView exists yet |
-| Theme preference/system resolution and native chrome work; password/clipboard/file requests return stable unavailable results without side effects | yes | **NOT RUN** | — | 032 capabilities intentionally remain unavailable |
-| Load/HTTP/process/session/message failures are nonblank, bounded and redacted; controls expose accessible roles/labels/states and safe target sizes | yes | **NOT RUN** | — | Manual VoiceOver/TalkBack, keyboard and runtime process termination stay outside 031 |
-| Existing auth/choir/repertoire/PDF/audio/mini-player regressions and tenant-clear ordering remain green | yes | **NOT RUN** | — | Current green history is not transferred as a new result |
-| Full mobile type/tests, both platform exports, Expo Doctor, exact iOS/Android Release builds and final diff/config/secret review pass | yes | **NOT RUN** | — | Hosted, provider, simulator/emulator, hardware, remote CI and independent review remain NOT RUN |
+| Exact Expo-compatible dependency resolves and both native Release projects compile; invalid production/dev initial origin or route never mounts | yes | **PASS** | 2026-09-11, `0217ac8`; Expo 57/RN 0.86; focused config/component tests, normal exports, clean prebuild, Android API 36 arm64 Release and iOS arm64-simulator Release | `react-native-webview` 13.16.1 and `expo-crypto` 57.0.2 resolved; iOS 1,351-module and Android 1,349-module exports, generated autolinking and both exact Release builds passed. Initial path is classified before mount; loopback override is dev-only. Generated outputs were deleted after hashing/inspection. No runtime launch or hardware proof |
+| Challenge/ack/context, refresh/renew/clear and retry/process lifecycle are source/replay/instance/epoch bound; only an access-token lease crosses | yes | **PASS** | 2026-09-11, `0217ac8`; auth-store and framework-free controller tests | Fresh challenge, exact acknowledgement, source/replay/epoch guards, one native refresh, newer renewal, stale tenant refusal, cover-before-clear and process/timeout failure passed. Context serialization contains access token, expiry, user, choir and member only; test-only injected `refreshToken` was absent from the outbound message. Synthetic sessions only; no provider/account call |
+| Permanent/native/unavailable/external/auth/unknown navigation plus popup and back handling obey one parser; external launch requires normalized-host confirmation | yes | **PASS** | 2026-09-11, `0217ac8`; controller and WebView component tests plus installed 13.16.1 source/type inspection | Shared classifier handles validated initial source, every callback and popup target; permanent routes remain web, current home/repertoire exit native, chat/assignments return stable unavailable, invalid/auth/scheme cases close visibly. RNCWebView's own whitelist is deliberately `*` so it cannot bypass the callback through automatic `Linking`; the shared parser is the exact allowlist. External tests use a no-op launcher and require a normalized-host confirmation; no system browser opened |
+| Theme preference/system resolution and native chrome work; password/clipboard/file requests return stable unavailable results without side effects | yes | **PASS** | 2026-09-11, `0217ac8`; theme/controller/component tests | SecureStore preference and system resolution, native chrome and post-proof `theme.apply` passed. Password, invitation clipboard and file requests return `capability-unavailable`; injected file controls are disabled. Actual password manager, clipboard and protected-file platform behavior remain 032 |
+| Load/HTTP/process/session/message failures are nonblank, bounded and redacted; controls expose accessible roles/labels/states and safe target sizes | yes | **PASS** | 2026-09-11, `0217ac8`; Jest/source/config review | Locked, loading, error, retry, close and external-confirmation surfaces are nonblank; malformed-message limit, timeout, 401/5xx, renderer termination and file attempt close visibly. Diagnostics contain only the 029 allowlist. Roles/labels/states and 48-point controls are source/test verified. React Native's existing `SafeAreaView` deprecation warning remains; manual VoiceOver/TalkBack, keyboard and actual process termination are NOT RUN |
+| Existing auth/choir/repertoire/PDF/audio/mini-player regressions and tenant-clear ordering remain green | yes | **PASS** | 2026-09-11, `0217ac8`; `npm run check` | Mobile TypeScript and all 26 suites / 126 tests passed, including auth/choir, cache clear, repertoire, PDF/Skia, annotations, audio, mini-player and product read flow. This is local deterministic regression evidence, not a service or device rerun |
+| Full mobile type/tests, both platform exports, Expo Doctor, exact iOS/Android Release builds and final diff/config/secret review pass | yes | **PASS** | 2026-09-11, `0217ac8`; mobile check, Expo exports/Doctor/prebuild, Gradle/Xcode, manifest/bundle/dependency/diff scans | `npm run check` passed 26/126; exports passed; Expo Doctor passed 21/21; Android arm64 Release produced a 44 MB APK with SHA-256 `237437bf845acaff405566985b9f0121bc7d956e5f6034198ced1165400368fe`; iOS Release executable SHA-256 was `0ae66481895f7fe8b1bebdbf762e8d1762efeed61f0e2f1e3b479e7cc5ba786d`. ATS disallows arbitrary loads; no camera/microphone permission was added. Change-scoped dependency review found neither added package introduces an advisory; repository-wide `npm audit --omit=dev` remains nonzero with 10 moderate, 0 high/critical pre-existing Expo/xcode/uuid-chain findings and was not auto-fixed. Root product code did not change, so root `pnpm check` is N/A. Hosted/provider, simulator/emulator execution, hardware, CI, push/deploy and independent review are NOT RUN |
 
 ## Delivery boundary
 
-Implementation has not started. Planning alone does not close any required row or change C1 status.
-Proceed only within the local/reversible authority above; keep 004 hardware acceptance and 010's open
-criterion unchanged.
+031 is locally accepted at `0217ac8` under the bounded evidence above. This proves the native shell,
+policy wiring and exact Release compilation only; it does not prove the dormant 030 web peer and 031
+native peer together in a browser engine. Package 032 may now implement the explicitly deferred
+password/clipboard/file platform capabilities, followed by 033 composed local C1 acceptance. Keep 004
+hardware acceptance at 25/27 and 010's open criterion at 6/7.

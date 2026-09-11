@@ -29,6 +29,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 028 WebView inventory | Documentation only: source-route/action coverage, current primary WebView/Supabase API comparison, installed-client construction probe, local links/consistency and `git diff --check`. No package, browser, WebView or provider runtime |
 | 029 WebView pure policy | Root `pnpm check` plus mobile `npx tsc --noEmit && npm test -- --runInBand`; focused `lib/mobile-webview-bridge.test.ts` covers exact route/message/replay/redaction vectors. No WebView/browser/provider/runtime claim |
 | 030 dormant web embedded adapter | Root `pnpm check`; focused runtime/Supabase/provider/Auth/layout/profile/navigation/cache tests. Final gate: 55 files / 462 tests, configured coverage, service-worker syntax and Next production build. No native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware or release claim |
+| 031 native WebView shell | Mobile `npx tsc --noEmit && npm test -- --runInBand`; normal iOS/Android exports; Expo Doctor 21/21; clean prebuild; exact Android API 36 arm64 and iOS arm64-simulator Release builds. Final gate: 26 suites / 126 tests. Native half only; no composed web runtime, platform capability side effect, hosted/provider/account, hardware or release claim |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -128,7 +129,7 @@ are in [027 evidence](../docs/evidence/027-native-audio-shell-mini-player/README
 
 ## Permanent WebView contract state — 11 September 2026
 
-Package 028 adds no product dependency. The current mobile app has no direct
+Package 028 added no product dependency. At that revision the mobile app had no direct
 `react-native-webview`; web Supabase is 2.112.4 and native is 2.115.0. Both installed clients expose
 an `accessToken` provider and Realtime token update, but that mode intentionally disables the Auth
 namespace. The accepted [contract](../docs/webview-bridge-contract.md) therefore keeps refresh token
@@ -145,6 +146,12 @@ URL detection disabled. Guarded fetches rewrite the current bearer and enforce r
 freeze; serialized Realtime auth operations make synchronous clear win over late installation.
 Initial embedded isolation removes prior Supabase Auth keys, Genova tenant caches and service-worker
 registrations before `bridge.ready`. These are unit/jsdom and build facts, not actual WebView,
-hosted CSP, provider or device evidence. Package 031 must select and install the Expo 57/RN 0.86
-compatible native WebView and independently run mobile type/tests/doctor/exports plus exact iOS and
-Android Release builds.
+hosted CSP, provider or device evidence. Package 031 then installed Expo 57-compatible
+`react-native-webview` 13.16.1 and `expo-crypto` 57.0.2 and accepted the native shell at `0217ac8`.
+Mobile 26 suites / 126 tests, both normal exports, Expo Doctor 21/21, clean prebuild and exact Android
+API 36 arm64 plus iOS arm64-simulator Release builds passed. The generated `.expo`, `ios`, `android`
+and native-library build caches were deleted after recording the binary hashes. `npm audit --omit=dev`
+still reports the same 10 moderate Expo/xcode/uuid toolchain findings and no high/critical finding;
+automatic breaking downgrade was not applied. The result remains the native half only. Package 032
+owns password/clipboard/protected-file platform capabilities and 033 owns composed local runtime;
+hosted CSP/provider/account and hardware remain separate gates.

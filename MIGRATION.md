@@ -55,15 +55,15 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Ekran | ≈ satır | Hedef | Durum | Faz |
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
-| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini yerelde kabul etti; 028 sözleşme, 029 ortak saf politika ve 030 dormant web adapter kabul edildi; native WebView/runtime/kalıcı nav/push bekliyor | 1 |
+| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028 sözleşme, 029 ortak saf politika, 030 dormant web adapter ve 031 native WebView kabuğunu yerelde kabul etti; platform yetenekleri/birleşik runtime/push bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
-| Duyurular | 977 | **WebView — kalıcı** | 028 envanter + 029 ortak politika + 030 dormant web gate/adapter yerelde kabul edildi; native WebView/runtime yok | — |
-| Koristler | 2.511 | **WebView — kalıcı** | 028 rol/dosya envanteri + 029 ortak politika + 030 dormant web gate/adapter yerelde kabul edildi; native WebView/runtime yok | — |
-| Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | 028 auth/tema/yazma envanteri + 029 ortak politika + 030 native-owned komut/web adapter yerelde kabul edildi; native WebView/runtime yok | — |
-| Devamsızlık | 1.461 | **WebView — kalıcı** | 028 rol/Realtime envanteri + 029 ortak politika + 030 dormant web gate/adapter yerelde kabul edildi; native WebView/runtime yok | — |
+| Duyurular | 977 | **WebView — kalıcı** | 028 envanter + 029 ortak politika + 030 dormant web adapter + 031 native shell ayrı ayrı yerelde kabul edildi; birleşik runtime yok | — |
+| Koristler | 2.511 | **WebView — kalıcı** | 028 rol/dosya envanteri + 029 ortak politika + 030 dormant web adapter + 031 native shell ayrı ayrı yerelde kabul edildi; platform dosya yeteneği ve birleşik runtime yok | — |
+| Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | 028 auth/tema/yazma envanteri + 029 ortak politika + 030 web adapter + 031 native-owned shell ayrı ayrı yerelde kabul edildi; şifre platform yeteneği ve birleşik runtime yok | — |
+| Devamsızlık | 1.461 | **WebView — kalıcı** | 028 rol/Realtime envanteri + 029 ortak politika + 030 dormant web adapter + 031 native shell ayrı ayrı yerelde kabul edildi; birleşik runtime yok | — |
 
 Kalıcı WebView ekranları native yeniden yazılmaz. Oturum, geri navigasyon,
 erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık varsayılmaz.
@@ -200,10 +200,13 @@ access-token lease. Package 029 accepted the shared framework-free route/message
 policy at `4289da4` under 107 focused, full root and full mobile tests. Package 030 then accepted the
 dormant web embedded adapter at `c7d09d3`: exact locked bootstrap/challenge, explicit-token user and
 choir proof, memory-only guarded bearer, renewal/clear races, cache/Realtime teardown, all nine route
-gates and regular-browser parity passed the root 55-file/462-test/build gate. No WebView was installed
-or run. Package 031 is the next ready C1 slice: select/install the Expo-compatible native WebView,
-implement its state machine plus route/external/back/theme handlers, and prove both exact Release
-builds. Release and hardware remain gated.
+gates and regular-browser parity passed the root 55-file/462-test/build gate. Package 031 then
+accepted the Expo-compatible native shell at `0217ac8`: challenged access-only leases, native refresh,
+route/external/back/theme handling, locked failures and deferred capability responses passed mobile
+26-suite/126-test, export, Doctor, generated-config and exact iOS/Android Release compile gates. The
+web and native peers have not yet run together. Package 032 is the next ready C1 slice for native
+password, invitation clipboard and protected-file platform capabilities; package 033 follows with
+composed local runtime acceptance. Hosted, provider, device, release and hardware remain gated.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

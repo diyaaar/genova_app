@@ -66,9 +66,15 @@ Son karşılaştırma: 11 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   freeze during renewal, and clear wins synchronously over pending proof/Realtime work. Embedded mode
   removes stale Supabase/session and tenant caches, disables persistent repertoire caches/service
   workers, suppresses the browser shell/platform notifications and routes native/external/file/back,
-  theme/password/sign-out/clipboard boundaries through exact messages. This is jsdom/local-build
-  acceptance; actual WebView/native/hosted/provider behavior begins with 031. See
-  [the contract](../docs/webview-bridge-contract.md) and [030](../docs/briefs/030-web-embedded-adapter.md).
+  theme/password/sign-out/clipboard boundaries through exact messages. Package 031 implements the
+  native half at `0217ac8`: native remains the refresh owner, supplies only a challenged short-lived
+  lease, holds a locked cover until navigation proof, coalesces renewal, invalidates tenant epochs,
+  and owns route/external/back/theme behavior. The WebView prop accepts every scheme only so the
+  shared callback can classify it before React Native WebView performs automatic external linking;
+  the shared parser remains the exact trust allowlist. Password, clipboard and protected-file side
+  effects stay unavailable until 032, and 033 owns composed runtime acceptance. See
+  [the contract](../docs/webview-bridge-contract.md), [030](../docs/briefs/030-web-embedded-adapter.md)
+  and [031](../docs/briefs/031-native-webview-shell.md).
 
 ## Tek doğru kaynak dağılımı
 

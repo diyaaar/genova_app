@@ -280,10 +280,13 @@ test proves no response/session/tenant data survives sign-out or choir switch.
 
 ### Popups and external navigation
 
-`originWhitelist` contains only the exact app origin, and native applies the same route parser in the
-initial source, `onShouldStartLoadWithRequest`, navigation-state changes and `onOpenWindow`. Popups are
-never created. A target-blank HTTPS link is cancelled and converted into the external confirmation
-flow. Any disagreement between handlers fails closed.
+React Native WebView 13.16.1 opens destinations excluded by its `originWhitelist` through
+`Linking.openURL` before the application's navigation callback can decide. The native shell therefore
+sets that library prop to `*` only to force every scheme through the callback; it is **not** the trust
+allowlist. The shared exact-origin/path parser is the sole allowlist and is applied before the initial
+mount, in `onShouldStartLoadWithRequest`, navigation-state changes and `onOpenWindow`. Popups are never
+created. A target-blank HTTPS link is cancelled and converted into the external confirmation flow.
+Any disagreement between handlers fails closed. Package 031 tests this installed-library boundary.
 
 ### Uploads, downloads and clipboard
 

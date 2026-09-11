@@ -1,6 +1,6 @@
 # Active context
 
-Updated 11 September 2026 after the 030 dormant web embedded-adapter acceptance. The recorded
+Updated 11 September 2026 after the 031 native WebView-shell acceptance. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -105,10 +105,16 @@ and mobile 22 suites / 105 tests/typecheck passed. Package
 locked exact bootstrap/challenge, explicit-token Auth/current-membership proof, a non-persisting
 guarded Supabase lease, mutation renewal freeze, synchronous clear over pending proof/Realtime work,
 cache/service-worker isolation, nine-route shell/navigation boundaries and regular-browser parity
-passed the root 55-file/462-test/build gate. No dependency or native WebView was installed; browser
-E2E, hosted CSP/provider/account, simulator/hardware and release remain NOT RUN. Package 031 is the
-next ready local C1 slice: select/install the Expo-compatible native WebView shell, implement its
-challenge/state machine plus route/external/back/theme handlers, and prove both Release builds.
+passed the root 55-file/462-test/build gate. Package
+[031](../docs/briefs/031-native-webview-shell.md) then accepted the native half at `0217ac8`:
+Expo-compatible WebView/Crypto dependencies, native-only short-lived lease, exact challenge/proof,
+renewal/clear race guards, route/external/back/theme behavior and locked/error UI passed 26 mobile
+suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS
+arm64-simulator Release builds. Generated build outputs were removed after hashing. The native and
+030 web halves are not yet composed; password/clipboard/protected-file side effects, browser E2E,
+hosted CSP/provider/account, hardware and release remain NOT RUN. Package 032 is the next ready local
+C1 slice for those three explicit platform capabilities; package 033 then owns composed local C1
+runtime acceptance.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
