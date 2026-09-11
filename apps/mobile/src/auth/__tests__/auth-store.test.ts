@@ -21,6 +21,10 @@ function buildStore(options: {
   signOutRejects?: boolean;
   listResponse?: () => { data: unknown; error: { message: string } | null };
   activateResponse?: (choirId: string) => { data: unknown; error: { message: string } | null };
+  refreshResponse?: {
+    data: { session: ReturnType<typeof sessionFor> | null };
+    error: { message: string } | null;
+  };
 } = {}) {
   const calls: string[] = [];
   const clientDouble = createClientDouble({
@@ -34,6 +38,7 @@ function buildStore(options: {
     initialSession: options.initialSession === undefined ? sessionFor() : options.initialSession,
     signInError: options.signInError ?? null,
     signOutRejects: options.signOutRejects,
+    refreshResponse: options.refreshResponse,
   });
   const preferences = createPreferenceDouble(options.preferences);
   const clearCaches = jest.fn(async () => {
@@ -110,6 +115,90 @@ describe('session lifecycle', () => {
 
     expect(preferences.values[USER_ID]).toBeUndefined();
     expect(clearCaches).toHaveBeenCalled();
+  });
+});
+
+describe('permanent WebView lease', () => {
+  const jwt = 'header.payload.signature';
+
+  it('returns only the current access lease when the ready native session is fresh', async () => {
+    const { store, gateway } = buildStore({
+      activeChoirId: CHOIR_A,
+      initialSession: sessionFor(USER_ID, { access_token: jwt, expires_at: 2_000 }),
+    });
+    await store.start();
+
+    await expect(store.getWebViewLease({ nowSeconds: 1_000 })).resolves.toEqual({
+      accessToken: jwt,
+      expiresAt: 2_000,
+      userId: USER_ID,
+      choirId: CHOIR_A,
+      memberId: membership().member_id,
+    });
+    expect(gateway.refreshSession).not.toHaveBeenCalled();
+  });
+
+  it('coalesces a near-expiry refresh and never returns the refresh token', async () => {
+    let release!: (value: {
+      data: { session: ReturnType<typeof sessionFor> };
+      error: null;
+    }) => void;
+    const pending = new Promise<{
+      data: { session: ReturnType<typeof sessionFor> };
+      error: null;
+    }>((resolve) => { release = resolve; });
+    const { store, gateway } = buildStore({
+      activeChoirId: CHOIR_A,
+      initialSession: sessionFor(USER_ID, { access_token: jwt, expires_at: 1_030 }),
+    });
+    await store.start();
+    gateway.refreshSession.mockImplementation(() => pending);
+
+    const first = store.getWebViewLease({ nowSeconds: 1_000 });
+    const second = store.getWebViewLease({ nowSeconds: 1_000 });
+    release({
+      data: { session: sessionFor(USER_ID, {
+        access_token: 'new.payload.signature',
+        refresh_token: 'must-never-cross',
+        expires_at: 2_000,
+      }) },
+      error: null,
+    });
+
+    const [one, two] = await Promise.all([first, second]);
+    expect(gateway.refreshSession).toHaveBeenCalledTimes(1);
+    expect(one).toEqual(two);
+    expect(one.accessToken).toBe('new.payload.signature');
+    expect(one).not.toHaveProperty('refreshToken');
+    expect(JSON.stringify(one)).not.toContain('must-never-cross');
+  });
+
+  it('fails closed outside ready state and after a tenant changes during refresh', async () => {
+    const signedOut = buildStore({ initialSession: null });
+    await signedOut.store.start();
+    await expect(signedOut.store.getWebViewLease()).rejects.toThrow(/hazır değil/u);
+
+    let release!: (value: {
+      data: { session: ReturnType<typeof sessionFor> };
+      error: null;
+    }) => void;
+    const prepared = buildStore({
+      memberships: [membership(), membership({ choir_id: CHOIR_B, choir_name: 'Genova B' })],
+      activeChoirId: CHOIR_A,
+      initialSession: sessionFor(USER_ID, { access_token: jwt, expires_at: 1_001 }),
+    });
+    await prepared.store.start();
+    const pending = new Promise<{ data: { session: ReturnType<typeof sessionFor> }; error: null }>((resolve) => {
+      release = resolve;
+    });
+    prepared.gateway.refreshSession.mockImplementation(() => pending);
+    const lease = prepared.store.getWebViewLease({ nowSeconds: 1_000 });
+    await prepared.store.selectChoir(CHOIR_B);
+    release({
+      data: { session: sessionFor(USER_ID, { access_token: 'new.payload.signature', expires_at: 2_000 }) },
+      error: null,
+    });
+    await expect(lease).rejects.toThrow(/değişti/u);
   });
 });
 

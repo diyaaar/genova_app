@@ -57,6 +57,39 @@ jest.mock('expo-audio', () => {
   };
 });
 
+jest.mock('react-native-webview', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const methods = {
+    postMessage: jest.fn(),
+    goBack: jest.fn(),
+    stopLoading: jest.fn(),
+    reload: jest.fn(),
+  };
+  let latestProps: Record<string, unknown> | null = null;
+  const WebView = React.forwardRef((props: Record<string, unknown>, ref: React.Ref<unknown>) => {
+    latestProps = props;
+    React.useImperativeHandle(ref, () => methods);
+    return React.createElement(View, props);
+  });
+  return {
+    WebView,
+    __mockMethods: methods,
+    __getLatestProps: () => latestProps,
+  };
+});
+
+jest.mock('expo-crypto', () => {
+  let uuidCounter = 0;
+  return {
+    randomUUID: jest.fn(() => `00000000-0000-4000-8000-${String(++uuidCounter).padStart(12, '0')}`),
+    getRandomBytes: jest.fn((length: number) => Uint8Array.from(
+      { length },
+      (_value, index) => (index * 17 + uuidCounter) % 256,
+    )),
+  };
+});
+
 beforeEach(() => {
   resetTenantCacheRegistry();
 });

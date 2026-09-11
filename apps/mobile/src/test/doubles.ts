@@ -25,8 +25,13 @@ export function membership(overrides: Partial<ChoirMembershipOption> = {}): Choi
   };
 }
 
-export function sessionFor(userId: string = USER_ID): Session {
-  return { access_token: 'test-token', user: { id: userId } as User } as Session;
+export function sessionFor(userId: string = USER_ID, overrides: Partial<Session> = {}): Session {
+  return {
+    access_token: 'test-token',
+    expires_at: Math.floor(Date.now() / 1_000) + 3_600,
+    user: { id: userId } as User,
+    ...overrides,
+  } as Session;
 }
 
 export interface ClientDouble {
@@ -86,12 +91,14 @@ export interface GatewayDouble {
   unsubscribe: jest.Mock;
   signInWithPassword: jest.Mock;
   signOut: jest.Mock;
+  refreshSession: jest.Mock;
 }
 
 export function createGatewayDouble(options: {
   initialSession?: Session | null;
   signInError?: { message: string } | null;
   signOutRejects?: boolean;
+  refreshResponse?: { data: { session: Session | null }; error: { message: string } | null };
 } = {}): GatewayDouble {
   let callback: ((event: string, session: Session | null) => void) | null = null;
   const unsubscribe = jest.fn();
@@ -100,10 +107,15 @@ export function createGatewayDouble(options: {
     if (options.signOutRejects) throw new Error('network down');
     return { error: null };
   });
+  const refreshSession = jest.fn(async () => options.refreshResponse ?? ({
+    data: { session: sessionFor() },
+    error: null,
+  }));
 
   return {
     gateway: {
       getSession: async () => ({ data: { session: options.initialSession ?? null } }),
+      refreshSession,
       onAuthStateChange: (cb) => {
         callback = cb;
         return { data: { subscription: { unsubscribe } } };
@@ -115,6 +127,7 @@ export function createGatewayDouble(options: {
     unsubscribe,
     signInWithPassword,
     signOut,
+    refreshSession,
   };
 }
 

@@ -11,6 +11,7 @@ import type { NativeAudioSession } from '../repertoire/audio-contract';
 import type { NativeAudioSourceGateway } from '../repertoire/audio-source-gateway';
 import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
 import type { NativeScoreReaderGateway } from '../repertoire/reader-contract';
+import { NativeWebViewScreen } from '../webview/NativeWebViewScreen';
 import { registerTenantCache } from '../auth/tenant-cache';
 import { ChoirSelectScreen } from './ChoirSelectScreen';
 import { ShellScreen } from './ShellScreen';
@@ -30,6 +31,7 @@ interface ReadyShellProps {
   audioGateway?: NativeAudioSourceGateway;
   onSwitchChoir: () => void;
   onSignOut: () => void;
+  getWebViewLease: ReturnType<typeof useAuth>['getWebViewLease'];
 }
 
 function ReadyShellRoutes({
@@ -39,9 +41,11 @@ function ReadyShellRoutes({
   readerGateway,
   onSwitchChoir,
   onSignOut,
+  getWebViewLease,
 }: Omit<ReadyShellProps, 'audioGateway'>) {
   const playback = useAudioPlayback();
-  const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio'>('home');
+  const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio' | 'web'>('home');
+  const [webPath, setWebPath] = useState('/announcements');
 
   useEffect(() => {
     if (screen === 'audio' && !playback.session) setScreen('repertoire');
@@ -53,7 +57,17 @@ function ReadyShellRoutes({
   };
 
   let content;
-  if (screen === 'audio' && playback.session) {
+  if (screen === 'web') {
+    content = (
+      <NativeWebViewScreen
+        initialPath={webPath}
+        getLease={getWebViewLease}
+        onNativeRoute={(route) => setScreen(route === 'repertoire' ? 'repertoire' : 'home')}
+        onExit={() => setScreen('home')}
+        onSignOut={onSignOut}
+      />
+    );
+  } else if (screen === 'audio' && playback.session) {
     content = <AudioPlayerScreen onBack={() => setScreen('repertoire')} />;
   } else if (screen !== 'home') {
     content = (
@@ -76,6 +90,10 @@ function ReadyShellRoutes({
         activeChoir={activeChoir}
         canSwitchChoir={canSwitchChoir}
         onOpenRepertoire={() => setScreen('repertoire')}
+        onOpenWeb={(path) => {
+          setWebPath(path);
+          setScreen('web');
+        }}
         onSwitchChoir={onSwitchChoir}
         onSignOut={onSignOut}
       />
@@ -189,6 +207,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway }: {
           audioGateway={audioGateway}
           onSwitchChoir={() => setSwitching(true)}
           onSignOut={() => void auth.signOut()}
+          getWebViewLease={auth.getWebViewLease}
         />
       </>
     );

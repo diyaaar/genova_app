@@ -4,7 +4,7 @@ import type { ChoirContextClient } from '@shared/choir-context-core';
 import { AuthStore } from './auth-store';
 import { createChoirPreferenceStore } from './choir-preference';
 import { getGenovaClient, secureKeyValueStore } from './supabase-client';
-import type { AuthGateway, AuthState, ChoirPreferenceStore } from './types';
+import type { AuthGateway, AuthState, ChoirPreferenceStore, NativeWebViewLease } from './types';
 
 /**
  * Thin React binding around `AuthStore`. It owns no rules of its own: every decision
@@ -23,6 +23,7 @@ interface AuthContextValue extends AuthState {
   signOut: () => Promise<void>;
   selectChoir: (choirId: string) => Promise<void>;
   refresh: () => Promise<void>;
+  getWebViewLease: () => Promise<NativeWebViewLease>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -37,11 +38,14 @@ export interface AuthProviderProps {
 
 export function AuthProvider({ children, store, client, preferences }: AuthProviderProps) {
   const storeRef = useRef<AuthStore | null>(null);
+  const clientRef = useRef<SupabaseClientLike | null>(null);
   if (!storeRef.current) {
     if (store) {
       storeRef.current = store;
+      clientRef.current = client ?? null;
     } else {
       const supabase = client ?? (getGenovaClient() as unknown as SupabaseClientLike);
+      clientRef.current = supabase;
       storeRef.current = new AuthStore({
         client: supabase,
         auth: supabase.auth,
@@ -64,14 +68,14 @@ export function AuthProvider({ children, store, client, preferences }: AuthProvi
   // Supabase only refreshes tokens while the app is in the foreground.
   useEffect(() => {
     const handleChange = (status: AppStateStatus) => {
-      const auth = client?.auth;
+      const auth = clientRef.current?.auth;
       if (!auth?.startAutoRefresh || !auth.stopAutoRefresh) return;
       if (status === 'active') void auth.startAutoRefresh();
       else void auth.stopAutoRefresh();
     };
     const subscription = AppState.addEventListener('change', handleChange);
     return () => subscription.remove();
-  }, [client]);
+  }, []);
 
   const value = useMemo<AuthContextValue>(() => ({
     ...state,
@@ -79,6 +83,7 @@ export function AuthProvider({ children, store, client, preferences }: AuthProvi
     signOut: () => authStore.signOut(),
     selectChoir: (choirId) => authStore.selectChoir(choirId),
     refresh: () => authStore.refresh(),
+    getWebViewLease: () => authStore.getWebViewLease(),
   }), [authStore, state]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

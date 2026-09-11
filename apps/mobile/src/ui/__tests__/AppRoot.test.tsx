@@ -122,6 +122,18 @@ describe('shell routing', () => {
     expect(await screen.findByTestId('shell-screen')).toBeTruthy();
   });
 
+  it('opens a permanent web-owned destination behind the native locked shell', async () => {
+    await renderWithStore({});
+    await screen.findByTestId('shell-screen');
+
+    await fireEvent.press(screen.getByTestId('shell-open-web-announcements'));
+
+    expect(await screen.findByTestId('native-webview-screen')).toBeTruthy();
+    expect(screen.getByTestId('permanent-webview')).toBeTruthy();
+    expect(screen.getByTestId('webview-locked')).toBeTruthy();
+    expect(screen.queryByTestId('shell-screen')).toBeNull();
+  });
+
   it('keeps one audio session through full player, repertoire and home mini-player navigation', async () => {
     const audioFile: import('@shared/repertuvar/catalog-core').RepertoireFile = {
       id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',

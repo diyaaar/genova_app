@@ -8,7 +8,7 @@ import {
   type ChoirMembershipOption,
 } from '@shared/choir-context-core';
 import { clearTenantCaches } from './tenant-cache';
-import type { AuthGateway, AuthState, ChoirPreferenceStore } from './types';
+import type { AuthGateway, AuthState, ChoirPreferenceStore, NativeWebViewLease } from './types';
 
 /**
  * Framework-free session and active-choir state machine.
@@ -45,6 +45,7 @@ export class AuthStore {
   private requestVersion = 0;
   private currentUserId: string | null = null;
   private switchInFlight = false;
+  private bridgeLeaseInFlight: Promise<NativeWebViewLease> | null = null;
 
   constructor(private readonly deps: AuthStoreDependencies) {}
 
@@ -83,6 +84,61 @@ export class AuthStore {
     this.subscription?.unsubscribe();
     this.subscription = null;
     this.listeners.clear();
+  }
+
+  /**
+   * Returns the only credential shape allowed to cross the permanent-WebView bridge.
+   * The native Supabase client remains the refresh-token owner and concurrent renewals
+   * share one refresh operation.
+   */
+  getWebViewLease(options: { nowSeconds?: number; safetyWindowSeconds?: number } = {}): Promise<NativeWebViewLease> {
+    if (this.bridgeLeaseInFlight) return this.bridgeLeaseInFlight;
+    const task = this.resolveWebViewLease(options).finally(() => {
+      if (this.bridgeLeaseInFlight === task) this.bridgeLeaseInFlight = null;
+    });
+    this.bridgeLeaseInFlight = task;
+    return task;
+  }
+
+  private async resolveWebViewLease({
+    nowSeconds = Math.floor(Date.now() / 1_000),
+    safetyWindowSeconds = 60,
+  }: { nowSeconds?: number; safetyWindowSeconds?: number }): Promise<NativeWebViewLease> {
+    const state = this.state;
+    const activeChoir = state.activeChoir;
+    const userId = state.user?.id ?? null;
+    if (state.phase !== 'ready' || !userId || userId !== this.currentUserId || !activeChoir
+      || !activeChoir.is_current || !activeChoir.member_is_active) {
+      throw new Error('Web görünümü için etkin koro oturumu hazır değil.');
+    }
+
+    let session = state.session;
+    const expiry = session?.expires_at;
+    if (!session?.access_token || !Number.isSafeInteger(expiry)
+      || (expiry as number) <= nowSeconds + safetyWindowSeconds) {
+      const refreshed = await this.deps.auth.refreshSession();
+      if (refreshed.error || !refreshed.data.session) {
+        throw new Error('Web görünümü oturumu yenilenemedi.');
+      }
+      session = refreshed.data.session;
+    }
+
+    if (this.currentUserId !== userId || this.state.activeChoir?.choir_id !== activeChoir.choir_id
+      || this.state.activeChoir?.member_id !== activeChoir.member_id) {
+      throw new Error('Web görünümü hazırlanırken koro oturumu değişti.');
+    }
+    if (session.user.id !== userId || !session.access_token || !Number.isSafeInteger(session.expires_at)
+      || (session.expires_at as number) <= nowSeconds + safetyWindowSeconds) {
+      throw new Error('Web görünümü için geçerli oturum bulunamadı.');
+    }
+
+    return Object.freeze({
+      accessToken: session.access_token,
+      expiresAt: session.expires_at as number,
+      userId,
+      choirId: activeChoir.choir_id,
+      memberId: activeChoir.member_id,
+    });
   }
 
   /**

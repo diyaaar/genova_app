@@ -18,11 +18,24 @@ export interface SessionStorage {
 /** The only auth operations this app performs. Keeps the store testable without a live client. */
 export interface AuthGateway {
   getSession(): Promise<{ data: { session: Session | null } }>;
+  refreshSession(): Promise<{
+    data: { session: Session | null };
+    error: { message: string } | null;
+  }>;
   onAuthStateChange(
     callback: (event: string, session: Session | null) => void,
   ): { data: { subscription: { unsubscribe: () => void } } };
   signInWithPassword(credentials: { email: string; password: string }): Promise<{ error: { message: string } | null }>;
   signOut(): Promise<{ error: { message: string } | null }>;
+}
+
+/** Short-lived context that may cross to the challenged embedded web page. */
+export interface NativeWebViewLease {
+  accessToken: string;
+  expiresAt: number;
+  userId: string;
+  choirId: string;
+  memberId: string;
 }
 
 export interface ChoirPreferenceStore {
