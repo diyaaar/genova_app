@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-11 after the 031 native permanent-WebView shell acceptance; originally prepared under
+Updated 2026-09-12 after the 032 WebView platform-capability acceptance; originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -33,7 +33,7 @@ Deferral from a release candidate needs an explicit owner decision and remains v
 ## Baseline and evidence ownership
 
 Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this update:
-`main / dc25938`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
+`main / b0724f0`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
 snapshot facts, not commands to reset a future checkout. Historical test details belong in their
 briefs, not in a second copy here.
 
@@ -94,6 +94,15 @@ briefs, not in a second copy here.
   Both local Release apps passed expiry renewal, real WAV playback, corrupt/unsupported failure and
   tenant teardown; [visual evidence](evidence/027-native-audio-shell-mini-player/README.md) is
   retained. Background/interruption/lock-screen/audio-route and hardware remain B5.
+- [028](briefs/028-permanent-webview-bridge-inventory.md) and the
+  [bridge contract](webview-bridge-contract.md) fixed all nine permanent route families, native-only
+  refresh ownership and the challenged memory-only access lease. [029](briefs/029-permanent-webview-policy-core.md)
+  accepted the shared pure policy at `4289da4`.
+- [030](briefs/030-web-embedded-adapter.md) accepted the dormant web peer at `c7d09d3`; [031](briefs/031-native-webview-shell.md)
+  accepted the native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted
+  password, clipboard, constrained image and ephemeral protected-file capabilities at `fa2e4b7`.
+  These are separately accepted local slices. Package 033 still owns the composed web/native Release
+  runtime; hosted/provider/real-account/hardware/release acceptance is not inferred.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
 - Known account risk remains under decision #17; its acceptance is not remediation. A historical
@@ -296,7 +305,10 @@ contract without product changes. Package 029 then accepted the shared framework
 route/message/replay/redaction policy at `4289da4` under root and mobile pure tests. Package 030 then
 accepted the dormant web adapter at `c7d09d3`: locked bootstrap/proof, memory-only bearer, renewal
 freeze, synchronous clear, browser parity, nine-route shell suppression and navigation/capability
-seams passed the 55-file/462-test root gate and production build. **The next bounded ready package is
-031: install and build the Expo-compatible native WebView shell, implement the native challenge/state
-machine plus route/external/back/theme handlers, and retain redacted diagnostics.** 013–030's historical local
-acceptance, 004/010 open criteria and the postponed hardware pilot remain unchanged.
+seams passed the 55-file/462-test root gate and production build. Package 031 accepted the native
+challenge/state machine, route/external/back/theme shell at `0217ac8`; package 032 accepted the
+password, clipboard, constrained image and ephemeral-file capabilities at `fa2e4b7`. **The next
+bounded ready package is 033: serve the production-type web build locally and accept the composed
+native session, all nine permanent routes, native exits and capability lifecycle on both local
+Release platforms.** 013–032's historical local acceptance, 004/010 open criteria and the postponed
+hardware pilot remain unchanged.

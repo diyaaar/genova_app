@@ -4,6 +4,11 @@ Date: 2026-09-10. Inventory revision: brief 028. This document is the C1 design 
 embedding the routes that `MIGRATION.md` assigns permanently to the web client. It is not runtime,
 hosted, device, dependency-compatibility or release evidence.
 
+Progress update: 2026-09-12. Packages 029–032 are accepted for their separately bounded local
+policy, dormant web adapter, native shell and platform-capability layers. Package 033 still owns the
+first composed web/native Release runtime. Hosted, real-provider/account, hardware and release proof
+remain separate.
+
 ## Evidence legend and result
 
 - **Verified project fact** means the statement was traced to the current repository at the 028
@@ -367,11 +372,11 @@ complete while a required preservation row or runtime layer is FAIL/NOT RUN.
 | Layer | Required proof | Current status |
 |---|---|---|
 | shared policy unit | valid/invalid route, URL, query, envelope, size, version, duplicate, epoch and redaction vectors | **PASS locally — [029](briefs/029-permanent-webview-policy-core.md), `4289da4`; pure policy only** |
-| web unit/integration | locked-before-proof, explicit-token user/choir match, renewal, teardown, all auth call-site adapters and nine route families | **NOT RUN** |
-| regular browser regression | existing login, choir selection/switch, all permanent writes, rich links and browser back remain unchanged | **NOT RUN** |
+| web unit/integration | locked-before-proof, explicit-token user/choir match, renewal, teardown, all auth call-site adapters and nine route families | **PASS locally — [030](briefs/030-web-embedded-adapter.md), `c7d09d3`; Vitest/jsdom/build only, no composed WebView or provider** |
+| regular browser regression | existing login, choir selection/switch, all permanent writes, rich links and browser back remain unchanged | **PASS locally in focused jsdom/root regression — [030](briefs/030-web-embedded-adapter.md); real browser E2E remains NOT RUN** |
 | CSP/security | release header observed; no unsafe credential sink, URL/query/log/analytics/storage/service-worker token; popup/origin/message attacks fail closed | **NOT RUN** |
-| native component | dependency compatibility, initial/subsequent navigation, challenge, renewal, epoch teardown, back/theme/external/error/process restart | **NOT RUN** |
-| platform capability | gallery upload, cancellation/refusal, clipboard/manual fallback, protected file view/download/expiry and native password sheet | **NOT RUN** |
+| native component | dependency compatibility, initial/subsequent navigation, challenge, renewal, epoch teardown, back/theme/external/error/process restart | **PASS locally — [031](briefs/031-native-webview-shell.md), `0217ac8`; unit/build only, before composition** |
+| platform capability | gallery upload, cancellation/refusal, clipboard/manual fallback, protected file view/download/expiry and native password sheet | **PASS locally — [032](briefs/032-webview-platform-capabilities.md), `fa2e4b7`; guarded simulator/emulator runtime, no real account/provider/hardware** |
 | composed local Release | every permanent route and native exit on iOS simulator plus Android emulator against production-type local web and synthetic tenants | **NOT RUN** |
 | hosted | deployed web capability/CSP and authorized hosted session/RLS/Realtime/API behavior on exact domain | **NOT RUN — separate authority** |
 | hardware/accessibility | approved devices, file providers/camera policy, keyboard, VoiceOver/TalkBack, process/background behavior | **NOT RUN — postponed/separate authority** |

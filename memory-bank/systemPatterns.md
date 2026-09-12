@@ -1,6 +1,6 @@
 # Sistem desenleri ve sınırlar
 
-Son karşılaştırma: 11 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
+Son karşılaştırma: 12 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
 
 - Web: Next.js istemci/sunucu; mevcut API'ler ekran göçüne kadar korunur.
   Native'e taşınan ekranın yeni sunucu mantığı Supabase Edge Function'a gider;
@@ -71,10 +71,15 @@ Son karşılaştırma: 11 Eylül 2026. Mimari hedef ile uygulanmış kodu ayır.
   lease, holds a locked cover until navigation proof, coalesces renewal, invalidates tenant epochs,
   and owns route/external/back/theme behavior. The WebView prop accepts every scheme only so the
   shared callback can classify it before React Native WebView performs automatic external linking;
-  the shared parser remains the exact trust allowlist. Password, clipboard and protected-file side
-  effects stay unavailable until 032, and 033 owns composed runtime acceptance. See
-  [the contract](../docs/webview-bridge-contract.md), [030](../docs/briefs/030-web-embedded-adapter.md)
-  and [031](../docs/briefs/031-native-webview-shell.md).
+  the shared parser remains the exact trust allowlist. Package 032 implements the bounded native
+  capability layer at `fa2e4b7`: passwords stay in a native reauth/update sheet; the exact validated
+  invitation URL reaches only the write-only clipboard adapter; permanent web inputs allow one
+  JPEG/PNG/GIF/WebP up to 5 MiB without Genova camera permission; protected passive files are
+  canonicalized, signature/size checked, explicitly shared from an ephemeral cache and removed on
+  every outcome. Package 033 still owns composed runtime acceptance. See
+  [the contract](../docs/webview-bridge-contract.md), [030](../docs/briefs/030-web-embedded-adapter.md),
+  [031](../docs/briefs/031-native-webview-shell.md) and
+  [032](../docs/briefs/032-webview-platform-capabilities.md).
 
 ## Tek doğru kaynak dağılımı
 
