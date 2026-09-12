@@ -398,22 +398,28 @@ function isInviteLink(value: unknown, policy: AppRoutePolicy): value is string {
   }
 }
 
-function isSafeFileRequestUrl(value: unknown, policy: AppRoutePolicy): value is string {
-  if (typeof value !== 'string' || value.length === 0 || value.length > MAX_APP_URL_CHARS) return false;
-  if (WHITESPACE_OR_CONTROL_PATTERN.test(value) || value.includes('\\') || value.startsWith('//')) return false;
+/** Revalidates a protected-file capability URL and returns its absolute canonical form. */
+export function canonicalizeBridgeFileRequestUrl(value: unknown, policy: AppRoutePolicy = {}): string | null {
+  if (typeof value !== 'string' || value.length === 0 || value.length > MAX_APP_URL_CHARS) return null;
+  if (WHITESPACE_OR_CONTROL_PATTERN.test(value) || value.includes('\\') || value.startsWith('//')) return null;
   const origin = configuredOrigin(policy);
-  if (!origin) return false;
+  if (!origin) return null;
   try {
     const url = new URL(value, origin);
     const isRelative = value.startsWith('/');
     const sameOrigin = url.origin === origin.origin;
-    if (url.username || url.password || url.hash) return false;
-    if (isRelative) return sameOrigin;
-    if (sameOrigin) return explicitPort(value) === explicitPort(policy.appOrigin ?? APP_WEB_ORIGIN);
-    return url.protocol === 'https:' && explicitPort(value) === null;
+    if (url.username || url.password || url.hash) return null;
+    if (isRelative && !sameOrigin) return null;
+    if (sameOrigin && explicitPort(value) !== explicitPort(policy.appOrigin ?? APP_WEB_ORIGIN)) return null;
+    if (!sameOrigin && (url.protocol !== 'https:' || explicitPort(value) !== null)) return null;
+    return url.toString();
   } catch {
-    return false;
+    return null;
   }
+}
+
+function isSafeFileRequestUrl(value: unknown, policy: AppRoutePolicy): value is string {
+  return canonicalizeBridgeFileRequestUrl(value, policy) !== null;
 }
 
 function validPayload(type: BridgeMessageType, payload: Record<string, unknown>, policy: AppRoutePolicy): boolean {

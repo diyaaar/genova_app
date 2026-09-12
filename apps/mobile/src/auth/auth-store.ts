@@ -8,7 +8,13 @@ import {
   type ChoirMembershipOption,
 } from '@shared/choir-context-core';
 import { clearTenantCaches } from './tenant-cache';
-import type { AuthGateway, AuthState, ChoirPreferenceStore, NativeWebViewLease } from './types';
+import type {
+  AuthGateway,
+  AuthState,
+  ChoirPreferenceStore,
+  NativeWebViewLease,
+  PasswordChangeResult,
+} from './types';
 
 /**
  * Framework-free session and active-choir state machine.
@@ -46,6 +52,7 @@ export class AuthStore {
   private currentUserId: string | null = null;
   private switchInFlight = false;
   private bridgeLeaseInFlight: Promise<NativeWebViewLease> | null = null;
+  private passwordChangeInFlight = false;
 
   constructor(private readonly deps: AuthStoreDependencies) {}
 
@@ -72,8 +79,10 @@ export class AuthStore {
   /** Loads any stored session and follows every later sign-in, refresh and sign-out. */
   async start(): Promise<void> {
     const { data } = await this.deps.auth.getSession();
-    const { data: listener } = this.deps.auth.onAuthStateChange((_event, session) => {
-      void this.applySession(session);
+    const { data: listener } = this.deps.auth.onAuthStateChange((event, session) => {
+      void this.applySession(session, {
+        preserveReady: event === 'SIGNED_IN' || event === 'USER_UPDATED',
+      });
     });
     this.subscription = listener.subscription;
     await this.applySession(data.session);
@@ -145,7 +154,7 @@ export class AuthStore {
    * A null session — including one produced by a refresh that failed — drops straight to
    * signed-out with the caches and the choir hint cleared.
    */
-  private async applySession(session: Session | null): Promise<void> {
+  private async applySession(session: Session | null, options: { preserveReady?: boolean } = {}): Promise<void> {
     const nextUserId = session?.user?.id ?? null;
     const previousUserId = this.currentUserId;
     this.currentUserId = nextUserId;
@@ -155,6 +164,12 @@ export class AuthStore {
       if (previousUserId) await this.deps.preferences.clear(previousUserId);
       await this.clearCaches();
       this.setState({ ...SIGNED_OUT_STATE });
+      return;
+    }
+
+    if (options.preserveReady && previousUserId === nextUserId && this.state.phase === 'ready'
+      && this.state.activeChoir?.is_current && this.state.activeChoir.member_is_active) {
+      this.setState({ session, user: session!.user, errorMessage: null });
       return;
     }
 
@@ -237,6 +252,57 @@ export class AuthStore {
     const { error } = await this.deps.auth.signInWithPassword({ email, password });
     if (error) return { error: error.message };
     return { error: null };
+  }
+
+  /** Reauthenticates and changes the current password without moving any field through the WebView. */
+  async changePassword(oldPassword: string, newPassword: string, confirmation: string): Promise<PasswordChangeResult> {
+    if (!oldPassword || !newPassword || !confirmation) {
+      return { ok: false, message: 'Lütfen tüm şifre alanlarını doldurun.' };
+    }
+    if (newPassword.length < 8) {
+      return { ok: false, message: 'Yeni şifre en az 8 karakter olmalıdır.' };
+    }
+    if (newPassword !== confirmation) {
+      return { ok: false, message: 'Yeni şifre ve tekrar şifresi eşleşmiyor.' };
+    }
+    if (oldPassword === newPassword) {
+      return { ok: false, message: 'Yeni şifre eski şifre ile aynı olamaz.' };
+    }
+    if (this.passwordChangeInFlight) {
+      return { ok: false, message: 'Şifre değişikliği zaten sürüyor.' };
+    }
+
+    const state = this.state;
+    const userId = state.user?.id ?? null;
+    const email = state.user?.email ?? null;
+    const choirId = state.activeChoir?.choir_id ?? null;
+    const memberId = state.activeChoir?.member_id ?? null;
+    if (state.phase !== 'ready' || !userId || !email || !choirId || !memberId) {
+      return { ok: false, message: 'Şifre değişikliği için oturum hazır değil.' };
+    }
+
+    this.passwordChangeInFlight = true;
+    try {
+      const { error: reauthError } = await this.deps.auth.signInWithPassword({
+        email,
+        password: oldPassword,
+      });
+      if (reauthError) return { ok: false, message: 'Mevcut şifre doğru değil.' };
+
+      if (this.currentUserId !== userId || this.state.phase !== 'ready'
+        || this.state.activeChoir?.choir_id !== choirId
+        || this.state.activeChoir?.member_id !== memberId) {
+        return { ok: false, message: 'Şifre değişikliği sırasında koro oturumu değişti.' };
+      }
+
+      const { error: updateError } = await this.deps.auth.updateUser({ password: newPassword });
+      if (updateError) return { ok: false, message: 'Şifre şu anda güncellenemedi. Tekrar deneyin.' };
+      return { ok: true };
+    } catch {
+      return { ok: false, message: 'Şifre şu anda güncellenemedi. Tekrar deneyin.' };
+    } finally {
+      this.passwordChangeInFlight = false;
+    }
   }
 
   /**

@@ -29,7 +29,7 @@ export function sessionFor(userId: string = USER_ID, overrides: Partial<Session>
   return {
     access_token: 'test-token',
     expires_at: Math.floor(Date.now() / 1_000) + 3_600,
-    user: { id: userId } as User,
+    user: { id: userId, email: 'korist@example.test' } as User,
     ...overrides,
   } as Session;
 }
@@ -87,11 +87,12 @@ export function createClientDouble(options: {
 
 export interface GatewayDouble {
   gateway: AuthGateway;
-  emit: (session: Session | null) => void;
+  emit: (session: Session | null, event?: string) => void;
   unsubscribe: jest.Mock;
   signInWithPassword: jest.Mock;
   signOut: jest.Mock;
   refreshSession: jest.Mock;
+  updateUser: jest.Mock;
 }
 
 export function createGatewayDouble(options: {
@@ -99,6 +100,7 @@ export function createGatewayDouble(options: {
   signInError?: { message: string } | null;
   signOutRejects?: boolean;
   refreshResponse?: { data: { session: Session | null }; error: { message: string } | null };
+  updateError?: { message: string } | null;
 } = {}): GatewayDouble {
   let callback: ((event: string, session: Session | null) => void) | null = null;
   const unsubscribe = jest.fn();
@@ -111,6 +113,7 @@ export function createGatewayDouble(options: {
     data: { session: sessionFor() },
     error: null,
   }));
+  const updateUser = jest.fn(async () => ({ error: options.updateError ?? null }));
 
   return {
     gateway: {
@@ -121,13 +124,15 @@ export function createGatewayDouble(options: {
         return { data: { subscription: { unsubscribe } } };
       },
       signInWithPassword,
+      updateUser,
       signOut,
     } as AuthGateway,
-    emit: (session) => callback?.(session ? 'TOKEN_REFRESHED' : 'SIGNED_OUT', session),
+    emit: (session, event) => callback?.(event ?? (session ? 'TOKEN_REFRESHED' : 'SIGNED_OUT'), session),
     unsubscribe,
     signInWithPassword,
     signOut,
     refreshSession,
+    updateUser,
   };
 }
 

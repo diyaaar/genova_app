@@ -315,6 +315,23 @@ describe('EmbeddedWebBridgeProvider', () => {
     expect(screen.queryByText('tenant child')).not.toBeInTheDocument();
   });
 
+  it('maps native clipboard and file results to safe user feedback', async () => {
+    const postMessage = vi.fn();
+    mount({ environment: embeddedEnvironment(postMessage), verifyContext: vi.fn(async (value) => ({ ok: true, value })) });
+    await hydrate(postMessage);
+
+    act(() => dispatchNative(incoming('command.result', {
+      requestId: 'request_1234567890abcdef', ok: false, code: 'clipboard-write-failed',
+    }, 'result_clipboard_12345')));
+    expect(screen.getByRole('status')).toHaveTextContent('Bağlantıyı seçip elle kopyalayabilirsiniz.');
+
+    act(() => dispatchNative(incoming('command.result', {
+      requestId: 'request_1234567890abcdef', ok: false, code: 'file-action-failed',
+    }, 'result_file_123456789')));
+    expect(screen.getByRole('status')).toHaveTextContent('Dosya güvenle açılamadı.');
+    expect(screen.getByRole('status')).not.toHaveTextContent('request_1234567890abcdef');
+  });
+
   it('intercepts native, external and denied links while preserving permanent web links', async () => {
     const postMessage = vi.fn();
     const navigateWithinWeb = vi.fn();
@@ -329,6 +346,11 @@ describe('EmbeddedWebBridgeProvider', () => {
           <a href="https://app.genesinovachoir.com/profil" target="_blank">popup web link</a>
           <a href="https://app.genesinovachoir.com/repertuvar">native link</a>
           <a href="https://example.com/resource?q=1" target="_blank">external link</a>
+          <a
+            href="https://app.genesinovachoir.com/api/drive-file/file_1?token=signed"
+            data-genova-file-name="Tenor.pdf"
+            data-genova-mime-type="application/pdf"
+          >protected file</a>
           <a href="http://bad.example/path">bad link</a>
         </>
       ),
@@ -344,11 +366,20 @@ describe('EmbeddedWebBridgeProvider', () => {
     expect(navigateWithinWeb).toHaveBeenCalledWith('/profil');
     fireEvent.click(screen.getByRole('link', { name: 'native link' }));
     fireEvent.click(screen.getByRole('link', { name: 'external link' }), { metaKey: true });
+    fireEvent.click(screen.getByRole('link', { name: 'protected file' }));
     fireEvent.click(screen.getByRole('link', { name: 'bad link' }));
 
     const messages = postMessage.mock.calls.map(([raw]) => JSON.parse(raw));
-    expect(messages.map((message) => message.type)).toEqual(['navigation.native.request', 'navigation.external.request']);
+    expect(messages.map((message) => message.type)).toEqual([
+      'navigation.native.request', 'navigation.external.request', 'file.open.request',
+    ]);
     expect(messages[1].payload.url).toBe('https://example.com/resource?q=1');
+    expect(messages[2].payload).toEqual({
+      url: 'https://app.genesinovachoir.com/api/drive-file/file_1?token=signed',
+      disposition: 'view',
+      fileName: 'Tenor.pdf',
+      mimeType: 'application/pdf',
+    });
     expect(screen.getByRole('status')).toHaveTextContent('güvenli olmadığı için');
     expect(screen.getByRole('status').textContent).not.toContain('bad.example');
   });

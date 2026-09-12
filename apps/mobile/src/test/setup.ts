@@ -90,6 +90,15 @@ jest.mock('expo-crypto', () => {
   };
 });
 
+jest.mock('expo-clipboard', () => ({
+  setStringAsync: jest.fn(async () => true),
+}));
+
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: jest.fn(async () => true),
+  shareAsync: jest.fn(async () => {}),
+}));
+
 beforeEach(() => {
   resetTenantCacheRegistry();
 });

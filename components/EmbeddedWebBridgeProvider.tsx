@@ -128,6 +128,15 @@ function isProtectedFileAnchor(anchor: HTMLAnchorElement, url: URL): boolean {
     || url.pathname.includes('/functions/v1/repertoire-file');
 }
 
+function commandResultMessage(ok: boolean, code: string): string | null {
+  if (code === 'clipboard-written') return 'Bağlantı panoya kopyalandı.';
+  if (code === 'clipboard-write-failed') return 'Pano kullanılamadı. Bağlantıyı seçip elle kopyalayabilirsiniz.';
+  if (code === 'file-action-failed' || code === 'file-not-supported') return 'Dosya güvenle açılamadı. Tekrar deneyin.';
+  if (code === 'file-operation-busy') return 'Önce açık dosya işlemini tamamlayın.';
+  if (ok || code === 'file-action-cancelled') return null;
+  return `İşlem tamamlanamadı (${code}).`;
+}
+
 function errorCopy(code: string) {
   switch (code) {
     case 'context-timeout': return 'Güvenli oturum zamanında doğrulanamadı.';
@@ -453,7 +462,7 @@ export function EmbeddedWebBridgeProvider({
         return;
       }
       if (message.type === 'command.result') {
-        setStatusMessage(message.payload.ok ? null : `İşlem tamamlanamadı (${message.payload.code}).`);
+        setStatusMessage(commandResultMessage(message.payload.ok, message.payload.code));
         return;
       }
       if (message.type === 'bridge.error') clearContext('error', message.payload.code);
@@ -562,7 +571,10 @@ export function EmbeddedWebBridgeProvider({
         requestFileOpen({
           url: url.href,
           disposition: anchor.hasAttribute('download') ? 'download' : 'view',
-          ...(anchor.download ? { fileName: anchor.download } : {}),
+          ...(anchor.download || anchor.dataset.genovaFileName
+            ? { fileName: anchor.download || anchor.dataset.genovaFileName }
+            : {}),
+          ...(anchor.dataset.genovaMimeType ? { mimeType: anchor.dataset.genovaMimeType } : {}),
         });
         return;
       }

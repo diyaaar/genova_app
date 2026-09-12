@@ -25,6 +25,7 @@ function buildStore(options: {
     data: { session: ReturnType<typeof sessionFor> | null };
     error: { message: string } | null;
   };
+  updateError?: { message: string } | null;
 } = {}) {
   const calls: string[] = [];
   const clientDouble = createClientDouble({
@@ -39,6 +40,7 @@ function buildStore(options: {
     signInError: options.signInError ?? null,
     signOutRejects: options.signOutRejects,
     refreshResponse: options.refreshResponse,
+    updateError: options.updateError,
   });
   const preferences = createPreferenceDouble(options.preferences);
   const clearCaches = jest.fn(async () => {
@@ -199,6 +201,90 @@ describe('permanent WebView lease', () => {
       error: null,
     });
     await expect(lease).rejects.toThrow(/değişti/u);
+  });
+});
+
+describe('native password change', () => {
+  it('keeps an already proved tenant ready for same-user reauth and user-update events', async () => {
+    const { store, gateway, calls, clearCaches } = buildStore({ activeChoirId: CHOIR_A });
+    await store.start();
+    calls.length = 0;
+    clearCaches.mockClear();
+
+    gateway.emit(sessionFor(USER_ID, { access_token: 'reauth-token' }), 'SIGNED_IN');
+    gateway.emit(sessionFor(USER_ID, { access_token: 'updated-token' }), 'USER_UPDATED');
+    await Promise.resolve();
+
+    expect(store.getState()).toMatchObject({ phase: 'ready', activeChoir: { choir_id: CHOIR_A } });
+    expect(store.getState().session?.access_token).toBe('updated-token');
+    expect(calls).toEqual([]);
+    expect(clearCaches).not.toHaveBeenCalled();
+  });
+
+  it('preserves the required validations before any auth call', async () => {
+    const { store, gateway } = buildStore({ activeChoirId: CHOIR_A });
+    await store.start();
+
+    await expect(store.changePassword('', 'new-password', 'new-password')).resolves.toEqual({
+      ok: false, message: 'Lütfen tüm şifre alanlarını doldurun.',
+    });
+    await expect(store.changePassword('old-password', 'short', 'short')).resolves.toEqual({
+      ok: false, message: 'Yeni şifre en az 8 karakter olmalıdır.',
+    });
+    await expect(store.changePassword('old-password', 'new-password', 'different')).resolves.toEqual({
+      ok: false, message: 'Yeni şifre ve tekrar şifresi eşleşmiyor.',
+    });
+    await expect(store.changePassword('same-password', 'same-password', 'same-password')).resolves.toEqual({
+      ok: false, message: 'Yeni şifre eski şifre ile aynı olamaz.',
+    });
+    expect(gateway.signInWithPassword).not.toHaveBeenCalled();
+    expect(gateway.updateUser).not.toHaveBeenCalled();
+  });
+
+  it('reauthenticates the current email before updating and keeps provider errors bounded', async () => {
+    const prepared = buildStore({ activeChoirId: CHOIR_A });
+    await prepared.store.start();
+
+    await expect(prepared.store.changePassword('old-password', 'new-password', 'new-password')).resolves.toEqual({ ok: true });
+    expect(prepared.gateway.signInWithPassword).toHaveBeenCalledWith({
+      email: 'korist@example.test', password: 'old-password',
+    });
+    expect(prepared.gateway.updateUser).toHaveBeenCalledWith({ password: 'new-password' });
+
+    const wrong = buildStore({ activeChoirId: CHOIR_A, signInError: { message: 'provider credential detail' } });
+    await wrong.store.start();
+    await expect(wrong.store.changePassword('wrong-password', 'new-password', 'new-password')).resolves.toEqual({
+      ok: false, message: 'Mevcut şifre doğru değil.',
+    });
+    expect(wrong.gateway.updateUser).not.toHaveBeenCalled();
+
+    const updateFailure = buildStore({ activeChoirId: CHOIR_A, updateError: { message: 'raw provider detail' } });
+    await updateFailure.store.start();
+    const result = await updateFailure.store.changePassword('old-password', 'new-password', 'new-password');
+    expect(result).toEqual({ ok: false, message: 'Şifre şu anda güncellenemedi. Tekrar deneyin.' });
+    expect(JSON.stringify(result)).not.toContain('raw provider detail');
+  });
+
+  it('refuses duplicate work and a tenant change before update', async () => {
+    let release!: (value: { error: null }) => void;
+    const pending = new Promise<{ error: null }>((resolve) => { release = resolve; });
+    const prepared = buildStore({
+      memberships: [membership(), membership({ choir_id: CHOIR_B, choir_name: 'Genova B' })],
+      activeChoirId: CHOIR_A,
+    });
+    await prepared.store.start();
+    prepared.gateway.signInWithPassword.mockImplementation(() => pending);
+
+    const first = prepared.store.changePassword('old-password', 'new-password', 'new-password');
+    await expect(prepared.store.changePassword('old-password', 'new-password', 'new-password')).resolves.toEqual({
+      ok: false, message: 'Şifre değişikliği zaten sürüyor.',
+    });
+    await prepared.store.selectChoir(CHOIR_B);
+    release({ error: null });
+    await expect(first).resolves.toEqual({
+      ok: false, message: 'Şifre değişikliği sırasında koro oturumu değişti.',
+    });
+    expect(prepared.gateway.updateUser).not.toHaveBeenCalled();
   });
 });
 

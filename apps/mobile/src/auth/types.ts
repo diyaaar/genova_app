@@ -26,8 +26,13 @@ export interface AuthGateway {
     callback: (event: string, session: Session | null) => void,
   ): { data: { subscription: { unsubscribe: () => void } } };
   signInWithPassword(credentials: { email: string; password: string }): Promise<{ error: { message: string } | null }>;
+  updateUser(attributes: { password: string }): Promise<{ error: { message: string } | null }>;
   signOut(): Promise<{ error: { message: string } | null }>;
 }
+
+export type PasswordChangeResult =
+  | { ok: true }
+  | { ok: false; message: string };
 
 /** Short-lived context that may cross to the challenged embedded web page. */
 export interface NativeWebViewLease {

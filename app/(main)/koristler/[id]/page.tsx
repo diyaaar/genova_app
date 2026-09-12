@@ -353,6 +353,8 @@ function HomeworkCard({ item, memberId }: { item: PerformanceHomeworkEntry; memb
                   href={submissionUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-genova-file-name={item.submission.file_name}
+                  data-genova-mime-type={item.submission.mime_type ?? undefined}
                   className="font-medium text-[var(--color-accent)] underline decoration-white/20 underline-offset-2 hover:text-[var(--color-text-high)]"
                 >
                   Drive Linki

@@ -32,6 +32,7 @@ interface ReadyShellProps {
   onSwitchChoir: () => void;
   onSignOut: () => void;
   getWebViewLease: ReturnType<typeof useAuth>['getWebViewLease'];
+  changePassword: ReturnType<typeof useAuth>['changePassword'];
 }
 
 function ReadyShellRoutes({
@@ -42,6 +43,7 @@ function ReadyShellRoutes({
   onSwitchChoir,
   onSignOut,
   getWebViewLease,
+  changePassword,
 }: Omit<ReadyShellProps, 'audioGateway'>) {
   const playback = useAudioPlayback();
   const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio' | 'web'>('home');
@@ -65,6 +67,7 @@ function ReadyShellRoutes({
         onNativeRoute={(route) => setScreen(route === 'repertoire' ? 'repertoire' : 'home')}
         onExit={() => setScreen('home')}
         onSignOut={onSignOut}
+        changePassword={changePassword}
       />
     );
   } else if (screen === 'audio' && playback.session) {
@@ -208,6 +211,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway }: {
           onSwitchChoir={() => setSwitching(true)}
           onSignOut={() => void auth.signOut()}
           getWebViewLease={auth.getWebViewLease}
+          changePassword={auth.changePassword}
         />
       </>
     );

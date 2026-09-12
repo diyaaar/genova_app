@@ -1,25 +1,38 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Appearance,
   BackHandler,
+  KeyboardAvoidingView,
   Linking,
   Modal,
+  Platform,
   Pressable,
   SafeAreaView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import type { BridgeDiagnostic, NativeRouteFamily } from '@shared/mobile-webview-bridge';
-import type { NativeWebViewLease, SecureKeyValueStore } from '../auth/types';
+import type { NativeWebViewLease, PasswordChangeResult, SecureKeyValueStore } from '../auth/types';
 import { secureKeyValueStore } from '../auth/supabase-client';
 import {
   NativeWebViewBridgeController,
   type NativeBridgeSnapshot,
   type PendingExternalRequest,
+  type PendingProtectedFileRequest,
 } from './native-bridge-controller';
+import {
+  ProtectedFileCapability,
+  WEBVIEW_IMAGE_INPUT_POLICY,
+  createExpoClipboardWriter,
+  createExpoEphemeralFileStore,
+  createExpoShareGateway,
+  prepareProtectedFileRequest,
+  type PreparedProtectedFileRequest,
+} from './platform-capabilities';
 import { allocateTenantEpoch, createBridgeChallenge, createBridgeCorrelationId } from './random';
 import { readNativeWebViewRuntimeConfig, type NativeWebViewRuntimeConfig } from './runtime-config';
 import {
@@ -28,20 +41,6 @@ import {
   type NativeThemePreference,
   type NativeThemeState,
 } from './theme-preference';
-
-const FILE_INPUT_GUARD = `(() => {
-  const deny = (input) => {
-    input.disabled = true;
-    input.setAttribute('aria-disabled', 'true');
-    input.setAttribute('title', 'Dosya seçimi mobil uygulamada henüz kullanılamıyor.');
-  };
-  const scan = (root) => root.querySelectorAll?.('input[type="file"]').forEach(deny);
-  scan(document);
-  new MutationObserver((records) => records.forEach((record) => record.addedNodes.forEach((node) => {
-    if (node instanceof Element) { if (node.matches('input[type="file"]')) deny(node); scan(node); }
-  }))).observe(document.documentElement, { childList: true, subtree: true });
-  true;
-})();`;
 
 const TITLE_BY_FAMILY: Record<NativeBridgeSnapshot['routeFamily'], string> = {
   announcements: 'Duyurular',
@@ -78,6 +77,7 @@ function errorCopy(code: string | null): string {
     case 'http-failed':
     case 'load-failed': return 'Web içeriği yüklenemedi.';
     case 'capability-unavailable': return 'Bu işlem mobil uygulamada henüz kullanılamıyor.';
+    case 'file-not-supported': return 'Bu dosya türü mobil uygulamada güvenle açılamıyor.';
     default: return 'Web görünümü hazırlanamadı.';
   }
 }
@@ -94,10 +94,13 @@ export interface NativeWebViewScreenProps {
   onNativeRoute: (route: Extract<NativeRouteFamily, 'home' | 'repertoire'>) => void;
   onExit: () => void;
   onSignOut: () => Promise<void> | void;
+  changePassword: (oldPassword: string, newPassword: string, confirmation: string) => Promise<PasswordChangeResult>;
   runtimeConfig?: NativeWebViewRuntimeConfig;
   storage?: SecureKeyValueStore;
   openExternal?: (url: string) => Promise<unknown>;
   onDiagnostic?: (diagnostic: BridgeDiagnostic) => void;
+  writeClipboard?: (text: string) => Promise<boolean>;
+  protectedFileCapability?: ProtectedFileCapability;
 }
 
 export function NativeWebViewScreen({
@@ -106,13 +109,16 @@ export function NativeWebViewScreen({
   onNativeRoute,
   onExit,
   onSignOut,
+  changePassword,
   runtimeConfig,
   storage = secureKeyValueStore,
   openExternal = (url) => Linking.openURL(url),
   onDiagnostic,
+  writeClipboard = createExpoClipboardWriter(),
+  protectedFileCapability: suppliedProtectedFileCapability,
 }: NativeWebViewScreenProps) {
-  const actionsRef = useRef({ getLease, onNativeRoute, onExit, onSignOut, onDiagnostic });
-  actionsRef.current = { getLease, onNativeRoute, onExit, onSignOut, onDiagnostic };
+  const actionsRef = useRef({ getLease, onNativeRoute, onExit, onSignOut, onDiagnostic, changePassword, writeClipboard });
+  actionsRef.current = { getLease, onNativeRoute, onExit, onSignOut, onDiagnostic, changePassword, writeClipboard };
   const configResult = useMemo(() => {
     try {
       return { config: runtimeConfig ?? readNativeWebViewRuntimeConfig(initialPath), error: null };
@@ -124,15 +130,64 @@ export function NativeWebViewScreen({
   const [snapshot, setSnapshot] = useState<NativeBridgeSnapshot | null>(null);
   const [covered, setCovered] = useState(true);
   const [pendingExternal, setPendingExternal] = useState<PendingExternalRequest | null>(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordStatus, setPasswordStatus] = useState<'idle' | 'saving' | 'done'>('idle');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<PreparedProtectedFileRequest | null>(null);
+  const [fileBusy, setFileBusy] = useState(false);
   const [themeState, setThemeState] = useState<NativeThemeState>(() => currentNativeTheme('system'));
   const webViewRef = useRef<WebView>(null);
   const controllerRef = useRef<NativeWebViewBridgeController | null>(null);
   const themeRef = useRef(themeState);
   themeRef.current = themeState;
   const themeStore = useMemo(() => createNativeThemePreferenceStore(storage), [storage]);
+  const protectedFileCapability = useMemo(() => suppliedProtectedFileCapability ?? new ProtectedFileCapability(
+    createExpoEphemeralFileStore(),
+    createExpoShareGateway(),
+  ), [suppliedProtectedFileCapability]);
+  const passwordVisibleRef = useRef(passwordVisible);
+  const oldPasswordRef = useRef(oldPassword);
+  const newPasswordRef = useRef(newPassword);
+  const confirmPasswordRef = useRef(confirmPassword);
+  const pendingFileRef = useRef(pendingFile);
+  passwordVisibleRef.current = passwordVisible;
+  pendingFileRef.current = pendingFile;
+
+  const resetPasswordSheet = () => {
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    oldPasswordRef.current = '';
+    newPasswordRef.current = '';
+    confirmPasswordRef.current = '';
+    setPasswordError(null);
+    setPasswordStatus('idle');
+    setPasswordVisible(false);
+    passwordVisibleRef.current = false;
+  };
+  const clearCapabilityUi = useCallback(async () => {
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    oldPasswordRef.current = '';
+    newPasswordRef.current = '';
+    confirmPasswordRef.current = '';
+    setPasswordError(null);
+    setPasswordStatus('idle');
+    setPasswordVisible(false);
+    passwordVisibleRef.current = false;
+    setPendingFile(null);
+    pendingFileRef.current = null;
+    setFileBusy(false);
+    await protectedFileCapability.clear();
+  }, [protectedFileCapability]);
 
   useEffect(() => {
     let current = true;
+    void protectedFileCapability.clear().catch(() => undefined);
     void themeStore.load().then((preference) => {
       if (current) setThemeState(currentNativeTheme(preference));
     });
@@ -177,6 +232,24 @@ export function NativeWebViewScreen({
         if (route === 'home' || route === 'repertoire') actionsRef.current.onNativeRoute(route);
       },
       onExternalRequest: setPendingExternal,
+      onPasswordRequest: () => {
+        if (passwordVisibleRef.current) return false;
+        passwordVisibleRef.current = true;
+        setPasswordError(null);
+        setPasswordStatus('idle');
+        setPasswordVisible(true);
+        return true;
+      },
+      writeClipboard: (text) => actionsRef.current.writeClipboard(text),
+      onProtectedFileRequest: (request: PendingProtectedFileRequest) => {
+        if (pendingFileRef.current) return false;
+        const prepared = prepareProtectedFileRequest(request, config.routePolicy);
+        if (!prepared) return false;
+        pendingFileRef.current = prepared;
+        setPendingFile(prepared);
+        return true;
+      },
+      onCapabilityClear: clearCapabilityUi,
       onExit: () => actionsRef.current.onExit(),
       onSignOut: () => actionsRef.current.onSignOut(),
       coverContent: () => setCovered(true),
@@ -185,9 +258,10 @@ export function NativeWebViewScreen({
     controllerRef.current = controller;
     return () => {
       controller.dispose();
+      void protectedFileCapability.clear();
       if (controllerRef.current === controller) controllerRef.current = null;
     };
-  }, [attempt, configResult.config, themeStore]);
+  }, [attempt, clearCapabilityUi, configResult.config, protectedFileCapability, themeStore]);
 
   useEffect(() => {
     controllerRef.current?.applyTheme();
@@ -208,6 +282,7 @@ export function NativeWebViewScreen({
   const styles = useMemo(() => makeStyles(colors), [colors]);
   const retry = () => {
     setPendingExternal(null);
+    void clearCapabilityUi();
     setCovered(true);
     setSnapshot(null);
     setAttempt(newAttempt());
@@ -237,6 +312,45 @@ export function NativeWebViewScreen({
     } catch {
       controllerRef.current?.resolveExternal(pending.requestId, 'failed');
     }
+  };
+  const submitPassword = async () => {
+    if (passwordStatus === 'saving') return;
+    setPasswordStatus('saving');
+    setPasswordError(null);
+    const result = await actionsRef.current.changePassword(
+      oldPasswordRef.current,
+      newPasswordRef.current,
+      confirmPasswordRef.current,
+    );
+    if (!result.ok) {
+      setPasswordStatus('idle');
+      setPasswordError(result.message);
+      return;
+    }
+    setOldPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    oldPasswordRef.current = '';
+    newPasswordRef.current = '';
+    confirmPasswordRef.current = '';
+    setPasswordStatus('done');
+  };
+  const cancelFile = () => {
+    const request = pendingFileRef.current;
+    if (!request || fileBusy) return;
+    controllerRef.current?.resolveProtectedFile(request.requestId, 'cancelled');
+    pendingFileRef.current = null;
+    setPendingFile(null);
+  };
+  const runFileAction = async () => {
+    const request = pendingFileRef.current;
+    if (!request || fileBusy) return;
+    setFileBusy(true);
+    const opened = await protectedFileCapability.run(request);
+    controllerRef.current?.resolveProtectedFile(request.requestId, opened ? 'opened' : 'failed');
+    setFileBusy(false);
+    pendingFileRef.current = null;
+    setPendingFile(null);
   };
 
   if (!configResult.config) {
@@ -292,7 +406,7 @@ export function NativeWebViewScreen({
             instanceId: attempt.instanceId,
             tenantEpoch: attempt.tenantEpoch,
           }}
-          injectedJavaScript={FILE_INPUT_GUARD}
+          injectedJavaScript={WEBVIEW_IMAGE_INPUT_POLICY}
           injectedJavaScriptForMainFrameOnly
           incognito
           cacheEnabled={false}
@@ -333,7 +447,7 @@ export function NativeWebViewScreen({
           }}
           onRenderProcessGone={() => controllerRef.current?.processFailed('renderer-terminated')}
           onContentProcessDidTerminate={() => controllerRef.current?.processFailed('renderer-terminated')}
-          onFileDownload={() => controllerRef.current?.processFailed('capability-unavailable')}
+          onFileDownload={() => controllerRef.current?.processFailed('file-not-supported')}
           style={styles.webview}
         />
 
@@ -408,6 +522,127 @@ export function NativeWebViewScreen({
           </View>
         </View>
       </Modal>
+
+      <Modal
+        visible={passwordVisible}
+        transparent
+        animationType="none"
+        onRequestClose={() => {
+          if (passwordStatus !== 'saving') resetPasswordSheet();
+        }}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.modalBackdrop}
+        >
+          <View accessibilityViewIsModal style={styles.modalCard} testID="password-sheet">
+            <Text accessibilityRole="header" style={styles.statusTitle}>Şifreyi değiştir</Text>
+            <Text style={styles.statusMessage}>Şifreniz yalnızca bu güvenli native ekranda işlenir.</Text>
+            <Text style={styles.fieldLabel}>Mevcut şifre</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoComplete="current-password"
+              editable={passwordStatus !== 'saving' && passwordStatus !== 'done'}
+              onChangeText={(value) => { oldPasswordRef.current = value; setOldPassword(value); }}
+              secureTextEntry
+              style={styles.field}
+              testID="password-current"
+              value={oldPassword}
+            />
+            <Text style={styles.fieldLabel}>Yeni şifre</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoComplete="new-password"
+              editable={passwordStatus !== 'saving' && passwordStatus !== 'done'}
+              onChangeText={(value) => { newPasswordRef.current = value; setNewPassword(value); }}
+              secureTextEntry
+              style={styles.field}
+              testID="password-new"
+              value={newPassword}
+            />
+            <Text style={styles.fieldLabel}>Yeni şifreyi tekrar girin</Text>
+            <TextInput
+              autoCapitalize="none"
+              autoComplete="new-password"
+              editable={passwordStatus !== 'saving' && passwordStatus !== 'done'}
+              onChangeText={(value) => { confirmPasswordRef.current = value; setConfirmPassword(value); }}
+              onSubmitEditing={() => void submitPassword()}
+              secureTextEntry
+              style={styles.field}
+              testID="password-confirm"
+              value={confirmPassword}
+            />
+            {passwordError ? <Text accessibilityRole="alert" style={styles.errorText}>{passwordError}</Text> : null}
+            {passwordStatus === 'done' ? (
+              <Text accessibilityLiveRegion="polite" style={styles.successText} testID="password-success">
+                Şifreniz güncellendi.
+              </Text>
+            ) : null}
+            <View style={styles.modalActions}>
+              <Pressable
+                accessibilityRole="button"
+                disabled={passwordStatus === 'saving'}
+                onPress={resetPasswordSheet}
+                style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+                testID="password-cancel"
+              >
+                <Text style={styles.secondaryButtonText}>{passwordStatus === 'done' ? 'Kapat' : 'Vazgeç'}</Text>
+              </Pressable>
+              {passwordStatus !== 'done' ? (
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ busy: passwordStatus === 'saving', disabled: passwordStatus === 'saving' }}
+                  disabled={passwordStatus === 'saving'}
+                  onPress={() => void submitPassword()}
+                  style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                  testID="password-submit"
+                >
+                  <Text style={styles.primaryButtonText}>{passwordStatus === 'saving' ? 'Güncelleniyor…' : 'Şifreyi güncelle'}</Text>
+                </Pressable>
+              ) : null}
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      <Modal
+        visible={Boolean(pendingFile)}
+        transparent
+        animationType="none"
+        onRequestClose={cancelFile}
+      >
+        <View style={styles.modalBackdrop}>
+          <View accessibilityViewIsModal style={styles.modalCard} testID="protected-file-confirmation">
+            <Text accessibilityRole="header" style={styles.statusTitle}>
+              {pendingFile?.disposition === 'download' ? 'Dosyayı kaydet' : 'Dosyayı aç'}
+            </Text>
+            <Text numberOfLines={2} style={styles.fileName}>{pendingFile?.fileName}</Text>
+            <Text style={styles.statusMessage}>{pendingFile?.mimeType}</Text>
+            <Text style={styles.statusMessage}>Dosya geçici olarak indirilir ve işlem bitince cihazdan silinir.</Text>
+            <View style={styles.modalActions}>
+              <Pressable
+                accessibilityRole="button"
+                disabled={fileBusy}
+                onPress={cancelFile}
+                style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}
+                testID="protected-file-cancel"
+              >
+                <Text style={styles.secondaryButtonText}>Vazgeç</Text>
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ busy: fileBusy, disabled: fileBusy }}
+                disabled={fileBusy}
+                onPress={() => void runFileAction()}
+                style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}
+                testID="protected-file-open"
+              >
+                <Text style={styles.primaryButtonText}>{fileBusy ? 'Hazırlanıyor…' : 'Devam et'}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -452,6 +687,10 @@ function makeStyles(colors: ReturnType<typeof chromeColors>) {
     statusTitle: { color: colors.text, fontSize: 21, fontWeight: '700', textAlign: 'center' },
     statusMessage: { color: colors.muted, fontSize: 15, lineHeight: 22, textAlign: 'center' },
     errorText: { color: colors.danger },
+    successText: { color: colors.accent, fontSize: 15, fontWeight: '700', textAlign: 'center' },
+    fieldLabel: { color: colors.muted, fontSize: 13, fontWeight: '700' },
+    field: { minHeight: 48, borderWidth: 1, borderColor: colors.border, borderRadius: 10, paddingHorizontal: 12, color: colors.text, backgroundColor: colors.background },
+    fileName: { color: colors.text, fontSize: 17, fontWeight: '700', textAlign: 'center' },
     statusActions: { width: '100%', maxWidth: 360, gap: 10, marginTop: 8 },
     primaryButton: { minHeight: 48, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 18, borderRadius: 12, backgroundColor: colors.accent },
     primaryButtonText: { color: colors.background, fontSize: 16, fontWeight: '800' },

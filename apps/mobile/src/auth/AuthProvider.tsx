@@ -4,7 +4,13 @@ import type { ChoirContextClient } from '@shared/choir-context-core';
 import { AuthStore } from './auth-store';
 import { createChoirPreferenceStore } from './choir-preference';
 import { getGenovaClient, secureKeyValueStore } from './supabase-client';
-import type { AuthGateway, AuthState, ChoirPreferenceStore, NativeWebViewLease } from './types';
+import type {
+  AuthGateway,
+  AuthState,
+  ChoirPreferenceStore,
+  NativeWebViewLease,
+  PasswordChangeResult,
+} from './types';
 
 /**
  * Thin React binding around `AuthStore`. It owns no rules of its own: every decision
@@ -24,6 +30,7 @@ interface AuthContextValue extends AuthState {
   selectChoir: (choirId: string) => Promise<void>;
   refresh: () => Promise<void>;
   getWebViewLease: () => Promise<NativeWebViewLease>;
+  changePassword: (oldPassword: string, newPassword: string, confirmation: string) => Promise<PasswordChangeResult>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -84,6 +91,9 @@ export function AuthProvider({ children, store, client, preferences }: AuthProvi
     selectChoir: (choirId) => authStore.selectChoir(choirId),
     refresh: () => authStore.refresh(),
     getWebViewLease: () => authStore.getWebViewLease(),
+    changePassword: (oldPassword, newPassword, confirmation) => (
+      authStore.changePassword(oldPassword, newPassword, confirmation)
+    ),
   }), [authStore, state]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

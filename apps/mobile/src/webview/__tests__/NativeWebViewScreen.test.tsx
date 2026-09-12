@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 import { APP_WEB_ORIGIN, BRIDGE_CHANNEL, type BridgeMessageType, type BridgePayloads } from '@shared/mobile-webview-bridge';
 import { createMemoryKeyValueStore, USER_ID, CHOIR_A, membership } from '../../test/doubles';
 import { NativeWebViewScreen } from '../NativeWebViewScreen';
+import { ProtectedFileCapability, type EphemeralFileStore, type NativeShareGateway } from '../platform-capabilities';
 import { createNativeWebViewRuntimeConfig } from '../runtime-config';
 
 interface MockWebViewProps {
@@ -57,6 +58,29 @@ function outgoing() {
   });
 }
 
+async function unlock(props: MockWebViewProps) {
+  await act(async () => {
+    props.onMessage({ nativeEvent: {
+      data: incoming(props, 'bridge.ready', { supportedVersions: [1], routeFamily: 'announcements' }),
+      url: SOURCE,
+    } });
+  });
+  const challenge = outgoing().findLast((message) => message.type === 'bridge.challenge');
+  await act(async () => {
+    props.onMessage({ nativeEvent: {
+      data: incoming(props, 'bridge.challenge.ack', { nonce: challenge?.payload.nonce as string }),
+      url: SOURCE,
+    } });
+  });
+  await act(async () => {
+    props.onMessage({ nativeEvent: {
+      data: incoming(props, 'navigation.state', { routeFamily: 'announcements', canGoBackWithinWeb: false }),
+      url: SOURCE,
+    } });
+  });
+  await waitFor(() => expect(screen.queryByTestId('webview-locked')).toBeNull());
+}
+
 async function renderScreen(overrides: Partial<React.ComponentProps<typeof NativeWebViewScreen>> = {}) {
   const props: React.ComponentProps<typeof NativeWebViewScreen> = {
     initialPath: '/announcements',
@@ -70,6 +94,7 @@ async function renderScreen(overrides: Partial<React.ComponentProps<typeof Nativ
     onNativeRoute: jest.fn(),
     onExit: jest.fn(),
     onSignOut: jest.fn(),
+    changePassword: jest.fn(async () => ({ ok: true as const })),
     runtimeConfig: createNativeWebViewRuntimeConfig({ initialPath: '/announcements', isDevelopment: false }),
     storage: createMemoryKeyValueStore(),
     openExternal: jest.fn(async () => {}),
@@ -201,5 +226,85 @@ describe('NativeWebViewScreen', () => {
     expect(screen.getByTestId('webview-error')).toHaveTextContent(/yüklenemedi/iu);
     expect(screen.getByTestId('webview-retry')).toBeTruthy();
     expect(screen.getByTestId('webview-status-close')).toBeTruthy();
+  });
+
+  it('keeps all password fields native, reports validation and clears them after success', async () => {
+    const changePassword = jest.fn()
+      .mockResolvedValueOnce({ ok: false, message: 'Mevcut şifre doğru değil.' })
+      .mockResolvedValueOnce({ ok: true });
+    await renderScreen({ changePassword });
+    const props = webViewMock.__getLatestProps() as MockWebViewProps;
+    await unlock(props);
+
+    await act(async () => {
+      props.onMessage({ nativeEvent: { data: incoming(props, 'auth.password.open', {}), url: SOURCE } });
+    });
+    expect(screen.getByTestId('password-sheet')).toHaveTextContent(/yalnızca bu güvenli native ekranda/u);
+    expect(outgoing().at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: true, code: 'password-sheet-opened' },
+    });
+
+    await fireEvent.changeText(screen.getByTestId('password-current'), 'old-password');
+    await fireEvent.changeText(screen.getByTestId('password-new'), 'new-password');
+    await fireEvent.changeText(screen.getByTestId('password-confirm'), 'new-password');
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('password-submit'));
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(changePassword).toHaveBeenCalledWith('old-password', 'new-password', 'new-password'));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Mevcut şifre doğru değil.');
+
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('password-submit'));
+      await Promise.resolve();
+    });
+    expect(await screen.findByTestId('password-success')).toHaveTextContent('Şifreniz güncellendi.');
+    expect(screen.getByTestId('password-current').props.value).toBe('');
+    expect(screen.getByTestId('password-new').props.value).toBe('');
+    expect(screen.getByTestId('password-confirm').props.value).toBe('');
+    await fireEvent.press(screen.getByTestId('password-cancel'));
+    await waitFor(() => expect(screen.queryByTestId('password-sheet')).toBeNull());
+  });
+
+  it('confirms a protected file without showing its URL and removes the temporary copy', async () => {
+    const files: EphemeralFileStore = {
+      download: jest.fn(async () => ({ uri: 'file:///cache/voice.pdf', size: 128 })),
+      remove: jest.fn(async () => {}),
+      clear: jest.fn(async () => {}),
+    };
+    const sharing: NativeShareGateway = {
+      isAvailable: jest.fn(async () => true),
+      share: jest.fn(async () => {}),
+    };
+    await renderScreen({ protectedFileCapability: new ProtectedFileCapability(files, sharing) });
+    await waitFor(() => expect(files.clear).toHaveBeenCalled());
+    const props = webViewMock.__getLatestProps() as MockWebViewProps;
+    await unlock(props);
+
+    await act(async () => {
+      props.onMessage({ nativeEvent: {
+        data: incoming(props, 'file.open.request', {
+          url: '/api/drive-file/file_1?token=must-stay-hidden',
+          disposition: 'view',
+          fileName: 'Tenor.pdf',
+          mimeType: 'application/pdf',
+        }),
+        url: SOURCE,
+      } });
+    });
+    expect(screen.getByTestId('protected-file-confirmation')).toHaveTextContent(/Tenor\.pdf/u);
+    expect(screen.getByTestId('protected-file-confirmation')).not.toHaveTextContent('must-stay-hidden');
+    await act(async () => {
+      fireEvent.press(screen.getByTestId('protected-file-open'));
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(files.remove).toHaveBeenCalledWith('file:///cache/voice.pdf'));
+    expect(sharing.share).toHaveBeenCalledWith('file:///cache/voice.pdf', expect.objectContaining({
+      mimeType: 'application/pdf',
+    }));
+    expect(outgoing().at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: true, code: 'file-action-complete' },
+    });
+    expect(JSON.stringify(outgoing().at(-1))).not.toContain('must-stay-hidden');
   });
 });

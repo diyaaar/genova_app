@@ -47,6 +47,9 @@ function setup(overrides: Partial<ConstructorParameters<typeof NativeWebViewBrid
   const external = jest.fn();
   const exit = jest.fn();
   const signOut = jest.fn();
+  const password = jest.fn(() => true);
+  const clipboard = jest.fn(async () => true);
+  const protectedFile = jest.fn((_request: import('../native-bridge-controller').PendingProtectedFileRequest) => true);
   const cover = jest.fn();
   const timers: Array<() => void> = [];
   let messageIndex = 0;
@@ -68,6 +71,10 @@ function setup(overrides: Partial<ConstructorParameters<typeof NativeWebViewBrid
     onDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
     onNativeRoute: nativeRoutes,
     onExternalRequest: external,
+    onPasswordRequest: password,
+    writeClipboard: clipboard,
+    onProtectedFileRequest: protectedFile,
+    onCapabilityClear: jest.fn(async () => {}),
     onExit: exit,
     onSignOut: signOut,
     coverContent: cover,
@@ -79,7 +86,10 @@ function setup(overrides: Partial<ConstructorParameters<typeof NativeWebViewBrid
     clearTimer: () => {},
     ...overrides,
   });
-  return { controller, messages, snapshots, diagnostics, nativeRoutes, external, exit, signOut, cover, timers };
+  return {
+    controller, messages, snapshots, diagnostics, nativeRoutes, external, exit, signOut, cover, timers,
+    password, clipboard, protectedFile,
+  };
 }
 
 async function makeRunning(runtime: ReturnType<typeof setup>) {
@@ -208,18 +218,34 @@ describe('native permanent-WebView bridge controller', () => {
     expect(external.external).not.toHaveBeenCalled();
   });
 
-  it('keeps 032 capabilities unavailable and applies a persisted theme only while running', async () => {
+  it('executes bounded 032 capabilities and applies a persisted theme only while running', async () => {
     const setTheme = jest.fn(async () => ({ preference: 'light' as const, resolved: 'light' as const }));
     const runtime = setup({ setTheme });
     await makeRunning(runtime);
-    for (const [type, payload] of [
-      ['auth.password.open', {}],
-      ['clipboard.write.request', { kind: 'invitation-link', text: `${APP_WEB_ORIGIN}/invite?token=${'a'.repeat(64)}` }],
-      ['file.open.request', { url: `${APP_WEB_ORIGIN}/api/drive-file?id=123`, disposition: 'view' }],
-    ] as const) {
-      await runtime.controller.handleMessage(incoming(type, payload as never), SOURCE);
-      expect(sent(runtime.messages).at(-1)).toMatchObject({ type: 'command.result', payload: { ok: false, code: 'capability-unavailable' } });
-    }
+    await runtime.controller.handleMessage(incoming('auth.password.open', {}), SOURCE);
+    expect(runtime.password).toHaveBeenCalledTimes(1);
+    expect(sent(runtime.messages).at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: true, code: 'password-sheet-opened' },
+    });
+
+    const invitation = `${APP_WEB_ORIGIN}/invite#invite=${'a'.repeat(64)}`;
+    await runtime.controller.handleMessage(incoming('clipboard.write.request', {
+      kind: 'invitation-link', text: invitation,
+    }), SOURCE);
+    expect(runtime.clipboard).toHaveBeenCalledWith(invitation);
+    expect(sent(runtime.messages).at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: true, code: 'clipboard-written' },
+    });
+
+    const fileRequest = { url: `${APP_WEB_ORIGIN}/api/drive-file/file_1?token=secret`, disposition: 'view' as const };
+    await runtime.controller.handleMessage(incoming('file.open.request', fileRequest), SOURCE);
+    const pending = runtime.protectedFile.mock.calls[0]?.[0];
+    if (!pending) throw new Error('expected protected file request');
+    expect(pending).toMatchObject(fileRequest);
+    runtime.controller.resolveProtectedFile(pending.requestId, 'cancelled');
+    expect(sent(runtime.messages).at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: false, code: 'file-action-cancelled' },
+    });
     await runtime.controller.handleMessage(incoming('theme.set.request', { scheme: 'light' }), SOURCE);
     expect(setTheme).toHaveBeenCalledWith('light');
     expect(sent(runtime.messages).slice(-2)).toEqual([
@@ -228,8 +254,40 @@ describe('native permanent-WebView bridge controller', () => {
     ]);
   });
 
+  it('returns stable capability failures and drops late clipboard/file work after clear', async () => {
+    let releaseClipboard!: (value: boolean) => void;
+    const clipboardPending = new Promise<boolean>((resolve) => { releaseClipboard = resolve; });
+    const runtime = setup({
+      onPasswordRequest: () => false,
+      writeClipboard: () => clipboardPending,
+      onProtectedFileRequest: () => false,
+    });
+    await makeRunning(runtime);
+
+    await runtime.controller.handleMessage(incoming('auth.password.open', {}), SOURCE);
+    expect(sent(runtime.messages).at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: false, code: 'password-sheet-unavailable' },
+    });
+    await runtime.controller.handleMessage(incoming('file.open.request', {
+      url: `${APP_WEB_ORIGIN}/api/drive-file/file_1?token=secret`, disposition: 'view',
+    }), SOURCE);
+    expect(sent(runtime.messages).at(-1)).toMatchObject({
+      type: 'command.result', payload: { ok: false, code: 'file-not-supported' },
+    });
+
+    const clipboard = runtime.controller.handleMessage(incoming('clipboard.write.request', {
+      kind: 'invitation-link', text: `${APP_WEB_ORIGIN}/invite#invite=${'b'.repeat(64)}`,
+    }), SOURCE);
+    await runtime.controller.clearAndRun('native-stop', () => {});
+    const countAfterClear = runtime.messages.length;
+    releaseClipboard(true);
+    await clipboard;
+    expect(runtime.messages).toHaveLength(countAfterClear);
+  });
+
   it('uses only current web history for back and ends visibly on timeout/process failure', async () => {
-    const runtime = setup();
+    const clearCapabilities = jest.fn(async () => {});
+    const runtime = setup({ onCapabilityClear: clearCapabilities });
     await makeRunning(runtime);
     const goBack = jest.fn();
     await runtime.controller.handleMessage(incoming('navigation.state', {
@@ -241,9 +299,12 @@ describe('native permanent-WebView bridge controller', () => {
     runtime.controller.processFailed('renderer-terminated');
     expect(runtime.cover).toHaveBeenCalled();
     expect(runtime.controller.snapshot()).toMatchObject({ phase: 'error', errorCode: 'renderer-terminated' });
+    expect(clearCapabilities).toHaveBeenCalledTimes(1);
 
-    const timed = setup();
+    const timeoutClear = jest.fn(async () => {});
+    const timed = setup({ onCapabilityClear: timeoutClear });
     timed.timers[0]?.();
     expect(timed.controller.snapshot()).toMatchObject({ phase: 'error', errorCode: 'handshake-timeout' });
+    expect(timeoutClear).toHaveBeenCalledTimes(1);
   });
 });

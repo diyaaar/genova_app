@@ -5,6 +5,7 @@ import {
   BRIDGE_CHANNEL,
   BRIDGE_VERSION,
   BridgeMessageGuard,
+  canonicalizeBridgeFileRequestUrl,
   classifyAppUrl,
   classifyExternalUrl,
   createBridgeDiagnostic,
@@ -155,6 +156,21 @@ describe('permanent WebView route policy', () => {
       kind: 'rejected',
       reasonCode: 'port-not-allowed',
     });
+  });
+});
+
+describe('protected file capability URL', () => {
+  it('canonicalizes only the same URL shapes accepted by the bridge parser', () => {
+    expect(canonicalizeBridgeFileRequestUrl('/api/drive-file/file_1?token=signed')).toBe(
+      `${APP_WEB_ORIGIN}/api/drive-file/file_1?token=signed`,
+    );
+    expect(canonicalizeBridgeFileRequestUrl('https://files.example.test/signed?ticket=one')).toBe(
+      'https://files.example.test/signed?ticket=one',
+    );
+    expect(canonicalizeBridgeFileRequestUrl('http://files.example.test/file')).toBeNull();
+    expect(canonicalizeBridgeFileRequestUrl('//files.example.test/file')).toBeNull();
+    expect(canonicalizeBridgeFileRequestUrl('https://user:pass@files.example.test/file')).toBeNull();
+    expect(canonicalizeBridgeFileRequestUrl('/api/file#secret')).toBeNull();
   });
 });
 

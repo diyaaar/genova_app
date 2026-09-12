@@ -41,6 +41,8 @@ export interface PendingExternalRequest {
   displayHost: string;
 }
 
+export type PendingProtectedFileRequest = BridgePayloads['file.open.request'] & { requestId: string };
+
 export interface NativeBridgeControllerDependencies {
   instanceId: string;
   tenantEpoch: number;
@@ -56,6 +58,10 @@ export interface NativeBridgeControllerDependencies {
   onDiagnostic?: (diagnostic: BridgeDiagnostic) => void;
   onNativeRoute: (route: NativeRouteFamily) => Promise<void> | void;
   onExternalRequest: (request: PendingExternalRequest) => void;
+  onPasswordRequest: () => boolean;
+  writeClipboard: (text: string) => Promise<boolean>;
+  onProtectedFileRequest: (request: PendingProtectedFileRequest) => boolean;
+  onCapabilityClear: () => Promise<void> | void;
   onExit: () => Promise<void> | void;
   onSignOut: () => Promise<void> | void;
   coverContent: () => void;
@@ -78,6 +84,7 @@ export class NativeWebViewBridgeController {
   private lastLeaseExpiry = 0;
   private leaseRequest: Promise<void> | null = null;
   private pendingExternalId: string | null = null;
+  private pendingProtectedFileId: string | null = null;
   private timer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private readonly deps: NativeBridgeControllerDependencies) {
@@ -149,6 +156,9 @@ export class NativeWebViewBridgeController {
   private fail(code: string) {
     if (this.phase === 'disposed' || this.phase === 'clearing' || this.phase === 'error') return;
     this.clearTimeout();
+    this.pendingExternalId = null;
+    this.pendingProtectedFileId = null;
+    void Promise.resolve(this.deps.onCapabilityClear()).catch(() => undefined);
     this.deps.coverContent();
     this.transition('error', code);
   }
@@ -252,10 +262,45 @@ export class NativeWebViewBridgeController {
         }
         return;
       case 'auth.password.open':
-      case 'clipboard.write.request':
+        if (!this.requireRunning(message.type)) return;
+        {
+          const opened = this.deps.onPasswordRequest();
+          this.send('command.result', {
+            requestId: message.id,
+            ok: opened,
+            code: opened ? 'password-sheet-opened' : 'password-sheet-unavailable',
+          });
+        }
+        return;
+      case 'clipboard.write.request': {
+        if (!this.requireRunning(message.type)) return;
+        const stamp = this.guard.createWorkStamp();
+        let written = false;
+        try {
+          written = await this.deps.writeClipboard(message.payload.text);
+        } catch {
+          written = false;
+        }
+        if (this.phase === 'running' && this.guard.isWorkCurrent(stamp)) {
+          this.send('command.result', {
+            requestId: message.id,
+            ok: written,
+            code: written ? 'clipboard-written' : 'clipboard-write-failed',
+          });
+        }
+        return;
+      }
       case 'file.open.request':
         if (!this.requireRunning(message.type)) return;
-        this.send('command.result', { requestId: message.id, ok: false, code: 'capability-unavailable' });
+        if (this.pendingProtectedFileId) {
+          this.send('command.result', { requestId: message.id, ok: false, code: 'file-operation-busy' });
+          return;
+        }
+        if (!this.deps.onProtectedFileRequest({ requestId: message.id, ...message.payload })) {
+          this.send('command.result', { requestId: message.id, ok: false, code: 'file-not-supported' });
+          return;
+        }
+        this.pendingProtectedFileId = message.id;
         return;
       case 'bridge.error':
         this.fail('web-bridge-error');
@@ -332,6 +377,16 @@ export class NativeWebViewBridgeController {
     });
   }
 
+  resolveProtectedFile(requestId: string, result: 'opened' | 'cancelled' | 'failed') {
+    if (requestId !== this.pendingProtectedFileId || this.phase !== 'running') return;
+    this.pendingProtectedFileId = null;
+    this.send('command.result', {
+      requestId,
+      ok: result === 'opened',
+      code: result === 'opened' ? 'file-action-complete' : result === 'cancelled' ? 'file-action-cancelled' : 'file-action-failed',
+    });
+  }
+
   async clearAndRun(
     reason: BridgePayloads['context.clear']['reason'],
     action: () => Promise<void> | void,
@@ -340,8 +395,12 @@ export class NativeWebViewBridgeController {
     this.clearTimeout();
     this.deps.coverContent();
     this.transition('clearing');
+    this.pendingProtectedFileId = null;
+    this.pendingExternalId = null;
+    const capabilityCleanup = Promise.resolve(this.deps.onCapabilityClear());
     this.send('context.clear', { reason });
     await (this.deps.yieldAfterClear?.() ?? Promise.resolve());
+    await capabilityCleanup;
     await action();
   }
 
@@ -384,7 +443,7 @@ export class NativeWebViewBridgeController {
     return 'rejected';
   }
 
-  processFailed(code: 'load-failed' | 'http-failed' | 'renderer-terminated' | 'capability-unavailable') {
+  processFailed(code: 'load-failed' | 'http-failed' | 'renderer-terminated' | 'capability-unavailable' | 'file-not-supported') {
     this.fail(code);
   }
 
@@ -399,5 +458,6 @@ export class NativeWebViewBridgeController {
     }
     this.phase = 'disposed';
     this.pendingExternalId = null;
+    this.pendingProtectedFileId = null;
   }
 }
