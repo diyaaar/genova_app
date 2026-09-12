@@ -1,6 +1,6 @@
 # Active context
 
-Updated 11 September 2026 after the 031 native WebView-shell acceptance. The recorded
+Updated 12 September 2026 after the 032 WebView platform-capability acceptance. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -110,11 +110,15 @@ passed the root 55-file/462-test/build gate. Package
 Expo-compatible WebView/Crypto dependencies, native-only short-lived lease, exact challenge/proof,
 renewal/clear race guards, route/external/back/theme behavior and locked/error UI passed 26 mobile
 suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS
-arm64-simulator Release builds. Generated build outputs were removed after hashing. The native and
-030 web halves are not yet composed; password/clipboard/protected-file side effects, browser E2E,
-hosted CSP/provider/account, hardware and release remain NOT RUN. Package 032 is the next ready local
-C1 slice for those three explicit platform capabilities; package 033 then owns composed local C1
-runtime acceptance.
+arm64-simulator Release builds. Package
+[032](../docs/briefs/032-webview-platform-capabilities.md) then accepted native-only password
+reauth/update, exact invitation clipboard, constrained image input and ephemeral protected-file
+sharing at `fa2e4b7`. Mobile 30 suites / 161 tests, root 55 files / 464 tests/build, both exports,
+Expo Doctor 21/21, normal and guarded Release builds, exact local image/PDF transfer, refusal,
+cancellation, permission and cleanup checks passed on iOS and Android. Generated/runtime output was
+removed. The native and 030 web halves are still not composed; browser E2E, hosted CSP/provider/
+account, hardware and release remain NOT RUN. Package 033 is the next ready local C1 task and owns
+composed runtime acceptance.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware
