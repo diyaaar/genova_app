@@ -1,7 +1,7 @@
 # 033 — Composed permanent-WebView local Release runtime
 
-Prepared: 2026-09-12. Status: **READY / NOT RUN**. Single writer and self-reviewer: main agent;
-no independent review is claimed.
+Prepared: 2026-09-12. Last executed: 2026-09-13. Status: **IN PROGRESS / REQUIRED
+FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent review is claimed.
 
 ## Outcome and delivery focus
 
@@ -36,9 +36,10 @@ accessibility on hardware or a store candidate.
 - `lib/embedded-web-runtime.ts`, `components/EmbeddedWebBridgeProvider.tsx` and focused tests: the
   smallest exact-loopback policy seam required for a production-type 033 web build. Normal builds
   must retain the exact production-origin policy and contain no active local endpoint.
-- `apps/mobile/src/ui/AppRoot.tsx`, `apps/mobile/src/webview/NativeWebViewScreen.tsx` and focused
-  tests only if composition exposes a missing injectable/configuration or observability seam. The
-  normal entry and native ownership contract must remain unchanged.
+- `apps/mobile/src/ui/AppRoot.tsx`, `apps/mobile/src/webview/NativeWebViewScreen.tsx`,
+  `apps/mobile/src/auth/auth-store.ts` and focused tests only if composition exposes a missing
+  injectable/configuration, observability or same-user token-refresh continuity seam. The normal
+  entry and native ownership contract must remain unchanged.
 - `apps/mobile/src/acceptance/` and `apps/mobile/app.json`: a compile-time guarded 033 entry,
   exact local configuration, redacted acceptance tracing and exact Android cleartext-loopback
   resource. Generated `ios/`, `android/`, `.expo/` and build outputs are never committed.
@@ -139,7 +140,7 @@ accessibility on hardware or a store candidate.
 
 ## Definition of done
 
-- [ ] Exact guards refuse hosted/non-loopback endpoints, non-synthetic identities, wrong project,
+- [x] Exact guards refuse hosted/non-loopback endpoints, non-synthetic identities, wrong project,
   wrong paths and missing flags; normal build/export contains no 033 marker or local endpoint.
 - [ ] Both exact Release runtimes complete the challenged composed handshake and render every one of
   the nine route families with required role/read/write/Realtime/file evidence.
@@ -147,11 +148,11 @@ accessibility on hardware or a store candidate.
   from real embedded page actions, including the named refusal and cleanup cases.
 - [ ] Renewal, first/second 401, reload, renderer restart, tenant switch and sign-out prove blanking,
   reproof, bounded failure and zero old-tenant credential/cache/history retention.
-- [ ] Local fixture/stack/source integrity and all runtime/generated-artifact cleanup checks pass.
+- [x] Local fixture/stack/source integrity and all runtime/generated-artifact cleanup checks pass.
 - [ ] Root `pnpm check`; mobile `npm run check`; normal iOS/Android exports; Expo Doctor; guarded and
   normal exact Release builds; bundle/permission/secret scans all pass or remain explicit required
   failures.
-- [ ] Transition start/delivery checks, diff/scope review and canonical records are current; the only
+- [x] Transition start/delivery checks, diff/scope review and canonical records are current; the only
   unrelated worktree entry remains unstaged.
 
 ## Mandatory acceptance evidence
@@ -161,18 +162,28 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **NOT RUN** | pending implementation | Unit/config/plugin, bundle and generated-manifest inspection required |
-| Production-type web build and actual native shell complete the challenged lease plus server-current user/choir/member proof before tenant render on Release iOS simulator | yes | **NOT RUN** | pending implementation | Must be actual composed WebView, not 030/031 history |
-| The same composed handshake/proof completes on Release Android emulator through exact reverse ports | yes | **NOT RUN** | pending implementation | Must be actual composed WebView, not 030/031 history |
-| All nine permanent route families render and preserve representative real reads, role variants, mutations, Realtime invalidation, visible errors and actual-file behavior on both platforms | yes | **NOT RUN** | pending fixture/runtime driver | Route title or source coverage alone is insufficient |
-| Permanent navigation, native home/repertoire exits, unavailable native routes, HTTPS confirmation, denied URL classes, web-history back and root exit behave fail closed on both platforms | yes | **NOT RUN** | pending composed scenarios | Include iOS header/gesture boundary and Android hardware/header back evidence available to local virtual devices |
-| Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **NOT RUN** | pending composed scenarios | Actual synthetic bytes and restored disposable password required; no camera permission |
-| Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **NOT RUN** | pending composed scenarios | Late work and wrong-choir access must fail closed |
-| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **NOT RUN** | pending runtime cleanup | Exact owned IDs/paths only; no broad deletion |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **NOT RUN** | pending final verification | These gates do not replace the composed scenarios |
-| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **NOT RUN** | pending self-review | Independent review remains NOT RUN unless separately performed |
+| Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **PASS** | 2026-09-13, `d295c62`; config/plugin/unit suites; unflagged Expo exports and prebuild inspection | iOS HBC `2bcaa6825fcef34b7c5346a73ee43c7f363bda4511d7a92c4a8a150d8b8978cc`, Android HBC `91797b86d21cce5e89131bf6f52ea13d4214d33630ac504eb56c06c420c8c894`; neither bundle contained a 033 marker, loopback endpoint or synthetic identity. Normal Android manifest had no network-security/cleartext widening and removal directives for camera, microphone and broad media; iOS ATS was `false` with no camera/microphone usage text. |
+| Production-type web build and actual native shell complete the challenged lease plus server-current user/choir/member proof before tenant render on Release iOS simulator | yes | **PASS** | 2026-09-13, Release iOS 26.5 simulator `genova033-ios`, production Next peer on exact loopback | The real permanent WebView completed the challenge/acknowledgement/lease and server-current tenant proof before rendering. This is simulator evidence only, not hardware or hosted-origin evidence. |
+| The same composed handshake/proof completes on Release Android emulator through exact reverse ports | yes | **PASS** | 2026-09-13, Release Android API 36 emulator, exact `adb reverse` for 18033/54321 | The real shell and production-type web peer completed the challenged lease and tenant proof. Reverse rules and app were later removed. |
+| All nine permanent route families render and preserve representative real reads, role variants, mutations, Realtime invalidation, visible errors and actual-file behavior on both platforms | yes | **FAIL** | 2026-09-13 composed run | Both platforms rendered all nine families; Android additionally covered representative reads, mutation/Realtime, role refusal and actual-file behavior. iOS route, tenant and role evidence exists, but the full mutation/Realtime/actual-file set was not completed there. Route visibility is not promoted to the missing feature proof. |
+| Permanent navigation, native home/repertoire exits, unavailable native routes, HTTPS confirmation, denied URL classes, web-history back and root exit behave fail closed on both platforms | yes | **PASS** | 2026-09-13, Android UI driver plus isolated iOS XCUITest navigation case | Android hardware/header back and iOS header back stayed inside web history first and exited at root; native home/repertoire, unavailable chat/homework, confirmed/cancelled HTTPS and denied HTTP/custom/unknown/popup paths behaved as required. XCUITest is simulator evidence, not accessibility certification. |
+| Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
+| Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | 2026-09-13 composed run | Android completed renewal, one 401 recovery, terminal failed renewal/sign-out, reload and cleanup. iOS completed reload, tenant switch and real WebContent termination with the fail-closed retry screen; retry-to-new-proof, 401 sequence and sign-out could not be activated reliably through the temporary UI harness and remain unproved. The sign-out ordering seam was corrected and unit-tested but is not substituted for iOS runtime evidence. |
+| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-13, runner cleanup plus exact post-cleanup inventory | Fixture cleanup reported target baseline restored and the source snapshot matched before stack removal. Ports 18033/54321, app/device/reverse state, `spike/033-runtime`, generated mobile/build directories, Colima profile/context and its orphaned 5.8 GB disk were absent afterward. The runner's already-deleted temp-dir exit-hook defect was fixed in `d295c62` and its focused regression check passed; no second runtime was created merely to replay cleanup. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **NOT RUN** | 2026-09-13, `pnpm check`; mobile `npm run check`; Expo Doctor; normal exports/prebuild/iOS Release | Root: 55 files/466 tests and production build PASS. Mobile: 32 suites/178 tests PASS. Expo Doctor 21/21; normal iOS/Android exports, manifests, iOS Release and scans PASS. Guarded iOS/Android Release builds ran in the composed session. A current-source normal Android Release rebuild is NOT RUN because the temporary JDK was removed and no persistent JDK is installed; export/manifest evidence does not replace it. |
+| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-13 self-review at `d295c62`; `git diff --check` | Changes are confined to the brief's guard, bridge continuity, acceptance runtime and disposable runner seams. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication evidence remain explicitly open. No independent review is claimed. |
 
 ## Delivery
 
-Pending. The implementation commit(s), evidence record, exact cleanup result, residual risks and next
-ready package will be written only after every required row has real evidence.
+- Product/test implementation: `d295c62` (`033: add composed permanent WebView runtime`). It adds
+  exact compile-time loopback guards, a disposable composed entry/fixture/driver, early bootstrap
+  injection, protected-file origin scoping, same-user token-refresh continuity and sign-out ordering.
+- The local composed run materially proved both Release handshakes, all route families and the full
+  Android scenario set, but required iOS feature/fault coverage and the current-source normal Android
+  Release rebuild remain open above. Therefore 033 is not closed and the plan must not advance as if
+  C1 composition were accepted.
+- Every 033 runtime artifact has been removed. The next bounded execution must recreate an exact
+  disposable runtime only when it is ready to finish the missing iOS rows, and must clean it again.
+  A persistent or separately authorized JDK is required before the missing normal Android Release
+  rebuild can be recorded. Hosted, physical-device, CI, accessibility and publication scopes remain
+  unrun and unauthorized.

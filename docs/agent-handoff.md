@@ -1,15 +1,16 @@
 # Genova — agent handoff
 
-Snapshot: 12 September 2026. Package 032 accepted the bounded native platform-capability layer
-locally at code/test commit `fa2e4b7`, after 031's native shell at `0217ac8`, 030's dormant web
-adapter at `c7d09d3` and 029's shared policy at `4289da4`. Native-only password reauth/update, exact
-invitation clipboard, constrained image input and ephemeral protected-file sharing passed 30 mobile
-suites / 161 tests, root 55 files / 464 tests/build, both normal exports, Expo Doctor 21/21 and exact
-normal plus guarded Android API 36 arm64 and iOS 26.5 arm64-simulator Release builds. Generated and
-runtime artifacts were removed. Native and web halves have not yet been composed in a runtime. Final
-native annotation UX remains owner-decision-gated; the canonical
-[delivery plan](mobil-teslim-plani.md) routes next to package 033 for composed local C1 acceptance.
-Release execution and hardware remain gated.
+Snapshot: 13 September 2026. Package 033 implemented the guarded composed permanent-WebView runtime
+at code/test commit `d295c62`, after packages 029–032 established its policy, web, native-shell and
+platform-capability layers. Both production-type local Release handshakes and all nine route families
+ran, and the Android scenario set passed. Required iOS mutation/Realtime/actual-file, successful
+password/PDF and 401/sign-out/retry evidence plus a current-source normal Android Release rebuild
+remain FAIL/NOT RUN, so C1 and package 033 are open. Root 55 files / 466 tests/build, mobile 32 suites
+/ 178 tests, both normal exports, Expo Doctor 21/21, normal manifests/iOS Release and cleanup passed.
+All 033 runtime/generated artifacts, device/profile state and the orphaned Colima disk were removed.
+Final native annotation UX remains owner-decision-gated; the canonical
+[delivery plan](mobil-teslim-plani.md) keeps the active bounded task at 033. Release execution and
+hardware remain gated.
 The recorded remote `main` remains `a13f696`; no push or deployment was performed. Verify the receiving checkout
 before trusting anything here; conversation history is not required and is not available.
 This file is an entry point and a source index — not a second roadmap, and not an
@@ -185,6 +186,7 @@ WF-006 is documentation-only and reran no product tests; read each source for ex
 
 | Date / revision | Environment, command or scenario | Result | Limitation |
 |---|---|---|---|
+| 13 Sep, `d295c62` | Disposable PostgreSQL 17/local Supabase + production Next; Release iOS 26.5 simulator and Android API 36 emulator; root/mobile gates, normal exports/prebuild/iOS Release, Expo Doctor, bundle/manifest/permission/secret and exact cleanup self-review | **FAIL / required rows open** — both challenged composed handshakes, all nine route families, both-platform navigation and the full Android feature/fault set passed; root 55 files / 466 tests/build, mobile 32 suites / 178 tests, Doctor 21/21 and normal-isolation scans passed | iOS mutation/Realtime/actual-file, successful password/PDF and 401/sign-out/retry evidence remains incomplete; current-source normal Android Release is NOT RUN because no persistent JDK exists after temporary packages were removed. No hosted/provider/real account, hardware, CI, push/deploy or independent review. Runtime/generated state was removed. See [033](briefs/033-composed-permanent-webview-runtime.md) |
 | 12 Sep, `fa2e4b7` | macOS task; mobile/root gates, normal exports, Expo Doctor, clean normal and guarded iOS 26.5 arm64-simulator plus Android API 36 arm64 Release builds/runtime; picker/share/clipboard/refusal/cancellation/permission/cache/secret/diff cleanup self-review | **PASS** — 30 mobile suites / 161 tests; root 55 files / 464 tests and Next build; exact 14,148-byte PNG and 125-byte PDF reached both platform surfaces, over-limit/active/malformed/401/403/cancel failed closed, normal bundles had no 032 loopback marker, generated/runtime artifacts were removed | Platform capability slice only. No composed 030 web runtime, hosted/provider/real account, hardware, CI, push/deploy or independent review. Supplemental audit retains 11 moderate Expo config/xcode/uuid build-tool findings. See [032](briefs/032-webview-platform-capabilities.md) |
 | 11 Sep, `0217ac8` | macOS task; mobile TypeScript/Jest, iOS/Android exports, Expo Doctor, clean prebuild, Android API 36 arm64 Release and iOS arm64-simulator Release builds; config/security/diff self-review | **PASS** — 26 suites / 126 tests; exact challenge/ack/lease/proof/renewal/clear lifecycle, route/external/back/theme behavior, locked/error UI and both platform compiles. Android APK SHA-256 `237437bf845acaff405566985b9f0121bc7d956e5f6034198ced1165400368fe`; iOS binary SHA-256 `0ae66481895f7fe8b1bebdbf762e8d1762efeed61f0e2f1e3b479e7cc5ba786d` | Native half only. No composed 030 web runtime, password/clipboard/file side effect, browser E2E, hosted CSP/provider/account, hardware, CI, push/deploy or independent review. Audit retained 10 moderate pre-existing Expo toolchain findings. Generated build outputs were removed after hashing. See [031](briefs/031-native-webview-shell.md) |
 | 11 Sep, `c7d09d3` | macOS task; focused runtime/Supabase/provider/Auth/layout/profile/navigation/cache Vitest; root `pnpm check`; diff/direct-auth/secret/scope self-review | **PASS** — exact lock/proof/replay/stale-work gates, current bearer + mutation freeze, clear-over-install race, cache/SW isolation, nine route families, browser parity and native-owned control seams; root 55 files / 462 tests, configured coverage/service-worker syntax/Next build | Dormant web adapter only. No native WebView dependency/mount, browser E2E, real Supabase/provider/account, hosted origin/CSP, simulator/emulator composition, hardware, CI, push/deploy or independent review. See [030](briefs/030-web-embedded-adapter.md) |
@@ -250,8 +252,9 @@ receiving-agent test is claimed anywhere.
 
 ## Checkout and ownership
 
-Branch `main`. Package 032 code/test is local commit `fa2e4b7`; this acceptance record is
-documentation-only. Local `origin/main` remains recorded at `a13f696`; packages 012–032 and
+Branch `main`. Package 033 product/test implementation is local commit `d295c62`; its acceptance
+record remains open and this handoff update is documentation-only. Local `origin/main` remains
+recorded at `a13f696`; packages 012–033 and
 workflow records after it are local commits only. No remote refresh or push was attempted. The pre-existing
 `supabase/.temp/cli-latest` change remains deliberately untouched.
 
@@ -301,7 +304,10 @@ B4 foreground native-audio slice at `c30b3b1`; package 027 completed foreground 
 and compact navigation at `dc25938`; package 028 accepted the permanent-WebView source/route/session
 contract without product changes; package 029 implemented its shared pure policy at `4289da4`;
 package 030 accepted the dormant web adapter at `c7d09d3`; package 031 accepted the native shell
-at `0217ac8`; package 032 accepted the platform-capability layer at `fa2e4b7`.
+at `0217ac8`; package 032 accepted the platform-capability layer at `fa2e4b7`; package 033
+implemented the guarded composition at `d295c62`, proved both local Release handshakes, every route
+family and the Android scenario set, but retains required iOS feature/fault failures and one normal
+Android Release NOT RUN gate.
 No hosted migration, release or external action occurred.
 
 The canonical [delivery plan](mobil-teslim-plani.md) owns package dependencies, milestone gates,
@@ -309,14 +315,15 @@ local/external work selection and the execution loop. Do not duplicate its backl
 The immediate local read path A1–A3, B1 inventory, 024 server/adapter foundation, 025 web
 lifecycle adoption, 026–027 foreground audio slices, 028 WebView contract inventory, 029 pure
 policy core, 030 dormant web adapter, 031 native shell and 032 platform capabilities are complete
-locally.
+locally. Package 033 is implemented but not accepted.
 A4 release preparation may be written locally, but push/deploy/hosted checks remain externally
 gated and A5 hardware remains postponed. The unresolved shared authorship, stale conflict,
 deletion and final exit UX choices gate final B2/native editing semantics. Following the roadmap's
 blocker rule, 032 accepted the explicit password-management, clipboard-invitation and protected-file
-platform capabilities without weakening the bridge or tenant lease. The next bounded ready package
-is 033, which owns the composed local web/native C1 runtime. It does not perform hosted or hardware
-acceptance.
+platform capabilities without weakening the bridge or tenant lease. The active bounded package
+remains 033: finish its iOS mutation/Realtime/actual-file, successful password/PDF and
+401/sign-out/retry evidence, then rerun the normal Android Release gate with a persistent or
+separately authorized JDK. It does not perform hosted or hardware acceptance.
 010 stays 6/7; 004 stays 25/27 and hardware remains postponed. Neither is the next action.
 
 ## Copyable startup prompt
@@ -339,10 +346,12 @@ acceptance.
 > `0217ac8` under 26 mobile suites / 126 tests, both exports, Expo Doctor and exact Android/iOS Release
 > builds. Package 032 then accepted native password, clipboard, constrained image and ephemeral-file
 > capabilities at `fa2e4b7` under 30 mobile suites / 161 tests, root 55 files / 464 tests/build, both
-> exports, Doctor and exact normal plus guarded Android/iOS Release builds. Read all five briefs
-> without inferring composed, hosted or provider runtime. Final native annotation UX remains
-> decision-gated. The next bounded local task is 033: compose and accept the local C1 runtime. Do not
-> perform hosted/device acceptance in that package.
+> exports, Doctor and exact normal plus guarded Android/iOS Release builds. Package 033 then
+> implemented the guarded composition at `d295c62`; both local Release handshakes, every route and
+> the Android scenario set passed, but required iOS mutation/Realtime/actual-file, successful
+> password/PDF and 401/sign-out/retry evidence plus one normal Android Release rebuild remain open.
+> Read briefs 028–033 without promoting 033 to accepted C1. Final native annotation UX remains
+> decision-gated. Keep the bounded local task at 033 and do not perform hosted/device acceptance.
 >
 > Preserve 013–032's historical local acceptance and distinguish it from deployment/Drive and
 > unrun integration layers. Keep 004 at 25/27 and 010 at 6/7; hardware remains

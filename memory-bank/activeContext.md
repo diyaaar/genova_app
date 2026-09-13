@@ -1,6 +1,6 @@
 # Active context
 
-Updated 12 September 2026 after the 032 WebView platform-capability acceptance. The recorded
+Updated 13 September 2026 after the partial 033 composed-WebView execution. The recorded
 remote `main` remains `a13f696`; no push or deployment was performed.
 [Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
 detail. This index is not test evidence and not live-state proof; follow its links.
@@ -116,9 +116,12 @@ reauth/update, exact invitation clipboard, constrained image input and ephemeral
 sharing at `fa2e4b7`. Mobile 30 suites / 161 tests, root 55 files / 464 tests/build, both exports,
 Expo Doctor 21/21, normal and guarded Release builds, exact local image/PDF transfer, refusal,
 cancellation, permission and cleanup checks passed on iOS and Android. Generated/runtime output was
-removed. The native and 030 web halves are still not composed; browser E2E, hosted CSP/provider/
-account, hardware and release remain NOT RUN. Package 033 is the next ready local C1 task and owns
-composed runtime acceptance.
+removed. [033](../docs/briefs/033-composed-permanent-webview-runtime.md) then implemented the guarded
+composition at `d295c62`. Both local Release handshakes and all nine route families ran, and the full
+Android scenario set passed. Required iOS mutation/Realtime/actual-file, successful password/PDF and
+401/sign-out/retry evidence plus a current-source normal Android Release rebuild remain FAIL/NOT RUN,
+so 033 and C1 are open. All 033 runtime/generated/device/profile artifacts were removed. Browser E2E,
+hosted CSP/provider/account, hardware and release remain NOT RUN. The active bounded task stays 033.
 
 010's sixth
 criterion still needs a new production fixture and explicit authorization; 004's two hardware

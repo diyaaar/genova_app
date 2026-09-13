@@ -31,6 +31,7 @@ bu özet otomatik sürüm yükseltme talimatı değildir.
 | 030 dormant web embedded adapter | Root `pnpm check`; focused runtime/Supabase/provider/Auth/layout/profile/navigation/cache tests. Final gate: 55 files / 462 tests, configured coverage, service-worker syntax and Next production build. No native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware or release claim |
 | 031 native WebView shell | Mobile `npx tsc --noEmit && npm test -- --runInBand`; normal iOS/Android exports; Expo Doctor 21/21; clean prebuild; exact Android API 36 arm64 and iOS arm64-simulator Release builds. Final gate: 26 suites / 126 tests. Native half only; no composed web runtime, platform capability side effect, hosted/provider/account, hardware or release claim |
 | 032 WebView platform capabilities | Mobile `npm run check`; root `pnpm check`; normal iOS/Android exports; Expo Doctor; clean normal and guarded Release builds; guarded `127.0.0.1:18032` picker/clipboard/share/refusal/cancellation runs on iOS 26.5 arm64 simulator and Android API 36 arm64 emulator; generated permission/marker/cache/cleanup inspection. Final gates: 30 suites / 161 mobile tests and 55 files / 464 root tests. Composed web peer, hosted/provider/real account, hardware and release remain NOT RUN |
+| 033 composed permanent WebView runtime | Exact `spike/033-runtime`, `colima-genova033`, PostgreSQL 17 test-copy and 127.0.0.1:18033/54321 guards; production Next plus guarded Release simulator/emulator apps. Both handshakes/routes and the Android feature/fault set ran. Final local gates: root 55 files / 466 tests/build, mobile 32 suites / 178 tests, Expo Doctor 21/21, normal exports/manifests and normal iOS Release. Required iOS feature/fault evidence remains FAIL; current-source normal Android Release is NOT RUN because no persistent JDK exists. Exact cleanup removed runtime, generated projects, device/profile/context and orphaned Colima disk. Hosted/provider/account/hardware/release remain NOT RUN |
 
 Kapsama oranı sadece yapılandırmadaki seçili dosyaları ölçer; tüm ürün oranı değildir.
 Komut bulunmuyor veya ortam eksikse geçti yazma. [CI](../.github/workflows/ci.yml)
@@ -154,7 +155,9 @@ API 36 arm64 plus iOS arm64-simulator Release builds passed. The generated `.exp
 and native-library build caches were deleted after recording the binary hashes. `npm audit --omit=dev`
 still reports the same 10 moderate Expo/xcode/uuid toolchain findings and no high/critical finding;
 automatic breaking downgrade was not applied. The result at that revision remained the native half
-only; 032 subsequently accepted the platform capabilities, while 033 owns composed local runtime.
+only; 032 subsequently accepted the platform capabilities. Package 033 implemented the composed
+local runtime at `d295c62` but remains open on required iOS feature/fault evidence and one normal
+Android Release rebuild.
 Hosted CSP/provider/account and hardware remain separate gates.
 
 ## WebView platform capability state — 12 September 2026
@@ -177,5 +180,7 @@ simulator, emulator and server.
 `npm audit --omit=dev --audit-level=moderate` remains a supplemental FAIL with 11 moderate findings:
 the new one is the same build-time `xcode -> uuid@7.0.3` chain reached through `expo-sharing`'s config
 plugin. The proposed automatic fix is breaking and was not applied; this is not relabeled as a clean
-audit or a demonstrated product-runtime exploit. Package 033 owns the still-unrun composed local
-web/native C1 runtime; hosted/provider/real-account/hardware/release layers remain separate.
+audit or a demonstrated product-runtime exploit. Package 033 now implements the guarded local
+web/native composition at `d295c62`, but its required iOS feature/fault evidence and one normal
+Android Release rebuild remain open; hosted/provider/real-account/hardware/release layers remain
+separate.

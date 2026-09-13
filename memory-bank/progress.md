@@ -1,6 +1,6 @@
 # İlerleme indeksi
 
-12 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
+13 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
 buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı anlamına gelmez.
 
 | İş | Durum | Kanıt / sınır |
@@ -43,6 +43,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 030 dormant web embedded adapter | Local acceptance complete; native/composed C1 runtime was NOT RUN at this revision | [030](../docs/briefs/030-web-embedded-adapter.md), code/test `c7d09d3`; exact locked bootstrap/challenge, explicit-token user/current-choir proof, memory-only guarded bearer, renewal/clear race refusal, cache/SW teardown, nine-route shell/navigation boundaries, native-owned controls and browser parity passed root 55 files / 462 tests, coverage/service-worker syntax and Next build. No dependency/native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware, CI or release proof at that revision; 031 subsequently added the native shell |
 | 031 native WebView shell | Local acceptance complete; composed C1 runtime still NOT RUN | [031](../docs/briefs/031-native-webview-shell.md), code/test `0217ac8`; Expo-compatible WebView/Crypto, native-only access lease, challenge/proof/renewal/clear state machine, exact routes, external confirmation, back/theme and locked/error UI passed mobile 26 suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS arm64-simulator Release builds. Build outputs were removed after hashing. Password/clipboard/protected-file side effects were still open at that revision and were subsequently accepted in 032; composition remains with 033 |
 | 032 WebView platform capabilities | Local acceptance complete; composed C1 runtime still NOT RUN | [032](../docs/briefs/032-webview-platform-capabilities.md), code/test `fa2e4b7`; native-only password reauth/update, exact invitation clipboard write, constrained single-image input and ephemeral protected-file share passed 30 mobile suites / 161 tests, root 55 files / 464 tests/build, both exports, Expo Doctor 21/21 and actual guarded plus normal iOS/Android Release builds. Exact local image/PDF bytes, refusals, cancellation, cache cleanup and no expanded Genova permissions passed. Generated/runtime artifacts were removed. Hosted/provider/real-account/hardware/CI/release and the composed web/native peer remain open; 033 is next. |
+| 033 composed permanent WebView runtime | In progress; required FAIL/NOT RUN rows keep C1 open | [033](../docs/briefs/033-composed-permanent-webview-runtime.md), code/test `d295c62`; both local Release handshakes, all nine route families, both-platform navigation and the full Android feature/fault set ran. Root 55 files / 466 tests/build, mobile 32 suites / 178 tests, Expo Doctor 21/21, normal exports/manifests/iOS Release and isolation scans passed. Required iOS mutation/Realtime/actual-file, successful password/PDF and 401/sign-out/retry evidence remains FAIL; current-source normal Android Release is NOT RUN without a persistent JDK. Runtime/generated/device/profile state was removed. No hosted/provider/real account/hardware/CI/release proof. |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -85,12 +86,14 @@ native-audio slice at `c30b3b1`, and 027 completed foreground shell ownership pl
 navigation at `dc25938`. Package 028 accepted the source-grounded permanent-WebView contract without
 product changes; package 029 accepted its shared framework-free policy at `4289da4`; package 030
 accepted the dormant web embedded adapter at `c7d09d3`; package 031 accepted the native shell at
-`0217ac8`; package 032 accepted the bounded platform-capability layer at `fa2e4b7`. Because final
+`0217ac8`; package 032 accepted the bounded platform-capability layer at `fa2e4b7`; package 033
+implemented the guarded composition at `d295c62` but remains open on its recorded iOS feature/fault
+and normal Android Release rows. Because final
 native annotation UX is still gated by four owner decisions and hardware audio is postponed, the
-[canonical long-term plan](../docs/mobil-teslim-plani.md) routes next to package 033's composed local
-C1 runtime. No composed web/native runtime, hosted CSP/provider/account, push, deploy, production
+[canonical long-term plan](../docs/mobil-teslim-plani.md) keeps active work at package 033's composed
+local C1 runtime. No full C1 acceptance, hosted CSP/provider/account, push, deploy, production
 database operation, Drive call, real choir access, email, remote CI or hardware test was performed
-for 032.
+for 033.
 
 WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
 [WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.

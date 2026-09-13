@@ -4,10 +4,12 @@ Date: 2026-09-10. Inventory revision: brief 028. This document is the C1 design 
 embedding the routes that `MIGRATION.md` assigns permanently to the web client. It is not runtime,
 hosted, device, dependency-compatibility or release evidence.
 
-Progress update: 2026-09-12. Packages 029–032 are accepted for their separately bounded local
-policy, dormant web adapter, native shell and platform-capability layers. Package 033 still owns the
-first composed web/native Release runtime. Hosted, real-provider/account, hardware and release proof
-remain separate.
+Progress update: 2026-09-13. Packages 029–032 are accepted for their separately bounded local
+policy, dormant web adapter, native shell and platform-capability layers. Package 033 implemented
+the guarded composition at `d295c62`; both local Release handshakes and all route families ran, and
+the Android scenario set passed. Required iOS feature/fault rows and one normal Android Release
+rebuild remain open, so composed C1 is not accepted. Hosted, real-provider/account, hardware and
+release proof remain separate.
 
 ## Evidence legend and result
 
@@ -377,7 +379,7 @@ complete while a required preservation row or runtime layer is FAIL/NOT RUN.
 | CSP/security | release header observed; no unsafe credential sink, URL/query/log/analytics/storage/service-worker token; popup/origin/message attacks fail closed | **NOT RUN** |
 | native component | dependency compatibility, initial/subsequent navigation, challenge, renewal, epoch teardown, back/theme/external/error/process restart | **PASS locally — [031](briefs/031-native-webview-shell.md), `0217ac8`; unit/build only, before composition** |
 | platform capability | gallery upload, cancellation/refusal, clipboard/manual fallback, protected file view/download/expiry and native password sheet | **PASS locally — [032](briefs/032-webview-platform-capabilities.md), `fa2e4b7`; guarded simulator/emulator runtime, no real account/provider/hardware** |
-| composed local Release | every permanent route and native exit on iOS simulator plus Android emulator against production-type local web and synthetic tenants | **NOT RUN** |
+| composed local Release | every permanent route and native exit on iOS simulator plus Android emulator against production-type local web and synthetic tenants | **FAIL / REQUIRED ROWS OPEN — [033](briefs/033-composed-permanent-webview-runtime.md), `d295c62`; both handshakes/routes and Android scenario set passed, but required iOS feature/fault rows and one normal Android Release rebuild remain open** |
 | hosted | deployed web capability/CSP and authorized hosted session/RLS/Realtime/API behavior on exact domain | **NOT RUN — separate authority** |
 | hardware/accessibility | approved devices, file providers/camera policy, keyboard, VoiceOver/TalkBack, process/background behavior | **NOT RUN — postponed/separate authority** |
 | publication | signed candidate, store review and installed public build | **NOT RUN — release authority** |
