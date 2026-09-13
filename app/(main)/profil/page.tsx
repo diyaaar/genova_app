@@ -174,9 +174,10 @@ export default function Profil() {
 
               <button
                 type="button"
+                aria-label="Çıkış Yap"
                 onClick={() => {
                   setMenuOpen(false);
-                  signOut();
+                  void signOut();
                 }}
                 className="flex w-full items-center gap-2.5 rounded-xl border border-[var(--status-rejected-border)] bg-[var(--status-rejected-bg)] px-3 py-2.5 text-left text-[var(--status-rejected-text)] transition-colors hover:border-[var(--status-rejected-border)] hover:bg-[var(--status-rejected-bg)]"
               >

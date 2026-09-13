@@ -96,6 +96,15 @@ describe('profile embedded capabilities', () => {
     expect(mocks.setTheme).not.toHaveBeenCalled();
   });
 
+  it('exposes one stable sign-out control name and invokes sign-out', () => {
+    render(<ProfilePage />);
+    fireEvent.click(screen.getByRole('button', { name: 'Profil menüsünü aç' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Çıkış Yap' }));
+
+    expect(mocks.signOut).toHaveBeenCalledOnce();
+    expect(screen.queryByRole('button', { name: 'Çıkış Yap' })).not.toBeInTheDocument();
+  });
+
   it('preserves all three browser password fields', () => {
     render(<ProfileEditPage />);
 
