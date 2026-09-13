@@ -28,6 +28,7 @@
       "expo-secure-store",
       "./src/acceptance/with-local-loopback-network.js",
       "./src/acceptance/with-platform-capability-loopback.js",
+      "./src/acceptance/with-composed-webview-loopback.js",
       [
         "expo-audio",
         {

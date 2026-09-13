@@ -39,4 +39,20 @@ describe('native WebView runtime configuration', () => {
       expect(() => createNativeWebViewRuntimeConfig({ initialPath: path, isDevelopment: false })).toThrow('route-not-allowed');
     }
   });
+
+  it('passes an explicit protected-file origin only when the caller provides one', () => {
+    expect(createNativeWebViewRuntimeConfig({
+      initialPath: '/announcements',
+      isDevelopment: true,
+      developmentOrigin: 'http://127.0.0.1:18033',
+      protectedFileOrigins: ['http://127.0.0.1:54321'],
+    }).routePolicy).toEqual({
+      appOrigin: 'http://127.0.0.1:18033',
+      protectedFileOrigins: ['http://127.0.0.1:54321'],
+    });
+    expect(createNativeWebViewRuntimeConfig({
+      initialPath: '/announcements',
+      isDevelopment: false,
+    }).routePolicy).toEqual({ appOrigin: APP_WEB_ORIGIN });
+  });
 });

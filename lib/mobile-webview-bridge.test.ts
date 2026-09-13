@@ -167,6 +167,18 @@ describe('protected file capability URL', () => {
     expect(canonicalizeBridgeFileRequestUrl('https://files.example.test/signed?ticket=one')).toBe(
       'https://files.example.test/signed?ticket=one',
     );
+    expect(canonicalizeBridgeFileRequestUrl(
+      'http://127.0.0.1:54321/functions/v1/repertoire-file?ticket=one',
+      { protectedFileOrigins: ['http://127.0.0.1:54321'] },
+    )).toBe('http://127.0.0.1:54321/functions/v1/repertoire-file?ticket=one');
+    expect(canonicalizeBridgeFileRequestUrl(
+      'http://127.0.0.1:54322/functions/v1/repertoire-file?ticket=one',
+      { protectedFileOrigins: ['http://127.0.0.1:54321'] },
+    )).toBeNull();
+    expect(canonicalizeBridgeFileRequestUrl(
+      'http://example.test/functions/v1/repertoire-file?ticket=one',
+      { protectedFileOrigins: ['http://example.test'] },
+    )).toBeNull();
     expect(canonicalizeBridgeFileRequestUrl('http://files.example.test/file')).toBeNull();
     expect(canonicalizeBridgeFileRequestUrl('//files.example.test/file')).toBeNull();
     expect(canonicalizeBridgeFileRequestUrl('https://user:pass@files.example.test/file')).toBeNull();

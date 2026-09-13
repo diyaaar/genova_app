@@ -9,6 +9,8 @@ interface MockWebViewProps {
   source: { uri: string };
   originWhitelist: string[];
   injectedJavaScriptObject: Record<string, unknown>;
+  injectedJavaScriptBeforeContentLoaded: string;
+  injectedJavaScriptBeforeContentLoadedForMainFrameOnly: boolean;
   injectedJavaScript: string;
   incognito: boolean;
   cacheEnabled: boolean;
@@ -23,6 +25,7 @@ interface MockWebViewProps {
   mediaCapturePermissionGrantType: string;
   onMessage: (event: { nativeEvent: { data: string; url: string } }) => void;
   onShouldStartLoadWithRequest: (event: { url: string }) => boolean;
+  onNavigationStateChange: (event: { url: string }) => void;
   onOpenWindow: (event: { nativeEvent: { targetUrl: string } }) => void;
   onError: () => void;
 }
@@ -143,6 +146,12 @@ describe('NativeWebViewScreen', () => {
       tenantEpoch: expect.any(Number),
     });
     expect(JSON.stringify(props?.injectedJavaScriptObject)).not.toMatch(/token|user|choir|member/iu);
+    expect(props?.injectedJavaScriptBeforeContentLoadedForMainFrameOnly).toBe(true);
+    expect(props?.injectedJavaScriptBeforeContentLoaded).toContain('injectedObjectJson');
+    expect(props?.injectedJavaScriptBeforeContentLoaded).toContain(JSON.stringify(
+      props?.injectedJavaScriptObject,
+    ).replaceAll('"', '\\"'));
+    expect(props?.injectedJavaScriptBeforeContentLoaded).not.toMatch(/token|user|choir|member/iu);
     expect(props?.injectedJavaScript).toContain('input[type="file"]');
   });
 
@@ -176,6 +185,44 @@ describe('NativeWebViewScreen', () => {
     });
     await waitFor(() => expect(screen.queryByTestId('webview-locked')).toBeNull());
     expect(outgoing().at(-1)).toMatchObject({ type: 'theme.apply' });
+  });
+
+  it('maps Android origin-only message sources only to the last native-accepted web route', async () => {
+    await renderScreen();
+    const props = webViewMock.__getLatestProps() as MockWebViewProps;
+    await act(async () => {
+      props.onMessage({ nativeEvent: {
+        data: incoming(props, 'bridge.ready', { supportedVersions: [1], routeFamily: 'announcements' }),
+        url: APP_WEB_ORIGIN,
+      } });
+    });
+    expect(outgoing().at(-1)).toMatchObject({ type: 'bridge.challenge' });
+
+    const challenge = outgoing().at(-1);
+    await act(async () => {
+      props.onMessage({ nativeEvent: {
+        data: incoming(props, 'bridge.challenge.ack', { nonce: challenge?.payload.nonce as string }),
+        url: 'https://attacker.invalid',
+      } });
+    });
+    expect(outgoing().some((message) => message.type === 'context.apply')).toBe(false);
+  });
+
+  it('resets the trusted Android origin-only source when the runtime route changes', async () => {
+    const { props, view } = await renderScreen();
+    const profileConfig = createNativeWebViewRuntimeConfig({ initialPath: '/profil', isDevelopment: false });
+    view.rerender(<NativeWebViewScreen {...props} initialPath="/profil" runtimeConfig={profileConfig} />);
+    await waitFor(() => expect(webViewMock.__getLatestProps()?.source.uri).toBe(`${APP_WEB_ORIGIN}/profil`));
+    const profile = webViewMock.__getLatestProps() as MockWebViewProps;
+
+    await act(async () => {
+      profile.onMessage({ nativeEvent: {
+        data: incoming(profile, 'bridge.ready', { supportedVersions: [1], routeFamily: 'profile' }),
+        url: APP_WEB_ORIGIN,
+      } });
+    });
+
+    expect(outgoing().at(-1)).toMatchObject({ type: 'bridge.challenge' });
   });
 
   it('stops route escapes and opens a normalized external host only after confirmation', async () => {

@@ -3,6 +3,7 @@ import {
   EMBEDDED_LEASE_SAFETY_SECONDS,
   EmbeddedLeaseVault,
   detectEmbeddedBootstrap,
+  readComposedAcceptanceRoutePolicy,
   verifyEmbeddedContext,
   type EmbeddedContextCandidate,
 } from './embedded-web-runtime';
@@ -13,6 +14,42 @@ const CHOIR_ID = '22222222-2222-4222-8222-222222222222';
 const MEMBER_ID = '33333333-3333-4333-8333-333333333333';
 const ACCESS_TOKEN = 'header.payload.signature';
 const NOW_SECONDS = 2_000_000_000;
+
+describe('readComposedAcceptanceRoutePolicy', () => {
+  it('is dormant without the exact compile-time acceptance flag', () => {
+    expect(readComposedAcceptanceRoutePolicy({
+      NEXT_PUBLIC_GENOVA_033_APP_ORIGIN: 'http://127.0.0.1:18033',
+      NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+    })).toBeUndefined();
+  });
+
+  it('accepts only the exact owned loopback web and service origins', () => {
+    expect(readComposedAcceptanceRoutePolicy({
+      NEXT_PUBLIC_GENOVA_033_ACCEPTANCE: '1',
+      NEXT_PUBLIC_GENOVA_033_APP_ORIGIN: 'http://127.0.0.1:18033',
+      NEXT_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+    })).toEqual({
+      appOrigin: 'http://127.0.0.1:18033',
+      protectedFileOrigins: ['http://127.0.0.1:54321'],
+    });
+
+    for (const [appOrigin, serviceOrigin] of [
+      ['https://127.0.0.1:18033', 'http://127.0.0.1:54321'],
+      ['http://localhost:18033', 'http://127.0.0.1:54321'],
+      ['http://127.0.0.1:18034', 'http://127.0.0.1:54321'],
+      ['http://user@127.0.0.1:18033', 'http://127.0.0.1:54321'],
+      ['http://127.0.0.1:18033/path', 'http://127.0.0.1:54321'],
+      ['http://127.0.0.1:18033', 'https://127.0.0.1:54321'],
+      ['http://127.0.0.1:18033', 'http://127.0.0.1:54322'],
+    ]) {
+      expect(() => readComposedAcceptanceRoutePolicy({
+        NEXT_PUBLIC_GENOVA_033_ACCEPTANCE: '1',
+        NEXT_PUBLIC_GENOVA_033_APP_ORIGIN: appOrigin,
+        NEXT_PUBLIC_SUPABASE_URL: serviceOrigin,
+      })).toThrow('033-local-runtime-refused');
+    }
+  });
+});
 
 function candidate(overrides: Partial<EmbeddedContextCandidate> = {}): EmbeddedContextCandidate {
   return {

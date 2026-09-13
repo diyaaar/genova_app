@@ -81,7 +81,7 @@ export class AuthStore {
     const { data } = await this.deps.auth.getSession();
     const { data: listener } = this.deps.auth.onAuthStateChange((event, session) => {
       void this.applySession(session, {
-        preserveReady: event === 'SIGNED_IN' || event === 'USER_UPDATED',
+        preserveReady: event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED',
       });
     });
     this.subscription = listener.subscription;

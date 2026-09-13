@@ -312,6 +312,8 @@ describe('EmbeddedWebBridgeProvider', () => {
       'clipboard.write.request', 'auth.sign-out.request',
     ]);
     expect(messages.find((message) => message.type === 'auth.password.open').payload).toEqual({});
+    expect(screen.getByText('tenant child')).toBeInTheDocument();
+    act(() => dispatchNative(incoming('context.clear', { reason: 'sign-out' }, 'signout_clear_12345')));
     expect(screen.queryByText('tenant child')).not.toBeInTheDocument();
   });
 

@@ -118,6 +118,24 @@ describe('session lifecycle', () => {
     expect(preferences.values[USER_ID]).toBeUndefined();
     expect(clearCaches).toHaveBeenCalled();
   });
+
+  it('keeps the proved tenant ready when the same user receives a refreshed token', async () => {
+    const { store, gateway, calls, clearCaches } = buildStore({ activeChoirId: CHOIR_A });
+    await store.start();
+    calls.length = 0;
+    clearCaches.mockClear();
+
+    gateway.emit(sessionFor(USER_ID, { access_token: 'refreshed-access-token' }), 'TOKEN_REFRESHED');
+    await Promise.resolve();
+
+    expect(store.getState()).toMatchObject({
+      phase: 'ready',
+      activeChoir: { choir_id: CHOIR_A },
+      session: { access_token: 'refreshed-access-token' },
+    });
+    expect(calls).toEqual([]);
+    expect(clearCaches).not.toHaveBeenCalled();
+  });
 });
 
 describe('permanent WebView lease', () => {

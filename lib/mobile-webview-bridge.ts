@@ -59,6 +59,7 @@ export type AppRouteDecision = AcceptedAppRoute | RejectedAppRoute;
 export interface AppRoutePolicy {
   appOrigin?: string;
   availableNativeRoutes?: readonly NativeRouteFamily[];
+  protectedFileOrigins?: readonly string[];
 }
 
 interface ParsedRouteInput {
@@ -103,6 +104,21 @@ function configuredOrigin(policy: AppRoutePolicy): URL | null {
   } catch {
     return null;
   }
+}
+
+function configuredProtectedFileOrigins(policy: AppRoutePolicy): Set<string> {
+  const origins = new Set<string>();
+  for (const value of policy.protectedFileOrigins ?? []) {
+    try {
+      const url = new URL(value);
+      const loopbackHttp = url.protocol === 'http:' && url.hostname === '127.0.0.1' && Boolean(url.port);
+      if ((url.protocol === 'https:' || loopbackHttp) && !url.username && !url.password
+        && url.pathname === '/' && !url.search && !url.hash) origins.add(url.origin);
+    } catch {
+      // Invalid optional origins never widen the accepted set.
+    }
+  }
+  return origins;
 }
 
 function absoluteAuthority(input: string): string | null {
@@ -408,10 +424,11 @@ export function canonicalizeBridgeFileRequestUrl(value: unknown, policy: AppRout
     const url = new URL(value, origin);
     const isRelative = value.startsWith('/');
     const sameOrigin = url.origin === origin.origin;
+    const explicitlyAllowedOrigin = configuredProtectedFileOrigins(policy).has(url.origin);
     if (url.username || url.password || url.hash) return null;
     if (isRelative && !sameOrigin) return null;
     if (sameOrigin && explicitPort(value) !== explicitPort(policy.appOrigin ?? APP_WEB_ORIGIN)) return null;
-    if (!sameOrigin && (url.protocol !== 'https:' || explicitPort(value) !== null)) return null;
+    if (!sameOrigin && !explicitlyAllowedOrigin && (url.protocol !== 'https:' || explicitPort(value) !== null)) return null;
     return url.toString();
   } catch {
     return null;

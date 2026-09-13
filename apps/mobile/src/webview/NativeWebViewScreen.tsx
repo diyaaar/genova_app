@@ -65,6 +65,15 @@ function newAttempt(): Attempt {
   return { instanceId, tenantEpoch: allocateTenantEpoch(), key: instanceId };
 }
 
+function isOriginOnlySource(sourceUrl: string, appOrigin: string): boolean {
+  try {
+    const source = new URL(sourceUrl);
+    return source.origin === appOrigin && source.pathname === '/' && !source.search && !source.hash;
+  } catch {
+    return false;
+  }
+}
+
 function errorCopy(code: string | null): string {
   switch (code) {
     case 'route-not-allowed': return 'Bu bağlantı mobil uygulamada güvenle açılamadı.';
@@ -101,6 +110,7 @@ export interface NativeWebViewScreenProps {
   onDiagnostic?: (diagnostic: BridgeDiagnostic) => void;
   writeClipboard?: (text: string) => Promise<boolean>;
   protectedFileCapability?: ProtectedFileCapability;
+  onBridgeSnapshot?: (snapshot: NativeBridgeSnapshot) => void;
 }
 
 export function NativeWebViewScreen({
@@ -116,9 +126,10 @@ export function NativeWebViewScreen({
   onDiagnostic,
   writeClipboard = createExpoClipboardWriter(),
   protectedFileCapability: suppliedProtectedFileCapability,
+  onBridgeSnapshot,
 }: NativeWebViewScreenProps) {
-  const actionsRef = useRef({ getLease, onNativeRoute, onExit, onSignOut, onDiagnostic, changePassword, writeClipboard });
-  actionsRef.current = { getLease, onNativeRoute, onExit, onSignOut, onDiagnostic, changePassword, writeClipboard };
+  const actionsRef = useRef({ getLease, onNativeRoute, onExit, onSignOut, onDiagnostic, changePassword, writeClipboard, onBridgeSnapshot });
+  actionsRef.current = { getLease, onNativeRoute, onExit, onSignOut, onDiagnostic, changePassword, writeClipboard, onBridgeSnapshot };
   const configResult = useMemo(() => {
     try {
       return { config: runtimeConfig ?? readNativeWebViewRuntimeConfig(initialPath), error: null };
@@ -140,6 +151,7 @@ export function NativeWebViewScreen({
   const [fileBusy, setFileBusy] = useState(false);
   const [themeState, setThemeState] = useState<NativeThemeState>(() => currentNativeTheme('system'));
   const webViewRef = useRef<WebView>(null);
+  const trustedWebSourceRef = useRef(configResult.config?.initialUrl ?? '');
   const controllerRef = useRef<NativeWebViewBridgeController | null>(null);
   const themeRef = useRef(themeState);
   themeRef.current = themeState;
@@ -148,6 +160,15 @@ export function NativeWebViewScreen({
     createExpoEphemeralFileStore(),
     createExpoShareGateway(),
   ), [suppliedProtectedFileCapability]);
+  const bootstrap = useMemo(() => ({
+    channel: 'genova.mobile.webview' as const,
+    instanceId: attempt.instanceId,
+    tenantEpoch: attempt.tenantEpoch,
+  }), [attempt.instanceId, attempt.tenantEpoch]);
+  const bootstrapBeforeContent = useMemo(() => {
+    const serialized = JSON.stringify(JSON.stringify(bootstrap));
+    return `window.ReactNativeWebView = window.ReactNativeWebView || {}; window.ReactNativeWebView.injectedObjectJson = function () { return ${serialized}; }; true;`;
+  }, [bootstrap]);
   const passwordVisibleRef = useRef(passwordVisible);
   const oldPasswordRef = useRef(oldPassword);
   const newPasswordRef = useRef(newPassword);
@@ -155,6 +176,10 @@ export function NativeWebViewScreen({
   const pendingFileRef = useRef(pendingFile);
   passwordVisibleRef.current = passwordVisible;
   pendingFileRef.current = pendingFile;
+
+  useEffect(() => {
+    trustedWebSourceRef.current = configResult.config?.initialUrl ?? '';
+  }, [attempt.key, configResult.config?.initialUrl]);
 
   const resetPasswordSheet = () => {
     setOldPassword('');
@@ -226,6 +251,7 @@ export function NativeWebViewScreen({
       onSnapshot: (next) => {
         setSnapshot(next);
         setCovered(next.phase !== 'running');
+        actionsRef.current.onBridgeSnapshot?.(next);
       },
       onDiagnostic: (diagnostic) => actionsRef.current.onDiagnostic?.(diagnostic),
       onNativeRoute: (route) => {
@@ -401,11 +427,9 @@ export function NativeWebViewScreen({
           // RNCWebView opens targets outside this prop through Linking before our callback.
           // Let the callback see every scheme; the shared parser below is the actual allowlist.
           originWhitelist={['*']}
-          injectedJavaScriptObject={{
-            channel: 'genova.mobile.webview',
-            instanceId: attempt.instanceId,
-            tenantEpoch: attempt.tenantEpoch,
-          }}
+          injectedJavaScriptObject={bootstrap}
+          injectedJavaScriptBeforeContentLoaded={bootstrapBeforeContent}
+          injectedJavaScriptBeforeContentLoadedForMainFrameOnly
           injectedJavaScript={WEBVIEW_IMAGE_INPUT_POLICY}
           injectedJavaScriptForMainFrameOnly
           incognito
@@ -424,13 +448,21 @@ export function NativeWebViewScreen({
           mediaCapturePermissionGrantType="deny"
           webviewDebuggingEnabled={__DEV__}
           onMessage={(event: WebViewMessageEvent) => {
-            void controllerRef.current?.handleMessage(event.nativeEvent.data, event.nativeEvent.url);
+            const config = configResult.config;
+            const sourceUrl = config && isOriginOnlySource(event.nativeEvent.url, config.appOrigin)
+              ? trustedWebSourceRef.current
+              : event.nativeEvent.url;
+            void controllerRef.current?.handleMessage(event.nativeEvent.data, sourceUrl);
           }}
-          onShouldStartLoadWithRequest={(request) => (
-            controllerRef.current?.handleNavigationUrl(request.url) === 'allow-web'
-          )}
+          onShouldStartLoadWithRequest={(request) => {
+            const decision = controllerRef.current?.handleNavigationUrl(request.url);
+            if (decision === 'allow-web') trustedWebSourceRef.current = request.url;
+            return decision === 'allow-web';
+          }}
           onNavigationStateChange={(navigation) => {
-            if (controllerRef.current?.handleNavigationUrl(navigation.url) !== 'allow-web') {
+            if (controllerRef.current?.handleNavigationUrl(navigation.url) === 'allow-web') {
+              trustedWebSourceRef.current = navigation.url;
+            } else {
               webViewRef.current?.stopLoading();
             }
           }}

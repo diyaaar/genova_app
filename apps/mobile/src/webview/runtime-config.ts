@@ -43,9 +43,13 @@ export function createNativeWebViewRuntimeConfig(input: {
   initialPath: string;
   isDevelopment: boolean;
   developmentOrigin?: string;
+  protectedFileOrigins?: readonly string[];
 }): NativeWebViewRuntimeConfig {
   const appOrigin = resolveNativeWebViewOrigin(input);
-  const routePolicy = { appOrigin };
+  const routePolicy = {
+    appOrigin,
+    ...(input.protectedFileOrigins ? { protectedFileOrigins: input.protectedFileOrigins } : {}),
+  };
   const rawDecision = classifyAppUrl(input.initialPath, routePolicy);
   if (rawDecision.kind === 'rejected' || rawDecision.owner !== 'web') {
     throw new Error('route-not-allowed');

@@ -17,6 +17,7 @@ import { clearChatCaches } from '@/lib/chat-cache';
 import {
   detectEmbeddedBootstrap,
   EMBEDDED_LEASE_SAFETY_SECONDS,
+  readComposedAcceptanceRoutePolicy,
   type EmbeddedBootstrapDetection,
   type EmbeddedBootstrapEnvironment,
   type EmbeddedContextCandidate,
@@ -107,7 +108,12 @@ function currentEnvironment(): EmbeddedBootstrapEnvironment {
   } catch {
     isTopFrame = false;
   }
-  return { href: window.location.href, isTopFrame, bridge };
+  const routePolicy = readComposedAcceptanceRoutePolicy({
+    NEXT_PUBLIC_GENOVA_033_ACCEPTANCE: process.env.NEXT_PUBLIC_GENOVA_033_ACCEPTANCE,
+    NEXT_PUBLIC_GENOVA_033_APP_ORIGIN: process.env.NEXT_PUBLIC_GENOVA_033_APP_ORIGIN,
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  });
+  return { href: window.location.href, isTopFrame, bridge, routePolicy };
 }
 
 function createMessageId(): string {
@@ -612,9 +618,7 @@ export function EmbeddedWebBridgeProvider({
   const requestSignOut = useCallback(() => {
     if (!send('auth.sign-out.request', {})) {
       clearContext('error', 'bridge-send-failed');
-      return;
     }
-    clearContext('locked');
   }, [clearContext, send]);
 
   const requestPasswordChange = useCallback(() => {

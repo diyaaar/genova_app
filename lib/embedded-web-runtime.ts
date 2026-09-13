@@ -44,6 +44,38 @@ export interface EmbeddedBootstrapEnvironment {
   routePolicy?: AppRoutePolicy;
 }
 
+export interface ComposedAcceptanceEnvironment {
+  NEXT_PUBLIC_GENOVA_033_ACCEPTANCE?: string;
+  NEXT_PUBLIC_GENOVA_033_APP_ORIGIN?: string;
+  NEXT_PUBLIC_SUPABASE_URL?: string;
+}
+
+function exactLoopbackOrigin(value: string | undefined, port: string): string | null {
+  if (!value) return null;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || url.port !== port
+    || url.username || url.password || !['', '/'].includes(url.pathname) || url.search || url.hash) {
+    return null;
+  }
+  return url.origin;
+}
+
+/** Compile-time-only escape hatch for the guarded 033 production-type local web build. */
+export function readComposedAcceptanceRoutePolicy(
+  environment: ComposedAcceptanceEnvironment,
+): AppRoutePolicy | undefined {
+  if (environment.NEXT_PUBLIC_GENOVA_033_ACCEPTANCE !== '1') return undefined;
+  const appOrigin = exactLoopbackOrigin(environment.NEXT_PUBLIC_GENOVA_033_APP_ORIGIN, '18033');
+  const serviceOrigin = exactLoopbackOrigin(environment.NEXT_PUBLIC_SUPABASE_URL, '54321');
+  if (!appOrigin || !serviceOrigin) throw new Error('033-local-runtime-refused');
+  return Object.freeze({ appOrigin, protectedFileOrigins: Object.freeze([serviceOrigin]) });
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
