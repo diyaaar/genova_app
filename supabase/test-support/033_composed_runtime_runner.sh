@@ -17,7 +17,7 @@ SOURCE_PORT="${PGPORT:-5432}"
 PSQL_COMMAND="${PSQL_BIN:-psql}"
 PG_DUMP_COMMAND="${PG_DUMP_BIN:-pg_dump}"
 
-case "$ACTION" in start|prepare|status|refresh-ticket|expire-ticket|arm-single-401|disarm-401|revoke-admin-refresh|cleanup|stop) ;; *) refuse 'unsupported 033 action' ;; esac
+case "$ACTION" in start|prepare|status|serve-credential|refresh-ticket|expire-ticket|arm-single-401|disarm-401|revoke-admin-refresh|cleanup|stop) ;; *) refuse 'unsupported 033 action' ;; esac
 [ -n "$RUNTIME_INPUT" ] || refuse 'GENOVA_033_WORKDIR is required'
 RUNTIME_PARENT="$(cd "$(dirname "$RUNTIME_INPUT")" && pwd -P)"
 [ "$RUNTIME_PARENT/$(basename "$RUNTIME_INPUT")" = "$REPO_ROOT/spike/033-runtime" ] || refuse 'runtime must resolve exactly to spike/033-runtime'
@@ -86,6 +86,15 @@ NODE
 FIXTURE_PATH="$RUNTIME_DIR/.033-fixture.json"
 ENV_PATH="$RUNTIME_DIR/.033-runtime.env"
 SOURCE_BASELINE_PATH="$RUNTIME_DIR/.033-source-baseline"
+
+if [ "$ACTION" = 'serve-credential' ]; then
+  case "${GENOVA_033_CREDENTIAL_ROLE:-}" in admin|chorist) ;; *) refuse 'GENOVA_033_CREDENTIAL_ROLE must be admin or chorist' ;; esac
+  [ -f "$FIXTURE_PATH" ] || refuse '033 fixture does not exist'
+  GENOVA_033_CREDENTIAL_SERVER=1 GENOVA_033_CREDENTIAL_ROLE="$GENOVA_033_CREDENTIAL_ROLE" \
+    GENOVA_033_WORKDIR="$RUNTIME_DIR" GENOVA_033_FIXTURE_PATH="$FIXTURE_PATH" \
+    node supabase/test-support/033_credential_server.mjs
+  exit 0
+fi
 
 fixture_action () {
   SUPABASE_URL="http://127.0.0.1:54321" SUPABASE_ANON_KEY="$ANON_KEY" SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY" \

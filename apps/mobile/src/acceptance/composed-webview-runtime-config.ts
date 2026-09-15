@@ -5,11 +5,10 @@ const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{
 export interface ComposedWebViewRuntimeConfig {
   appOrigin: string;
   supabaseUrl: string;
+  credentialUrl: string;
   anonKey: string;
   email: string;
-  password: string;
   choristEmail: string;
-  choristPassword: string;
   choirA: string;
   choirB: string;
   memberA: string;
@@ -31,6 +30,15 @@ function exactOrigin(value: string, port: string): string {
     throw new Error('033 yalnız tam yerel kabul originlerini kullanır.');
   }
   return url.origin;
+}
+
+export function exactComposedCredentialUrl(value: string): string {
+  const url = new URL(value);
+  if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || url.port !== '18034'
+    || url.username || url.password || url.pathname !== '/credentials' || url.search || url.hash) {
+    throw new Error('033 parola kanalı yalnız tam yerel tek-kullanımlık URL olabilir.');
+  }
+  return url.toString();
 }
 
 function assertLocalAnonKey(value: string): string {
@@ -59,6 +67,7 @@ export function readComposedWebViewRuntimeConfig(
   }
   const appOrigin = exactOrigin(required(environment, 'EXPO_PUBLIC_GENOVA_033_APP_ORIGIN'), '18033');
   const supabaseUrl = exactOrigin(required(environment, 'EXPO_PUBLIC_SUPABASE_URL'), '54321');
+  const credentialUrl = exactComposedCredentialUrl(required(environment, 'EXPO_PUBLIC_GENOVA_033_CREDENTIAL_URL'));
   const email = required(environment, 'EXPO_PUBLIC_GENOVA_033_EMAIL');
   if (!email.startsWith('033-composed-') || !email.endsWith('@example.invalid')) {
     throw new Error('033 yalnız sentetik example.invalid hesabını kabul eder.');
@@ -79,11 +88,10 @@ export function readComposedWebViewRuntimeConfig(
   return Object.freeze({
     appOrigin,
     supabaseUrl,
+    credentialUrl,
     anonKey: assertLocalAnonKey(required(environment, 'EXPO_PUBLIC_SUPABASE_ANON_KEY')),
     email,
-    password: required(environment, 'EXPO_PUBLIC_GENOVA_033_PASSWORD'),
     choristEmail,
-    choristPassword: required(environment, 'EXPO_PUBLIC_GENOVA_033_CHORIST_PASSWORD'),
     choirA,
     choirB,
     memberA,

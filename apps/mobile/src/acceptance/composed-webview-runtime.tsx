@@ -15,17 +15,17 @@ import { getGenovaClient } from '../auth/supabase-client';
 import { NativeWebViewScreen } from '../webview/NativeWebViewScreen';
 import { createNativeWebViewRuntimeConfig } from '../webview/runtime-config';
 import type { NativeBridgeSnapshot } from '../webview/native-bridge-controller';
+import { signInWithComposedCredential } from './composed-webview-credential';
 import { readComposedWebViewRuntimeConfig } from './composed-webview-runtime-config';
 
 const config = readComposedWebViewRuntimeConfig({
   EXPO_PUBLIC_GENOVA_033_ACCEPTANCE: process.env.EXPO_PUBLIC_GENOVA_033_ACCEPTANCE,
   EXPO_PUBLIC_GENOVA_033_APP_ORIGIN: process.env.EXPO_PUBLIC_GENOVA_033_APP_ORIGIN,
+  EXPO_PUBLIC_GENOVA_033_CREDENTIAL_URL: process.env.EXPO_PUBLIC_GENOVA_033_CREDENTIAL_URL,
   EXPO_PUBLIC_SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
   EXPO_PUBLIC_SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
   EXPO_PUBLIC_GENOVA_033_EMAIL: process.env.EXPO_PUBLIC_GENOVA_033_EMAIL,
-  EXPO_PUBLIC_GENOVA_033_PASSWORD: process.env.EXPO_PUBLIC_GENOVA_033_PASSWORD,
   EXPO_PUBLIC_GENOVA_033_CHORIST_EMAIL: process.env.EXPO_PUBLIC_GENOVA_033_CHORIST_EMAIL,
-  EXPO_PUBLIC_GENOVA_033_CHORIST_PASSWORD: process.env.EXPO_PUBLIC_GENOVA_033_CHORIST_PASSWORD,
   EXPO_PUBLIC_GENOVA_033_CHOIR_A: process.env.EXPO_PUBLIC_GENOVA_033_CHOIR_A,
   EXPO_PUBLIC_GENOVA_033_CHOIR_B: process.env.EXPO_PUBLIC_GENOVA_033_CHOIR_B,
   EXPO_PUBLIC_GENOVA_033_MEMBER_A: process.env.EXPO_PUBLIC_GENOVA_033_MEMBER_A,
@@ -47,6 +47,7 @@ const ROUTES = [
 ] as const;
 
 type Trace = (event: string) => void;
+type Identity = 'admin' | 'chorist';
 
 function redactedDiagnostic(diagnostic: BridgeDiagnostic): string {
   return [diagnostic.type, diagnostic.outcome, diagnostic.reasonCode, diagnostic.routeFamily]
@@ -59,18 +60,55 @@ function ComposedRuntime({ trace }: { trace: Trace }) {
   const loginAttempted = useRef(false);
   const selectedAttempted = useRef(false);
   const identityTransition = useRef(false);
+  const credentialRequest = useRef<AbortController | null>(null);
   const leaseRequests = useRef(0);
   const [path, setPath] = useState<string>('/announcements');
   const [exitState, setExitState] = useState<string | null>(null);
+  const [credentialError, setCredentialError] = useState(false);
   const [instanceNonce, setInstanceNonce] = useState(0);
+
+  const beginIdentity = useCallback(async (
+    kind: Identity,
+    options: { signOutFirst: boolean; tracePrefix: 'auth' | 'identity' },
+  ) => {
+    if (identityTransition.current) return;
+    identityTransition.current = true;
+    loginAttempted.current = true;
+    selectedAttempted.current = kind === 'chorist';
+    setCredentialError(false);
+    setExitState(null);
+    trace(`${options.tracePrefix} RUNNING ${kind}`);
+    credentialRequest.current?.abort();
+    const controller = new AbortController();
+    credentialRequest.current = controller;
+
+    try {
+      if (options.signOutFirst) await auth.signOut();
+      if (controller.signal.aborted) return;
+      const result = await signInWithComposedCredential({
+        credentialUrl: config.credentialUrl,
+        email: kind === 'admin' ? config.email : config.choristEmail,
+        signIn: auth.signIn,
+        signal: controller.signal,
+      });
+      if (controller.signal.aborted) return;
+      setCredentialError(Boolean(result.error));
+      trace(result.error
+        ? `${options.tracePrefix} FAIL ${kind} credential-channel`
+        : `${options.tracePrefix} PASS ${kind} synthetic-session`);
+    } finally {
+      if (credentialRequest.current === controller) credentialRequest.current = null;
+      identityTransition.current = false;
+    }
+  }, [auth, trace]);
 
   useEffect(() => {
     if (auth.phase !== 'signed-out' || loginAttempted.current) return;
     loginAttempted.current = true;
-    void auth.signIn(config.email, config.password).then(({ error }) => {
-      trace(error ? `auth FAIL ${error}` : 'auth PASS synthetic session');
-    });
-  }, [auth, trace]);
+    void beginIdentity('admin', { signOutFirst: false, tracePrefix: 'auth' });
+  }, [auth.phase, beginIdentity]);
+
+  useEffect(() => () => credentialRequest.current?.abort(), []);
 
   useEffect(() => {
     if (auth.phase !== 'selection-required' || selectedAttempted.current) return;
@@ -101,30 +139,32 @@ function ComposedRuntime({ trace }: { trace: Trace }) {
     }
   }, [auth, trace]);
 
-  const switchIdentity = useCallback(async (kind: 'admin' | 'chorist') => {
-    if (identityTransition.current) return;
-    identityTransition.current = true;
-    loginAttempted.current = true;
-    selectedAttempted.current = kind === 'chorist';
-    setExitState(null);
-    trace(`identity RUNNING ${kind}`);
-    try {
-      await auth.signOut();
-      const result = await auth.signIn(
-        kind === 'admin' ? config.email : config.choristEmail,
-        kind === 'admin' ? config.password : config.choristPassword,
-      );
-      trace(result.error ? `identity FAIL ${kind}` : `identity PASS ${kind}`);
-    } finally {
-      identityTransition.current = false;
-    }
-  }, [auth, trace]);
+  const switchIdentity = useCallback((kind: Identity) => beginIdentity(kind, {
+    signOutFirst: true,
+    tracePrefix: 'identity',
+  }), [beginIdentity]);
 
   if (auth.phase !== 'ready' || !auth.activeChoir) {
     return (
       <View style={styles.status}>
         <Text accessibilityRole="header" style={styles.statusTitle}>033 · oturum hazırlanıyor</Text>
-        <Text style={styles.statusText}>{auth.phase}{auth.errorMessage ? ` · ${auth.errorMessage}` : ''}</Text>
+        <Text style={styles.statusText} testID="runtime-033-auth-status">
+          {auth.phase}{credentialError ? ' · yerel bilgi kanalı yeniden hazırlanmalı' : ''}
+        </Text>
+        {auth.phase === 'signed-out' && loginAttempted.current ? (
+          <View style={styles.statusActions}>
+            <RuntimeAction
+              label="Şef oturumunu dene"
+              onPress={() => void beginIdentity('admin', { signOutFirst: false, tracePrefix: 'auth' })}
+              testID="runtime-033-retry-admin"
+            />
+            <RuntimeAction
+              label="Korist oturumunu dene"
+              onPress={() => void beginIdentity('chorist', { signOutFirst: false, tracePrefix: 'auth' })}
+              testID="runtime-033-retry-chorist"
+            />
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -181,6 +221,9 @@ function ComposedRuntime({ trace }: { trace: Trace }) {
           }}
           onSignOut={async () => {
             trace('sign-out RUNNING');
+            credentialRequest.current?.abort();
+            loginAttempted.current = true;
+            setCredentialError(false);
             await auth.signOut();
             trace('sign-out PASS native session cleared');
           }}
@@ -237,4 +280,5 @@ const styles = StyleSheet.create({
   status: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 8, padding: 24 },
   statusTitle: { color: '#f8fafc', fontSize: 20, fontWeight: '700' },
   statusText: { color: '#cbd5e1', fontSize: 14 },
+  statusActions: { flexDirection: 'row', gap: 8, marginTop: 8 },
 });

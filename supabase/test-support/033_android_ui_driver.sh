@@ -26,6 +26,10 @@ PACKAGE='com.genesinovachoir.genova'
   echo 'FAIL 033 service reverse is absent' >&2
   exit 1
 }
+[ "$(adb reverse --list | grep -c 'tcp:18034 tcp:18034')" = 1 ] || {
+  echo 'FAIL 033 credential reverse is absent' >&2
+  exit 1
+}
 
 XML="$EXPECTED_RUNTIME/android-ui-driver.xml"
 

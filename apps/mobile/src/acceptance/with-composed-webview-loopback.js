@@ -21,10 +21,19 @@ function isExactOrigin(value, port) {
     && !url.search && !url.hash;
 }
 
+function isExactCredentialUrl(value) {
+  let url;
+  try { url = new URL(value); } catch { return false; }
+  return url.protocol === 'http:' && url.hostname === '127.0.0.1' && url.port === '18034'
+    && !url.username && !url.password && url.pathname === '/credentials'
+    && !url.search && !url.hash;
+}
+
 function requireGuardedComposedLoopback(environment = process.env) {
   if (environment[ACCEPTANCE_FLAG] !== '1') return false;
   if (environment.EXPO_PUBLIC_GENOVA_033_ACCEPTANCE !== '1'
     || !isExactOrigin(environment.EXPO_PUBLIC_GENOVA_033_APP_ORIGIN, '18033')
+    || !isExactCredentialUrl(environment.EXPO_PUBLIC_GENOVA_033_CREDENTIAL_URL)
     || !isExactOrigin(environment.EXPO_PUBLIC_SUPABASE_URL, '54321')) {
     throw new Error(`${ACCEPTANCE_FLAG}=1 permits only the exact guarded 033 loopback environment`);
   }
