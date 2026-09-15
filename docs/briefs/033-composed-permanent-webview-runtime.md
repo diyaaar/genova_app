@@ -1,7 +1,46 @@
 # 033 — Composed permanent-WebView local Release runtime
 
-Prepared: 2026-09-12. Last executed: 2026-09-13. Status: **IN PROGRESS / REQUIRED
+Prepared: 2026-09-12. Runtime last executed: 2026-09-13; checkpoint and cleanup verified
+2026-09-15 under WF-007. Status: **IN PROGRESS / REQUIRED
 FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent review is claimed.
+
+## Current checkpoint — 15 September 2026
+
+This checkpoint supersedes stale current-state claims below; dated historical results remain.
+Product revision is `692b286` plus two owned, uncommitted credential-config source/test edits.
+The config now requires a loopback credential URL but the runtime still references removed
+password fields: mobile `npx tsc --noEmit` failed with three TS2339 errors in the 15 September
+status review. No product repair or new runtime acceptance was performed by WF-007.
+
+Before cleanup, a boolean-only scan confirmed literal synthetic password assignments for both
+033 password variables in the local iOS acceptance bundle (SHA-256
+`3a8a33b23ae4b91c29221604fd14e0dd0ab82483fb455feb0990c2013a592e03`).
+The earlier general secret-scan PASS cannot support current acceptance. Normal-build isolation
+is separate historical evidence; no hosted credential exposure is established by this finding.
+A client anon/publishable key is not a password or service-role secret; classify scan findings
+by sensitivity as well as the acceptance build's explicit isolation contract. Never print values.
+
+**Next bounded result:** finish the existing credential repair and restore the mobile type gate.
+Allowed repair paths remain this brief's acceptance config/runtime/tests and existing fixture/runner.
+Up to three next actions:
+1. Wire the exact local credential channel through config, runtime and fixture/runner; remove
+   password build variables. Reuse the existing design, with no new general-purpose framework.
+2. Run affected refusal/lifecycle tests and mobile typecheck; record changed-code checks before
+   any new full runtime. Keep normal-build guards and required full gates intact.
+3. Once source is coherent and the plan's disk preflight passes, run only missing/invalidated
+   acceptance, one platform/build at a time; capture results and clean outputs after last use.
+
+Failed approaches to preserve: unreliable text/coordinate iOS activation -> semantic sign-out
+label fixed at `692b286`; recreated runtime then exposed public-build passwords -> incomplete
+credential-channel repair. Do not repeat UI attempts or rebuild the stack before that repair.
+
+**Resource checkpoint:** [WF-007](WF-007-bounded-execution-and-disk-budget.md) cleaned the
+recreated runtime, target fixtures, generated iOS/web outputs, exact simulator, Colima profile,
+data disk and Docker context. Source/target baselines passed; ports 18033/18034/54321 closed.
+Free space measured 23.6 GiB afterward. No runtime is retained. Before recreation, inventory
+all internal/external artifacts and estimated peak use against the plan's 10 GiB free-space floor.
+The next normal Android Release needs an available compatible JDK within that resource/authority
+scope; a permanent installation is not itself an acceptance requirement.
 
 ## Outcome and delivery focus
 
@@ -152,8 +191,8 @@ accessibility on hardware or a store candidate.
 - [ ] Root `pnpm check`; mobile `npm run check`; normal iOS/Android exports; Expo Doctor; guarded and
   normal exact Release builds; bundle/permission/secret scans all pass or remain explicit required
   failures.
-- [x] Transition start/delivery checks, diff/scope review and canonical records are current; the only
-  unrelated worktree entry remains unstaged.
+- [ ] Final product diff/gates and canonical records are current after the credential repair;
+  the two owned unfinished edits and unrelated CLI cache remain unstaged at this checkpoint.
 
 ## Mandatory acceptance evidence
 
@@ -169,8 +208,8 @@ actually performed.
 | Permanent navigation, native home/repertoire exits, unavailable native routes, HTTPS confirmation, denied URL classes, web-history back and root exit behave fail closed on both platforms | yes | **PASS** | 2026-09-13, Android UI driver plus isolated iOS XCUITest navigation case | Android hardware/header back and iOS header back stayed inside web history first and exited at root; native home/repertoire, unavailable chat/homework, confirmed/cancelled HTTPS and denied HTTP/custom/unknown/popup paths behaved as required. XCUITest is simulator evidence, not accessibility certification. |
 | Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
 | Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | 2026-09-13 composed run | Android completed renewal, one 401 recovery, terminal failed renewal/sign-out, reload and cleanup. iOS completed reload, tenant switch and real WebContent termination with the fail-closed retry screen; retry-to-new-proof, 401 sequence and sign-out could not be activated reliably through the temporary UI harness and remain unproved. The sign-out ordering seam was corrected and unit-tested but is not substituted for iOS runtime evidence. |
-| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-13, runner cleanup plus exact post-cleanup inventory | Fixture cleanup reported target baseline restored and the source snapshot matched before stack removal. Ports 18033/54321, app/device/reverse state, `spike/033-runtime`, generated mobile/build directories, Colima profile/context and its orphaned 5.8 GB disk were absent afterward. The runner's already-deleted temp-dir exit-hook defect was fixed in `d295c62` and its focused regression check passed; no second runtime was created merely to replay cleanup. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **NOT RUN** | 2026-09-13, `pnpm check`; mobile `npm run check`; Expo Doctor; normal exports/prebuild/iOS Release | Root: 55 files/466 tests and production build PASS. Mobile: 32 suites/178 tests PASS. Expo Doctor 21/21; normal iOS/Android exports, manifests, iOS Release and scans PASS. Guarded iOS/Android Release builds ran in the composed session. A current-source normal Android Release rebuild is NOT RUN because the temporary JDK was removed and no persistent JDK is installed; export/manifest evidence does not replace it. |
+| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-15, existing 033 cleanup runner and exact post-cleanup inventory; earlier 2026-09-13 cleanup was followed by recreation | Target baseline restored, source snapshot matched, stack/runtime removed; generated iOS/web outputs, exact simulator, Colima profile/data/context absent; ports 18033/18034/54321 closed. Free space 23.6 GiB. WF-007 owns the detailed receipt. No new runtime was created for this cleanup. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-15 current checkpoint; historical gates on 2026-09-13 | Historical root 55 files/466 tests/build, mobile 32 suites/178 tests, Doctor and normal exports/iOS Release passed. Current mobile typecheck has three TS2339 errors; a direct scan confirmed literal synthetic passwords in the local acceptance bundle, invalidating the earlier general secret-scan PASS. Required normal Android Release is still NOT RUN. Repair and affected reruns are required; no WF-007 product pass is claimed. |
 | Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-13 self-review at `d295c62`; `git diff --check` | Changes are confined to the brief's guard, bridge continuity, acceptance runtime and disposable runner seams. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication evidence remain explicitly open. No independent review is claimed. |
 
 ## Delivery
@@ -182,8 +221,7 @@ actually performed.
   Android scenario set, but required iOS feature/fault coverage and the current-source normal Android
   Release rebuild remain open above. Therefore 033 is not closed and the plan must not advance as if
   C1 composition were accepted.
-- Every 033 runtime artifact has been removed. The next bounded execution must recreate an exact
-  disposable runtime only when it is ready to finish the missing iOS rows, and must clean it again.
-  A persistent or separately authorized JDK is required before the missing normal Android Release
-  rebuild can be recorded. Hosted, physical-device, CI, accessibility and publication scopes remain
-  unrun and unauthorized.
+- The 15 September cleanup removed the recreated owned runtime. Resume the credential repair
+  and typecheck first, then apply the resource preflight before runtime recreation. The normal
+  Android Release needs a compatible available JDK; permanence is not a gate. Hosted,
+  physical-device, CI, accessibility and publication scopes remain separately gated.

@@ -1,6 +1,8 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-Updated 2026-09-13 after the partial 033 composed-WebView execution; originally prepared under
+Execution controls updated 2026-09-15 under
+[WF-007](briefs/WF-007-bounded-execution-and-disk-budget.md) after the owner's disk-pressure
+and delivery-focus review. Product acceptance remains partial at 033. Originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -242,14 +244,87 @@ approved external step; verify its result before the next. A failed Edge release
 release. Reverting Git does not restore DB rows, files or installed mobile clients. Keep old-client
 compatibility until an explicit supported-version policy permits retirement.
 
+## Revised goal text
+
+Deliver all outcomes in docs/mobil-teslim-plani.md through the earliest ready, bounded
+user flow: select -> implement -> test -> evaluate -> record -> clean up -> continue.
+Resume from the verified 033 checkpoint; preserve 018-032 historical acceptance, deferred
+004 device tests, open 010 criteria, all existing product features and approval boundaries.
+First finish owned temporary-artifact cleanup and the incomplete 033 credential repair;
+keep C1 open until its required evidence passes. Follow the execution and resource controls
+below: one active result, at most three next actions, causal reassessment after two failed
+approaches, and a progress review every 60 minutes. Preserve at least 10 GiB of filesystem
+free space; estimate peak allocation before downloads/builds, run heavy work sequentially,
+and remove owned generated artifacts after use. Keep handoffs short and evidence in its
+brief. Prepare concrete owner decisions/releases when gated; stop dependent work with the
+exact missing condition. Never turn an unrun check into a pass or extend test infrastructure
+without an identified product blocker. Continue within existing authority until completion
+or a concrete dependency, resource or approval boundary.
+
+This is the canonical revised objective. Repository edits do not themselves edit the Codex
+goal card. WF-007 records whether the application update was possible; never complete the
+unfinished product goal merely to replace its wording.
+
+## Bounded execution and resource controls
+
+These controls apply to the continuing goal, including work with GPT-5.6 Sol. They are
+project workflow rules, not model-capacity claims or permission to change the selected model.
+
+- **Work card:** in the current brief, name one observable user benefit or reproduced blocker,
+  the exact paths, at most three next actions, required checks and the exit condition. Add a
+  short checkpoint to a large existing brief; do not create a new brief for each diagnostic.
+  New integration work proves one real client/server flow early, then expands the preserved
+  feature matrix. Existing required acceptance rows remain intact.
+- **Repetition:** record failure -> cause/evidence -> changed approach. After two unsuccessful
+  approaches to the same criterion, stop repeating it and reassess. A further attempt needs
+  new causal evidence and a bounded check; otherwise record the blocker and choose a genuinely
+  independent ready task. Every 60 minutes of active work, state the new user outcome or
+  evidence and what changes next. No new evidence means change method/scope within authority
+  or checkpoint; it does not justify another identical build or environment rebuild.
+- **Disk floor:** the owner requested roughly 10 GB free. Use a conservative **10 GiB available**
+  filesystem floor (10,485,760 KiB reported by `df -k`), not advertised/purgeable capacity.
+  Before downloads, installs, exports, builds or runtime setup, record current free space,
+  existing owned usage, estimated additional peak allocation and cleanup targets. Proceed only
+  if projected free space remains above the floor. If peak is unknown, first obtain a size
+  estimate without downloading; unknown does not pass. Below the floor, do only owned cleanup
+  and low-allocation inspection/source/document work; no large download/build/runtime start.
+  Recheck free space during heavy work and after each phase. If actual growth threatens the
+  floor, stop further allocation at the next safe boundary and clean owned output. This is an
+  agent operating rule, not an OS-enforced quota; other applications can also consume disk.
+- **Peak usage:** count task VM data disks, simulator/AVD storage, native build directories,
+  temporary SDK/JDKs, database copies and caches outside the repo as well as inside it.
+  Measure allocated bytes, not a VM's configured maximum. Use one owned runtime and one heavy
+  build/platform at a time; reuse a valid installed toolchain. Record a reason before another
+  export/rebuild; successful unchanged checks are historical evidence, not a reason to rerun.
+- **Artifact lifetime:** keep one brief-local inventory: exact owned path/profile/device,
+  measured size, purpose, last dependent check and removal point. Preserve source, lockfiles,
+  existing working dependencies and essential redacted evidence. Remove large derived output
+  after its last check; reuse within a planned check batch to avoid delete/recreate loops.
+  On pause/handoff, stop owned services/devices and remove large disposable outputs unless a
+  concrete same-task reuse step, short expiry and sufficient disk headroom are recorded.
+  A user cleanup request or disk-floor breach overrides retention. Inspect residual VM disks,
+  contexts and ports after cleanup; never purge global caches, other projects or unknown data.
+- **Evidence and context:** keep dated results/hashes in the brief; keep only current status,
+  dirty ownership, one next action and links in handoff/activeContext (aim <=80 lines each).
+  Read relevant/changed sources rather than the whole archive. Redact secrets before tool
+  output; scan actual artifacts using boolean matches/counts, never printing secret values.
+  Do not store passwords in EXPO_PUBLIC_* or other public build variables. Document-only
+  changes use link/consistency/diff checks, not product builds. Required product gates remain.
+- **Delivery focus:** when a decision or external action blocks progress, prepare the concrete
+  alternatives or release/rollback package and ask only for the missing choice/authority.
+  Preserve previously granted approval. No new capability framework, general-purpose test
+  runner, dependency upgrade, parallel agent/worktree or expanded matrix merely to keep busy.
+  If no authorized outcome is ready, record the exact blocker and stop dependent execution.
+
 ## Agent execution loop
 
 Use the existing [work cycle](ai-calisma-duzeni.md); this section defines Genova's task selection
 and evidence transitions, not a second agent framework or scheduler.
 
-1. **Orient:** read AGENTS → handoff → guide/work cycle → six short memory indexes → current
-   brief, decisions and relevant code. Verify branch, HEAD, dirty ownership, tools and current
-   permission. Old Linux/macOS limitations are observations, not universal commands.
+1. **Orient:** read AGENTS → short handoff/activeContext → current brief and these controls;
+   read guide/work cycle once and other memory, decisions and code only as relevant/changed.
+   Verify branch, HEAD, dirty ownership, disk/tool availability and current permission.
+   Old environment observations are not universal commands.
 2. **Select:** take the earliest ready bounded outcome above. State its user benefit and concrete
    blocker. Check dependencies and evidence; prefer closing a known integration gap to adding
    an unrelated feature. If another agent has moved HEAD or owns changes, reconcile before writing.
@@ -265,11 +340,13 @@ and evidence transitions, not a second agent framework or scheduler.
 7. **Record/commit:** evidence in the brief, screen state in MIGRATION, decision changes only in
    KARARLAR when actually accepted; concise active/progress indexes and handoff links. Separate code
    and documentation commits, both containing the brief identifier. Stage only owned paths.
+   Finish owned cleanup and record actual free space before starting another heavy task.
 8. **Choose the next iteration:** continue only within active user authorization and a ready brief.
    A blocked task stays visible. Select an independent allowed package only if its dependency is
    genuinely absent; do not bypass A1–A3 by calling a dependent feature independent.
 9. **Checkpoint:** before context/agent handoff, commit coherent owned work, record unfinished
    ownership, exact next action, tests/limits and pending approvals. The receiving agent re-verifies.
+   Include the short work card, failed approaches and artifact inventory; apply retention limits.
    If no authorized task is ready, provide the concrete blocker/approval request and stop; never
    busy-wait, repeatedly ask about postponed hardware or create an unrequested scheduled job.
 
@@ -313,8 +390,9 @@ seams passed the 55-file/462-test root gate and production build. Package 031 ac
 challenge/state machine, route/external/back/theme shell at `0217ac8`; package 032 accepted the
 password, clipboard, constrained image and ephemeral-file capabilities at `fa2e4b7`. Package 033
 implemented the guarded composition at `d295c62` and proved both Release handshakes, every route and
-the full Android scenario set. **The active bounded work remains 033:** finish its required iOS
-mutation/Realtime/actual-file, successful password/PDF and 401/sign-out/retry rows, then rerun the
-normal Android Release gate with a persistent or separately authorized JDK. Do not advance to C2
-while those required rows are FAIL/NOT RUN. 013–032's historical local acceptance, 004/010 open
-criteria and the postponed hardware pilot remain unchanged.
+the full Android scenario set. **15 September checkpoint: active product work remains 033.**
+First finish the incomplete credential repair and mobile typecheck; then apply the disk preflight
+before missing iOS feature/fault acceptance and normal Android Release with an available compatible
+JDK. See [033's work card](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026).
+Do not advance to C2 while required rows are FAIL/NOT RUN. 013–032's historical local acceptance,
+004/010 open criteria and the postponed hardware pilot remain unchanged.

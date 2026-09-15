@@ -11,8 +11,9 @@
 
 ## Başlangıç ve proje hafızası
 
-- Kapsamlı işte önce `memory-bank/` altındaki altı kısa dosyayı, ardından ilgili
-  brief'i ve `docs/ai-calisma-duzeni.md` içindeki çalışma döngüsünü oku.
+- Start with this file, the short handoff, `memory-bank/activeContext.md`, the current
+  brief and the delivery plan's execution controls. Read other memory/decision/source
+  sections only when relevant or changed; do not reload the full history every iteration.
 - Mobil işte `MIGRATION.md`, karar etkileyen işte `KARARLAR.md` ve ilgili kaynak
   belgeler de okunur. Tüm geçmişi her tur yükleme; basit soruda ilgili kaynağa git.
 - Geçiş görevlerinde ana ajan ve her alt ajan [geçiş rehberini](docs/gecis-rehberi.md)
@@ -25,8 +26,8 @@
 
 ## Repo düzeni
 - **Kök** — Next.js 15 web uygulaması. Üretimde, canlı. `app.genesinovachoir.com`
-- **Mobil hedef** — React Native + Expo, aynı depoda. Ürün çalışma alanının yolu
-  kurulum brief'inde belirlenecek; spike, ürün uygulaması değildir.
+- **Mobil hedef** — React Native + Expo, aynı depoda, ürün alanı `apps/mobile/`.
+  Spike, ürün uygulaması değildir.
 - **`spike/`** — atılacak denemeler. Ürün kodu değildir, buradan import edilmez.
 - **`docs/briefs/`** — görev brief'leri. Bir göreve başlamadan önce ilgili brief okunur.
 - **`MIGRATION.md`** — geçişin durum defteri. Hangi ekran native, hangisi WebView.
@@ -73,8 +74,10 @@
 
 ## Git disiplini
 
-- **Her brief'e temiz çalışma ağacıyla başlanır.** Kirliyse sahiplik/kapsamı kontrol et;
-  başkasının değişikliklerini sahiplenip commit etme. Güvenli devir veya yönlendirme iste.
+- Prefer a clean worktree. If dirty, record exact ownership first: resume owned unfinished
+  work, or make non-overlapping authorized edits without staging other changes. Ask only
+  when overlap/ownership cannot be resolved safely. Do not copy the repo/install just to
+  obtain a cosmetically clean tree; any necessary copy counts toward the disk budget.
 - **Her brief bitince commit atılır**, mesaj brief numarasını içerir (örn. `003: kiracı şeması`).
 - **Aynı çalışma ağacında tek yazıcı.** Ana ajan entegrasyon ve son kabul sahibidir.
   Kontrollü alt ajan yalnız bağımsız, sınırları yazılı işte kullanılır; ortak ağaçta
@@ -103,6 +106,15 @@
   İlgili hafıza özeti güncellenir; ayrıntılı kanıt brief'e bağlanır.
 
 ## Dosya hijyeni
+
+- Follow the [execution controls](docs/mobil-teslim-plani.md#bounded-execution-and-resource-controls)
+  before downloads, builds or test environments. One active outcome, one heavy process at a time;
+  after two failed approaches, reassess and record the next bounded action.
+- A cleanup request takes priority over product execution. Verify owned targets, capture small
+  redacted evidence, stop their processes and remove generated outputs; measure actual free space.
+  Check VM disks and simulator storage outside the repo. Never purge global caches/user data.
+- Keep sources, lockfiles and required small evidence. Do not retain binary/build/runtime copies
+  merely for history or recreate a cleaned environment without the plan's resource preflight.
 - Kök dizine geçici dosya, script veya çıktı yazma. Denemeler `spike/`, notlar `docs/`.
 - Üretilen dosyalar elle düzenlenmez — üreteci düzeltilir.
 - Modül sınırını ve tek sorumluluğu koru; kapsam dışı refactor yapma.

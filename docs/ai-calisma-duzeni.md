@@ -1,8 +1,12 @@
-# AI çalışma düzeni — ortak çekirdek v1.1
+# AI çalışma düzeni — ortak çekirdek v1.2
 
 5 Eylül 2026. Genova profili [AGENTS.md](../AGENTS.md) ve
 [hafıza dosyalarıdır](../memory-bank/projectbrief.md). Bu belge çalışma yöntemidir;
 ürün mimarisini, kullanıcı yetkisini veya sağlayıcı ayarını kendiliğinden değiştirmez.
+
+15 September 2026 execution update: Genova's concrete retry, progress and disk limits are
+owned by the [delivery plan](mobil-teslim-plani.md#bounded-execution-and-resource-controls).
+Use its short work card and cleanup preflight; do not duplicate numeric limits in this method.
 
 ## 1. Küçük, kanıtlanabilir iş döngüsü
 
@@ -38,8 +42,10 @@ yöntemi/eksik bağlamı yeniden değerlendir. Bu, toplam iş için iki deneme s
 | `progress.md` | Durum ve ayrıntılı kanıtın indeksi | İş/kabul durumu değişince |
 
 Dosyalar kısa tutulur; ayrıntılı loglar, müşteri verileri ve sırlar burada tutulmaz.
-Kapsamlı başlangıçta altı özeti oku, sonra yalnız gereken kaynaklara git. Her değişiklikte
-altı dosyayı zorla değiştirme. Tarihli test kayıtlarını yeni koşulmuş gibi tarihleme.
+Start with the short handoff, active context and current brief; read the other indexes
+only when relevant or changed. Keep handoff/active context to current facts and links;
+keep detailed acceptance in the brief. Do not update all six indexes for every change.
+Tarihli test kayıtlarını yeni koşulmuş gibi tarihleme.
 Karar, ekran durumu ve test kanıtı kendi asıl belgesinde kalır; hafıza bağlantıyla yönlendirir.
 Depo hafızası proje içindir; kişisel/global hafızaya yazmak ayrıca kullanıcı talebi gerektirir.
 Bir aracın bu dosyaları otomatik okuduğunu varsayma; oturum girişinde açıkça yönlendir.

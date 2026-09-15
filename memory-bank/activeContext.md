@@ -1,142 +1,37 @@
 # Active context
 
-Updated 13 September 2026 after the partial 033 composed-WebView execution. The recorded
-remote `main` remains `a13f696`; no push or deployment was performed.
-[Agent handoff](../docs/agent-handoff.md) is the fresh-session entry point and carries the
-detail. This index is not test evidence and not live-state proof; follow its links.
+Updated 15 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
+revises execution instructions and records cleanup. Product progress is unchanged.
+The [handoff](../docs/agent-handoff.md) is the short entry; the
+[delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
+dependencies and resource controls. Do not duplicate the historical brief narrative here.
 
-## Where the work stands
+## Current checkpoint
 
-The live release of invitation-based membership is done. [010](../docs/briefs/010-008-canli-yayin-ve-kabul.md)
-took 008 to production in DB → Edge → web order, the flow was accepted end to end on the live
-product with purpose-made test identities, and the fixture was cleaned up afterwards with the
-owner's confirmation. **010 is six of seven**: the revoked-link and wrong-account refusals were
-never exercised through the product, and the fixture that would do so no longer exists.
+- Product revision: `692b286`; workflow-only commits follow. Recorded remote `a13f696`;
+  no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
+- 033/C1 remains OPEN. Missing iOS feature/fault evidence and normal Android Release persist.
+  See [033](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026).
+- Two owned uncommitted credential-config source/test edits are incomplete: runtime still
+  references removed password fields. TypeScript had three errors on 15 September.
+  Synthetic passwords were confirmed in the old local acceptance bundle before its removal.
+  Fixing the credential channel and passing affected checks is the next product outcome.
+- The unrelated `supabase/.temp/cli-latest` change stays unstaged.
+- Cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
+  simulator and Colima profile/data/context removed; owned service ports closed.
+  Free space measured 23.6 GiB after cleanup. Recheck before allocating.
+- Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
+  One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
+  and a progress review every 60 active minutes. No environment recreation for this doc task.
+- The revised goal is saved in the plan. The application goal is still `usageLimited`;
+  objective editing is unavailable and UI access was denied. It was not marked complete.
 
-Two faults surfaced during that acceptance and both are fixed and live:
-[011](../docs/briefs/011-davet-donusu-ve-sifre-sifirlama.md) (13/13, released as `f661ab2`)
-restored the invitation across the email-verification round trip and gave the app the
-self-service password reset it never had; [012](../docs/briefs/012-coklu-uyelik-secim-kilidi.md)
-(10/10) stopped `list_my_choirs` returning a null `is_current`, which had locked every
-multi-choir member out of the choir picker. Its SQL file now passes on the fixed function,
-fails for the expected two-null-row assertion after the down-migration, and passes again
-after restoration on an isolated PostgreSQL 17.11 copy. The reusable local guard is
-`supabase/test-support/012_regression_runner.sh` at `5702bca`.
+## Preserved boundaries
 
-[004](../docs/briefs/004-rn-kabuk-ve-giris.md) is now **25 of 27**. The live-010 criterion
-passed; the two that remain are hardware keychain and the real-phone flow, both postponed by
-the owner. Do not make either the next agent's first action.
-
-## Active work after 012
-
-The owner authorized the local work-package sequence on 8 September. WF-005 reconciled the
-stale roadmap records, 013 accepted the native repertoire contract, and 014 locally accepted
-the shared pure catalogue core plus native catalogue. Root `pnpm check` passed with 211 tests;
-the mobile gate passed 50 tests and the iOS bundle export. Package 015 then locally accepted a
-shared protected repertoire-file ticket/Edge path and web adoption: root `pnpm check` passed
-240 tests/build and the isolated PostgreSQL 17.11 role/tenant matrix passed with unchanged
-fixtures. Deno compile/serve, Edge deploy, live product and provider integration are NOT RUN.
-Package 016 then locally accepted private PDF download/render, basic zoom/scroll and read-only
-annotations: root passed 244 tests/build; mobile passed 72 tests/bundle; Expo Doctor passed 21/21;
-an iPhone 17 Pro simulator native build passed. The supplemental dependency audit remains FAIL
-with 10 moderate Expo toolchain findings. Package 017 accepted one synthetic continuous flow
-through sign-in, choir selection, catalogue, recovered 40-page PDF/annotation, tenant switch and
-sign-out; mobile passed 73 tests/bundle. The real pilot is NOT RUN. Package
-[018](../docs/briefs/018-protected-file-runtime-acceptance.md) then accepted the actual local
-protected-file entrypoint through disposable Auth/RPC/RLS/Storage and HTTP at code/test commit
-`0b3df6e`; root `pnpm check` passed 253 tests/build. It exposed and fixed proxy URL, Storage MIME
-and Deno WebCrypto typing defects. No deploy, Drive, real account, CI or hardware result is
-inferred. [019](../docs/briefs/019-ios-native-pdf-render-acceptance.md) accepted actual iOS
-PDF-page-image and Skia output on an iPhone 17 / iOS 26.5 simulator at `2c64e5e`: pages 1/20/40,
-base/150% overlay alignment, page-41 refusal, close cleanup and reopen passed; mobile remained
-14 suites / 73 tests and the normal 1,314-module iOS export passed. Its alternate entry uses only
-tracked fixtures. At that point A2 remained open for Android plus actual 018-service lifecycle
-integration. Package
-[020](../docs/briefs/020-android-native-pdf-render-acceptance.md) then accepted the same actual
-PDF/Skia output on the API 36 arm64 Android emulator at `e2fe177`: pages 1/20/40, 150% alignment,
-page-41 refusal, returned-image cleanup and reopen passed; mobile remained 14 suites / 73 tests,
-normal Android export was 1,312 modules, and the affected iOS Release acceptance rebuild passed.
-Expo Asset 57.0.16 prepares only the tracked fixture as a local file after an embedded-asset
-`ENOENT`; product private-file handling is unchanged. Package
-[021](../docs/briefs/021-mobile-protected-file-runtime-acceptance.md) then completed A2 locally at
-`404a9ee`: the actual disposable Auth/RPC/RLS/Edge/private Storage route composed with default
-mobile Auth, catalogue, private-file and native reader modules on iOS and Android. Real 401/retry,
-fresh tickets, the exact 40-page render, reader removal/reopen, B-choir 403/empty catalogue and
-sign-out session/preference cleanup passed. Fixture and source baselines were restored. Package
-[022](../docs/briefs/022-web-protected-file-compatibility.md) then completed A3 locally at
-`fb4a6a2`: production Chrome used the actual disposable Auth/RLS/Edge/private Storage path for
-the current PDF, audio and explicit-offline consumers. Exact-byte/cache checks, ticket renewal,
-visible missing-object 502, wrong-choir 403 and switch/sign-out teardown passed; no web product
-repair was required. A1–A3 are complete locally. Release execution and hardware remain gated;
-[023](../docs/briefs/023-annotation-write-contract-inventory.md) then mapped role/layer,
-row/delete/audit/version and web/native lifecycle behavior. It found six blocking web save risks,
-including cover-page offset, cancelled debounce, unsupported-content overwrite, no CAS and
-unchecked zero-row writes. Four new collaboration/exit UX choices remain explicit owner decisions.
-[024](../docs/briefs/024-annotation-mutation-safe-save-contract.md) locally added the positive
-revision/CAS RPC, server-derived relation/audit trigger, reversible SQL guard and per-layer
-lossless-write metadata/safe web adapter. PostgreSQL role/tenant/revision/down-forward tests and
-the root 39-file/262-test build gate passed. [025](../docs/briefs/025-web-annotation-safe-save-lifecycle.md)
-then adopted that path in the web workspace at `42c2fbb`: correct PDF-page identity, lossless row
-guards, serialized retryable saves, pending remount overlay, unload warning and flush-before-tenant
-exit passed 24 focused tests and the root 42-file/279-test build gate. No hosted migration/account
-browser/release occurred. Final native annotation UX remains owner-decision-gated. Package
-[026](../docs/briefs/026-native-repertoire-audio-playback.md) then accepted the first B4 slice at
-`c30b3b1`: SDK-compatible `expo-audio`, current-session protected tickets, stale-request
-cancellation, one foreground player, seek/speed, expiry renewal, visible corrupt/unsupported
-failures and tenant teardown passed 20 suites / 100 tests plus actual iOS/Android Release decoding
-of a deterministic 160,044-byte WAV. The root 42-file/279-test build gate also passed. This is
-local simulator/emulator self-review only; hosted service, real accounts, hardware, background,
-lock-screen and release remain unverified. Package
-[027](../docs/briefs/027-native-audio-shell-mini-player.md) then completed foreground B4 navigation
-at `dc25938`: one provider under authenticated `ReadyShell` retained the same source, position and
-rate across full, repertoire and home compact views. Mobile 21 suites / 104 tests, normal iOS
-export, Expo Doctor and both exact Release apps passed expiry, actual WAV, failure and tenant-clear
-paths; [visual evidence](../docs/evidence/027-native-audio-shell-mini-player/README.md) is retained.
-This remains local simulator/emulator self-review. Package
-[028](../docs/briefs/028-permanent-webview-bridge-inventory.md) then accepted the
-[permanent WebView contract](../docs/webview-bridge-contract.md) as documentation: all nine routes,
-role/mutation/Realtime/file behavior and native/native-future exits are mapped. Native alone owns the
-refresh token and active choir; embedded web receives only a challenged in-memory access-token lease
-and must re-prove the server-current choir before rendering. Package
-[029](../docs/briefs/029-permanent-webview-policy-core.md) then accepted the shared framework-free
-route/message/replay/redaction core at `4289da4`: 107 focused cases, root 43 files / 386 tests/build
-and mobile 22 suites / 105 tests/typecheck passed. Package
-[030](../docs/briefs/030-web-embedded-adapter.md) then accepted the dormant web half at `c7d09d3`:
-locked exact bootstrap/challenge, explicit-token Auth/current-membership proof, a non-persisting
-guarded Supabase lease, mutation renewal freeze, synchronous clear over pending proof/Realtime work,
-cache/service-worker isolation, nine-route shell/navigation boundaries and regular-browser parity
-passed the root 55-file/462-test/build gate. Package
-[031](../docs/briefs/031-native-webview-shell.md) then accepted the native half at `0217ac8`:
-Expo-compatible WebView/Crypto dependencies, native-only short-lived lease, exact challenge/proof,
-renewal/clear race guards, route/external/back/theme behavior and locked/error UI passed 26 mobile
-suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS
-arm64-simulator Release builds. Package
-[032](../docs/briefs/032-webview-platform-capabilities.md) then accepted native-only password
-reauth/update, exact invitation clipboard, constrained image input and ephemeral protected-file
-sharing at `fa2e4b7`. Mobile 30 suites / 161 tests, root 55 files / 464 tests/build, both exports,
-Expo Doctor 21/21, normal and guarded Release builds, exact local image/PDF transfer, refusal,
-cancellation, permission and cleanup checks passed on iOS and Android. Generated/runtime output was
-removed. [033](../docs/briefs/033-composed-permanent-webview-runtime.md) then implemented the guarded
-composition at `d295c62`. Both local Release handshakes and all nine route families ran, and the full
-Android scenario set passed. Required iOS mutation/Realtime/actual-file, successful password/PDF and
-401/sign-out/retry evidence plus a current-source normal Android Release rebuild remain FAIL/NOT RUN,
-so 033 and C1 are open. All 033 runtime/generated/device/profile artifacts were removed. Browser E2E,
-hosted CSP/provider/account, hardware and release remain NOT RUN. The active bounded task stays 033.
-
-010's sixth
-criterion still needs a new production fixture and explicit authorization; 004's two hardware
-criteria remain postponed.
-
-## Preserved order and boundaries
-
-[Decisions #21 and #23-#26](../KARARLAR.md) and the [delivery plan](../docs/mobil-teslim-plani.md).
-004's acceptance gate is open and the owner has now started the local repertoire/PDF sequence.
-RN + Expo, the shared annotation contract and the permanent WebView targets are unchanged.
-The 005 client contract stays fail-closed by decision #24.
-
-## Authority
-
-Standing: local implementation, local commits, reading live state, running the repository
-gates. Requiring approval every time: deleting live rows, any production release (push,
-deploy, migration), anything touching `Genesi Nova`, real email, spending, and hardware
-testing. Housekeeping the owner still owes: revoke the GitHub token in `.env.local.github`.
+004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
+M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
+[023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
+C2–C5 and release/store work remain pending; no C1 acceptance is inferred.
+Local-work authority persists within current scope. External actions, real data/accounts,
+email, credentials, spending, CI dispatch, publication and hardware retain their gates.
+Decision #17/account risk and historical GitHub-token revocation remain unresolved.

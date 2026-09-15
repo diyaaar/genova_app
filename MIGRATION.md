@@ -1,11 +1,16 @@
 # Mobil Geçiş — Durum Defteri
 
-> Bu dosya geçişin tek doğru kaynağıdır. Yeni bir oturum önce burayı okur.
+> Bu dosya ekran geçişinin tek doğru kaynağıdır. Oturum girişi AGENTS.md ve kısa handoff'tadır.
 > Durum değişikliği, koddan ayrı ama birlikte devredilen belge commit'ine işlenir.
 > Güncel teslim sırası: [mobil teslim planı](docs/mobil-teslim-plani.md), karar #21.
 
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
+
+15 September 2026 checkpoint: 033/C1 remains open, including the incomplete credential repair
+and current typecheck failure. WF-007 cleaned the recreated runtime and revised execution/disk
+controls; screen ownership and historical acceptance below did not change. Current next action:
+[033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026).
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**

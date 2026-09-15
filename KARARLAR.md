@@ -36,6 +36,12 @@ yeni karara açıkça bağla. Eski tahminler güncel doğrulama değildir.
 |---|---|---|---|
 | 15 | **Kısa proje hafızası + brief + kanıtlı devir; aynı ağaçta tek yazıcı** | Kullanıcının video/repo/görsellerle istediği yöntem Genova'ya uyarlanır. Altı hafıza dosyası mevcut karar/durum/test kayıtlarına bağlanır. Bağımsız düşük riskli iş kontrollü alt ajana verilebilir; model seçimi riskle yapılır, ana ajan son kabul sahibidir. Eski eşzamanlı tek-ajan kuralı bu kontrollü devir düzeniyle değiştirilir; eşzamanlı ortak-ağaç yazımı yine yasaktır. Teknoloji/mobil kapsamı değişmez. Uygulama ve sınırları: [WF-001](docs/briefs/WF-001-ai-calisma-duzeni.md). | 4 Eyl 2026 |
 
+## Execution resources — 15 September 2026
+
+| # | Decision | Rationale | Date |
+|---|---|---|---|
+| 27 | **Keep roughly 10 GB free; prioritize owned cleanup and bounded product progress** | The owner clarified that disk pressure motivated cleanup and requested revised agent instructions/goal after the long run. The plan implements a conservative 10 GiB floor, one active result and bounded retries. Product scope and prior approval/evidence boundaries remain. [WF-007](docs/briefs/WF-007-bounded-execution-and-disk-budget.md) records implementation; numeric controls live in the delivery plan. | 15 Sep 2026 |
+
 ## Hesap güvenliği kararı
 
 | # | Karar | Gerekçe | Tarih |

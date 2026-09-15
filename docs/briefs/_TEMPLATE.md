@@ -10,6 +10,15 @@ kapanır? En küçük kabul ve bu brief'te ertelenen geliştirmeler nelerdir?
 **Başlangıç kanıtı:** çalışma ağacı, ilgili kod/karar, sorun veya ihtiyaç.
 Varsayım, doğrulanmış durum ve açık kullanıcı kararı ayrı yazılır.
 
+**Current work card:** one observable result; at most three next actions; exact exit check.
+For a large existing brief, update this card without expanding its acceptance scope.
+Record each failed approach, new causal evidence and the next progress-review time.
+
+**Resources:** available disk; existing owned usage; estimated additional peak; exact
+paths/profiles/devices, purpose and removal point. Apply the delivery plan's
+[resource controls](../mobil-teslim-plani.md#bounded-execution-and-resource-controls).
+Use N/A for a document-only task that creates no runtime; do not invent an environment.
+
 **İzinli dosyalar / modüller:**
 
 - <yol ve sorumluluk>
@@ -66,6 +75,8 @@ Bağımsız alt iş yoksa tek ajan; gereksiz devir yaratma.
 
 **Teslim:** commit(ler), kalan risk, geri dönüş ve sıradaki tek adım.
 Bir kayıt önceki testten aktarılıyorsa tarihsel olduğunu belirt; yeni sonuç gibi yazma.
+Include cleanup/free-space evidence, any deliberately retained resource with reason/expiry,
+and unfinished dirty-path ownership. Keep the detailed result here; other indexes link here.
 
 ## Mandatory acceptance evidence
 

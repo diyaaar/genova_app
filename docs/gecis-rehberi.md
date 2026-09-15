@@ -11,12 +11,12 @@ ve güncel ortamla karşılaştır.
 
 1. [AGENTS.md](../AGENTS.md)'yi ve çalışılacak alandaki ek talimatları oku.
    Doğru çalışma yolu/branch/commit ve `git status --short` ile sahipliği doğrula.
-2. `memory-bank/` altındaki altı kısa kaydı oku: [projectbrief](../memory-bank/projectbrief.md),
-   [productContext](../memory-bank/productContext.md), [systemPatterns](../memory-bank/systemPatterns.md),
-   [techContext](../memory-bank/techContext.md), [activeContext](../memory-bank/activeContext.md),
-   [progress](../memory-bank/progress.md).
-3. [Çalışma döngüsü](ai-calisma-duzeni.md), [MIGRATION.md](../MIGRATION.md) ve
-   [KARARLAR.md](../KARARLAR.md)'yi oku. Sonra yalnız ilgili brief, kod ve test kanıtına git.
+2. Read the short [handoff](agent-handoff.md), [active context](../memory-bank/activeContext.md),
+   current brief and [execution controls](mobil-teslim-plani.md#bounded-execution-and-resource-controls).
+   Read other memory indexes when the task needs them; do not repeat the whole archive.
+3. Read [the work cycle](ai-calisma-duzeni.md) once, then the relevant/changed sections of
+   [MIGRATION](../MIGRATION.md), [decisions](../KARARLAR.md), source and test evidence.
+   Verify disk headroom and owned resources before starting an environment or build.
 4. [Brief şablonundaki](briefs/_TEMPLATE.md) başlangıç kontrolünü doldur: okunan
    kaynaklar, tek hedef, izinli dosyalar, korunacak davranış, yetki, test ve geri dönüş.
    Kullanıcıya kısa kapsam özeti ver; her küçük adım için yeniden onay isteme.

@@ -1,6 +1,8 @@
 # İlerleme indeksi
 
-13 Eylül 2026. Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
+15 September 2026: WF-007 revised instructions and cleaned owned artifacts; product
+acceptance remains unchanged. Current 033 failures/next action are in its checkpoint.
+Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
 buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı anlamına gelmez.
 
 | İş | Durum | Kanıt / sınır |
@@ -43,7 +45,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 030 dormant web embedded adapter | Local acceptance complete; native/composed C1 runtime was NOT RUN at this revision | [030](../docs/briefs/030-web-embedded-adapter.md), code/test `c7d09d3`; exact locked bootstrap/challenge, explicit-token user/current-choir proof, memory-only guarded bearer, renewal/clear race refusal, cache/SW teardown, nine-route shell/navigation boundaries, native-owned controls and browser parity passed root 55 files / 462 tests, coverage/service-worker syntax and Next build. No dependency/native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware, CI or release proof at that revision; 031 subsequently added the native shell |
 | 031 native WebView shell | Local acceptance complete; composed C1 runtime still NOT RUN | [031](../docs/briefs/031-native-webview-shell.md), code/test `0217ac8`; Expo-compatible WebView/Crypto, native-only access lease, challenge/proof/renewal/clear state machine, exact routes, external confirmation, back/theme and locked/error UI passed mobile 26 suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS arm64-simulator Release builds. Build outputs were removed after hashing. Password/clipboard/protected-file side effects were still open at that revision and were subsequently accepted in 032; composition remains with 033 |
 | 032 WebView platform capabilities | Local acceptance complete; composed C1 runtime still NOT RUN | [032](../docs/briefs/032-webview-platform-capabilities.md), code/test `fa2e4b7`; native-only password reauth/update, exact invitation clipboard write, constrained single-image input and ephemeral protected-file share passed 30 mobile suites / 161 tests, root 55 files / 464 tests/build, both exports, Expo Doctor 21/21 and actual guarded plus normal iOS/Android Release builds. Exact local image/PDF bytes, refusals, cancellation, cache cleanup and no expanded Genova permissions passed. Generated/runtime artifacts were removed. Hosted/provider/real-account/hardware/CI/release and the composed web/native peer remain open; 033 is next. |
-| 033 composed permanent WebView runtime | In progress; required FAIL/NOT RUN rows keep C1 open | [033](../docs/briefs/033-composed-permanent-webview-runtime.md), code/test `d295c62`; both local Release handshakes, all nine route families, both-platform navigation and the full Android feature/fault set ran. Root 55 files / 466 tests/build, mobile 32 suites / 178 tests, Expo Doctor 21/21, normal exports/manifests/iOS Release and isolation scans passed. Required iOS mutation/Realtime/actual-file, successful password/PDF and 401/sign-out/retry evidence remains FAIL; current-source normal Android Release is NOT RUN without a persistent JDK. Runtime/generated/device/profile state was removed. No hosted/provider/real account/hardware/CI/release proof. |
+| 033 composed permanent WebView runtime | OPEN; current credential/typecheck FAIL and required runtime gaps | [Current checkpoint](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026) owns the historical passes, invalidated secret-scan claim, two unfinished source edits and next three actions. WF-007 verified renewed cleanup on 15 September; no new product acceptance. |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -71,29 +73,9 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 11 September 2026
+## Latest handoff — 15 September 2026
 
-[Current handoff](../docs/agent-handoff.md) records the completed 012 isolated-database
-roundtrip and preserves the remaining open criteria: 010 is 6/7; 004 is 25/27 with both
-device items postponed. The owner has now authorized the local repertoire/PDF sequence;
-WF-005 and 013 are documentation-complete; 014, 015 and 016 are locally accepted at product commits
-`9cec58d`, `42fc8ff` and `0bbe646`; 017 is locally accepted at `326aae9`; 018 is locally
-accepted at `0b3df6e`; 019 and 020's iOS/Android render slices are locally accepted at `2c64e5e`
-and `e2fe177`; 021 completed A2 locally at `404a9ee`; 022 completed A3 locally at `fb4a6a2`.
-023 accepted B1, 024 locally accepted the revision-safe server/adapter foundation at `1755803`,
-025 accepted the web safe-save lifecycle at `42c2fbb`, 026 accepted the first B4 foreground
-native-audio slice at `c30b3b1`, and 027 completed foreground shell ownership plus compact
-navigation at `dc25938`. Package 028 accepted the source-grounded permanent-WebView contract without
-product changes; package 029 accepted its shared framework-free policy at `4289da4`; package 030
-accepted the dormant web embedded adapter at `c7d09d3`; package 031 accepted the native shell at
-`0217ac8`; package 032 accepted the bounded platform-capability layer at `fa2e4b7`; package 033
-implemented the guarded composition at `d295c62` but remains open on its recorded iOS feature/fault
-and normal Android Release rows. Because final
-native annotation UX is still gated by four owner decisions and hardware audio is postponed, the
-[canonical long-term plan](../docs/mobil-teslim-plani.md) keeps active work at package 033's composed
-local C1 runtime. No full C1 acceptance, hosted CSP/provider/account, push, deploy, production
-database operation, Drive call, real choir access, email, remote CI or hardware test was performed
-for 033.
-
-WF-006: long-term plan and execution directive prepared; acceptance evidence belongs in
-[WF-006](../docs/briefs/WF-006-long-term-execution-plan.md). Future milestone outcomes are unrun.
+[Current handoff](../docs/agent-handoff.md) and [active context](activeContext.md) carry only
+the current checkpoint. Historical acceptance stays in the table's linked briefs.
+WF-006 owns the original long-term plan; [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
+owns the revised execution controls and verified cleanup. 033 remains open; no milestone advanced.
