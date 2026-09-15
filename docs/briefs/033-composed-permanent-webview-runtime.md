@@ -7,10 +7,13 @@ FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent rev
 ## Current checkpoint — 15 September 2026
 
 This checkpoint supersedes stale current-state claims below; dated historical results remain.
-Product revision is `692b286` plus two owned, uncommitted credential-config source/test edits.
-The config now requires a loopback credential URL but the runtime still references removed
-password fields: mobile `npx tsc --noEmit` failed with three TS2339 errors in the 15 September
-status review. No product repair or new runtime acceptance was performed by WF-007.
+Product revision is `ec5b19a`. The credential repair is committed: no fixture password is a public
+build variable, and the acceptance app requests one selected synthetic identity from the exact
+single-use `127.0.0.1:18034/credentials` process. The server reads only the mode-0600 owned fixture,
+binds loopback, rejects browser/wrong-host/wrong-identity requests, atomically consumes one success,
+closes after delivery or expiry and logs no credential. Native code passes the returned password
+directly to Auth without retaining it in component state; abort, sign-out and generic-error paths
+remain fail closed.
 
 Before cleanup, a boolean-only scan confirmed literal synthetic password assignments for both
 033 password variables in the local iOS acceptance bundle (SHA-256
@@ -20,15 +23,15 @@ is separate historical evidence; no hosted credential exposure is established by
 A client anon/publishable key is not a password or service-role secret; classify scan findings
 by sensitivity as well as the acceptance build's explicit isolation contract. Never print values.
 
-**Next bounded result:** finish the existing credential repair and restore the mobile type gate.
-Allowed repair paths remain this brief's acceptance config/runtime/tests and existing fixture/runner.
+**Next bounded result:** validate the repaired channel against the real disposable fixture and
+guarded Release app, then finish only the still-missing/invalidated 033 rows.
 Up to three next actions:
-1. Wire the exact local credential channel through config, runtime and fixture/runner; remove
-   password build variables. Reuse the existing design, with no new general-purpose framework.
-2. Run affected refusal/lifecycle tests and mobile typecheck; record changed-code checks before
-   any new full runtime. Keep normal-build guards and required full gates intact.
-3. Once source is coherent and the plan's disk preflight passes, run only missing/invalidated
-   acceptance, one platform/build at a time; capture results and clean outputs after last use.
+1. Recreate one owned local stack/fixture after a fresh disk/tool inventory; exercise the actual
+   one-use server and scan the real guarded bundle without printing fixture values.
+2. Run the missing iOS feature/fault scenarios, using semantic controls and rearming the tiny
+   credential process before each new identity. Do not replay already-valid navigation evidence.
+3. Run the required current normal Android Release plus only invalidated Android credential/sign-out
+   checks, then capture cleanup/source-baseline proof and remove every owned output.
 
 Failed approaches to preserve: unreliable text/coordinate iOS activation -> semantic sign-out
 label fixed at `692b286`; recreated runtime then exposed public-build passwords -> incomplete
@@ -37,7 +40,8 @@ credential-channel repair. Do not repeat UI attempts or rebuild the stack before
 **Resource checkpoint:** [WF-007](WF-007-bounded-execution-and-disk-budget.md) cleaned the
 recreated runtime, target fixtures, generated iOS/web outputs, exact simulator, Colima profile,
 data disk and Docker context. Source/target baselines passed; ports 18033/18034/54321 closed.
-Free space measured 23.6 GiB afterward. No runtime is retained. Before recreation, inventory
+Free space measured 23.5 GiB after the repair gates and their generated outputs were cleaned. No
+runtime is retained. Before recreation, inventory
 all internal/external artifacts and estimated peak use against the plan's 10 GiB free-space floor.
 The next normal Android Release needs an available compatible JDK within that resource/authority
 scope; a permanent installation is not itself an acceptance requirement.
@@ -103,7 +107,7 @@ accessibility on hardware or a store candidate.
   synthetic choirs where tenant isolation requires it. The fixture owns every inserted row/object,
   records a baseline, and deletes only exact IDs/buckets/accounts that it created. Source database
   and hosted state remain read-only.
-- Android reaches both loopback ports through explicit `adb reverse`; iOS simulator reaches the
+- Android reaches all three loopback ports through explicit `adb reverse`; iOS simulator reaches the
   host loopback directly. A Release build, not Metro/Expo Go/debug mode, must run each platform.
 
 ## Required route and feature proof
@@ -191,8 +195,8 @@ accessibility on hardware or a store candidate.
 - [ ] Root `pnpm check`; mobile `npm run check`; normal iOS/Android exports; Expo Doctor; guarded and
   normal exact Release builds; bundle/permission/secret scans all pass or remain explicit required
   failures.
-- [ ] Final product diff/gates and canonical records are current after the credential repair;
-  the two owned unfinished edits and unrelated CLI cache remain unstaged at this checkpoint.
+- [x] Credential-repair product diff/gates and canonical records are current at `ec5b19a`;
+  only the unrelated CLI cache remains unstaged at this checkpoint.
 
 ## Mandatory acceptance evidence
 
@@ -201,7 +205,7 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **PASS** | 2026-09-13, `d295c62`; config/plugin/unit suites; unflagged Expo exports and prebuild inspection | iOS HBC `2bcaa6825fcef34b7c5346a73ee43c7f363bda4511d7a92c4a8a150d8b8978cc`, Android HBC `91797b86d21cce5e89131bf6f52ea13d4214d33630ac504eb56c06c420c8c894`; neither bundle contained a 033 marker, loopback endpoint or synthetic identity. Normal Android manifest had no network-security/cleartext widening and removal directives for camera, microphone and broad media; iOS ATS was `false` with no camera/microphone usage text. |
+| Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **PASS** | 2026-09-15, `ec5b19a`; config/client/plugin and single-use server tests; fresh unflagged iOS/Android exports | 24 focused mobile cases and four server cases passed, including concurrent one-use, wrong identity, hosted/path/host/browser and abort/error refusals. Fresh normal iOS HBC `7b5bee531df7522ffcf35c15f447af23e55052b755ba469acdad90280f8e6876` and Android HBC `6f028b0fd0998dacc962c066f381c2641637839948547c3b3c684038d2011226` contained no 033 marker, local endpoint or synthetic identity. Historical manifest/permission inspection remains applicable; current prebuild/Release inspection is still required below. |
 | Production-type web build and actual native shell complete the challenged lease plus server-current user/choir/member proof before tenant render on Release iOS simulator | yes | **PASS** | 2026-09-13, Release iOS 26.5 simulator `genova033-ios`, production Next peer on exact loopback | The real permanent WebView completed the challenge/acknowledgement/lease and server-current tenant proof before rendering. This is simulator evidence only, not hardware or hosted-origin evidence. |
 | The same composed handshake/proof completes on Release Android emulator through exact reverse ports | yes | **PASS** | 2026-09-13, Release Android API 36 emulator, exact `adb reverse` for 18033/54321 | The real shell and production-type web peer completed the challenged lease and tenant proof. Reverse rules and app were later removed. |
 | All nine permanent route families render and preserve representative real reads, role variants, mutations, Realtime invalidation, visible errors and actual-file behavior on both platforms | yes | **FAIL** | 2026-09-13 composed run | Both platforms rendered all nine families; Android additionally covered representative reads, mutation/Realtime, role refusal and actual-file behavior. iOS route, tenant and role evidence exists, but the full mutation/Realtime/actual-file set was not completed there. Route visibility is not promoted to the missing feature proof. |
@@ -209,19 +213,24 @@ actually performed.
 | Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
 | Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | 2026-09-13 composed run | Android completed renewal, one 401 recovery, terminal failed renewal/sign-out, reload and cleanup. iOS completed reload, tenant switch and real WebContent termination with the fail-closed retry screen; retry-to-new-proof, 401 sequence and sign-out could not be activated reliably through the temporary UI harness and remain unproved. The sign-out ordering seam was corrected and unit-tested but is not substituted for iOS runtime evidence. |
 | Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-15, existing 033 cleanup runner and exact post-cleanup inventory; earlier 2026-09-13 cleanup was followed by recreation | Target baseline restored, source snapshot matched, stack/runtime removed; generated iOS/web outputs, exact simulator, Colima profile/data/context absent; ports 18033/18034/54321 closed. Free space 23.6 GiB. WF-007 owns the detailed receipt. No new runtime was created for this cleanup. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-15 current checkpoint; historical gates on 2026-09-13 | Historical root 55 files/466 tests/build, mobile 32 suites/178 tests, Doctor and normal exports/iOS Release passed. Current mobile typecheck has three TS2339 errors; a direct scan confirmed literal synthetic passwords in the local acceptance bundle, invalidating the earlier general secret-scan PASS. Required normal Android Release is still NOT RUN. Repair and affected reruns are required; no WF-007 product pass is claimed. |
-| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-13 self-review at `d295c62`; `git diff --check` | Changes are confined to the brief's guard, bridge continuity, acceptance runtime and disposable runner seams. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication evidence remain explicitly open. No independent review is claimed. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-15, repair revision `ec5b19a`; historical runtime gates on 2026-09-13 | Mobile passed 33 suites/189 tests plus typecheck; root `pnpm check` passed 55 files/467 tests, coverage, service-worker syntax and production build. Fresh normal iOS/Android exports passed isolation scans. A guarded source-check iOS HBC (`c926fd5dd9e33f8a54912580d672872ca62bc913ba024d5954fb1c26f26d420d`) contained the exact credential endpoint and neither obsolete password variable nor test credential. This does not replace a real fixture-backed guarded bundle scan. Expo Doctor, current guarded Releases and required normal Android Release remain NOT RUN, so this required row stays FAIL. |
+| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-15 self-review at `ec5b19a`; affected/full gates and `git diff --check` | The repair is confined to 033 acceptance config/runtime/tests and its existing fixture/runner/Android driver. It adds no dependency, schema, hosted endpoint or general framework. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication evidence remain explicitly open. No independent review is claimed. |
 
 ## Delivery
 
 - Product/test implementation: `d295c62` (`033: add composed permanent WebView runtime`). It adds
   exact compile-time loopback guards, a disposable composed entry/fixture/driver, early bootstrap
   injection, protected-file origin scoping, same-user token-refresh continuity and sign-out ordering.
+- Credential correction: `ec5b19a` (`033: replace bundled acceptance passwords`). It replaces the
+  two public password variables with an exact, expiring, single-use loopback delivery and a visible
+  rearm/retry path. Source, unit, root and normal-export gates above passed; no runtime result is
+  inferred from them.
 - The local composed run materially proved both Release handshakes, all route families and the full
   Android scenario set, but required iOS feature/fault coverage and the current-source normal Android
   Release rebuild remain open above. Therefore 033 is not closed and the plan must not advance as if
   C1 composition were accepted.
-- The 15 September cleanup removed the recreated owned runtime. Resume the credential repair
-  and typecheck first, then apply the resource preflight before runtime recreation. The normal
+- The 15 September cleanup removed the recreated owned runtime; the correction's `.next`, coverage
+  and Expo export outputs were also removed. Apply the resource preflight before runtime recreation,
+  then run only the missing or invalidated rows listed in the current work card. The normal
   Android Release needs a compatible available JDK; permanence is not a gate. Hosted,
   physical-device, CI, accessibility and publication scopes remain separately gated.

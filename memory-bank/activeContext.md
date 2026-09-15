@@ -1,25 +1,26 @@
 # Active context
 
 Updated 15 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-revises execution instructions and records cleanup. Product progress is unchanged.
+revises execution instructions and records cleanup; `ec5b19a` completes the bounded 033
+credential-source repair without closing runtime acceptance.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
 [delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
 dependencies and resource controls. Do not duplicate the historical brief narrative here.
 
 ## Current checkpoint
 
-- Product revision: `692b286`; workflow-only commits follow. Recorded remote `a13f696`;
+- Product revision: `ec5b19a`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 remains OPEN. Missing iOS feature/fault evidence and normal Android Release persist.
   See [033](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026).
-- Two owned uncommitted credential-config source/test edits are incomplete: runtime still
-  references removed password fields. TypeScript had three errors on 15 September.
-  Synthetic passwords were confirmed in the old local acceptance bundle before its removal.
-  Fixing the credential channel and passing affected checks is the next product outcome.
+- The old local acceptance bundle contained synthetic passwords. `ec5b19a` removes the public
+  password variables and adds an exact expiring single-use loopback server plus abort/retry path.
+  Mobile 33 suites/189 tests, server 4/4, root 55 files/467 tests/build and normal iOS/Android
+  isolation exports passed. Real fixture-backed guarded Release/bundle proof remains NOT RUN.
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
 - Cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
   simulator and Colima profile/data/context removed; owned service ports closed.
-  Free space measured 23.6 GiB after cleanup. Recheck before allocating.
+  Repair outputs were cleaned; free space measured 23.5 GiB. Recheck before allocating.
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. No environment recreation for this doc task.

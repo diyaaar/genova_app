@@ -7,9 +7,11 @@
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
 
-15 September 2026 checkpoint: 033/C1 remains open, including the incomplete credential repair
-and current typecheck failure. WF-007 cleaned the recreated runtime and revised execution/disk
-controls; screen ownership and historical acceptance below did not change. Current next action:
+15 September 2026 checkpoint: `ec5b19a` completed the 033 credential-source repair and restored
+mobile/root gates without putting fixture passwords in public build variables. 033/C1 remains open:
+real fixture-backed guarded Release proof, the named iOS feature/fault rows and current normal
+Android Release are still required. WF-007 cleanup/resource controls and all screen ownership below
+remain unchanged. Current next action:
 [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026).
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
