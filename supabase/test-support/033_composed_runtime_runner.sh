@@ -17,7 +17,7 @@ SOURCE_PORT="${PGPORT:-5432}"
 PSQL_COMMAND="${PSQL_BIN:-psql}"
 PG_DUMP_COMMAND="${PG_DUMP_BIN:-pg_dump}"
 
-case "$ACTION" in start|prepare|status|serve-credential|refresh-ticket|expire-ticket|arm-single-401|disarm-401|revoke-admin-refresh|cleanup|stop) ;; *) refuse 'unsupported 033 action' ;; esac
+case "$ACTION" in initialize|serve-loopback-tunnel|start|prepare|status|serve-credential|refresh-ticket|expire-ticket|arm-single-401|disarm-401|revoke-admin-refresh|cleanup|stop) ;; *) refuse 'unsupported 033 action' ;; esac
 [ -n "$RUNTIME_INPUT" ] || refuse 'GENOVA_033_WORKDIR is required'
 RUNTIME_PARENT="$(cd "$(dirname "$RUNTIME_INPUT")" && pwd -P)"
 [ "$RUNTIME_PARENT/$(basename "$RUNTIME_INPUT")" = "$REPO_ROOT/spike/033-runtime" ] || refuse 'runtime must resolve exactly to spike/033-runtime'
@@ -26,7 +26,7 @@ case "$SOURCE_DATABASE" in genova_008_test*) ;; *) refuse 'PGDATABASE must be a 
 [ "$SOURCE_HOST" = '127.0.0.1' ] || refuse 'PGHOST must be 127.0.0.1'
 [ "$SOURCE_PORT" = '5432' ] || refuse 'PGPORT must be 5432'
 
-for command_name in docker supabase node pnpm rsync curl "$PSQL_COMMAND" "$PG_DUMP_COMMAND"; do
+for command_name in docker supabase node pnpm rsync curl lsof ssh "$PSQL_COMMAND" "$PG_DUMP_COMMAND"; do
   command -v "$command_name" >/dev/null 2>&1 || refuse "missing command: $command_name"
 done
 
@@ -48,11 +48,11 @@ for required_schema in genova_003 genova_005 genova_007 genova_008; do
   [ "$(source_psql "select to_regnamespace('$required_schema') is not null;")" = 't' ] || refuse "source schema missing: $required_schema"
 done
 
-if [ "$ACTION" = 'start' ]; then
+if [ "$ACTION" = 'initialize' ]; then
   [ ! -e "$RUNTIME_INPUT" ] || refuse '033 runtime path already exists'
   mkdir -p "$RUNTIME_INPUT/supabase/functions"
   cp supabase/test-support/033_runtime_config.toml "$RUNTIME_INPUT/supabase/config.toml"
-  DOCKER_CONTEXT="$DOCKER_CONTEXT_INPUT" supabase start --workdir "$RUNTIME_INPUT"
+  echo 'PASS runtime_initialize path=owned services=not-started'
   exit 0
 fi
 
@@ -60,6 +60,43 @@ fi
 RUNTIME_DIR="$(cd "$RUNTIME_INPUT" && pwd -P)"
 PROJECT_ID="$(sed -n 's/^project_id = "\([^"]*\)"/\1/p' "$RUNTIME_DIR/supabase/config.toml")"
 [ "$PROJECT_ID" = 'genova-033-runtime' ] || refuse 'unexpected runtime project'
+
+if [ "$ACTION" = 'serve-loopback-tunnel' ]; then
+  SSH_CONFIG_INPUT="${GENOVA_033_SSH_CONFIG:-}"
+  [ -n "$SSH_CONFIG_INPUT" ] || refuse 'GENOVA_033_SSH_CONFIG is required'
+  SSH_CONFIG_PARENT="$(cd "$(dirname "$SSH_CONFIG_INPUT")" && pwd -P)"
+  SSH_CONFIG="$SSH_CONFIG_PARENT/$(basename "$SSH_CONFIG_INPUT")"
+  [ "$SSH_CONFIG" = "$HOME/.colima/_lima/colima-genova033/ssh.config" ] || refuse 'unexpected Colima SSH config'
+  [ -f "$SSH_CONFIG" ] && [ ! -L "$SSH_CONFIG" ] || refuse 'Colima SSH config must be a regular file'
+  [ "$(sed -n 's/^portForwarder: //p' "$HOME/.colima/genova033/colima.yaml")" = 'none' ] \
+    || refuse 'Colima automatic port forwarding must be disabled'
+  exec ssh -F "$SSH_CONFIG" -o ControlMaster=no -o ControlPath=none \
+    -o ExitOnForwardFailure=yes -o GatewayPorts=no \
+    -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -N \
+    -L 127.0.0.1:54321:127.0.0.1:54321 \
+    -L 127.0.0.1:54322:127.0.0.1:54322 \
+    lima-colima-genova033
+fi
+
+if [ "$ACTION" = 'start' ]; then
+  for local_port in 54321 54322; do
+    [ "$(lsof -nP -a -iTCP:"$local_port" -sTCP:LISTEN -Fn | sed -n 's/^n//p')" = "127.0.0.1:$local_port" ] \
+      || refuse "exact loopback tunnel is missing for port $local_port"
+  done
+  if ! DOCKER_CONTEXT="$DOCKER_CONTEXT_INPUT" supabase start --workdir "$RUNTIME_DIR" >/dev/null 2>&1; then
+    DOCKER_CONTEXT="$DOCKER_CONTEXT_INPUT" supabase stop --workdir "$RUNTIME_DIR" --no-backup >/dev/null 2>&1 || true
+    refuse 'local Supabase stack failed to start'
+  fi
+  EDGE_CONTAINER="supabase_edge_runtime_$PROJECT_ID"
+  if [ "$(DOCKER_CONTEXT="$DOCKER_CONTEXT_INPUT" docker inspect -f '{{.State.Running}}' "$EDGE_CONTAINER" 2>/dev/null || true)" != 'true' ]; then
+    DOCKER_CONTEXT="$DOCKER_CONTEXT_INPUT" docker start "$EDGE_CONTAINER" >/dev/null 2>&1 \
+      || refuse 'local Edge runtime failed to start'
+  fi
+  [ "$(DOCKER_CONTEXT="$DOCKER_CONTEXT_INPUT" docker inspect -f '{{.State.Running}}' "$EDGE_CONTAINER" 2>/dev/null || true)" = 'true' ] \
+    || refuse 'local Edge runtime is not running'
+  echo 'PASS runtime_start stack=healthy endpoints=loopback-only output=redacted'
+  exit 0
+fi
 
 TEMP_DIR="$(mktemp -d "$RUNTIME_DIR/.033-run.XXXXXX")"
 cleanup_temp () {
