@@ -11,23 +11,26 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 - Product revision: `5a9fb8f`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
-- 033/C1 remains OPEN. Missing iOS feature/fault evidence and normal Android Release persist.
+- 033/C1 remains OPEN. Missing iOS feature/fault evidence and invalidated Android runtime checks persist.
   See [033](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026).
 - Real synthetic credential delivery and fixture-backed bundle scans passed in the interrupted
   run; the unsigned build's SecureStore failure was repaired operationally by using Xcode's normal
   simulator signing. Current normal Release reached sign-in on first launch/relaunch with no
   keychain error. Memory-only storage/manual bundle substitutions remain rejected.
+- Current offline normal arm64 Android Release, APK signature/alignment, merged manifest,
+  permission/backup rules and bundle-isolation scans passed. It was not run on an emulator.
 - Mobile typecheck and 33 suites/194 tests passed on 18 September. Root/export evidence remains
   historical, not rerun. New error/retry tests do not prove native signing or runtime acceptance.
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
 - Cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
   simulator and Colima profile/data/context removed; owned service ports closed.
-  Native build, generated project, exact simulator/app and screenshots were removed after proof;
-  free space measured 16.6 GiB. Shared caches/device pool were not purged. Recheck before allocating.
+  Both generated native projects/builds/apps, exact simulator and screenshots were removed;
+  A later audit removed the exact stale 021 Colima disk (5.4 GiB); free space measured 22.8 GiB.
+  Shared caches/device pool were not purged. Recheck before allocating.
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
-  and a progress review every 60 active minutes. Next: budget and run one normal Android Release
-  build/manifest check; emulator and combined iOS runtime remain separate.
+  and a progress review every 60 active minutes. Next: one owned 033 stack and one platform app at
+  a time; run only the missing/invalidated scenarios with disk monitoring.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 

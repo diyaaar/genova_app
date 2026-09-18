@@ -136,6 +136,53 @@ be recreated now: historical VM+web+simulator allocation exceeds the current hea
 10 GiB floor. This resource fact keeps those required 033 rows open; it is not a pass or blocker
 status for the overall goal.
 
+**Android build preflight (18 September):** 18,999,288 KiB available. The initial shell lookup
+missed keg-only JDKs and the SDK's Homebrew root; read-only inventory then found existing
+OpenJDK 17.0.20, Android platform/build-tools 36.0.0, NDK 27.1.12297006, Gradle 9.3.1 and AGP
+8.12 caches. No install/download is needed. Shared SDK (9,353,352 KiB), Gradle cache
+(3,574,428 KiB) and JDK are pre-existing and not cleanup targets. Generate only the ignored
+normal Android project with all three acceptance plugins disabled, use the existing product
+`.env` without printing values, build the same arm64 Release boundary used by prior local gates
+in offline/no-daemon mode, and stop allocation below 12,700,000 KiB. Inspect the exact APK,
+merged manifest, network-security/permission state and acceptance-marker absence before deleting
+generated Android output. Emulator execution is not part of this work card.
+
+**Android normal Release result (18 September): PASS within its build boundary.** Existing
+OpenJDK 17 and SDK/Gradle caches built `:app:assembleRelease` offline, no daemon, arm64 only, with
+all 021/032/033 acceptance switches disabled. The build completed in 3m22s (460 tasks) without a
+download; free space started at 19,749,452 KiB, reached 17,711,732 KiB minimum and stayed above
+the 12,700,000 KiB stop. The 44,896 KiB APK SHA-256 was
+`7b4a833709b11ada57308bdfd26ca2555d17b9482fd1f4c8c48795ab6f06a47c`.
+APK v2 signature verification and zip alignment passed; min/target SDK were 24/36,
+`debuggable=false`, with 17 arm64 libraries and no other ABI library.
+
+The merged Release manifest had no cleartext/network-security override and no camera, record-audio,
+external/manage/media storage permission. The normal Hermes bundle (3,376,532 bytes) contained no
+021/032/033 marker, loopback address, obsolete 033 password variable, service-role variable or
+private-key marker. SecureStore backup and device-transfer XML excluded its `SecureStore`
+shared-preference path. Existing Release permissions include Internet, network state, audio-setting,
+vibrate/wake-lock, biometric/fingerprint and Expo's generated `SYSTEM_ALERT_WINDOW`; the latter is
+from the current Expo base template, is not a 033 expansion, and remains a later release-hardening
+review item rather than being silently called absent. No emulator/runtime behavior is inferred.
+
+The generated Android tree peaked at 776,976 KiB (app build 587,888 KiB). It and the APK were
+deleted after inspection; absence was verified. Outputs are reproducible and not Trash-recoverable.
+Available space recovered to 18,339,680 KiB. `.expo` remains 12 KiB; the unrelated CLI cache and
+shared SDK/JDK/Gradle caches were untouched. Two evidence commands exited early after already
+printing the relevant PASS data (stdin invocation, then a generated-source XML path); the corrected
+read-only scans used the APK bundle/merged manifest/resource table and did not rebuild.
+
+**Resolved resource stop / next active result:** current normal iOS and Android Release build gaps
+are closed, but 033 remains open for session write, invalidated Android credential/sign-out checks,
+required iOS feature/fault rows, current guarded runtime builds and Expo Doctor. The task-owned
+combined iOS stack historically needs about 11,367,272 KiB after retaining only the built app.
+The cleanup audit found 021's documented-as-deleted, non-running Colima data disk still allocated
+5,565,904 KiB. Exact supported deletion raised free space to 23,915,364 KiB, leaving 13,429,604 KiB
+above the floor and about 2.0 GiB over the historical combined need. No other/global cache was
+purged. Recreate one owned stack only, build/retain one platform app at a time, monitor before each
+phase and run only invalidated Android credential/sign-out plus missing iOS feature/fault rows.
+Do not rebuild either normal platform. C2 remains dependent on C1.
+
 ## Historical checkpoint — 15 September 2026
 
 This checkpoint supersedes stale current-state claims below; dated historical results remain.
@@ -327,7 +374,7 @@ accessibility on hardware or a store candidate.
 - [ ] Root `pnpm check`; mobile `npm run check`; normal iOS/Android exports; Expo Doctor; guarded and
   normal exact Release builds; bundle/permission/secret scans all pass or remain explicit required
   failures.
-- [x] Credential-repair product diff/gates and canonical records are current at `ec5b19a`;
+- [x] Credential/session-repair product diff/gates and canonical records are current at `5a9fb8f`;
   only the unrelated CLI cache remains unstaged at this checkpoint.
 
 ## Mandatory acceptance evidence
@@ -344,9 +391,9 @@ actually performed.
 | Permanent navigation, native home/repertoire exits, unavailable native routes, HTTPS confirmation, denied URL classes, web-history back and root exit behave fail closed on both platforms | yes | **PASS** | 2026-09-13, Android UI driver plus isolated iOS XCUITest navigation case | Android hardware/header back and iOS header back stayed inside web history first and exited at root; native home/repertoire, unavailable chat/homework, confirmed/cancelled HTTPS and denied HTTP/custom/unknown/popup paths behaved as required. XCUITest is simulator evidence, not accessibility certification. |
 | Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
 | Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | 2026-09-13 composed run | Android completed renewal, one 401 recovery, terminal failed renewal/sign-out, reload and cleanup. iOS completed reload, tenant switch and real WebContent termination with the fail-closed retry screen; retry-to-new-proof, 401 sequence and sign-out could not be activated reliably through the temporary UI harness and remain unproved. The sign-out ordering seam was corrected and unit-tested but is not substituted for iOS runtime evidence. |
-| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-15, existing 033 cleanup runner and exact post-cleanup inventory; earlier 2026-09-13 cleanup was followed by recreation | Target baseline restored, source snapshot matched, stack/runtime removed; generated iOS/web outputs, exact simulator, Colima profile/data/context absent; ports 18033/18034/54321 closed. Free space 23.6 GiB. WF-007 owns the detailed receipt. No new runtime was created for this cleanup. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-15, repair revision `ec5b19a`; historical runtime gates on 2026-09-13 | Mobile passed 33 suites/189 tests plus typecheck; root `pnpm check` passed 55 files/467 tests, coverage, service-worker syntax and production build. Fresh normal iOS/Android exports passed isolation scans. A guarded source-check iOS HBC (`c926fd5dd9e33f8a54912580d672872ca62bc913ba024d5954fb1c26f26d420d`) contained the exact credential endpoint and neither obsolete password variable nor test credential. This does not replace a real fixture-backed guarded bundle scan. Expo Doctor, current guarded Releases and required normal Android Release remain NOT RUN, so this required row stays FAIL. |
-| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-15 self-review at `ec5b19a`; affected/full gates and `git diff --check` | The repair is confined to 033 acceptance config/runtime/tests and its existing fixture/runner/Android driver. It adds no dependency, schema, hosted endpoint or general framework. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication evidence remain explicitly open. No independent review is claimed. |
+| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-18, existing runner plus exact native post-cleanup inventories | Target/source baselines passed on 15 September; on 18 September the generated iOS/Android projects, native builds/apps, exact simulator and screenshots were removed and absence verified. Stack/profile/context and ports remained absent. Current free space 17.5 GiB. Shared/global caches were not purged. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-18, product `5a9fb8f`; historical root/export gates plus current native checks | Mobile passed 33 suites/194 tests plus typecheck; historical root 55 files/467 tests/build and normal exports remain applicable. Current Xcode-signed normal iOS Release startup and offline normal arm64 Android Release/manifest/bundle scans passed. Real fixture-backed guarded iOS bundle scan passed in the interrupted run, but current guarded Release builds and Expo Doctor remain NOT RUN, so this required row stays FAIL. |
+| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-18 self-review at `5a9fb8f`; affected gates, native artifact review and `git diff --check` | Repair is confined to AuthStore/UI/033 acceptance and records, with no dependency/schema/hosted change. Normal Android disclosed the existing Expo-generated overlay permission rather than hiding it. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication remain open. No independent review. |
 
 ## Delivery
 
@@ -357,12 +404,14 @@ actually performed.
   two public password variables with an exact, expiring, single-use loopback delivery and a visible
   rearm/retry path. Source, unit, root and normal-export gates above passed; no runtime result is
   inferred from them.
+- Session-startup correction: `5a9fb8f` (`033: recover from session storage startup errors`). It
+  fails closed with retry and invalidates late reads. Current signed normal iOS and Android Release
+  build checks passed afterward; only iOS ran, proving SecureStore startup/read rather than sign-in.
 - The local composed run materially proved both Release handshakes, all route families and the full
-  Android scenario set, but required iOS feature/fault coverage and the current-source normal Android
-  Release rebuild remain open above. Therefore 033 is not closed and the plan must not advance as if
-  C1 composition were accepted.
+  Android scenario set, but required iOS feature/fault coverage, invalidated Android credential/
+  sign-out checks, current guarded builds and Expo Doctor remain open. Therefore 033 is not closed.
 - The 15 September cleanup removed the recreated owned runtime; the correction's `.next`, coverage
   and Expo export outputs were also removed. Apply the resource preflight before runtime recreation,
-  then run only the missing or invalidated rows listed in the current work card. The normal
-  Android Release needs a compatible available JDK; permanence is not a gate. Hosted,
+  then run only the missing or invalidated rows listed in the current work card. Existing JDK/SDK
+  were sufficient for the normal Android build; no permanent tool install was added. Hosted,
   physical-device, CI, accessibility and publication scopes remain separately gated.

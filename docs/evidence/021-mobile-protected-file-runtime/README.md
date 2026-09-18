@@ -48,8 +48,13 @@ On each platform the observed sequence was:
 The final runtime status reported two memberships, three annotations, the exact object checksum
 and an unchanged source database. Cleanup restored the tracked target-table baseline, removed the
 synthetic Auth user and private bucket/object, preserved the source hash, removed Android's
-temporary `adb reverse tcp:54321` route, stopped the stack and emulator, deleted only the
-task-owned Colima profile, and moved the secret-free runtime directory to Trash.
+temporary `adb reverse tcp:54321` route, stopped the stack and emulator, requested deletion of the
+task-owned Colima profile, and moved the secret-free runtime directory to Trash. A later resource
+audit on 18 September found that Colima had left its non-running `colima-genova021` data disk and
+store marker behind despite the original cleanup result. There was no instance, Docker context,
+process or relevant listener. The supported `colima delete genova021 --data --force` removed only
+that exact 5,565,904 KiB generated residue and its marker; absence was verified. Available space
+rose from 18,339,680 to 23,915,364 KiB. This correction does not change the product/runtime result.
 
 ## Visual evidence
 

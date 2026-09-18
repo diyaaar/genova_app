@@ -27,7 +27,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - M0/A1–A3 local read foundation accepted; 018–032 accepted their bounded local scopes.
   Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
 - 033/C1 OPEN: both local Release handshakes/routes and Android scenarios ran; required
-  iOS feature/fault evidence and current-source normal Android Release remain open.
+  iOS feature/fault evidence and invalidated Android credential/sign-out checks remain open.
 - `ec5b19a` replaced public fixture passwords with single-use loopback delivery. The interrupted
   15 September run proved both real synthetic credential deliveries and fixture-backed bundle
   scans, but unsigned Release SecureStore failed. In-memory storage/manual bundle substitution
@@ -36,10 +36,12 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   after stop/sign-out. Mobile typecheck and all 33 suites/194 tests passed on 18 September.
   A current Xcode-signed normal iOS Release then reached sign-in on first launch/relaunch using
   real SecureStore with no keychain failure. It proves startup/read only and does not close C1.
+- A current offline normal arm64 Android Release, signature/alignment, SDK 24/36, merged manifest,
+  SecureStore backup rules and bundle isolation passed. No emulator/runtime result is inferred.
 - 18 September cleanup restored target/source baselines and removed the exact runtime,
   generated iOS/web build, simulator, Colima profile/data/context. Ports are closed.
-  The native-only build/simulator were also removed after proof. Available disk measured
-  16.6 GiB afterward; no VM/server was recreated.
+  Both native build trees/apps and the exact simulator were also removed after proof. Available
+  disk measured 17.5 GiB afterward; no VM/server was recreated.
   This is a snapshot, not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -47,10 +49,10 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 ## Active bounded sequence
 
-Next product result: current normal Android Release build/permission isolation after verifying
-the existing JDK/SDK and <=6 GiB peak budget. Remove its outputs after inspection. Emulator
-credential/sign-out and missing iOS feature/fault rows remain separate required runtime work.
-Do not recreate the combined iOS server stack while its historical allocation exceeds headroom.
+Next product result is the remaining composed runtime. Cleanup found and removed the exact stale
+5.4 GiB 021 Colima disk that its old record had incorrectly called deleted; free space is 22.8 GiB.
+Create one 033 stack and retain one platform app at a time, monitoring the ~2 GiB safety margin.
+Run only invalidated Android credential/sign-out and missing iOS feature/fault rows; no normal rebuild.
 C2 still depends on C1.
 No new product feature, general test framework or repeated full-environment rebuild is implied.
 The revised goal text is in the plan; the application's recreated goal is active (18 September).
