@@ -27,7 +27,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
 - 033/C1 OPEN: both local Release handshakes/routes and Android scenarios ran. Repaired current
   Android credential/persisted-session/sign-out now passes; required iOS feature/fault evidence
-  and the post-alignment normal Android check remain open.
+  and the post-alignment guarded iOS check remain open.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -40,7 +40,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   the real disposable services. Failed refresh was observed signed-out, not full cleanup proof.
 - Final 19 September cleanup restored the disposable target baseline and removed the exact runtime,
   generated native/web builds, app/AVD, wrapper and Colima profile/data/context; all four ports closed.
-  Available: 27,892,724 KiB (~26.6 GiB). Sources/dependencies/shared caches preserved.
+  Latest available: 27,844,544 KiB (~26.5 GiB). Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -50,8 +50,8 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 `851e9cd` aligns three direct/four required transitive Expo patches. Mobile 197/root 467 tests,
 root build, exports/isolation, Doctor 21/21, normal signed iOS startup/relaunch and guarded Android
-credential/session/sign-out PASS. Next: one post-alignment normal Android Release/isolation build;
-do not recreate the composed stack. Other iOS/C1 rows remain open.
+credential/session/sign-out plus normal Android Release/isolation PASS. Next: one resource-budgeted
+guarded iOS feature/fault batch; recreate no stack until its exact work card is recorded.
 Password change/restore requires user UI hand-off; keep that required row open, never bypass it.
 Reuse accepted evidence; create no runtime until a concrete remaining check batch/resource budget
 is recorded. C2 still depends on C1; 023 owner choices gate final native-writing UX.

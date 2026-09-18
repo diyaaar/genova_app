@@ -12,9 +12,9 @@ SecureStore; mobile typecheck and 194 tests pass. The real fixture-backed creden
 passed. A current Xcode-signed normal iOS Release now reaches sign-in on first launch/relaunch with
 real SecureStore and no keychain failure; substitute memory storage remains invalid evidence.
 The repaired guarded Android one-use credential, persisted SecureStore cold relaunch and actual
-WebView sign-out now pass on current dependencies. 033/C1 stays open for composed iOS feature/fault
-rows and a post-alignment normal Android Release/isolation check. All owned native/runtime outputs
-were cleaned; screen ownership is unchanged.
+WebView sign-out plus the normal Android Release/isolation gate now pass on current dependencies.
+033/C1 stays open for composed iOS feature/fault rows and a post-alignment guarded iOS check. All
+owned native/runtime outputs were cleaned; screen ownership is unchanged.
 Current next action: [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
@@ -221,7 +221,7 @@ cleanup/permission gates passed. Package 033 implemented the guarded composition
 real web/native peers completed both local Release handshakes and all route families, and the Android
 scenario set passed. Current repaired Android credential/session/sign-out then passed on 19 September.
 Required iOS mutation/Realtime/actual-file, successful password/PDF and remaining 401/sign-out/retry
-evidence plus one current-source normal Android Release rebuild remain open, so
+evidence plus one current guarded iOS Release check remain open, so
 C1 is not accepted. Hosted, provider, device,
 release and hardware remain gated.
 010 6/7 kalır;

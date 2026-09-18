@@ -8,8 +8,8 @@ FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent rev
 
 This checkpoint supersedes the current-state statements in the dated sections below.
 Entry was `main / 61c7ae2`; latest product is `851e9cd`, preceded by record `ed86d22`.
-Latest patch gates/exports/Doctor, normal iOS build/startup and guarded Android credential/sign-out
-runtime PASS; other post-alignment native/composed checks are NOT RUN.
+Latest patch gates/exports/Doctor, normal iOS build/startup and guarded plus normal Android
+Release checks PASS; other post-alignment native/composed checks are NOT RUN.
 See the current composed follow-up below for repair evidence and final cleanup; earlier
 18 September receipts remain dated checkpoints, not current environment claims.
 The interrupted ephemeral-storage files were removed. `supabase/.temp/cli-latest` is unrelated
@@ -449,6 +449,41 @@ No product source changed. Next: run one bounded post-alignment **normal** Andro
 isolation check; do not recreate the composed stack. Required iOS feature/fault rows still keep 033
 and C1 open.
 
+**Current normal Android work card (19 September):** close only the post-alignment normal Release
+build/isolation gap. Use the installed JDK 17/SDK 36/Gradle caches and existing product environment;
+all 021/032/033 switches must remain absent. Three actions: generate/build one offline arm64 Release,
+inspect its exact signature/alignment/SDK/ABI/manifest/backup/bundle isolation, then remove every
+owned generated Android/native build output. No emulator, runtime stack, download, product/source,
+hosted or hardware action. Preflight available: 27,889,100 KiB. Allow 3,145,728 KiB additional peak
+(recent generated/native outputs used <2 GiB plus reserve), projecting 24,743,372 KiB > the
+10,485,760 KiB floor; stop new allocation below 13,631,488 KiB. Exit: normal artifact contains no
+acceptance/loopback/synthetic/credential marker or acceptance network policy, required ordinary
+configuration remains, and exact outputs are absent after evidence capture.
+
+**Current normal Android result (19 September): PASS.** Existing JDK 17/SDK 36/Gradle caches built
+the unguarded arm64 Release offline/no-daemon in 2m22s (460 tasks) with all 021/032/033 switches
+absent; the existing mobile product environment was loaded without printing values. APK SHA-256
+was `7f063e750fc9371334db194a86e75e66a6490926f8c3228a1c35fddf44c465f5`
+(45,972,526 bytes). v2 signature, zip alignment, `debuggable=false`, min/target SDK 24/36 and exactly
+17 arm64 libraries with no other ABI passed. The merged manifest had no cleartext/network-security
+override and no camera, recording or external/manage/media-storage permission; ordinary current
+Expo permissions remain, including generated `SYSTEM_ALERT_WINDOW`, and are not silently called a
+release-hardening pass. The compiled resource table linked both SecureStore backup resources;
+`apkanalyzer` decoded the optimized resource paths and confirmed `SecureStore` shared preferences
+are excluded from cloud backup and device transfer. The 3,376,604-byte Hermes bundle had zero
+021/032/033 marker, loopback, synthetic identity, obsolete password variable, service-role or
+private-key matches.
+
+Available space started at 27,887,960 KiB, the lowest recorded post-build value was 26,295,888 KiB,
+and the 13,631,488 KiB stop never approached. The Android tree peaked at 776,948 KiB; its exact
+tree and nine dependency-native build directories were removed, with a final recheck at 27,844,544 KiB
+(~26.5 GiB). Two read-only backup-resource lookups failed because the optimized APK did not retain
+the guessed source/logical filenames; after the required causal reassessment, the resource-table
+mapping plus installed `apkanalyzer` decoded the actual entries without another build. No APK,
+emulator, runtime, product source or new dependency remains. The current Android native gate is now
+closed; post-alignment guarded iOS and required iOS feature/fault rows remain. Next work must budget
+one iOS batch around those exact gaps and preserve the password-success user hand-off boundary.
+
 ## Historical checkpoint — 15 September 2026
 
 
@@ -651,7 +686,7 @@ actually performed.
 
 | Criterion / expected behavior | Required? / N/A reason | Status | Date / revision / environment / command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **PASS** | 2026-09-15, `ec5b19a`; config/client/plugin and single-use server tests; fresh unflagged iOS/Android exports | 24 focused mobile cases and four server cases passed, including concurrent one-use, wrong identity, hosted/path/host/browser and abort/error refusals. Fresh normal iOS HBC `7b5bee531df7522ffcf35c15f447af23e55052b755ba469acdad90280f8e6876` and Android HBC `6f028b0fd0998dacc962c066f381c2641637839948547c3b3c684038d2011226` contained no 033 marker, local endpoint or synthetic identity. Historical manifest/permission inspection remains applicable; current prebuild/Release inspection is still required below. |
+| Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **PASS** | 2026-09-15, `ec5b19a`; current Android artifact 2026-09-19 | 24 focused mobile cases and four server cases passed, including concurrent one-use, wrong identity, hosted/path/host/browser and abort/error refusals. Fresh normal iOS HBC `7b5bee531df7522ffcf35c15f447af23e55052b755ba469acdad90280f8e6876` and Android HBC `6f028b0fd0998dacc962c066f381c2641637839948547c3b3c684038d2011226` contained no 033 marker, local endpoint or synthetic identity. Current normal Android APK/manifest/bundle also passed exact isolation and blocked-permission scans; guarded Android retained only its exact compile-time loopback policy. |
 | Production-type web build and actual native shell complete the challenged lease plus server-current user/choir/member proof before tenant render on Release iOS simulator | yes | **PASS** | 2026-09-13, Release iOS 26.5 simulator `genova033-ios`, production Next peer on exact loopback | The real permanent WebView completed the challenge/acknowledgement/lease and server-current tenant proof before rendering. This is simulator evidence only, not hardware or hosted-origin evidence. |
 | The same composed handshake/proof completes on Release Android emulator through exact reverse ports | yes | **PASS** | 2026-09-19, post-alignment guarded Release on fresh API 36 arm64 AVD; exact reverse ports 18033/18034/54321 | The real shell consumed the repaired one-use credential, persisted its SecureStore session through a cold emulator restart and completed challenged lease/server proof on current dependencies. The 13 September route evidence remains separate. Reverse rules, app and AVD were removed. |
 | All nine permanent route families render and preserve representative real reads, role variants, mutations, Realtime invalidation, visible errors and actual-file behavior on both platforms | yes | **FAIL** | 2026-09-13 composed run | Both platforms rendered all nine families; Android additionally covered representative reads, mutation/Realtime, role refusal and actual-file behavior. iOS route, tenant and role evidence exists, but the full mutation/Realtime/actual-file set was not completed there. Route visibility is not promoted to the missing feature proof. |
@@ -659,7 +694,7 @@ actually performed.
 | Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
 | Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | Historical 2026-09-13; current iOS 2026-09-18 at `6a5769a`; current Android 2026-09-19 | Repaired guarded Android now passes one-use credential delivery, real SecureStore cold relaunch and WebView-originated sign-out: bridge clear/native session clear passed and a closed credential channel could not revive the old session. Repaired guarded iOS passed early first-401 forced renewal/reproof and persisted SecureStore relaunch; revoked refresh was observed signed-out. Full iOS second-401/cleanup ordering and cache/history/credential matrix are not inferred, so the required row remains FAIL. |
 | Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-19 final runner/handle/path/port inventories | Target baseline restored; exact runtime, generated native/web trees, apps/devices, reverse rules, profile/VM/data disk, Docker context and temporary wrapper were removed. Web/tunnel stopped and all four ports closed. Actual free space 27,892,724 KiB (~26.6 GiB); shared/global caches preserved. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-19, product `851e9cd` | Mobile 197/root 467 tests/build, both normal exports/isolation and Doctor 21/21 PASS. Post-alignment normally signed arm64 iOS Release/signature/Info.plist/isolation and real empty SecureStore startup/relaunch PASS. Post-alignment guarded Android Release/signature/alignment/SDK/manifest/password scan and composed credential/sign-out runtime PASS. Current post-alignment **normal** Android Release remains NOT RUN; prior guarded iOS proof stays dated at prior dependencies. Source/export checks do not close missing feature/native rows. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-19, product `851e9cd` | Mobile 197/root 467 tests/build, both normal exports/isolation and Doctor 21/21 PASS. Post-alignment normally signed arm64 iOS Release/signature/Info.plist/isolation and real empty SecureStore startup/relaunch PASS. Post-alignment guarded and normal Android Release/signature/alignment/SDK/manifest/backup/bundle scans PASS; guarded composed credential/sign-out runtime also PASS. Post-alignment guarded iOS and required iOS feature/fault rows remain NOT RUN; source/export and Android checks do not close them. |
 | Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-18 self-review at `851e9cd`, managed lock delta plus applicable gates and `git diff --check` | Exactly three direct and four required transitive patch replacements, no SDK migration/addition/removal/scene opt-in/check exclusion. Prior bounded auth repairs preserved. CLI cache unstaged; 004/010, hosted, hardware, accessibility, CI and publication boundaries open. Native evidence after alignment is not claimed. No independent review. |
 
 ## Delivery
@@ -679,8 +714,8 @@ actually performed.
   early-401 recovery/persisted SecureStore relaunch passed. Full C1 feature acceptance remains open.
 - The local composed runs materially proved both Release handshakes, all route families and the full
   historical Android scenario set. The repaired Android credential/persisted-session/sign-out path
-  and guarded native checks now pass on current dependencies. Required iOS feature/fault coverage
-  and the post-alignment normal Android check remain open. `851e9cd` fixes the observed Doctor
+  and guarded plus normal native checks now pass on current dependencies. Required iOS feature/fault
+  coverage and the post-alignment guarded iOS check remain open. `851e9cd` fixes the observed Doctor
   patch mismatch: current mobile/root/normal-export/Doctor gates pass. Therefore 033 is not closed.
   The final 18 September teardown restored both
   baselines, removed all owned runtime/build/device/VM outputs and measured 24.6 GiB free.

@@ -22,7 +22,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 | M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation, 025 web lifecycle and 026–027 foreground native audio/navigation accepted locally; native writing and recoverable sync remain open |
-| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | 028–032 accepted the component/platform layers locally. 033 proved both composed handshakes, all route families, current iOS native startup and repaired Android credential/sign-out, but required iOS feature/fault and current normal Android rows remain open; C2–C5 have not started |
+| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | 028–032 accepted the component/platform layers locally. 033 proved both composed handshakes, all route families, current iOS native startup and current guarded/normal Android checks, but required iOS feature/fault and guarded-native rows remain open; C2–C5 have not started |
 | M4: release candidate | Multi-choir limits, data lifecycle, provider exit, security/accessibility and distribution requirements pass | Future packages; no current store eligibility claim |
 | M5: released and operable | Approved beta/public release verified at actual destination; support and recovery exercised | NOT RUN; publication and spending remain separately gated |
 
@@ -107,9 +107,9 @@ briefs, not in a second copy here.
   implemented the guarded composed runtime at `d295c62` and proved both local Release handshakes,
   all route families and the full historical Android scenario set. On 19 September the repaired
   one-use credential, persisted SecureStore relaunch, WebView-originated sign-out and guarded Android
-  Release checks passed on current dependencies. It remains open because required iOS mutation/
-  Realtime/file, successful password/PDF and full 401/sign-out/retry evidence plus a current-source
-  normal Android Release rebuild are missing. Hosted/provider/real-account/hardware/release acceptance
+  and normal Release checks passed on current dependencies. It remains open because required iOS
+  mutation/Realtime/file, successful password/PDF and full 401/sign-out/retry evidence plus a
+  post-alignment guarded iOS check are missing. Hosted/provider/real-account/hardware/release acceptance
   is not inferred.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
@@ -176,7 +176,7 @@ that product/security boundary before shipping. Offline support is not implied b
 
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
-| C1 / stable A read flow | **Foundation in progress:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted dormant web adapter at `c7d09d3`; [031](briefs/031-native-webview-shell.md) accepted native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted platform capabilities at `fa2e4b7`. [033](briefs/033-composed-permanent-webview-runtime.md) composes both clients; credential/startup/early-401 repairs are recorded there. `851e9cd` aligns Expo patches: mobile/root/export/Doctor gates pass. Current guarded Android credential/session/sign-out now passes; required iOS features/faults and the post-alignment normal Android check remain open. Preserve prior native/route/Android proof separately. `apps/mobile/src/ui/`, `MIGRATION.md`, auth | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of permanent WebView routes; native alone owns refresh token; no token in URLs/logs; partial local simulator/emulator proof is not full C1 acceptance or hosted/provider/hardware proof |
+| C1 / stable A read flow | **Foundation in progress:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted dormant web adapter at `c7d09d3`; [031](briefs/031-native-webview-shell.md) accepted native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted platform capabilities at `fa2e4b7`. [033](briefs/033-composed-permanent-webview-runtime.md) composes both clients; credential/startup/early-401 repairs are recorded there. `851e9cd` aligns Expo patches: mobile/root/export/Doctor and current guarded/normal Android gates pass. Required iOS features/faults and the post-alignment guarded iOS check remain open. Preserve prior native/route/Android proof separately. `apps/mobile/src/ui/`, `MIGRATION.md`, auth | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of permanent WebView routes; native alone owns refresh token; no token in URLs/logs; partial local simulator/emulator proof is not full C1 acceptance or hosted/provider/hardware proof |
 | C2 / C1 | Notification/deep-link contract, then native delivery. `lib/server/push-notifications.ts`, current subscribe/unsubscribe routes | Correct account/device token lifecycle; permission refusal; foreground/background tap routing; destination rechecks tenant/role; unsubscribe/sign-out; duplicate delivery handling | Local payload tests first. Provider keys, push delivery and real recipients separately authorized |
 | C3 / C1 + chat inventory | Native chat, split list/read → send/retry → media/remaining features. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and other inventoried features; RLS on every read/write; realtime reconnect/order/dedup; offline retry; inaccessible room and choir switch | Inventory before scope. Dart UI and Socket.IO from the old reference app are not reusable RN/Supabase code |
 | C4 / C1 + file/upload contract | Native assignments, split read → submission → review. `lib/assignment-scope.ts`, `app/(main)/odevler/`, existing assignment APIs | Existing role/deadline/lock/withdrawal/review rules; authorized upload completion, failed/resumed submission, hidden review, wrong tenant and audit behavior | Native server logic moves to shared Edge paths; web uses the same path. Any schema change requires DB gates |
@@ -257,6 +257,7 @@ Xcode-signed normal iOS Release passed SecureStore startup/read twice on 18 Sept
 `6a5769a` then repaired early-401 forced refresh; guarded iOS recovery and persisted SecureStore
 relaunch passed against the disposable services. On 19 September the repaired guarded Android
 one-use credential, persisted session and WebView-originated sign-out passed and were cleaned.
+The post-alignment normal Android Release/isolation gate then passed and was cleaned.
 Resume the remaining 033 rows after exact cleanup;
 see the brief's current checkpoint rather than replaying historical checks. Keep C1 open until all
 required evidence passes. Follow the execution and resource controls
@@ -399,8 +400,8 @@ challenge/state machine, route/external/back/theme shell at `0217ac8`; package 0
 password, clipboard, constrained image and ephemeral-file capabilities at `fa2e4b7`. Package 033
 implemented the guarded composition at `d295c62` and proved both Release handshakes, every route and
 the historical Android scenario set. **19 September checkpoint: active product work remains 033.**
-The repaired Android credential/session/sign-out and guarded Release checks now pass on current
-dependencies. Next is one bounded post-alignment normal Android Release/isolation check, then the
-remaining iOS feature/fault acceptance. See [033's work card](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
+The repaired Android credential/session/sign-out and guarded plus normal Release checks now pass on
+current dependencies. Next is one bounded post-alignment guarded iOS feature/fault batch, preserving
+the password-success user hand-off. See [033's work card](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
 Do not advance to C2 while required rows are FAIL/NOT RUN. 013–032's historical local acceptance,
 004/010 open criteria and the postponed hardware pilot remain unchanged.
