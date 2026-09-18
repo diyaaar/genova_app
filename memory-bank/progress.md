@@ -1,10 +1,12 @@
 # İlerleme indeksi
 
-18 September 2026: `851e9cd` aligns three direct/four required transitive Expo patches: mobile
+19 September 2026: `851e9cd` aligns three direct/four required transitive Expo patches: mobile
 197/root 467 tests/build, both normal exports/isolation and Doctor 21/21 PASS. Earlier `6a5769a`
 guarded iOS renewal proof stays historical; post-patch normal signed iOS build/empty SecureStore
-startup/relaunch passed. Other current native checks unrun; cleanup measured 23.4 GiB free. C1 open; current
-failures and next action are in its checkpoint. WF-007 resource controls remain authoritative.
+startup/relaunch passed. Post-patch guarded Android Release, repaired one-use credential, persisted
+session and WebView sign-out also passed. The normal Android rebuild and required iOS feature/fault
+rows remain; cleanup measured 26.6 GiB free. C1 open; current failures and next action are in its
+checkpoint. WF-007 resource controls remain authoritative.
 Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
 buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı anlamına gelmez.
 
@@ -48,7 +50,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 030 dormant web embedded adapter | Local acceptance complete; native/composed C1 runtime was NOT RUN at this revision | [030](../docs/briefs/030-web-embedded-adapter.md), code/test `c7d09d3`; exact locked bootstrap/challenge, explicit-token user/current-choir proof, memory-only guarded bearer, renewal/clear race refusal, cache/SW teardown, nine-route shell/navigation boundaries, native-owned controls and browser parity passed root 55 files / 462 tests, coverage/service-worker syntax and Next build. No dependency/native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware, CI or release proof at that revision; 031 subsequently added the native shell |
 | 031 native WebView shell | Local acceptance complete; composed C1 runtime still NOT RUN | [031](../docs/briefs/031-native-webview-shell.md), code/test `0217ac8`; Expo-compatible WebView/Crypto, native-only access lease, challenge/proof/renewal/clear state machine, exact routes, external confirmation, back/theme and locked/error UI passed mobile 26 suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS arm64-simulator Release builds. Build outputs were removed after hashing. Password/clipboard/protected-file side effects were still open at that revision and were subsequently accepted in 032; composition remains with 033 |
 | 032 WebView platform capabilities | Local acceptance complete; composed C1 runtime still NOT RUN | [032](../docs/briefs/032-webview-platform-capabilities.md), code/test `fa2e4b7`; native-only password reauth/update, exact invitation clipboard write, constrained single-image input and ephemeral protected-file share passed 30 mobile suites / 161 tests, root 55 files / 464 tests/build, both exports, Expo Doctor 21/21 and actual guarded plus normal iOS/Android Release builds. Exact local image/PDF bytes, refusals, cancellation, cache cleanup and no expanded Genova permissions passed. Generated/runtime artifacts were removed. Hosted/provider/real-account/hardware/CI/release and the composed web/native peer remain open; 033 is next. |
-| 033 composed permanent WebView runtime | OPEN; patch/normal iOS gates pass, C1 gaps remain | [Current checkpoint](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026) records `851e9cd`, mobile 197/root 467 tests/build, normal exports/isolation, Doctor 21/21 and post-patch normal signed iOS build/empty SecureStore startup/relaunch PASS. Missing iOS features/faults, Android credential/sign-out and other current native checks remain. Exact cleanup left 23.4 GiB free. No substitute storage/full C1/hardware proof. |
+| 033 composed permanent WebView runtime | OPEN; patch/iOS startup/current guarded Android pass, C1 gaps remain | [Current checkpoint](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026) records `851e9cd`, mobile 197/root 467 tests/build, normal exports/isolation, Doctor 21/21, post-patch normal signed iOS startup and current guarded Android credential/session/sign-out PASS. Missing iOS features/faults and the post-alignment normal Android build remain. Exact cleanup left 26.6 GiB free. No substitute storage/full C1/hardware proof. |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
@@ -76,7 +78,7 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 18 September 2026
+## Latest handoff — 19 September 2026
 
 [Current handoff](../docs/agent-handoff.md) and [active context](activeContext.md) carry only
 the current checkpoint. Historical acceptance stays in the table's linked briefs.

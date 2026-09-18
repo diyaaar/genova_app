@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Updated 18 September 2026 under [033](briefs/033-composed-permanent-webview-runtime.md).
+Updated 19 September 2026 under [033](briefs/033-composed-permanent-webview-runtime.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
@@ -18,7 +18,6 @@ This is a short entry point, not another backlog or acceptance record.
 
 Current local product HEAD: `851e9cd`; `6a5769a` contains early-401 refresh repair. Recorded
 `origin/main` is `a13f696`; no fetch/push/deploy was performed.
-The 033 credential and session-startup corrections are committed.
 `supabase/.temp/cli-latest` is unrelated CLI cache; keep it unstaged.
 Do not create a second checkout/install solely to avoid these known dirty paths.
 
@@ -26,8 +25,9 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 - M0/A1–A3 local read foundation accepted; 018–032 accepted their bounded local scopes.
   Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
-- 033/C1 OPEN: both local Release handshakes/routes and Android scenarios ran; required
-  iOS feature/fault evidence and invalidated Android credential/sign-out checks remain open.
+- 033/C1 OPEN: both local Release handshakes/routes and Android scenarios ran. Repaired current
+  Android credential/persisted-session/sign-out now passes; required iOS feature/fault evidence
+  and the post-alignment normal Android check remain open.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -38,9 +38,9 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   preserving initial non-forced leases and stale-work guards. Typecheck/33 suites/197 tests PASS.
   Repaired guarded iOS Release passed early-401 recovery and persisted SecureStore relaunch on
   the real disposable services. Failed refresh was observed signed-out, not full cleanup proof.
-- Final 18 September cleanup restored target/source baselines and removed the exact runtime,
-  generated iOS/web builds, simulator and Colima profile/data/context; all four ports closed.
-  After post-patch native cleanup: 24,559,836 KiB (~23.4 GiB). Sources/dependencies/caches preserved.
+- Final 19 September cleanup restored the disposable target baseline and removed the exact runtime,
+  generated native/web builds, app/AVD, wrapper and Colima profile/data/context; all four ports closed.
+  Available: 27,892,724 KiB (~26.6 GiB). Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -49,14 +49,14 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 ## Active bounded sequence
 
 `851e9cd` aligns three direct/four required transitive Expo patches. Mobile 197/root 467 tests,
-root build, exports/isolation, Doctor 21/21 and normal signed iOS startup/relaunch PASS.
-Next: budget repaired Android credential/sign-out batch; other current native/C1 rows remain open.
+root build, exports/isolation, Doctor 21/21, normal signed iOS startup/relaunch and guarded Android
+credential/session/sign-out PASS. Next: one post-alignment normal Android Release/isolation build;
+do not recreate the composed stack. Other iOS/C1 rows remain open.
 Password change/restore requires user UI hand-off; keep that required row open, never bypass it.
 Reuse accepted evidence; create no runtime until a concrete remaining check batch/resource budget
 is recorded. C2 still depends on C1; 023 owner choices gate final native-writing UX.
 No new product feature, general test framework or repeated full-environment rebuild is implied.
-The revised goal text is in the plan; the application's recreated goal is active (18 September).
-Goal wording could not be edited through the available tools; do not fake completion to replace it.
+The revised goal text is in the plan; the application's recreated goal is active (19 September).
 
 ## Authority
 

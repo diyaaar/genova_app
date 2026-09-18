@@ -7,14 +7,15 @@
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
 
-18 September 2026 checkpoint: `5a9fb8f` fixes startup storage rejection/retry without replacing
+19 September 2026 checkpoint: `5a9fb8f` fixes startup storage rejection/retry without replacing
 SecureStore; mobile typecheck and 194 tests pass. The real fixture-backed credential/bundle scan
 passed. A current Xcode-signed normal iOS Release now reaches sign-in on first launch/relaunch with
 real SecureStore and no keychain failure; substitute memory storage remains invalid evidence.
-Current offline normal arm64 Android Release and isolation scans also passed. 033/C1 stays open for
-session-write/composed iOS feature/fault rows and invalidated Android runtime checks. All owned
-native/runtime outputs were cleaned; screen ownership is unchanged.
-Current next action: [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026).
+The repaired guarded Android one-use credential, persisted SecureStore cold relaunch and actual
+WebView sign-out now pass on current dependencies. 033/C1 stays open for composed iOS feature/fault
+rows and a post-alignment normal Android Release/isolation check. All owned native/runtime outputs
+were cleaned; screen ownership is unchanged.
+Current next action: [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**
@@ -218,8 +219,9 @@ image input and ephemeral protected-file sharing at `fa2e4b7`: mobile 30-suite/1
 55-file/464-test/build, both exports, Doctor, normal plus guarded iOS/Android Release runtime and
 cleanup/permission gates passed. Package 033 implemented the guarded composition at `d295c62`: the
 real web/native peers completed both local Release handshakes and all route families, and the Android
-scenario set passed. Required iOS mutation/Realtime/actual-file, successful password/PDF and
-401/sign-out/retry evidence plus one current-source normal Android Release rebuild remain open, so
+scenario set passed. Current repaired Android credential/session/sign-out then passed on 19 September.
+Required iOS mutation/Realtime/actual-file, successful password/PDF and remaining 401/sign-out/retry
+evidence plus one current-source normal Android Release rebuild remain open, so
 C1 is not accepted. Hosted, provider, device,
 release and hardware remain gated.
 010 6/7 kalır;
