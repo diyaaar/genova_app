@@ -250,8 +250,9 @@ Deliver all outcomes in docs/mobil-teslim-plani.md through the earliest ready, b
 user flow: select -> implement -> test -> evaluate -> record -> clean up -> continue.
 Resume from the verified 033 checkpoint; preserve 018-032 historical acceptance, deferred
 004 device tests, open 010 criteria, all existing product features and approval boundaries.
-Owned temporary-artifact cleanup and the 033 credential-source repair are complete at `ec5b19a`;
-now validate the real guarded credential path and remaining 033 rows. Keep C1 open until all
+The credential repair is at `ec5b19a`, startup error/retry repair at `5a9fb8f`, and owned cleanup
+was repeated on 18 September. Resume the real SecureStore Release and remaining 033 rows;
+see the brief's current checkpoint rather than replaying historical checks. Keep C1 open until all
 required evidence passes. Follow the execution and resource controls
 below: one active result, at most three next actions, causal reassessment after two failed
 approaches, and a progress review every 60 minutes. Preserve at least 10 GiB of filesystem

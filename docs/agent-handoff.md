@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Updated 15 September 2026 under [WF-007](briefs/WF-007-bounded-execution-and-disk-budget.md).
+Updated 18 September 2026 under [033](briefs/033-composed-permanent-webview-runtime.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
@@ -16,9 +16,9 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `ec5b19a`; WF-007 precedes it. Recorded
+Current local product HEAD: `5a9fb8f`; `61c7ae2` contains loopback runtime fixes. Recorded
 `origin/main` is `a13f696`; no fetch/push/deploy was performed.
-The 033 credential correction is committed; no owned product edit remains uncommitted.
+The 033 credential and session-startup corrections are committed.
 `supabase/.temp/cli-latest` is unrelated CLI cache; keep it unstaged.
 Do not create a second checkout/install solely to avoid these known dirty paths.
 
@@ -28,14 +28,16 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
 - 033/C1 OPEN: both local Release handshakes/routes and Android scenarios ran; required
   iOS feature/fault evidence and current-source normal Android Release remain open.
-- Later bundle inspection found synthetic passwords in public build variables; `ec5b19a` replaced
-  them with an exact expiring single-use loopback delivery. Mobile 33 suites/189 tests, the four-case
-  server suite, root 55 files/467 tests/build and fresh normal iOS/Android exports passed. A guarded
-  source-check bundle excluded both obsolete password variables, but the real fixture-backed
-  Release/bundle scan is still NOT RUN. See 033's current checkpoint before rebuilding.
-- 15 September cleanup restored target/source baselines and removed the recreated runtime,
-  generated iOS/web build, exact simulator, Colima profile/data/context. Ports are closed.
-  The repair's build/export outputs were also removed; available disk measured 23.5 GiB afterward.
+- `ec5b19a` replaced public fixture passwords with single-use loopback delivery. The interrupted
+  15 September run proved both real synthetic credential deliveries and fixture-backed bundle
+  scans, but unsigned Release SecureStore failed. In-memory storage/manual bundle substitution
+  is not acceptance; that uncommitted workaround was removed. Do not repeat manual signing guesses.
+- `5a9fb8f` handles startup storage rejection with generic error/retry and invalidates late reads
+  after stop/sign-out. Mobile typecheck and all 33 suites/194 tests passed on 18 September.
+  This does not prove platform signing or close runtime rows. Root gates remain historical.
+- 18 September cleanup restored target/source baselines and removed the exact runtime,
+  generated iOS/web build, simulator, Colima profile/data/context. Ports are closed.
+  Available disk measured 19.0 GiB after lightweight tests; no heavy environment was recreated.
   This is a snapshot, not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -43,13 +45,14 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 ## Active bounded sequence
 
-Next product result: validate `ec5b19a` against the owned real fixture/guarded Release and resolve
-033's remaining required runtime rows with one platform/build at a time and the measured disk
-budget. Start with the actual single-use credential/bundle proof, then missing iOS feature/fault
-coverage, then the current normal Android Release and invalidated Android credential/sign-out seam.
+Next product result: genuine SecureStore startup in an Xcode-built simulator Release, without
+disabling signing or manually replacing bundle/entitlements. First budget a build-only phase;
+do not recreate the server stack until native startup works and the combined runtime fits.
+Then finish missing iOS feature/fault rows and current normal Android Release plus invalidated
+Android credential/sign-out checks. Small startup tests do not replace these requirements.
 C2 still depends on C1.
 No new product feature, general test framework or repeated full-environment rebuild is implied.
-The revised goal text is in the plan; the application's old goal remains `usageLimited`.
+The revised goal text is in the plan; the application's recreated goal is active (18 September).
 Goal wording could not be edited through the available tools; do not fake completion to replace it.
 
 ## Authority

@@ -7,12 +7,12 @@
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
 
-15 September 2026 checkpoint: `ec5b19a` completed the 033 credential-source repair and restored
-mobile/root gates without putting fixture passwords in public build variables. 033/C1 remains open:
-real fixture-backed guarded Release proof, the named iOS feature/fault rows and current normal
-Android Release are still required. WF-007 cleanup/resource controls and all screen ownership below
-remain unchanged. Current next action:
-[033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--15-september-2026).
+18 September 2026 checkpoint: `5a9fb8f` fixes startup storage rejection/retry without replacing
+SecureStore; mobile typecheck and 194 tests pass. The real fixture-backed credential/bundle scan
+passed, but unsigned simulator storage failed; substitute memory storage is not acceptance.
+033/C1 remains open for genuine signed Release storage, iOS feature/fault rows and current normal
+Android Release. Owned runtime/build artifacts were cleaned; screen ownership is unchanged.
+Current next action: [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026).
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**

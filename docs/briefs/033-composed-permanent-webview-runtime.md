@@ -1,10 +1,92 @@
 # 033 — Composed permanent-WebView local Release runtime
 
-Prepared: 2026-09-12. Runtime last executed: 2026-09-13; checkpoint and cleanup verified
-2026-09-15 under WF-007. Status: **IN PROGRESS / REQUIRED
+Prepared: 2026-09-12. Runtime last attempted: 2026-09-15; checkpoint, cleanup and mobile repair verified
+2026-09-18 under WF-007 controls. Status: **IN PROGRESS / REQUIRED
 FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent review is claimed.
 
-## Current checkpoint — 15 September 2026
+## Current checkpoint — 18 September 2026
+
+This checkpoint supersedes the current-state statements in the dated sections below.
+Entry: `main / 61c7ae2`; owned unfinished changes were the three ephemeral-storage acceptance
+files from the interrupted run. `supabase/.temp/cli-latest` is unrelated and remains unstaged.
+Read AGENTS, handoff, active context, this brief, plan controls, migration guide/work cycle,
+and the relevant MIGRATION and AuthStore/provider/UI sources. No independent reviewer.
+
+**Active result:** recover from the reproduced native session-storage startup error without
+remaining on the loading screen or replacing the product's secure session storage.
+Allowed paths: `apps/mobile/src/auth/auth-store.ts`, `types.ts`, their tests,
+`apps/mobile/src/ui/AppRoot.tsx` and its existing tests; remove the owned ephemeral acceptance
+workaround and expose the same error/retry in the existing 033 acceptance entry. No new dependency.
+Up to three actions: (1) clean owned runtime and discard the substitute storage path;
+(2) reproduce and fix startup rejection/retry with focused regressions and the mobile gate;
+(3) record limits and identify the next genuine SecureStore Release check within measured disk limits.
+Exit: visible generic error, tenant content/leases refused, explicit retry uses the real session
+gateway, stale startup completion cannot revive a stopped/signed-out store. Runtime acceptance
+stays open until the real SecureStore/platform scenarios pass; unit tests do not close C1.
+
+**Cleanup receipt (18 September):** available disk started at 5,283,452 KiB. Owned allocation:
+runtime 98,956 KiB, generated iOS 633,748 KiB, `.next` 472,116 KiB, Colima instance 1,469,184 KiB,
+VM data 6,084,748 KiB, simulator 3,194,840 KiB. Stopped/deleted only simulator
+`22BE7D41-9071-46AD-A91F-67FB7E50A86C`, ignored/untracked iOS and web outputs.
+Reconnected an exact loopback tunnel solely to clean the already-running disposable stack.
+Existing runner returned `PASS fixture_cleanup target_baseline=restored` and
+`PASS runtime_cleanup stack=stopped path=removed`; its source-hash equality gate passed.
+Stopped the tunnel and deleted the exact `genova033` profile/data with the supported CLI.
+All listed paths, Docker context and listeners 18033/18034/54321/54322 are now absent.
+Available disk after cleanup: 20,016,892 KiB (19.1 GiB); other applications can change this.
+Deleted outputs are reproducible, not Trash-recoverable; source DB and working dependencies remain.
+
+**Evidence review of the interrupted 15 September run:** `61c7ae2` committed exact loopback
+tunnelling, redacted stack startup and Edge-container recovery. Actual single-use credential
+delivery and local Auth succeeded for both synthetic roles using the native HTTP header shape.
+Node fetch's browser-style `sec-fetch-*` header was correctly refused. The genuine fixture-backed
+iOS export excluded both passwords (SHA-256
+`c9714ebfa25b7a5488a26ded03a45c5ed9c0a6c9badde300fdc147ef7aef781f`); the original Release bundle
+scan also passed (`69b0cd9f81b8c6390ca5c700cbf76fd62385f10f8cfbd3defb97f2cf204f6d82`).
+The unsigned simulator Release then failed SecureStore with `ERR_KEY_CHAIN` / missing entitlement.
+Two manually supplied entitlement variants failed launch; ad-hoc without entitlements launched
+but kept the same storage failure. Do not repeat these approaches or manually patch build outputs.
+The later in-memory session substitute and manually replaced JS bundle rendered the WebView but
+are diagnostic evidence only, not product SecureStore/session-lifecycle acceptance. Discard that
+uncommitted workaround. Native UI clicks worked; WebView scrolling/keyboard attempts did not prove
+the missing feature cases. Read the documented UI API before another interaction attempt.
+The build's peak crossed the disk floor (10,167,244 KiB available); deleting DerivedData immediately
+restored headroom. A future build needs a measured larger reserve and in-build monitoring.
+
+**Bounded repair completed at `5a9fb8f` (18 September):** restored the real acceptance client
+and removed the uncommitted in-memory storage files. Session reads now contain both rejected
+promises and returned errors, expose a generic message, deny tenant rendering/leases and retry
+the same real gateway explicitly. A startup generation invalidates delayed reads after stop or
+sign-out. Product and 033 UI expose retry; no SecureStore implementation/dependency was changed.
+
+| Repair criterion | Required | Result | Evidence / boundary |
+|---|---|---|---|
+| Reproduce the loading failure and late-read revival before fixing | yes | PASS | 18 September: new focused suite had 5 failures/35 passes on original code; UI stayed at `loading-screen`, storage rejection escaped, and delayed reads revived stopped/signed-out state |
+| Generic error, refused lease, explicit gateway retry and stale-read invalidation | yes | PASS | New AuthStore regressions; returned error with session data is also refused; retry registers exactly one listener |
+| Actual product UI shows error/retry before tenant content | yes | PASS | AppRoot renderer regression: private diagnostic absent, no shell on error, retry restores server-confirmed fixture choir; mocked renderer, not native runtime |
+| Required mobile source gate | yes | PASS | `npx tsc --noEmit && npm test -- --runInBand`: 33 suites/194 tests, exit 0; existing SafeAreaView/punycode/npm-config warnings remain |
+| Real SecureStore in current signed Release and remaining composed rows | yes | NOT RUN | No native build, simulator or disposable server was created for this repair; C1 remains open |
+
+**Next active result:** genuine SecureStore startup in a Release simulator app, without memory
+fallback or manual bundle replacement. Up to three actions: (1) size the native-only build phase
+and verify the generated Xcode signing settings; (2) build with Xcode's simulator signing enabled,
+inspect resulting entitlements and run actual storage startup; (3) retain only the proved app for
+the next composed check if its combined resource budget passes, otherwise remove owned outputs.
+The installed Expo CLI's `run/ios/XcodeBuild.js` does not disable simulator signing; SecureStore's
+installed config plugin does not add custom iOS keychain entitlements. This supports changing the
+previous `CODE_SIGNING_ALLOWED=NO` approach, not claiming a successful new runtime.
+Preflight: 19,906,236 KiB free before lightweight tests, 19,888,764 KiB after. Existing `.expo`
+is 12 KiB; no download/build/runtime allocation occurred. Historical VM+simulator+web+runtime+iOS
+allocation totals 11,953,592 KiB, exceeding the current ~9.0 GiB usable headroom even before a
+native build. Therefore do not recreate them together. A build-only peak and later reduced
+runtime peak must each be demonstrated to fit; unknown size is not permission to allocate.
+Root gates/exports were not rerun for this mobile-only repair. No push, deploy, live data or
+physical-device operation occurred. Self-review only; 004/010 and every required 033 row remain.
+Documentation validation: 144 local file links across the six changed records resolved;
+current checkpoint anchors and state boundaries were reviewed, and `git diff --check` passed.
+The handoff is 77 lines and active context 40; unrelated CLI cache remains unstaged.
+
+## Historical checkpoint — 15 September 2026
 
 This checkpoint supersedes stale current-state claims below; dated historical results remain.
 Product revision is `ec5b19a`. The credential repair is committed: no fixture password is a public
