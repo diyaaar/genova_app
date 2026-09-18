@@ -16,7 +16,7 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `6a5769a`; `61c7ae2` contains loopback runtime fixes. Recorded
+Current local product HEAD: `851e9cd`; `6a5769a` contains early-401 refresh repair. Recorded
 `origin/main` is `a13f696`; no fetch/push/deploy was performed.
 The 033 credential and session-startup corrections are committed.
 `supabase/.temp/cli-latest` is unrelated CLI cache; keep it unstaged.
@@ -32,7 +32,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
   SecureStore startup/relaunch; full feature acceptance remains with 033.
-- A current offline normal arm64 Android Release, signature/alignment, SDK 24/36, merged manifest,
+- Before patch alignment, offline normal arm64 Android Release, signature/alignment, SDK 24/36, manifest,
   SecureStore backup rules and bundle isolation passed. No emulator/runtime result is inferred.
 - `6a5769a` fixes reproduced early-401 renewal: challenged requests force real native refresh,
   preserving initial non-forced leases and stale-work guards. Typecheck/33 suites/197 tests PASS.
@@ -40,7 +40,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   the real disposable services. Failed refresh was observed signed-out, not full cleanup proof.
 - Final 18 September cleanup restored target/source baselines and removed the exact runtime,
   generated iOS/web builds, simulator and Colima profile/data/context; all four ports closed.
-  Actual available space: 25,830,536 KiB (~24.6 GiB). Sources/dependencies/shared caches preserved.
+  After patch gates/export cleanup: 25,645,188 KiB (~24.5 GiB). Sources/dependencies/caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -48,9 +48,9 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 ## Active bounded sequence
 
-Next: align the three observed Expo Doctor patch mismatches after changelog/disk preflight,
-then required gates. Existing checker 1.20.4 returned FAIL 20/21; do not exclude its check.
-Plan only missing 033 iOS feature/fault and Android credential/sign-out evidence. No services remain.
+`851e9cd` aligns three direct/four required transitive Expo patches. Mobile 197/root 467 tests,
+root build, normal exports/isolation and Doctor 21/21 PASS. No native check after alignment yet.
+Next: one resource-budgeted missing C1 native check batch; no services/binaries are retained.
 Password change/restore requires user UI hand-off; keep that required row open, never bypass it.
 Reuse accepted evidence; create no runtime until a concrete remaining check batch/resource budget
 is recorded. C2 still depends on C1; 023 owner choices gate final native-writing UX.

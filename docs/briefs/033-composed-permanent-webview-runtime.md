@@ -1,19 +1,22 @@
 # 033 — Composed permanent-WebView local Release runtime
 
-Prepared: 2026-09-12. Runtime last attempted: 2026-09-15; checkpoint, cleanup and mobile repair verified
+Prepared: 2026-09-12. Runtime last attempted: 2026-09-18; checkpoint, cleanup and mobile repair verified
 2026-09-18 under WF-007 controls. Status: **IN PROGRESS / REQUIRED
 FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent review is claimed.
 
 ## Current checkpoint — 18 September 2026
 
 This checkpoint supersedes the current-state statements in the dated sections below.
-Entry was `main / 61c7ae2`; product is now `5a9fb8f` and the preceding record is `35fdea2`.
+Entry was `main / 61c7ae2`; latest product is `851e9cd`, preceded by record `ed86d22`.
+Latest patch gates/exports/Doctor PASS; native checks after alignment are NOT RUN.
+See the current composed follow-up below for repair evidence and final cleanup; earlier
+18 September receipts remain dated checkpoints, not current environment claims.
 The interrupted ephemeral-storage files were removed. `supabase/.temp/cli-latest` is unrelated
 and remains unstaged.
 Read AGENTS, handoff, active context, this brief, plan controls, migration guide/work cycle,
 and the relevant MIGRATION and AuthStore/provider/UI sources. No independent reviewer.
 
-**Completed source result:** recover from the reproduced native session-storage startup error without
+**Completed startup source result at `5a9fb8f`:** recover from native session-storage startup error without
 remaining on the loading screen or replacing the product's secure session storage.
 Allowed paths: `apps/mobile/src/auth/auth-store.ts`, `types.ts`, their tests,
 `apps/mobile/src/ui/AppRoot.tsx` and its existing tests; remove the owned ephemeral acceptance
@@ -279,6 +282,69 @@ existing install and this brief; (1) dry-run resolver and quantify any transitiv
 Doctor and affected export/native checks. Stop unexpected broader changes and reassess.
 No native test environment is retained while this preflight is pending.
 
+**Alignment preflight (18 September):** dry-run PASS, exactly seven patch replacements,
+zero additions/removals. Besides the three direct targets, the resolver requires constants
+57.0.18 -> 57.0.19, nested CLI 57.0.24 -> 57.0.26, nested router-server 57.0.9 -> 57.0.10
+and nested Babel preset 57.0.11 -> 57.0.12. Official SDK-57 changelogs for
+[constants](https://raw.githubusercontent.com/expo/expo/sdk-57/packages/expo-constants/CHANGELOG.md),
+[CLI](https://raw.githubusercontent.com/expo/expo/sdk-57/packages/@expo/cli/CHANGELOG.md),
+[router-server](https://raw.githubusercontent.com/expo/expo/sdk-57/packages/@expo/router-server/CHANGELOG.md)
+and [Babel](https://raw.githubusercontent.com/expo/expo/sdk-57/packages/babel-preset-expo/CHANGELOG.md)
+were read: router-server fixes streaming JS chunk order; no new product feature is enabled.
+Seven exact registry unpacked sizes total 7,320,192 bytes. Existing mobile install 3,598,648 KiB;
+available 25,724,644 KiB. Reserve 524,288 KiB additional for replacements/extraction/cache/metadata
+(well above measured contents and ~98 MiB resolver allocation), projected available
+25,200,356 KiB > floor 10,485,760 KiB. Use existing install, no second copy or native/VM runtime;
+monitor allocation. Package/lock changes only, lifecycle scripts disabled; Doctor/mobile/root
+and fresh normal exports follow. Required native checks remain open until actually run.
+
+First install attempt exited 0, but actual package manifests still reported old versions and
+Doctor remained FAIL 20/21. Generated node_modules/.package-lock.json claimed all new versions,
+disagreeing with physical manifests (npm 11.8.0). Do not accept resolver metadata as installation
+proof. Causal reassessment: remove only this regular generated hidden index, preserve the tracked
+lock and entire existing install, then let npm regenerate it/reify the seven exact replacements.
+This is not a second checkout, clean install, blanket cache purge or manual generated-file edit.
+
+Second install PASS, seven physical replacements, minimum available 25,717,900 KiB. Actual
+manifests now match all targets; mobile typecheck/33 suites/197 tests PASS and cached Doctor
+21/21 PASS with dotenv disabled and no exclusions. Lock diff contains exactly the seven
+expected version changes and their dependency/peer metadata, no additions/removals.
+Root gate preflight: available 25,719,112 KiB; reserve 2,097,152 KiB for coverage/.next (recent
+Next output 472,036 KiB plus ample cache overhead), projected 23,621,960 KiB > floor.
+Run one root check with synthetic loopback public configuration, no server/VM/native build;
+monitor free space and delete owned generated output after small evidence is recorded.
+
+Root `pnpm check` PASS (lint/typecheck, 55 files/467 tests with coverage, service-worker syntax,
+Next production build), minimum monitored available 25,303,104 KiB; no budget stop. Synthetic
+loopback public config, no hosted flow/DB/Edge or E2E was exercised. Owned .next 472,004 KiB and
+coverage 244 KiB are removed after recording this receipt. Normal export preflight: current
+25,225,384 KiB before that removal, reserve 1,048,576 KiB additional for both sequential exports
+plus Metro/Hermes cache, projected 24,176,808 KiB > floor even without recovered build space.
+Exact outputs `.expo/033-patch-ios` and `.expo/033-patch-android` are absent before creation;
+dotenv off, acceptance/network switches off, synthetic public config only. Hash and inspect each
+actual normal HBC for guarded markers/endpoints/identities, then remove these exact outputs.
+
+**Patch outcome at `851e9cd`:** source and lock committed separately from records. Both normal
+exports PASS; actual HBC guarded flag/trace/exact local endpoint and source-grounded fixture-email
+prefix scans PASS (zero matches). iOS 4,098,917 bytes SHA-256
+`9811526471b27459f366816a288bbf30432de76171ff6769fb18535601a8ba0c`;
+Android 4,104,987 bytes SHA-256
+`c01a27a5f7bc046e8badb97780e1e8c85bd5595404d27ba52fa58621cc963a99`.
+No fixture was created, so no current actual-fixture password scan is inferred. During export
+available space measured 25,659,552 KiB and after both exports 25,639,208 KiB. Exact export
+directories total 8,024 KiB and are removed after this receipt; root output already removed.
+Current source/mobile/root/export/Doctor gates PASS; native builds/runtime after these package
+changes are NOT RUN, and all missing C1 feature/cleanup and approval rows remain open. Older
+normal/guarded native evidence stays dated at its original dependency versions.
+Next: one resource-budgeted remaining C1 native check batch (not replaying old criteria); finish
+needed iOS representative mutations/Realtime/PDF and Android repaired credential/sign-out.
+Password change/restore requires user hand-off. 023's four owner choices have been requested;
+until answered they do not authorize final native annotation UX. No hosted/device/release action.
+
+Post-gate cleanup PASS: exact normal-export directories, root .next and coverage are absent;
+no owned native tree/build, VM/simulator or server was recreated. Actual available 25,645,188 KiB
+(~24.5 GiB), not a continuing quota guarantee. Sources/current dependencies retained.
+
 ## Historical checkpoint — 15 September 2026
 
 
@@ -489,8 +555,8 @@ actually performed.
 | Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
 | Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | Historical 2026-09-13 and current 2026-09-18 at `6a5769a` | Historical Android coverage remains dated before credential repair. Repaired guarded iOS passed early first-401 forced renewal/reproof and persisted real SecureStore relaunch; revoked refresh was observed signed-out. Full second-401/cleanup ordering and cache/history/credential matrix are not inferred. Remaining iOS and invalidated Android cases keep this row open. |
 | Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-18 final runner/handle/path/port inventories | Target baseline restored and source hash verified; exact runtime, generated iOS/web trees, app/device, profile/VM/data disk and Docker context removed. Web/tunnel stopped and all four ports closed. Actual free space 25,830,536 KiB (~24.6 GiB); shared/global caches preserved. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-18, product `6a5769a`; historical root/export gates plus current native checks | Mobile typecheck/33 suites/197 tests PASS. Normal iOS/Android native checks and repaired guarded iOS Release/signature/actual-password scans passed. Current guarded Android remains NOT RUN. Current Expo Doctor 1.20.4 FAIL 20/21 due to three patch-version mismatches; no exclusion/upgrade was performed. Root/export evidence stays historical. |
-| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-18 self-review at `5a9fb8f`; affected gates, native artifact review and `git diff --check` | Repair is confined to AuthStore/UI/033 acceptance and records, with no dependency/schema/hosted change. Normal Android disclosed the existing Expo-generated overlay permission rather than hiding it. `supabase/.temp/cli-latest` remains unstaged. 004 hardware, 010 live-provider, hosted-origin, CI, accessibility and publication remain open. No independent review. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-18, product `851e9cd` | Mobile typecheck/33 suites/197 tests, root lint/typecheck/55 files/467 tests/build, both normal exports/guard isolation and Doctor 1.20.4 21/21 PASS. Three direct/four required transitive patches resolve the earlier Doctor failure without exclusions. Native builds/runtime after alignment NOT RUN; earlier normal/guarded iOS native evidence remains dated at prior versions. Required current native evidence is not inferred from exports. |
+| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-18 self-review at `851e9cd`, managed lock delta plus applicable gates and `git diff --check` | Exactly three direct and four required transitive patch replacements, no SDK migration/addition/removal/scene opt-in/check exclusion. Prior bounded auth repairs preserved. CLI cache unstaged; 004/010, hosted, hardware, accessibility, CI and publication boundaries open. Native evidence after alignment is not claimed. No independent review. |
 
 ## Delivery
 
@@ -509,8 +575,9 @@ actually performed.
   early-401 recovery/persisted SecureStore relaunch passed. Full C1 feature acceptance remains open.
 - The local composed run materially proved both Release handshakes, all route families and the full
   Android scenario set, but required iOS feature/fault coverage, invalidated Android credential/
-  sign-out checks and current guarded Android remain open; current Expo Doctor failed exact patch
-  alignment (20/21). Therefore 033 is not closed. The final 18 September teardown restored both
+  sign-out checks and post-alignment native checks remain open. `851e9cd` fixes the observed Doctor
+  patch mismatch: current mobile/root/normal-export/Doctor gates pass. Therefore 033 is not closed.
+  The final 18 September teardown restored both
   baselines, removed all owned runtime/build/device/VM outputs and measured 24.6 GiB free.
 - The 15 September cleanup removed the recreated owned runtime; the correction's `.next`, coverage
   and Expo export outputs were also removed. Apply the resource preflight before runtime recreation,
