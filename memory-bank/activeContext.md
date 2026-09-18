@@ -1,7 +1,7 @@
 # Active context
 
 Updated 18 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; `5a9fb8f` fixes 033's reproduced session-startup loading failure.
+owns resource controls; `6a5769a` fixes 033's reproduced early-401 refresh failure.
 The product SecureStore remains unchanged; runtime acceptance stays open.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
 [delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
@@ -9,7 +9,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `5a9fb8f`. Recorded remote `a13f696`;
+- Product revision: `6a5769a`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 remains OPEN. Missing iOS feature/fault evidence and invalidated Android runtime checks persist.
   See [033](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026).
@@ -19,18 +19,22 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   keychain error. Memory-only storage/manual bundle substitutions remain rejected.
 - Current offline normal arm64 Android Release, APK signature/alignment, merged manifest,
   permission/backup rules and bundle-isolation scans passed. It was not run on an emulator.
-- Mobile typecheck and 33 suites/194 tests passed on 18 September. Root/export evidence remains
+- Mobile typecheck and 33 suites/197 tests passed on 18 September. Root/export evidence remains
   historical, not rerun. New error/retry tests do not prove native signing or runtime acceptance.
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
-- Cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
+- Repaired guarded iOS Release passed early-401 forced refresh/reproof and persisted actual
+  SecureStore relaunch against disposable services. Revoked refresh ended signed-out; full
+  ordering/cache cleanup is not inferred. Password change/restore requires user UI hand-off.
+- Final cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
   simulator and Colima profile/data/context removed; owned service ports closed.
-  Both generated native projects/builds/apps, exact simulator and screenshots were removed;
-  A later audit removed the exact stale 021 Colima disk (5.4 GiB); free space measured 22.8 GiB.
+  Native projects/builds/apps, exact simulator, screenshots and 6,073,416 KiB Colima data removed.
+  Actual free space measured 25,830,536 KiB (~24.6 GiB); previous stale 021 disk remains removed.
   Shared caches/device pool were not purged. Recheck before allocating.
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
-  and a progress review every 60 active minutes. Next: one owned 033 stack and one platform app at
-  a time; run only the missing/invalidated scenarios with disk monitoring.
+  and a progress review every 60 active minutes. Current cached Expo Doctor FAIL 20/21: three
+  Expo patch mismatches. Next: exact patch assessment/preflight/alignment and required gates;
+  no SDK migration/check exclusion or runtime recreation merely to replay passed checks.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 

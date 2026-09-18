@@ -1,9 +1,9 @@
 # İlerleme indeksi
 
-18 September 2026: owned 033 runtime/build outputs were cleaned again; `5a9fb8f` fixes startup
-storage error/retry (mobile typecheck, 194 tests); a signed normal iOS Release then passed real
-SecureStore startup/read and relaunch; a current offline normal arm64 Android Release and exact
-artifact scans also passed. C1 runtime acceptance remains open; current
+18 September 2026: `6a5769a` repairs reproduced early-401 refresh (mobile typecheck, 197 tests).
+Repaired guarded iOS Release passed actual renewal/reproof and persisted SecureStore relaunch;
+current normal native build/scans remain accepted. Final owned runtime/native/web/simulator/VM
+cleanup restored baselines and measured 24.6 GiB free. C1 runtime acceptance remains open; current
 failures and next action are in its checkpoint. WF-007 resource controls remain authoritative.
 Kaynak belgelerdeki tarihli sonuçlar aşağıda özetlenmiştir;
 buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı anlamına gelmez.
@@ -48,7 +48,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 030 dormant web embedded adapter | Local acceptance complete; native/composed C1 runtime was NOT RUN at this revision | [030](../docs/briefs/030-web-embedded-adapter.md), code/test `c7d09d3`; exact locked bootstrap/challenge, explicit-token user/current-choir proof, memory-only guarded bearer, renewal/clear race refusal, cache/SW teardown, nine-route shell/navigation boundaries, native-owned controls and browser parity passed root 55 files / 462 tests, coverage/service-worker syntax and Next build. No dependency/native WebView, browser E2E, hosted CSP/provider/account, simulator/hardware, CI or release proof at that revision; 031 subsequently added the native shell |
 | 031 native WebView shell | Local acceptance complete; composed C1 runtime still NOT RUN | [031](../docs/briefs/031-native-webview-shell.md), code/test `0217ac8`; Expo-compatible WebView/Crypto, native-only access lease, challenge/proof/renewal/clear state machine, exact routes, external confirmation, back/theme and locked/error UI passed mobile 26 suites / 126 tests, both exports, Expo Doctor 21/21 and exact Android API 36 arm64 plus iOS arm64-simulator Release builds. Build outputs were removed after hashing. Password/clipboard/protected-file side effects were still open at that revision and were subsequently accepted in 032; composition remains with 033 |
 | 032 WebView platform capabilities | Local acceptance complete; composed C1 runtime still NOT RUN | [032](../docs/briefs/032-webview-platform-capabilities.md), code/test `fa2e4b7`; native-only password reauth/update, exact invitation clipboard write, constrained single-image input and ephemeral protected-file share passed 30 mobile suites / 161 tests, root 55 files / 464 tests/build, both exports, Expo Doctor 21/21 and actual guarded plus normal iOS/Android Release builds. Exact local image/PDF bytes, refusals, cancellation, cache cleanup and no expanded Genova permissions passed. Generated/runtime artifacts were removed. Hosted/provider/real-account/hardware/CI/release and the composed web/native peer remain open; 033 is next. |
-| 033 composed permanent WebView runtime | OPEN; normal native builds pass, composed gaps remain | [Current checkpoint](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026) records `5a9fb8f`, mobile typecheck/194 tests, signed iOS SecureStore startup/relaunch and a current offline normal arm64 Android Release with exact manifest/bundle scans. Real credential delivery/bundle scans also passed; session write, missing iOS feature/fault and invalidated Android runtime checks remain. Substitute storage is not acceptance. |
+| 033 composed permanent WebView runtime | OPEN; early-401 iOS repair passes, feature/runtime gaps remain | [Current checkpoint](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026) records `6a5769a`, mobile typecheck/197 tests, guarded iOS actual early-401 recovery and persisted SecureStore relaunch. Final exact cleanup restored baselines and 24.6 GiB free. Current Expo Doctor FAIL 20/21 due to three patch mismatches; required iOS feature/fault, Android credential/sign-out and guarded Android remain open. Substitute storage is not acceptance. |
 
 WF-003: mobil teslim planı ve yönerge incelemesi tamamlandı; ürün kodu başlamadı.
 Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).

@@ -16,7 +16,7 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `5a9fb8f`; `61c7ae2` contains loopback runtime fixes. Recorded
+Current local product HEAD: `6a5769a`; `61c7ae2` contains loopback runtime fixes. Recorded
 `origin/main` is `a13f696`; no fetch/push/deploy was performed.
 The 033 credential and session-startup corrections are committed.
 `supabase/.temp/cli-latest` is unrelated CLI cache; keep it unstaged.
@@ -28,32 +28,32 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
 - 033/C1 OPEN: both local Release handshakes/routes and Android scenarios ran; required
   iOS feature/fault evidence and invalidated Android credential/sign-out checks remain open.
-- `ec5b19a` replaced public fixture passwords with single-use loopback delivery. The interrupted
-  15 September run proved both real synthetic credential deliveries and fixture-backed bundle
-  scans, but unsigned Release SecureStore failed. In-memory storage/manual bundle substitution
-  is not acceptance; that uncommitted workaround was removed. Do not repeat manual signing guesses.
-- `5a9fb8f` handles startup storage rejection with generic error/retry and invalidates late reads
-  after stop/sign-out. Mobile typecheck and all 33 suites/194 tests passed on 18 September.
-  A current Xcode-signed normal iOS Release then reached sign-in on first launch/relaunch using
-  real SecureStore with no keychain failure. It proves startup/read only and does not close C1.
+- `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
+  Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
+- `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
+  SecureStore startup/relaunch; full feature acceptance remains with 033.
 - A current offline normal arm64 Android Release, signature/alignment, SDK 24/36, merged manifest,
   SecureStore backup rules and bundle isolation passed. No emulator/runtime result is inferred.
-- 18 September cleanup restored target/source baselines and removed the exact runtime,
-  generated iOS/web build, simulator, Colima profile/data/context. Ports are closed.
-  Both native build trees/apps and the exact simulator were also removed after proof. Available
-  disk measured 17.5 GiB afterward; no VM/server was recreated.
-  This is a snapshot, not a continuing guarantee.
+- `6a5769a` fixes reproduced early-401 renewal: challenged requests force real native refresh,
+  preserving initial non-forced leases and stale-work guards. Typecheck/33 suites/197 tests PASS.
+  Repaired guarded iOS Release passed early-401 recovery and persisted SecureStore relaunch on
+  the real disposable services. Failed refresh was observed signed-out, not full cleanup proof.
+- Final 18 September cleanup restored target/source baselines and removed the exact runtime,
+  generated iOS/web builds, simulator and Colima profile/data/context; all four ports closed.
+  Actual available space: 25,830,536 KiB (~24.6 GiB). Sources/dependencies/shared caches preserved.
+  Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
   C2–C5, release candidate and stores remain pending. Dependencies live only in the plan.
 
 ## Active bounded sequence
 
-Next product result is the remaining composed runtime. Cleanup found and removed the exact stale
-5.4 GiB 021 Colima disk that its old record had incorrectly called deleted; free space is 22.8 GiB.
-Create one 033 stack and retain one platform app at a time, monitoring the ~2 GiB safety margin.
-Run only invalidated Android credential/sign-out and missing iOS feature/fault rows; no normal rebuild.
-C2 still depends on C1.
+Next: align the three observed Expo Doctor patch mismatches after changelog/disk preflight,
+then required gates. Existing checker 1.20.4 returned FAIL 20/21; do not exclude its check.
+Plan only missing 033 iOS feature/fault and Android credential/sign-out evidence. No services remain.
+Password change/restore requires user UI hand-off; keep that required row open, never bypass it.
+Reuse accepted evidence; create no runtime until a concrete remaining check batch/resource budget
+is recorded. C2 still depends on C1; 023 owner choices gate final native-writing UX.
 No new product feature, general test framework or repeated full-environment rebuild is implied.
 The revised goal text is in the plan; the application's recreated goal is active (18 September).
 Goal wording could not be edited through the available tools; do not fake completion to replace it.
