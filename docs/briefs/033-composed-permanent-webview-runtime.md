@@ -8,7 +8,8 @@ FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent rev
 
 This checkpoint supersedes the current-state statements in the dated sections below.
 Entry was `main / 61c7ae2`; latest product is `851e9cd`, preceded by record `ed86d22`.
-Latest patch gates/exports/Doctor PASS; native checks after alignment are NOT RUN.
+Latest patch gates/exports/Doctor and normal iOS build/startup PASS; other post-alignment
+native/composed checks are NOT RUN.
 See the current composed follow-up below for repair evidence and final cleanup; earlier
 18 September receipts remain dated checkpoints, not current environment claims.
 The interrupted ephemeral-storage files were removed. `supabase/.temp/cli-latest` is unrelated
@@ -345,6 +346,57 @@ Post-gate cleanup PASS: exact normal-export directories, root .next and coverage
 no owned native tree/build, VM/simulator or server was recreated. Actual available 25,645,188 KiB
 (~24.5 GiB), not a continuing quota guarantee. Sources/current dependencies retained.
 
+**Post-alignment native work card (18 September):** prove the normal iOS native entry after
+`851e9cd`, whose Expo update includes native scene-lifecycle code. This is changed dependency
+verification, not repetition of unchanged startup evidence. Exact generated paths:
+`apps/mobile/ios` and `spike/033-patch-native-ios`; one owned simulator only after compilation.
+Three actions: cached-toolchain prebuild/Pods + default Xcode-signed arm64 Release; inspect
+signature/Info.plist/normal-bundle isolation and actual SecureStore startup; record/clean exact
+outputs/device. No hosted account, fixture/VM/server, SDK upgrade or manual signing modification.
+Required existing C1 feature/credential/fault matrix remains open. Preflight: available
+25,644,964 KiB; reserve 7,340,032 KiB for generated Pods/build (prior generated ~0.6–1.2 GiB,
+derived ~1.8–3.9 GiB plus reserve), projected 18,304,932 KiB > 10,485,760 KiB floor.
+Monitor and stop allocation below 12,500,000 KiB. Simulator has a separate <=3,194,840 KiB
+historical measured budget, allowed only after removing build intermediates. Sources/dependencies
+and shared caches are not cleanup targets. Retain no binary/device after this check.
+
+Native generation/Pods PASS (actual Expo 57.0.24, Asset 57.0.18, Sharing 57.0.21), Pods minimum
+available 24,400,908 KiB. Xcode default signing allowed/required YES, identity `-`; no signing
+override. Normal arm64 simulator Release PASS, build minimum available 23,088,864 KiB, no stop.
+Actual strict signature and guarded/credential marker absence scans PASS (zero matches).
+Bundle 4,098,939 bytes SHA-256
+`955228c9240fada70727e28f06c82b3367bf9a1867418fc7b8aa614f003b39d9`.
+Actual Info.plist: no scene manifest, camera/microphone usage or background mode; arbitrary
+loads false and base-template local networking true (not falsely claimed absent). Known native
+dependency/compiler deprecation/header warnings remain; no warning suppression/refactor.
+Derived tree 1,849,260 KiB, generated iOS 633,752 KiB and app 47,628 KiB. Keep only exact app
+`spike/033-patch-ios.app` for this immediate <=15-minute startup check, delete both large trees
+before simulator boot and delete app/device at check end; no historical binary retention.
+
+Intermediates/generated iOS removed; copied app strict signature PASS. Before simulator boot
+available 25,512,476 KiB; <=3,194,840 KiB simulator allowance projects 22,317,636 KiB > floor.
+Exact new owned simulator: `6E2B00E4-A3B1-44C2-96EE-0CE70365802B`, `genova033-patch-ios`,
+iPhone 17 Pro / installed iOS 26.5. No prior/shared device is modified.
+
+**Post-alignment actual startup PASS:** installed the exact normally signed app on that device.
+First process 90697 and terminate/relaunch process 90756 both reached the ordinary Turkish
+sign-in UI, inspected through CUA screenshots and AX (`sign-in-email`, `sign-in-password`,
+`sign-in-submit`, "Koro hesabınızla giriş yapın."). No storage-error/loading screen, surrogate
+storage or manual bundle substitution. Real empty SecureStore/getSession read only; no account
+credential/session write or hosted/composed WebView/E2E/physical-hardware acceptance.
+Live process confirmed; scoped app logs had zero ERR_KEY_CHAIN/KeyChainException/SecureStore
+failure/uncaught-exception/fatal-error matches (log command succeeded; contents not retained).
+Owned simulator 1,926,968 KiB, app 47,484 KiB; pre-final-cleanup available 23,221,852 KiB.
+Delete this exact device/app now, preserving other devices/shared caches and all source evidence.
+
+Final cleanup PASS: exact simulator/device directory, kept app, generated iOS and derived build
+absent; process 90756 gone and no deleted-file handle on these owned paths. Available space
+initially reported 23,027,232 KiB after deletion, then 24,559,836 KiB on recheck (~23.4 GiB);
+use actual filesystem readings, not theoretical recovered bytes. No shared cache/user data purged.
+Next: budget one remaining C1 composed-platform batch, prioritizing repaired Android credential
+delivery/sign-out; current normal Android and guarded native checks still need their own evidence.
+Do not repeat this now-passed normal iOS startup absent another relevant change.
+
 ## Historical checkpoint — 15 September 2026
 
 
@@ -555,7 +607,7 @@ actually performed.
 | Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
 | Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | Historical 2026-09-13 and current 2026-09-18 at `6a5769a` | Historical Android coverage remains dated before credential repair. Repaired guarded iOS passed early first-401 forced renewal/reproof and persisted real SecureStore relaunch; revoked refresh was observed signed-out. Full second-401/cleanup ordering and cache/history/credential matrix are not inferred. Remaining iOS and invalidated Android cases keep this row open. |
 | Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-18 final runner/handle/path/port inventories | Target baseline restored and source hash verified; exact runtime, generated iOS/web trees, app/device, profile/VM/data disk and Docker context removed. Web/tunnel stopped and all four ports closed. Actual free space 25,830,536 KiB (~24.6 GiB); shared/global caches preserved. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-18, product `851e9cd` | Mobile typecheck/33 suites/197 tests, root lint/typecheck/55 files/467 tests/build, both normal exports/guard isolation and Doctor 1.20.4 21/21 PASS. Three direct/four required transitive patches resolve the earlier Doctor failure without exclusions. Native builds/runtime after alignment NOT RUN; earlier normal/guarded iOS native evidence remains dated at prior versions. Required current native evidence is not inferred from exports. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-18, product `851e9cd` | Mobile 197/root 467 tests/build, both normal exports/isolation and Doctor 21/21 PASS. Post-alignment normally signed arm64 iOS Release/signature/Info.plist/isolation and real empty SecureStore startup/relaunch PASS. Current normal Android and guarded native/composed evidence after alignment remain NOT RUN; prior guarded iOS proof stays dated at prior dependencies. Source/export checks do not close missing feature/native rows. |
 | Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-18 self-review at `851e9cd`, managed lock delta plus applicable gates and `git diff --check` | Exactly three direct and four required transitive patch replacements, no SDK migration/addition/removal/scene opt-in/check exclusion. Prior bounded auth repairs preserved. CLI cache unstaged; 004/010, hosted, hardware, accessibility, CI and publication boundaries open. Native evidence after alignment is not claimed. No independent review. |
 
 ## Delivery

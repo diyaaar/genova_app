@@ -40,7 +40,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   the real disposable services. Failed refresh was observed signed-out, not full cleanup proof.
 - Final 18 September cleanup restored target/source baselines and removed the exact runtime,
   generated iOS/web builds, simulator and Colima profile/data/context; all four ports closed.
-  After patch gates/export cleanup: 25,645,188 KiB (~24.5 GiB). Sources/dependencies/caches preserved.
+  After post-patch native cleanup: 24,559,836 KiB (~23.4 GiB). Sources/dependencies/caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -49,8 +49,8 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 ## Active bounded sequence
 
 `851e9cd` aligns three direct/four required transitive Expo patches. Mobile 197/root 467 tests,
-root build, normal exports/isolation and Doctor 21/21 PASS. No native check after alignment yet.
-Next: one resource-budgeted missing C1 native check batch; no services/binaries are retained.
+root build, exports/isolation, Doctor 21/21 and normal signed iOS startup/relaunch PASS.
+Next: budget repaired Android credential/sign-out batch; other current native/C1 rows remain open.
 Password change/restore requires user UI hand-off; keep that required row open, never bypass it.
 Reuse accepted evidence; create no runtime until a concrete remaining check batch/resource budget
 is recorded. C2 still depends on C1; 023 owner choices gate final native-writing UX.

@@ -20,7 +20,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Before patch alignment, normal arm64 Android Release, APK signature/alignment, merged manifest,
   permission/backup rules and bundle-isolation scans passed. It was not run on an emulator.
 - Patch gates: mobile typecheck/33 suites/197 tests, root lint/typecheck/55 files/467 tests/build,
-  both normal exports/isolation and Doctor 21/21 PASS. Native checks after alignment NOT RUN.
+  normal exports/isolation and Doctor 21/21 PASS. Post-alignment normal signed iOS native build,
+  signature/Info.plist/isolation and empty SecureStore startup/relaunch PASS; others NOT RUN.
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
 - Repaired guarded iOS Release passed early-401 forced refresh/reproof and persisted actual
   SecureStore relaunch against disposable services. Revoked refresh ended signed-out; full
@@ -28,12 +29,12 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Final cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
   simulator and Colima profile/data/context removed; owned service ports closed.
   Native projects/builds/apps, exact simulator, screenshots and 6,073,416 KiB Colima data removed.
-  After patch gate/export cleanup: 25,645,188 KiB (~24.5 GiB); stale 021 disk remains removed.
+  Post-patch iOS trees/app/device also removed; final available 24,559,836 KiB (~23.4 GiB).
   Shared caches/device pool were not purged. Recheck before allocating.
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  Next: one budgeted missing C1 native check batch; no runtime recreation to replay old criteria.
+  Next: budget repaired Android credential/sign-out batch; no replay of passed normal iOS startup.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
