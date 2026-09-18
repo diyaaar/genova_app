@@ -13,6 +13,7 @@ import type {
   AuthState,
   ChoirPreferenceStore,
   NativeWebViewLease,
+  NativeWebViewLeaseOptions,
   PasswordChangeResult,
 } from './types';
 
@@ -120,7 +121,7 @@ export class AuthStore {
    * The native Supabase client remains the refresh-token owner and concurrent renewals
    * share one refresh operation.
    */
-  getWebViewLease(options: { nowSeconds?: number; safetyWindowSeconds?: number } = {}): Promise<NativeWebViewLease> {
+  getWebViewLease(options: NativeWebViewLeaseOptions & { nowSeconds?: number; safetyWindowSeconds?: number } = {}): Promise<NativeWebViewLease> {
     if (this.bridgeLeaseInFlight) return this.bridgeLeaseInFlight;
     const task = this.resolveWebViewLease(options).finally(() => {
       if (this.bridgeLeaseInFlight === task) this.bridgeLeaseInFlight = null;
@@ -132,7 +133,8 @@ export class AuthStore {
   private async resolveWebViewLease({
     nowSeconds = Math.floor(Date.now() / 1_000),
     safetyWindowSeconds = 60,
-  }: { nowSeconds?: number; safetyWindowSeconds?: number }): Promise<NativeWebViewLease> {
+    forceRefresh = false,
+  }: NativeWebViewLeaseOptions & { nowSeconds?: number; safetyWindowSeconds?: number }): Promise<NativeWebViewLease> {
     const state = this.state;
     const activeChoir = state.activeChoir;
     const userId = state.user?.id ?? null;
@@ -143,7 +145,7 @@ export class AuthStore {
 
     let session = state.session;
     const expiry = session?.expires_at;
-    if (!session?.access_token || !Number.isSafeInteger(expiry)
+    if (forceRefresh || !session?.access_token || !Number.isSafeInteger(expiry)
       || (expiry as number) <= nowSeconds + safetyWindowSeconds) {
       const refreshed = await this.deps.auth.refreshSession();
       if (refreshed.error || !refreshed.data.session) {

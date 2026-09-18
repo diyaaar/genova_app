@@ -12,6 +12,7 @@ import {
 import type { BridgeDiagnostic } from '@shared/mobile-webview-bridge';
 import { AuthProvider, useAuth } from '../auth/AuthProvider';
 import { getGenovaClient } from '../auth/supabase-client';
+import type { NativeWebViewLeaseOptions } from '../auth/types';
 import { NativeWebViewScreen } from '../webview/NativeWebViewScreen';
 import { createNativeWebViewRuntimeConfig } from '../webview/runtime-config';
 import type { NativeBridgeSnapshot } from '../webview/native-bridge-controller';
@@ -127,10 +128,10 @@ function ComposedRuntime({ trace }: { trace: Trace }) {
     trace(`snapshot ${snapshot.phase}:${snapshot.routeFamily}:${snapshot.canGoBackWithinWeb ? 'back' : 'root'}`);
   }, [trace]);
 
-  const getLease = useCallback(async () => {
+  const getLease = useCallback(async (options?: NativeWebViewLeaseOptions) => {
     const requestNumber = ++leaseRequests.current;
     try {
-      const lease = await auth.getWebViewLease();
+      const lease = await auth.getWebViewLease(options);
       trace(`lease PASS #${requestNumber} ttl=${Math.max(0, lease.expiresAt - Math.floor(Date.now() / 1000))}`);
       return lease;
     } catch (error) {

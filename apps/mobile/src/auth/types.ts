@@ -35,6 +35,11 @@ export type PasswordChangeResult =
   | { ok: false; message: string };
 
 /** Short-lived context that may cross to the challenged embedded web page. */
+export interface NativeWebViewLeaseOptions {
+  /** Native-only renewal instruction; never serialized into the web envelope. */
+  forceRefresh?: boolean;
+}
+
 export interface NativeWebViewLease {
   accessToken: string;
   expiresAt: number;

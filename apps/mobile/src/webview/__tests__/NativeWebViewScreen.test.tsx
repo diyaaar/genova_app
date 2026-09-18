@@ -187,6 +187,36 @@ describe('NativeWebViewScreen', () => {
     expect(outgoing().at(-1)).toMatchObject({ type: 'theme.apply' });
   });
 
+  it('forwards challenged early renewal to native refresh and stays covered until new web proof', async () => {
+    const lease = {
+      accessToken: 'header.payload.signature', expiresAt: 2_000,
+      userId: USER_ID, choirId: CHOIR_A, memberId: membership().member_id,
+    };
+    const getLease = jest.fn().mockResolvedValueOnce(lease)
+      .mockResolvedValueOnce({ ...lease, accessToken: 'renewed.payload.signature', expiresAt: 3_000 });
+    await renderScreen({ getLease });
+    const props = webViewMock.__getLatestProps() as MockWebViewProps;
+    await unlock(props);
+    expect(getLease).toHaveBeenNthCalledWith(1, { forceRefresh: false });
+    await act(async () => {
+      props.onMessage({ nativeEvent: {
+        data: incoming(props, 'context.renew.request', { reason: 'unauthorized' }), url: SOURCE,
+      } });
+    });
+    expect(getLease).toHaveBeenNthCalledWith(2, { forceRefresh: true });
+    expect(screen.getByTestId('webview-locked')).toBeTruthy();
+    expect(outgoing().findLast((message) => message.type === 'context.apply')).toMatchObject({
+      payload: { accessToken: 'renewed.payload.signature', expiresAt: 3_000 },
+    });
+    await act(async () => {
+      props.onMessage({ nativeEvent: {
+        data: incoming(props, 'navigation.state', { routeFamily: 'announcements', canGoBackWithinWeb: false }),
+        url: SOURCE,
+      } });
+    });
+    expect(screen.queryByTestId('webview-locked')).toBeNull();
+  });
+
   it('maps Android origin-only message sources only to the last native-accepted web route', async () => {
     await renderScreen();
     const props = webViewMock.__getLatestProps() as MockWebViewProps;

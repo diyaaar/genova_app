@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import type { BridgeDiagnostic, NativeRouteFamily } from '@shared/mobile-webview-bridge';
-import type { NativeWebViewLease, PasswordChangeResult, SecureKeyValueStore } from '../auth/types';
+import type { NativeWebViewLease, NativeWebViewLeaseOptions, PasswordChangeResult, SecureKeyValueStore } from '../auth/types';
 import { secureKeyValueStore } from '../auth/supabase-client';
 import {
   NativeWebViewBridgeController,
@@ -99,7 +99,7 @@ function chromeColors(resolved: NativeThemeState['resolved']) {
 
 export interface NativeWebViewScreenProps {
   initialPath: string;
-  getLease: () => Promise<NativeWebViewLease>;
+  getLease: (options?: NativeWebViewLeaseOptions) => Promise<NativeWebViewLease>;
   onNativeRoute: (route: Extract<NativeRouteFamily, 'home' | 'repertoire'>) => void;
   onExit: () => void;
   onSignOut: () => Promise<void> | void;
@@ -238,7 +238,7 @@ export function NativeWebViewScreen({
       routePolicy: config.routePolicy,
       createMessageId: createBridgeCorrelationId,
       createChallenge: createBridgeChallenge,
-      getLease: () => actionsRef.current.getLease(),
+      getLease: (options) => actionsRef.current.getLease(options),
       postMessage: (message) => webViewRef.current?.postMessage(message),
       getTheme: () => themeRef.current,
       setTheme: async (preference: NativeThemePreference) => {

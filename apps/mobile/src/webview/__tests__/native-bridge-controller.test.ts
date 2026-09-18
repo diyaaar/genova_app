@@ -168,6 +168,8 @@ describe('native permanent-WebView bridge controller', () => {
     const first = runtime.controller.handleMessage(incoming('context.renew.request', { reason: 'expiring' }), SOURCE);
     const second = runtime.controller.handleMessage(incoming('context.renew.request', { reason: 'unauthorized' }), SOURCE);
     expect(getLease).toHaveBeenCalledTimes(2);
+    expect(getLease).toHaveBeenNthCalledWith(1, { forceRefresh: false });
+    expect(getLease).toHaveBeenNthCalledWith(2, { forceRefresh: true });
     release({ ...LEASE, expiresAt: LEASE.expiresAt });
     await Promise.all([first, second]);
     expect(runtime.controller.snapshot()).toMatchObject({ phase: 'error', errorCode: 'lease-renewal-failed' });

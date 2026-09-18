@@ -9,6 +9,7 @@ import type {
   AuthState,
   ChoirPreferenceStore,
   NativeWebViewLease,
+  NativeWebViewLeaseOptions,
   PasswordChangeResult,
 } from './types';
 
@@ -29,7 +30,7 @@ interface AuthContextValue extends AuthState {
   signOut: () => Promise<void>;
   selectChoir: (choirId: string) => Promise<void>;
   refresh: () => Promise<void>;
-  getWebViewLease: () => Promise<NativeWebViewLease>;
+  getWebViewLease: (options?: NativeWebViewLeaseOptions) => Promise<NativeWebViewLease>;
   changePassword: (oldPassword: string, newPassword: string, confirmation: string) => Promise<PasswordChangeResult>;
 }
 
@@ -90,7 +91,7 @@ export function AuthProvider({ children, store, client, preferences }: AuthProvi
     signOut: () => authStore.signOut(),
     selectChoir: (choirId) => authStore.selectChoir(choirId),
     refresh: () => authStore.refresh(),
-    getWebViewLease: () => authStore.getWebViewLease(),
+    getWebViewLease: (options) => authStore.getWebViewLease(options),
     changePassword: (oldPassword, newPassword, confirmation) => (
       authStore.changePassword(oldPassword, newPassword, confirmation)
     ),

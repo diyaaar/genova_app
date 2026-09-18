@@ -206,6 +206,38 @@ describe('permanent WebView lease', () => {
     expect(gateway.refreshSession).not.toHaveBeenCalled();
   });
 
+  it('forces and coalesces early renewal even when the native session is fresh', async () => {
+    const { store, gateway } = buildStore({
+      activeChoirId: CHOIR_A,
+      initialSession: sessionFor(USER_ID, { access_token: jwt, expires_at: 2_000 }),
+    });
+    await store.start();
+    gateway.refreshSession.mockResolvedValue({
+      data: { session: sessionFor(USER_ID, { access_token: 'renewed.payload.signature', expires_at: 3_000 }) },
+      error: null,
+    });
+    const options = { nowSeconds: 1_000, forceRefresh: true };
+    const [first, second] = await Promise.all([
+      store.getWebViewLease(options), store.getWebViewLease(options),
+    ]);
+    expect(gateway.refreshSession).toHaveBeenCalledTimes(1);
+    expect(first).toEqual(second);
+    expect(first.accessToken).toBe('renewed.payload.signature');
+    expect(first.expiresAt).toBe(3_000);
+  });
+
+  it('refuses failed forced renewal rather than falling back to the fresh old token', async () => {
+    const { store, gateway } = buildStore({
+      activeChoirId: CHOIR_A,
+      initialSession: sessionFor(USER_ID, { access_token: jwt, expires_at: 2_000 }),
+    });
+    await store.start();
+    gateway.refreshSession.mockResolvedValue({ data: { session: null }, error: { message: 'private' } });
+    const options = { nowSeconds: 1_000, forceRefresh: true };
+    await expect(store.getWebViewLease(options)).rejects.toThrow(/yenilenemedi/u);
+    expect(gateway.refreshSession).toHaveBeenCalledTimes(1);
+  });
+
   it('coalesces a near-expiry refresh and never returns the refresh token', async () => {
     let release!: (value: {
       data: { session: ReturnType<typeof sessionFor> };

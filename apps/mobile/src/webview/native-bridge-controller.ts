@@ -15,7 +15,7 @@ import {
   type NativeRouteFamily,
   type WebRouteFamily,
 } from '@shared/mobile-webview-bridge';
-import type { NativeWebViewLease } from '../auth/types';
+import type { NativeWebViewLease, NativeWebViewLeaseOptions } from '../auth/types';
 import type { NativeThemePreference, NativeThemeState } from './theme-preference';
 
 export type NativeBridgePhase =
@@ -50,7 +50,7 @@ export interface NativeBridgeControllerDependencies {
   routePolicy: AppRoutePolicy;
   createMessageId: () => string;
   createChallenge: () => string;
-  getLease: () => Promise<NativeWebViewLease>;
+  getLease: (options?: NativeWebViewLeaseOptions) => Promise<NativeWebViewLease>;
   postMessage: (message: string) => void;
   getTheme: () => NativeThemeState;
   setTheme: (preference: NativeThemePreference) => Promise<NativeThemeState>;
@@ -322,7 +322,7 @@ export class NativeWebViewBridgeController {
     this.armTimeout();
     const stamp = this.guard.createWorkStamp();
     const previousExpiry = this.lastLeaseExpiry;
-    const task = this.deps.getLease().then((lease) => {
+    const task = this.deps.getLease({ forceRefresh: isRenewal }).then((lease) => {
       if (!this.guard.isWorkCurrent(stamp) || this.phase !== 'loading-lease') return;
       if (isRenewal && lease.expiresAt <= previousExpiry) throw new Error('lease-not-newer');
       this.lastLeaseExpiry = lease.expiresAt;
