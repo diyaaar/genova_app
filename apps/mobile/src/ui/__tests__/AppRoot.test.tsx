@@ -19,6 +19,7 @@ async function renderWithStore(options: {
   activeChoirId?: string | null;
   initialSession?: ReturnType<typeof sessionFor> | null;
   signInError?: { message: string } | null;
+  sessionReadFailsOnce?: boolean;
   repertoireGateway?: NativeRepertoireGateway;
   audioGateway?: NativeAudioSourceGateway;
 }) {
@@ -36,6 +37,9 @@ async function renderWithStore(options: {
     preferences: createPreferenceDouble(),
     clearCaches: async () => {},
   });
+  if (options.sessionReadFailsOnce) {
+    jest.spyOn(gateway.gateway, 'getSession').mockRejectedValueOnce(new Error('private storage error'));
+  }
 
   const root = (
     <AuthProvider store={store}>
@@ -47,6 +51,16 @@ async function renderWithStore(options: {
 }
 
 describe('shell routing', () => {
+  it('shows a safe startup error and retries before opening tenant content', async () => {
+    await renderWithStore({ sessionReadFailsOnce: true, activeChoirId: CHOIR_A });
+    expect(await screen.findByTestId('context-error-screen')).toBeTruthy();
+    expect(screen.getByText('Oturum açılamadı')).toBeTruthy();
+    expect(screen.queryByText('private storage error')).toBeNull();
+    expect(screen.queryByTestId('shell-screen')).toBeNull();
+    await fireEvent.press(screen.getByRole('button', { name: 'Tekrar dene' }));
+    expect(await screen.findByTestId('shell-active-choir')).toHaveTextContent('Genova A');
+  });
+
   it('asks for credentials when there is no session', async () => {
     await renderWithStore({ initialSession: null });
 

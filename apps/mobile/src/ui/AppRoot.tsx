@@ -172,7 +172,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway }: {
   if (auth.phase === 'error') {
     return (
       <StatusScreen
-        title="Koro bilgileri yüklenemedi"
+        title={auth.user ? 'Koro bilgileri yüklenemedi' : 'Oturum açılamadı'}
         message={auth.errorMessage ?? undefined}
         tone="error"
         actionLabel="Tekrar dene"

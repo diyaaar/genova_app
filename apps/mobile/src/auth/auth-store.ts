@@ -43,12 +43,14 @@ const SIGNED_OUT_STATE: AuthState = {
 };
 
 const GENERIC_CONTEXT_ERROR = 'Koro bilgileri yüklenemedi.';
+const SESSION_READ_ERROR = 'Oturum bilgileri okunamadı. Lütfen tekrar deneyin.';
 
 export class AuthStore {
   private state: AuthState = { ...SIGNED_OUT_STATE, phase: 'loading' };
   private readonly listeners = new Set<(state: AuthState) => void>();
   private subscription: { unsubscribe: () => void } | null = null;
   private requestVersion = 0;
+  private startupVersion = 0;
   private currentUserId: string | null = null;
   private switchInFlight = false;
   private bridgeLeaseInFlight: Promise<NativeWebViewLease> | null = null;
@@ -76,19 +78,37 @@ export class AuthStore {
     return (this.deps.clearCaches ?? clearTenantCaches)();
   }
 
-  /** Loads any stored session and follows every later sign-in, refresh and sign-out. */
+  /** Reads real persisted auth; storage failures lock content and permit an explicit retry. */
   async start(): Promise<void> {
-    const { data } = await this.deps.auth.getSession();
-    const { data: listener } = this.deps.auth.onAuthStateChange((event, session) => {
-      void this.applySession(session, {
-        preserveReady: event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED',
+    const version = ++this.startupVersion;
+    this.requestVersion += 1;
+    this.subscription?.unsubscribe();
+    this.subscription = null;
+    this.setState({ phase: 'loading', errorMessage: null });
+    try {
+      const { data, error } = await this.deps.auth.getSession();
+      if (version !== this.startupVersion) return;
+      if (error) throw new Error(SESSION_READ_ERROR);
+      const { data: listener } = this.deps.auth.onAuthStateChange((event, session) => {
+        void this.applySession(session, {
+          preserveReady: event === 'SIGNED_IN' || event === 'USER_UPDATED' || event === 'TOKEN_REFRESHED',
+        });
       });
-    });
-    this.subscription = listener.subscription;
-    await this.applySession(data.session);
+      this.subscription = listener.subscription;
+      await this.applySession(data.session);
+    } catch {
+      if (version !== this.startupVersion) return;
+      this.requestVersion += 1;
+      this.currentUserId = null;
+      this.subscription?.unsubscribe();
+      this.subscription = null;
+      // Never surface platform diagnostics or substitute a less secure session store.
+      this.setState({ ...SIGNED_OUT_STATE, phase: 'error', errorMessage: SESSION_READ_ERROR });
+    }
   }
 
   stop(): void {
+    this.startupVersion += 1;
     this.requestVersion += 1;
     this.subscription?.unsubscribe();
     this.subscription = null;
@@ -243,7 +263,10 @@ export class AuthStore {
   }
 
   async refresh(): Promise<void> {
-    if (!this.currentUserId) return;
+    if (!this.currentUserId) {
+      if (this.state.phase === 'error') await this.start();
+      return;
+    }
     this.setState({ phase: 'loading', errorMessage: null });
     await this.resolveChoirContext(this.currentUserId);
   }
@@ -344,6 +367,7 @@ export class AuthStore {
   /** Local state is cleared even when the network sign-out call fails. */
   async signOut(): Promise<void> {
     const userId = this.currentUserId;
+    this.startupVersion += 1;
     this.requestVersion += 1;
     this.currentUserId = null;
     if (userId) await this.deps.preferences.clear(userId);

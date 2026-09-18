@@ -58,6 +58,54 @@ function buildStore(options: {
 }
 
 describe('session lifecycle', () => {
+  it('contains a storage rejection, refuses leases and retries the real session gateway', async () => {
+    const { store, gateway, clientDouble } = buildStore({ activeChoirId: CHOIR_A });
+    const getSession = jest.spyOn(gateway.gateway, 'getSession')
+      .mockRejectedValueOnce(new Error('ERR_KEY_CHAIN private diagnostic'));
+    const listen = jest.spyOn(gateway.gateway, 'onAuthStateChange');
+
+    await expect(store.start()).resolves.toBeUndefined();
+    expect(store.getState()).toMatchObject({
+      phase: 'error', session: null, user: null, activeChoir: null, choirs: [],
+      errorMessage: 'Oturum bilgileri okunamadı. Lütfen tekrar deneyin.',
+    });
+    expect(clientDouble.rpc).not.toHaveBeenCalled();
+    expect(listen).not.toHaveBeenCalled();
+    await expect(store.getWebViewLease()).rejects.toThrow('hazır değil');
+
+    await store.refresh();
+    expect(getSession).toHaveBeenCalledTimes(2);
+    expect(listen).toHaveBeenCalledTimes(1);
+    expect(store.getState()).toMatchObject({ phase: 'ready', activeChoir: { choir_id: CHOIR_A } });
+  });
+
+  it('fails closed when getSession returns an error alongside session data', async () => {
+    const { store, gateway, clientDouble } = buildStore();
+    jest.spyOn(gateway.gateway, 'getSession').mockResolvedValueOnce({
+      data: { session: sessionFor() }, error: { message: 'private diagnostic' },
+    });
+    await store.start();
+    expect(store.getState()).toMatchObject({ phase: 'error', session: null, user: null });
+    expect(clientDouble.rpc).not.toHaveBeenCalled();
+  });
+
+  it.each(['stop', 'signOut'] as const)('ignores a pending session read after %s', async (action) => {
+    const { store, gateway, clientDouble } = buildStore();
+    let resolveRead!: (value: { data: { session: ReturnType<typeof sessionFor> } }) => void;
+    jest.spyOn(gateway.gateway, 'getSession').mockReturnValueOnce(new Promise((resolve) => {
+      resolveRead = resolve;
+    }));
+    const listen = jest.spyOn(gateway.gateway, 'onAuthStateChange');
+    const start = store.start();
+    await store[action]();
+    const stopped = store.getState();
+    resolveRead({ data: { session: sessionFor() } });
+    await start;
+    expect(store.getState()).toEqual(stopped);
+    expect(listen).not.toHaveBeenCalled();
+    expect(clientDouble.rpc).not.toHaveBeenCalled();
+  });
+
   it('stays signed out when no session is stored', async () => {
     const { store, clientDouble } = buildStore({ initialSession: null });
 

@@ -147,10 +147,18 @@ function ComposedRuntime({ trace }: { trace: Trace }) {
   if (auth.phase !== 'ready' || !auth.activeChoir) {
     return (
       <View style={styles.status}>
-        <Text accessibilityRole="header" style={styles.statusTitle}>033 · oturum hazırlanıyor</Text>
+        <Text accessibilityRole="header" style={styles.statusTitle}>
+          {auth.phase === 'error' ? '033 · oturum açılamadı' : '033 · oturum hazırlanıyor'}
+        </Text>
         <Text style={styles.statusText} testID="runtime-033-auth-status">
           {auth.phase}{credentialError ? ' · yerel bilgi kanalı yeniden hazırlanmalı' : ''}
         </Text>
+        {auth.phase === 'error' ? (
+          <>
+            <Text style={styles.statusText}>{auth.errorMessage}</Text>
+            <RuntimeAction label="Tekrar dene" onPress={() => void auth.refresh()} testID="runtime-033-retry-session" />
+          </>
+        ) : null}
         {auth.phase === 'signed-out' && loginAttempted.current ? (
           <View style={styles.statusActions}>
             <RuntimeAction

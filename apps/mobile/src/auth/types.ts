@@ -17,7 +17,7 @@ export interface SessionStorage {
 
 /** The only auth operations this app performs. Keeps the store testable without a live client. */
 export interface AuthGateway {
-  getSession(): Promise<{ data: { session: Session | null } }>;
+  getSession(): Promise<{ data: { session: Session | null }; error?: { message: string } | null }>;
   refreshSession(): Promise<{
     data: { session: Session | null };
     error: { message: string } | null;
