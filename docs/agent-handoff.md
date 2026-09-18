@@ -34,10 +34,12 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   is not acceptance; that uncommitted workaround was removed. Do not repeat manual signing guesses.
 - `5a9fb8f` handles startup storage rejection with generic error/retry and invalidates late reads
   after stop/sign-out. Mobile typecheck and all 33 suites/194 tests passed on 18 September.
-  This does not prove platform signing or close runtime rows. Root gates remain historical.
+  A current Xcode-signed normal iOS Release then reached sign-in on first launch/relaunch using
+  real SecureStore with no keychain failure. It proves startup/read only and does not close C1.
 - 18 September cleanup restored target/source baselines and removed the exact runtime,
   generated iOS/web build, simulator, Colima profile/data/context. Ports are closed.
-  Available disk measured 19.0 GiB after lightweight tests; no heavy environment was recreated.
+  The native-only build/simulator were also removed after proof. Available disk measured
+  16.6 GiB afterward; no VM/server was recreated.
   This is a snapshot, not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -45,11 +47,10 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 ## Active bounded sequence
 
-Next product result: genuine SecureStore startup in an Xcode-built simulator Release, without
-disabling signing or manually replacing bundle/entitlements. First budget a build-only phase;
-do not recreate the server stack until native startup works and the combined runtime fits.
-Then finish missing iOS feature/fault rows and current normal Android Release plus invalidated
-Android credential/sign-out checks. Small startup tests do not replace these requirements.
+Next product result: current normal Android Release build/permission isolation after verifying
+the existing JDK/SDK and <=6 GiB peak budget. Remove its outputs after inspection. Emulator
+credential/sign-out and missing iOS feature/fault rows remain separate required runtime work.
+Do not recreate the combined iOS server stack while its historical allocation exceeds headroom.
 C2 still depends on C1.
 No new product feature, general test framework or repeated full-environment rebuild is implied.
 The revised goal text is in the plan; the application's recreated goal is active (18 September).

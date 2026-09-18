@@ -7,12 +7,13 @@ FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent rev
 ## Current checkpoint — 18 September 2026
 
 This checkpoint supersedes the current-state statements in the dated sections below.
-Entry: `main / 61c7ae2`; owned unfinished changes were the three ephemeral-storage acceptance
-files from the interrupted run. `supabase/.temp/cli-latest` is unrelated and remains unstaged.
+Entry was `main / 61c7ae2`; product is now `5a9fb8f` and the preceding record is `35fdea2`.
+The interrupted ephemeral-storage files were removed. `supabase/.temp/cli-latest` is unrelated
+and remains unstaged.
 Read AGENTS, handoff, active context, this brief, plan controls, migration guide/work cycle,
 and the relevant MIGRATION and AuthStore/provider/UI sources. No independent reviewer.
 
-**Active result:** recover from the reproduced native session-storage startup error without
+**Completed source result:** recover from the reproduced native session-storage startup error without
 remaining on the loading screen or replacing the product's secure session storage.
 Allowed paths: `apps/mobile/src/auth/auth-store.ts`, `types.ts`, their tests,
 `apps/mobile/src/ui/AppRoot.tsx` and its existing tests; remove the owned ephemeral acceptance
@@ -65,7 +66,8 @@ sign-out. Product and 033 UI expose retry; no SecureStore implementation/depende
 | Generic error, refused lease, explicit gateway retry and stale-read invalidation | yes | PASS | New AuthStore regressions; returned error with session data is also refused; retry registers exactly one listener |
 | Actual product UI shows error/retry before tenant content | yes | PASS | AppRoot renderer regression: private diagnostic absent, no shell on error, retry restores server-confirmed fixture choir; mocked renderer, not native runtime |
 | Required mobile source gate | yes | PASS | `npx tsc --noEmit && npm test -- --runInBand`: 33 suites/194 tests, exit 0; existing SafeAreaView/punycode/npm-config warnings remain |
-| Real SecureStore in current signed Release and remaining composed rows | yes | NOT RUN | No native build, simulator or disposable server was created for this repair; C1 remains open |
+| Real SecureStore startup/read in current signed Release | yes | PASS | Current Xcode-signed simulator Release reached ordinary sign-in on first launch and relaunch; detailed evidence below |
+| Session write and remaining composed rows | yes | NOT RUN | No real sign-in or disposable server was created for this bounded check; C1 remains open |
 
 **Next active result:** genuine SecureStore startup in a Release simulator app, without memory
 fallback or manual bundle replacement. Up to three actions: (1) size the native-only build phase
@@ -85,6 +87,54 @@ physical-device operation occurred. Self-review only; 004/010 and every required
 Documentation validation: 144 local file links across the six changed records resolved;
 current checkpoint anchors and state boundaries were reviewed, and `git diff --check` passed.
 The handoff is 77 lines and active context 40; unrelated CLI cache remains unstaged.
+
+**Native-only preflight (18 September, after `35fdea2`):** 19,875,868 KiB available;
+Xcode 26.6 and installed iOS 26.5 simulator runtime, all devices stopped. Existing shared
+DerivedData (1,820,608 KiB) and CocoaPods cache (977,876 KiB) are not cleanup targets.
+Allow at most 7 GiB additional allocation for generated iOS/Pods and a task-owned native build
+(previous generated iOS ~0.6 GiB and observed DerivedData ~3.9 GiB, with ~2.5 GiB reserve).
+Use `spike/033-native-release` for the sole build, no VM/server and no simulator during compilation.
+Disable dotenv loading and build the normal entry with synthetic loopback configuration only;
+this is real product storage startup, not a composed-033 acceptance claim. Before simulator use,
+remove build intermediates after preserving only the exact built app. Monitor free space and
+stop further allocation before the 10 GiB floor; no download/upgrade of a toolchain is planned.
+
+**Native-only result (18 September): PASS within its bounded scope.** Expo prebuild and cached
+Pods produced the normal iOS project without downloads or source changes. Xcode build settings
+reported `CODE_SIGNING_ALLOWED=YES`, `CODE_SIGNING_REQUIRED=YES`, identity `-` and the generated
+empty app entitlements file. The arm64 iOS 26.5 simulator Release then completed with Xcode's
+default “Sign to Run Locally”; `codesign --verify --deep --strict` passed and the 47,428 KiB kept
+app manifest hash was `924718d59596943212eb0f6d0f1ec42ffc790e90ce28a1fc2b1f683562f7fc8b`.
+No signing flag, entitlement, bundle or SecureStore implementation was manually replaced.
+
+The normal product entry ran on task-owned iPhone 17 Pro simulator
+`F68FD443-F2CB-4101-950B-3EC3F5B41A87`. On first launch and after terminate/relaunch it moved
+from the real Supabase `getSession()` / Expo SecureStore read to the ordinary Turkish sign-in
+screen, not the new generic storage-error screen. Visual screenshots were inspected; hashes were
+`6e43282440e03217bc17e4a29cafe663fdb2f3558198c085f6e35f0ef0a0efa3` and
+`0d654d244b307ef7fab26011e2c986d41296fb1d4a6e5fa1e74c8601b191c9c3`.
+The process remained live. Scoped system logs contained no `ERR_KEY_CHAIN`, KeyChainException,
+SecureStore failure, fatal or uncaught-exception match. A benign securityd feature-flag debug line
+was not classified as an error. This proves signed simulator startup/read and relaunch only: no
+session write, real sign-in, composed WebView, hosted service or physical-device behavior ran.
+
+Disk monitoring started at 18,561,740 KiB after prebuild/Pods, reached a minimum of
+17,278,892 KiB during the successful build and never triggered the 12,535,836 KiB safety stop.
+Build intermediates were removed before starting the simulator; the generated iOS project was
+633,748 KiB and the created simulator 1,829,888 KiB. After evidence capture, the exact simulator,
+generated project, kept app, build directory and two temporary screenshots were deleted and
+absence verified. They are reproducible and not Trash-recoverable. Available space was
+17,438,688 KiB afterward; the shared simulator device pool and shared Xcode/CocoaPods caches were
+measured but not purged. The first runtime-ID parser failed before creating anything; querying the
+exact installed identifier corrected it, so no repeated environment attempt occurred.
+
+**Next bounded result:** current normal Android Release build/permission isolation, which is
+independent of the unavailable combined iOS stack. First verify an existing compatible JDK/SDK
+and a <=6 GiB peak budget; then generate/build once, inspect the exact APK/manifest and remove
+outputs. Android emulator/runtime checks remain separate. The full iOS composed fixture cannot
+be recreated now: historical VM+web+simulator allocation exceeds the current headroom above the
+10 GiB floor. This resource fact keeps those required 033 rows open; it is not a pass or blocker
+status for the overall goal.
 
 ## Historical checkpoint — 15 September 2026
 

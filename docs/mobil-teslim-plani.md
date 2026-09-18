@@ -35,7 +35,7 @@ Deferral from a release candidate needs an explicit owner decision and remains v
 ## Baseline and evidence ownership
 
 Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this update:
-`main / d295c62`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
+product `main / 5a9fb8f`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
 snapshot facts, not commands to reset a future checkout. Historical test details belong in their
 briefs, not in a second copy here.
 
@@ -250,8 +250,9 @@ Deliver all outcomes in docs/mobil-teslim-plani.md through the earliest ready, b
 user flow: select -> implement -> test -> evaluate -> record -> clean up -> continue.
 Resume from the verified 033 checkpoint; preserve 018-032 historical acceptance, deferred
 004 device tests, open 010 criteria, all existing product features and approval boundaries.
-The credential repair is at `ec5b19a`, startup error/retry repair at `5a9fb8f`, and owned cleanup
-was repeated on 18 September. Resume the real SecureStore Release and remaining 033 rows;
+The credential repair is at `ec5b19a`, startup error/retry repair at `5a9fb8f`, and a current
+Xcode-signed normal iOS Release passed SecureStore startup/read twice on 18 September. Resume the
+remaining 033 rows after exact cleanup;
 see the brief's current checkpoint rather than replaying historical checks. Keep C1 open until all
 required evidence passes. Follow the execution and resource controls
 below: one active result, at most three next actions, causal reassessment after two failed

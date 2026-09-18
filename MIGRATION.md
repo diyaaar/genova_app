@@ -9,9 +9,10 @@ yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçi
 
 18 September 2026 checkpoint: `5a9fb8f` fixes startup storage rejection/retry without replacing
 SecureStore; mobile typecheck and 194 tests pass. The real fixture-backed credential/bundle scan
-passed, but unsigned simulator storage failed; substitute memory storage is not acceptance.
-033/C1 remains open for genuine signed Release storage, iOS feature/fault rows and current normal
-Android Release. Owned runtime/build artifacts were cleaned; screen ownership is unchanged.
+passed. A current Xcode-signed normal iOS Release now reaches sign-in on first launch/relaunch with
+real SecureStore and no keychain failure; substitute memory storage remains invalid evidence.
+033/C1 stays open for session-write/composed iOS feature/fault rows and current normal Android
+Release. All owned native/runtime outputs were cleaned; screen ownership is unchanged.
 Current next action: [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026).
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.

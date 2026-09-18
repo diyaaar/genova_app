@@ -14,18 +14,20 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - 033/C1 remains OPEN. Missing iOS feature/fault evidence and normal Android Release persist.
   See [033](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--18-september-2026).
 - Real synthetic credential delivery and fixture-backed bundle scans passed in the interrupted
-  run; unsigned iOS Release SecureStore failed. Memory-only storage/manual bundle substitutions
-  were rejected and removed. Next: budget a native-only correctly signed Release startup check,
-  without recreating the server stack first; preserve all remaining composed platform rows.
+  run; the unsigned build's SecureStore failure was repaired operationally by using Xcode's normal
+  simulator signing. Current normal Release reached sign-in on first launch/relaunch with no
+  keychain error. Memory-only storage/manual bundle substitutions remain rejected.
 - Mobile typecheck and 33 suites/194 tests passed on 18 September. Root/export evidence remains
   historical, not rerun. New error/retry tests do not prove native signing or runtime acceptance.
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
 - Cleanup: target/source baselines verified; runtime, generated iOS/web builds, exact 033
   simulator and Colima profile/data/context removed; owned service ports closed.
-  Cleanup repeated on 18 September; free space measured 19.0 GiB. Recheck before allocating.
+  Native build, generated project, exact simulator/app and screenshots were removed after proof;
+  free space measured 16.6 GiB. Shared caches/device pool were not purged. Recheck before allocating.
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
-  and a progress review every 60 active minutes. No new heavy environment in this repair.
+  and a progress review every 60 active minutes. Next: budget and run one normal Android Release
+  build/manifest check; emulator and combined iOS runtime remain separate.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
