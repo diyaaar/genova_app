@@ -1,8 +1,9 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [038](../docs/briefs/038-native-chat-feature-inventory.md) now owns C3's
-accepted feature/safety inventory. Product `b1d565f` remains the accepted provider-neutral native
+owns resource controls; [039](../docs/briefs/039-chat-tenant-memory-teardown.md) now owns C3's first
+accepted safety repair after 038's feature inventory. Product `7a6a78e` resets chat process memory
+at accepted ordinary/embedded tenant teardown; `b1d565f` remains the provider-neutral native
 push registration protocol after [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md)
 fixed the lifecycle, `04319e3` added the permission/tap consumer and `6883b3b` added the C2 event
 contract, following the final C1 product repair `69714b1`.
@@ -13,7 +14,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `b1d565f`. Recorded remote `a13f696`;
+- Product revision: `7a6a78e`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -51,8 +52,12 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   current chat capability is assigned to a bounded C3 slice. The dated repository schema exposes
   self-expanded room membership/role, broad same-choir poll/reaction/star policies, public
   Broadcast/Presence, unstable pagination/retry and stale in-memory tenant state. This is not a
-  live-schema check or remediation. The bounded tenant-memory teardown repair is next and can
-  proceed without a DB/runtime allocation.
+  live-schema check or authority remediation.
+- [039](../docs/briefs/039-chat-tenant-memory-teardown.md) is **ACCEPTED LOCALLY** at `7a6a78e`:
+  successful ordinary/embedded tenant teardown synchronously resets the real chat Zustand store;
+  rejected sign-out preserves it. Focused 23 tests and the 57-file/542-test root gate pass. Exact
+  489 MiB `.next`/332 KiB coverage outputs were removed, leaving 15,592,952 KiB free. The shared
+  room/message read contract is next; DB authority, Realtime and native runtime remain open.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -71,8 +76,9 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
   After 037 cleanup 12,092,896 KiB (~11.5 GiB) remained free. C2's next schema/runtime cannot fit
   its required DB evidence safely near the floor, and its adapter awaits the Expo-vs-direct owner
-  choice. C3 inventory is accepted at 038; its bounded tenant-memory teardown repair is the next
-  ready local package. Do not infer DB/runtime or provider/device delivery from local tests.
+  choice. C3 inventory is accepted at 038 and tenant-memory teardown at 039; the shared room/
+  message read contract is the next ready local package. Do not infer DB/runtime or provider/device
+  delivery from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -81,7 +87,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 038,
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 039,
 C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.

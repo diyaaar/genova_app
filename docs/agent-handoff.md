@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 19 September 2026 under [038](briefs/038-native-chat-feature-inventory.md).
+Updated 19 September 2026 under [039](briefs/039-chat-tenant-memory-teardown.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [038](briefs/038-native-chat-feature-inventory.md).
+   [039](briefs/039-chat-tenant-memory-teardown.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -16,7 +16,8 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `b1d565f`; `04319e3` contains the native tap consumer and `6883b3b`
+Current local product HEAD: `7a6a78e`; `b1d565f` contains the native registration protocol,
+`04319e3` contains the native tap consumer and `6883b3b`
 contains the C2 shared event contract. Recorded `origin/main` is `a13f696`; no fetch/push/deploy
 was performed.
 `supabase/.temp/cli-latest` is unrelated CLI cache; keep it unstaged.
@@ -49,7 +50,11 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - [038](briefs/038-native-chat-feature-inventory.md) is **DOCUMENTATION ACCEPTED**: it preserves
   every current chat capability across a seven-step C3 split and records dated room-authority,
   RLS, Realtime, cache, order and retry blockers. No live schema was queried and no defect was
-  remediated. The next ready slice is the bounded tenant-memory teardown repair.
+  remediated.
+- [039](briefs/039-chat-tenant-memory-teardown.md) is **ACCEPTED LOCALLY** at `7a6a78e`: successful
+  ordinary and embedded tenant teardown reset the real process-wide chat store synchronously;
+  failed ordinary sign-out preserves it. The 57-file/542-test root gate passes and exact generated
+  outputs are cleaned. The next ready slice is the shared room/message read contract.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -83,8 +88,9 @@ consumer under 36 suites/216 tests, config and production JS export. 036 documen
 separate native registration lifecycle; `b1d565f` then accepts its pure provider-neutral v1
 protocol under 57 files/540 tests and the root build. Its exact outputs were removed with about
 12.1 million KiB free. C2 schema/runtime is not resource-ready near the floor and the transport
-adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory without allocating
-a runtime; next ready local work is its tenant-memory teardown repair. Chat RLS/Realtime migration,
+adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory; `7a6a78e`/039 then
+accepts tenant-memory teardown, with 15,592,952 KiB free after cleanup. Next ready local work is the
+shared room/message read contract. Chat RLS/Realtime migration,
 provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
@@ -105,7 +111,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 038 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 039 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

@@ -6,7 +6,8 @@ and delivery-focus review. Local C1 acceptance is complete at 033; C2's shared c
 at 034, the first native permission/tap consumer at 035 and the token lifecycle inventory at 036.
 The provider-neutral registration protocol is accepted at 037. Schema/Edge and then the selected
 transport remain; [038](briefs/038-native-chat-feature-inventory.md) accepts C3's bounded feature
-and safety inventory. Its tenant-memory teardown repair is the next resource-ready slice.
+and safety inventory. [039](briefs/039-chat-tenant-memory-teardown.md) accepts the first C3 repair;
+the shared room/message read contract is the next resource-ready slice.
 Originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
@@ -27,7 +28,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 | M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation, 025 web lifecycle and 026–027 foreground native audio/navigation accepted locally; native writing and recoverable sync remain open |
-| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | C1 **COMPLETE locally:** 028–032 accepted the component/platform layers; 033 proved both composed handshakes, all route families, current iOS feature/fault, current guarded/normal Android and owner-operated iOS password change/restore. C2 is in progress through 037; C3 inventory is accepted at 038, while implementation and C4–C5 have not started |
+| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | C1 **COMPLETE locally:** 028–032 accepted the component/platform layers; 033 proved both composed handshakes, all route families, current iOS feature/fault, current guarded/normal Android and owner-operated iOS password change/restore. C2 is in progress through 037; C3 inventory is accepted at 038 and its tenant-memory teardown at 039, while the read/runtime slices and C4–C5 have not started |
 | M4: release candidate | Multi-choir limits, data lifecycle, provider exit, security/accessibility and distribution requirements pass | Future packages; no current store eligibility claim |
 | M5: released and operable | Approved beta/public release verified at actual destination; support and recovery exercised | NOT RUN; publication and spending remain separately gated |
 
@@ -40,7 +41,7 @@ Deferral from a release candidate needs an explicit owner decision and remains v
 ## Baseline and evidence ownership
 
 Start from [agent-handoff](agent-handoff.md), then verify the checkout. At this update:
-product `main / b1d565f`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
+product `main / 7a6a78e`, recorded remote `a13f696`, with an unrelated unstaged CLI cache. These are
 snapshot facts, not commands to reset a future checkout. Historical test details belong in their
 briefs, not in a second copy here.
 
@@ -195,7 +196,7 @@ that product/security boundary before shipping. Offline support is not implied b
 |---|---|---|---|
 | C1 / stable A read flow | **COMPLETE locally:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted dormant web adapter at `c7d09d3`; [031](briefs/031-native-webview-shell.md) accepted native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted platform capabilities at `fa2e4b7`. [033](briefs/033-composed-permanent-webview-runtime.md) composes both clients; current dependency/native gates, iOS/Android composed scenarios and owner-operated iOS password change/restore pass through product `69714b1`. Preserve prior native/route/platform proof separately. `apps/mobile/src/ui/`, `MIGRATION.md`, auth | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of permanent WebView routes; native alone owns refresh token; no token in URLs/logs; this is local simulator/emulator acceptance, not hosted/provider/real-account/hardware/distribution proof |
 | C2 / C1 | [034](briefs/034-notification-deep-link-contract.md) accepts the shared seven-event contract at `6883b3b`; [035](briefs/035-native-notification-tap-runtime.md) accepts the user-initiated permission and auth-gated initial/live tap consumer at `04319e3`; [036](briefs/036-native-push-token-lifecycle-inventory.md) documentation-accepts the separate native registration lifecycle; [037](briefs/037-native-push-registration-protocol.md) accepts its fail-closed v1 wire protocol at `b1d565f`. Schema/Edge and the selected provider remain. | Correct account/device token lifecycle; permission refusal; foreground/background tap routing; destination rechecks tenant/role; unsubscribe/sign-out; duplicate delivery handling | 034–035 prove local payload/consumer behavior; 036 is design evidence and 037 pure contract evidence only. Expo-first is recommended but not selected. DB runtime is deferred near the disk floor. Native binary permission/tap, provider keys, push delivery, real recipients and hardware remain separately authorized |
-| C3 / C1 + chat inventory | [038](briefs/038-native-chat-feature-inventory.md) documentation-accepts the current feature/data/safety map and splits tenant teardown → shared read contract → authority/Realtime → native list/read → send/retry → social/media/administration. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and every mapped feature; RLS on every read/write; private room topics; reconnect/order/dedup; idempotent offline retry; inaccessible room and choir switch | Dated repository schema exposes self-expanded room authority, broad same-choir policies, stale in-memory tenant state and public Broadcast/Presence. Inventory is not remediation. Dart UI and Socket.IO from the old reference app are not reusable RN/Supabase code |
+| C3 / C1 + chat inventory | [038](briefs/038-native-chat-feature-inventory.md) documentation-accepts the current feature/data/safety map and splits tenant teardown → shared read contract → authority/Realtime → native list/read → send/retry → social/media/administration. [039](briefs/039-chat-tenant-memory-teardown.md) resets process-wide chat state on accepted ordinary/embedded tenant teardown at `7a6a78e`; shared read is next. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and every mapped feature; RLS on every read/write; private room topics; reconnect/order/dedup; idempotent offline retry; inaccessible room and choir switch | 039 repairs only client memory teardown. Dated repository schema still exposes self-expanded room authority, broad same-choir policies and public Broadcast/Presence; no live schema/native runtime claim. Dart UI and Socket.IO from the old reference app are not reusable RN/Supabase code |
 | C4 / C1 + file/upload contract | Native assignments, split read → submission → review. `lib/assignment-scope.ts`, `app/(main)/odevler/`, existing assignment APIs | Existing role/deadline/lock/withdrawal/review rules; authorized upload completion, failed/resumed submission, hidden review, wrong tenant and audit behavior | Native server logic moves to shared Edge paths; web uses the same path. Any schema change requires DB gates |
 | C5 / C1, C3–C4 as needed | Native home and performance views. Existing main pages, `lib/korist-performance.ts` | Same role/data meaning; empty/error/refresh and tenant change; counters cannot leak a prior choir; deep links resolve correctly | No new analytics product or silent change to calculations |
 
@@ -428,8 +429,9 @@ tap consumer at `04319e3` under 36 suites/216 tests plus production JS export; n
 provider/device delivery were not run. Package 036 then fixed the separate native token lifecycle
 as documentation and package 037 accepted its provider-neutral registration protocol at `b1d565f`.
 Package 038 documentation-accepts the C3 feature/data/safety inventory: it preserves every current
-chat capability, records the dated RLS/Realtime/cache/order blockers and selects the bounded
-tenant-memory teardown repair as the next ready local slice. See
+chat capability and records the dated RLS/Realtime/cache/order blockers. Package 039 accepts the
+bounded process-memory teardown repair at `7a6a78e`; the shared room/message read contract is the
+next ready local slice. See
 [033's final checkpoint](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
 013–032's historical local acceptance,
 004/010 open criteria and the postponed hardware pilot remain unchanged.
