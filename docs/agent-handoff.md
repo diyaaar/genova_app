@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 19 September 2026 under [043](briefs/043-chat-message-status-authority.md).
+Updated 19 September 2026 under [044](briefs/044-chat-core-message-mutation-authority.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [043](briefs/043-chat-message-status-authority.md).
+   [044](briefs/044-chat-core-message-mutation-authority.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -16,7 +16,8 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `1434464`; `c58f4da` contains the social authority repair,
+Current local product HEAD: `621147e`; it contains server-owned core-message mutation authority;
+`1434464` contains durable status authority, `c58f4da` contains the social authority repair,
 `cb4e7ec` contains the room-membership repair,
 `2dfe6ab` contains the shared chat read contract and
 `7a6a78e` contains the chat tenant teardown,
@@ -77,6 +78,11 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   server-time authenticated RPC gives room members monotonic own delivered/read state; senders see
   all recipient rows and other members only own. Roundtrip and root 58 files/571 tests/build pass.
   No client adopts it yet; core-message rules and Realtime remain open.
+- [044](briefs/044-chat-core-message-mutation-authority.md) is **ACCEPTED LOCALLY** at `621147e`:
+  sender-only server-timed one-hour edit/delete, per-member hide and tightened member/reply inserts
+  replace direct UPDATE/shared hide metadata. The refusal matrix, exact down/re-forward and root
+  59-file/575-test build pass. Hosted schema, idempotent send/retry, status client adoption,
+  private Realtime and native runtime remain open.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -91,7 +97,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - Final 19 September password-run cleanup restored the disposable target baseline and removed the
   exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
   all four ports closed. A later orphan inactive task-owned 033 VM disk was removed before 041.
-  After 043 database/build cleanup: 21,680,984 KiB (~20.7 GiB) free.
+  After 044 database/build cleanup: 21,673,820 KiB (~20.7 GiB) free.
   Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
@@ -113,8 +119,9 @@ protocol under 57 files/540 tests and the root build. Its exact outputs were rem
 12.1 million KiB free. C2 schema/runtime is not resource-ready near the floor and the transport
 adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory; `7a6a78e`/039 accepts
 tenant-memory teardown, `2dfe6ab`/040 accepts the shared read contract, `cb4e7ec`/041 accepts room
-membership authority, `c58f4da`/042 accepts social authority and `1434464`/043 accepts durable
-message-status authority. After cleanup, 21,680,984 KiB is free. Core-message rules, client adoption, publication/private Realtime,
+membership authority, `c58f4da`/042 accepts social authority, `1434464`/043 accepts durable
+message-status authority and `621147e`/044 accepts core-message mutation authority. After cleanup,
+21,673,820 KiB is free. Idempotent text send/retry is next; status client adoption, publication/private Realtime,
 provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
@@ -135,7 +142,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 043 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 044 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

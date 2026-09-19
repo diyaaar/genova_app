@@ -1,6 +1,6 @@
 # 044 — Core chat message mutation authority
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Make edit, delete-for-everyone and delete-for-me actually work under
 server authority without letting clients rewrite message identity, shared metadata or time rules.
@@ -25,6 +25,11 @@ RPC/policy + local matrix, web adapter tests, root/mobile-relevant gates, cleanu
 **Resources:** 21,680,196 KiB (~20.7 GiB) free. Reuse loopback PostgreSQL 17 with one disposable
 clone and prerequisites 041–043; no Colima/download/native build. One root build at a time; remove
 generated output and preserve 10 GiB.
+
+**Current references:** [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security),
+[database functions](https://supabase.com/docs/guides/database/functions) and the
+[current changelog](https://supabase.com/changelog) were checked. The 2026 Data API exposure change
+reinforces the explicit table grants/RLS used here; no linked or hosted project was contacted.
 
 **Allowed files / modules:**
 
@@ -55,11 +60,11 @@ re-forward and source baseline; focused web adapter behavior; root gate; cleanup
 
 **Done definition:**
 
-- [ ] Edit/delete-everyone are sender-only, server-timed, one-hour bounded and field constrained.
-- [ ] Delete-for-me uses per-member server state and affects no other member/shared message field.
-- [ ] Send/reply membership and same-room identity checks pass; direct UPDATE/refusal matrix passes.
-- [ ] Web adapters use RPCs; focused and root gates pass without feature loss.
-- [ ] Roundtrip, cleanup, disk/docs gates pass; later hosted/Realtime/native work stays explicit.
+- [x] Edit/delete-everyone are sender-only, server-timed, one-hour bounded and field constrained.
+- [x] Delete-for-me uses per-member server state and affects no other member/shared message field.
+- [x] Send/reply membership and same-room identity checks pass; direct UPDATE/refusal matrix passes.
+- [x] Web adapters use RPCs; focused and root gates pass without feature loss.
+- [x] Roundtrip, cleanup, disk/docs gates pass; later hosted/Realtime/native work stays explicit.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -68,15 +73,27 @@ re-forward and source baseline; focused web adapter behavior; root gate; cleanup
 | Date | Action | Result | Evidence / limit |
 |---|---|---|---|
 | 2026-09-19 | Source/resource/ownership preflight | PASS | Current UI/RLS/data path inspected; delete-for-me has no working per-user read filter and hour rule is client-only. 21,680,196 KiB free; no clone/build started. |
+| 2026-09-19 | Guarded forward/down/restored-forward | PASS | Disposable PostgreSQL 17 clone with 041–043 prerequisites passed mutation/hide/send/refusal matrix twice; down restored exact post-043 policy/API/schema/data state; source unchanged; target dropped. |
+| 2026-09-19 | First focused web adapter run | FAIL | Vitest stopped before tests because the mock referenced a top-level variable before hoisted initialization. No product criterion ran or was suppressed. |
+| 2026-09-19 | Corrected focused web adapter gates | PASS | `vi.hoisted` fixed test setup; 1 file/4 tests, focused lint and root typecheck passed. Edit/delete/hide call only server RPCs; legacy shared `deleted_for` path is absent. |
+| 2026-09-19 | SQL/API/security/index/diff review | PASS | Direct message UPDATE removed; authenticated inserts normalize server fields and exclude client-authored system messages; same-room reply and indexed room/hide checks pass. SECURITY DEFINER APIs explicitly require auth, fix search paths and revoke public/anon execution. Self-review only. |
+| 2026-09-19 | Root `pnpm check` | PASS | Product `621147e`: lint/typecheck, 59 test files/575 tests, coverage, service-worker syntax and Next production build passed. |
+| 2026-09-19 | Cleanup/resource recheck | PASS | Disposable DB absent; exact `.next` 472,544 KiB and coverage 332 KiB removed; 21,673,820 KiB (~20.7 GiB) free; unrelated CLI marker unstaged. |
+| 2026-09-19 | First two documentation-check formulations | FAIL | The ad-hoc checker first used an unsupported JavaScript regular expression, then collapsed the existing em-dash heading's GitHub double-hyphen anchor. These were checker defects; no missing target was accepted or hidden. |
+| 2026-09-19 | Corrected documentation consistency gate | PASS | Five changed Markdown files contain 130 resolving local links and zero missing targets/anchors; stale 044 pending/next-core markers are absent and `git diff --check` passes. |
 
-**Delivery:** Pending implementation and acceptance record.
+**Delivery:** Planning `0071200`; product/test `621147e`; this acceptance record follows. Local
+rollback restores exact prior message policies and removes 044 data/API objects. Hosted rollback
+would discard per-member hide state and therefore remains a separately reviewed/approved data
+operation. Next: idempotent text send/retry contract; publication/private Realtime and native
+list/read remain separate later packages.
 
 ## Mandatory acceptance evidence
 
 | Criterion | Required? | Status | Evidence / limit |
 |---|---|---|---|
-| Sender edit/delete one-hour and constrained fields | yes | NOT RUN | Pending local SQL matrix. |
-| Per-member hide isolation and idempotency | yes | NOT RUN | Pending relation/RLS/RPC matrix and web adoption. |
-| Send/reply/direct-update/foreign authority refusals | yes | NOT RUN | Pending two-room/two-choir matrix. |
-| Web focused/root compatibility and full roundtrip cleanup | yes | NOT RUN | Pending. |
+| Sender edit/delete one-hour and constrained fields | yes | PASS | Near-boundary success, expired/non-text/deleted/other-sender/blank refusals pass with server time. |
+| Per-member hide isolation and idempotency | yes | PASS | Same hidden ID repeats; sender loses only own visibility; peer retains message and cannot see sender hide row. |
+| Send/reply/direct-update/foreign authority refusals | yes | PASS | Member send/same-room reply pass; direct UPDATE, cross-room reply, foreign sender, system message, nonmember and cross-choir refuse. |
+| Web focused/root compatibility and full roundtrip cleanup | yes | PASS | 4 focused tests; root 59/575/build; exact down/re-forward/source/cleanup pass. |
 | Send idempotency/Realtime/native/hosted/media semantics | later slices | N/A | Explicitly not executed. |
