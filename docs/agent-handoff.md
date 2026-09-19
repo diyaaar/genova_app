@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 19 September 2026 under [040](briefs/040-shared-chat-read-contract.md).
+Updated 19 September 2026 under [041](briefs/041-chat-room-membership-authority.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [040](briefs/040-shared-chat-read-contract.md).
+   [041](briefs/041-chat-room-membership-authority.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -16,7 +16,8 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `2dfe6ab`; `7a6a78e` contains the chat tenant teardown,
+Current local product HEAD: `cb4e7ec`; `2dfe6ab` contains the shared chat read contract and
+`7a6a78e` contains the chat tenant teardown,
 `b1d565f` contains the native registration protocol,
 `04319e3` contains the native tap consumer and `6883b3b`
 contains the C2 shared event contract. Recorded `origin/main` is `a13f696`; no fetch/push/deploy
@@ -59,7 +60,12 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - [040](briefs/040-shared-chat-read-contract.md) is **ACCEPTED LOCALLY** at `2dfe6ab`: strict shared
   room/message models, compatible-unknown fallback, account/choir/member scope and microsecond
   cursor/order/dedup pass mobile 37 suites/218 tests and root 58 files/571 tests. It has no network,
-  cache, DB or UI behavior. Authority/Realtime foundation is next behind fresh DB/resource gates.
+  cache, DB or UI behavior. Its next authority step is now accepted separately under 041.
+- [041](briefs/041-chat-room-membership-authority.md) is **ACCEPTED LOCALLY** at `cb4e7ec`: local
+  PostgreSQL proves creator/admin member management and own preferences while arbitrary self-join,
+  role escalation and reidentity refuse. Exact down/re-forward and the root 58-file/571-test build
+  pass. Secondary chat-table RLS is next; hosted schema, publication/private Realtime and native
+  runtime remain unproved.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -73,7 +79,8 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   exact PDF cleanup, terminal second-401/native retry, tenant isolation and WebView sign-out on iOS.
 - Final 19 September password-run cleanup restored the disposable target baseline and removed the
   exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
-  all four ports closed. Latest available: 18,478,116 KiB (~17.6 GiB).
+  all four ports closed. A later orphan inactive task-owned 033 VM disk was removed before 041.
+  After 041 database/build cleanup: 21,684,548 KiB (~20.7 GiB) free.
   Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
@@ -94,8 +101,9 @@ separate native registration lifecycle; `b1d565f` then accepts its pure provider
 protocol under 57 files/540 tests and the root build. Its exact outputs were removed with about
 12.1 million KiB free. C2 schema/runtime is not resource-ready near the floor and the transport
 adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory; `7a6a78e`/039 accepts
-tenant-memory teardown and `2dfe6ab`/040 accepts the shared read contract. After cleanup,
-15,624,884 KiB is free. Chat RLS/Realtime migration,
+tenant-memory teardown, `2dfe6ab`/040 accepts the shared read contract and `cb4e7ec`/041 accepts the
+room-membership authority repair. After cleanup, 21,684,548 KiB is free. Secondary-table RLS,
+publication/private Realtime,
 provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
@@ -116,7 +124,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 040 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 041 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

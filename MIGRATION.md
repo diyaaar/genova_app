@@ -29,8 +29,9 @@ floor and the adapter awaits the Expo-vs-direct owner choice. Package 038 accept
 safety inventory, preserves list/read through media/administration, and records current dated
 room-RLS, Realtime, cache, order and retry blockers. Package 039 accepts the tenant-memory teardown
 repair at `7a6a78e`, including failed-sign-out preservation. Package 040 accepts the framework-free
-room/message/scope/cursor contract at `2dfe6ab`. Authority/Realtime foundation is next; native chat
-runtime has not started. Native binary,
+room/message/scope/cursor contract at `2dfe6ab`. Package 041 accepts the local room-membership
+authority repair at `cb4e7ec`; secondary chat-table RLS, publication/private Realtime and native
+chat runtime remain separate. Native binary,
 provider keys, real delivery/recipients and
 hardware remain gated.
 
@@ -84,7 +85,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028–032 WebView katmanlarını ve 033 iki platformlu bileşik yaşam döngüsünü yerelde kabul etti; 034–035 push sözleşmesi/tap tüketicisi, 036 yaşam döngüsü envanteri ve 037 kayıt protokolü kabul edildi; backend/provider bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
-| Chat | 8.552 | **native** | 038 envanter, 039 kiracı bellek temizliği ve 040 ortak okuma sözleşmesi kabul edildi; oda-yetki/Realtime onarımı ve RN liste/okuma uygulaması bekliyor | 3 |
+| Chat | 8.552 | **native** | 038 envanter, 039 kiracı bellek temizliği, 040 ortak okuma sözleşmesi ve 041 oda-üyeliği yetki onarımı yerelde kabul edildi; ikincil tablo RLS, özel Realtime ve RN liste/okuma bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
 | Duyurular | 977 | **WebView — kalıcı** | 028–032 katmanları ve 033 iki platformlu gerçek yerel bileşik rota/yaşam döngüsü kabul edildi | — |

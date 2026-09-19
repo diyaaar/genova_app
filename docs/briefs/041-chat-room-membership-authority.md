@@ -1,6 +1,6 @@
 # 041 — Chat room-membership authority repair
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Stop an authenticated choir member from joining an arbitrary same-choir
 room or changing membership authority fields while preserving creator/admin member management and
@@ -97,11 +97,11 @@ be a separately approved operation after fresh backup/restore proof.
 
 **Done definition:**
 
-- [ ] Same-choir nonmember self-add and self role/identity escalation fail closed.
-- [ ] Creator/admin member management and own preference/read-state updates still pass.
-- [ ] Two-room/two-choir matrix, forward/down/restored-forward and exact prior restore pass.
-- [ ] Source/fixture baseline, root `pnpm check`, cleanup and 10 GiB floor pass.
-- [ ] Diff/DDL review and documentation gates pass; hosted/live/Realtime remain explicitly open.
+- [x] Same-choir nonmember self-add and self role/identity escalation fail closed.
+- [x] Creator/admin member management and own preference/read-state updates still pass.
+- [x] Two-room/two-choir matrix, forward/down/restored-forward and exact prior restore pass.
+- [x] Source/fixture baseline, root `pnpm check`, cleanup and 10 GiB floor pass.
+- [x] Diff/DDL review and documentation gates pass; hosted/live/Realtime remain explicitly open.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -110,16 +110,25 @@ be a separately approved operation after fresh backup/restore proof.
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-19 | Source/resource/ownership preflight | local repository at `b3bd07a` | PASS | PostgreSQL 17 loopback source exists and is ~14.7 MiB; no DB clone/runtime started. Exact orphan `colima-genova033` disk (6,072,144 KiB) was inactive/unregistered and removed; free space rose to 21,691,844 KiB. |
+| 2026-09-19 | Guarded forward/down/restored-forward runner | loopback PostgreSQL 17, disposable `genova_041_test_restore` cloned from `genova_008_test_restore` | PASS | Final role/room/choir matrix passed after the idempotent admin-role case was added. Exact prior policies/triggers/data restored on down; source baseline stayed unchanged; target was dropped. Dated local source is not fresh hosted evidence. |
+| 2026-09-19 | Runner name/refusal guard | local shell | PASS | Shell syntax passed and an unsafe database name was refused before any database action. One earlier wrapper invocation used zsh's read-only `status` name and stopped before the runner; the corrected invocation passed. |
+| 2026-09-19 | Root `pnpm check` | local repository, product `cb4e7ec` | PASS | Lint/typecheck, 58 test files / 571 tests, configured coverage, service-worker syntax and Next production build passed. |
+| 2026-09-19 | DDL/API/diff review | four product/test files | PASS | Insert authority is creator/admin only; the trigger keeps identity immutable and separates member preferences from admin role writes. Existing indexed room/member keys are reused; forward and down are atomic. Self-review only, not independent review. |
+| 2026-09-19 | Generated-output/database cleanup | local filesystem/PostgreSQL | PASS | Disposable database is absent; exact `.next` (472,608 KiB) and `coverage` (332 KiB) were removed. 21,684,548 KiB (~20.7 GiB) remained free; unrelated CLI marker stayed unstaged. |
+| 2026-09-19 | Documentation consistency gate | five changed Markdown files | PASS | 120 local links resolve with zero missing; stale 041 pending/next-general-authority markers are absent; `git diff --check` passes. |
 
-**Delivery:** Pending migration/test implementation and acceptance record.
+**Delivery:** Planning commit `87bea4b`; product/test commit `cb4e7ec`; this acceptance/status
+record follows separately. Rollback is the scoped down migration locally, or the product commit
+before hosted application. Next: a separate secondary-chat RLS package for reactions, polls,
+votes, stars and message status; publication/private Realtime remains a later slice.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Nonmember self-add and member self-escalation/identity mutation refuse | yes | NOT RUN | pending local SQL matrix | Same choir and cross-choir negatives required. |
-| Creator/admin add/remove/role and own preference/read-state compatibility | yes | NOT RUN | pending local SQL matrix | Existing web direct-table behaviors remain. |
-| Forward/down/restored-forward and exact prior policy/trigger state | yes | NOT RUN | pending guarded runner | Disposable local clone only. |
-| Source/fixture baseline and root web/shared gate | yes | NOT RUN | pending | No retained synthetic rows/database/build outputs. |
-| Diff/DDL review, cleanup, disk floor and records | yes | NOT RUN | pending | Preserve unrelated CLI marker unstaged. |
+| Nonmember self-add and member self-escalation/identity mutation refuse | yes | PASS | 2026-09-19, `cb4e7ec`, local two-room/two-choir SQL matrix | Same-choir and cross-choir self-add plus ID/room/member/choir/joined-at and role escalation refuse. |
+| Creator/admin add/remove/role and own preference/read-state compatibility | yes | PASS | 2026-09-19, `cb4e7ec`, local SQL matrix | Creator multi-row bootstrap, admin add/remove/idempotent role writes, self leave and own nickname/read/mute/hide updates pass. |
+| Forward/down/restored-forward and exact prior policy/trigger state | yes | PASS | 2026-09-19, guarded local runner | Atomic forward and down pass; exact prior policy/trigger snapshots restore; second forward passes. |
+| Source/fixture baseline and root web/shared gate | yes | PASS | 2026-09-19, loopback PostgreSQL/root `pnpm check` | Source/fixture hashes unchanged; target removed; 58 files/571 tests and production build pass. |
+| Diff/DDL review, cleanup, disk floor and records | yes | PASS | 2026-09-19, local source/filesystem/docs | Scoped four-file product commit; build outputs removed; ~20.7 GiB free; 120 local links and diff check pass; unrelated marker preserved. |
 | Secondary chat RLS/Realtime/native runtime/hosted | N/A — later C3 slices | N/A | not executed | Explicitly remains open. |
