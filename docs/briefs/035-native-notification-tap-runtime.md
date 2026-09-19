@@ -1,6 +1,6 @@
 # 035 — Native notification permission and tap runtime
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Add the first real native C2 consumer so a signed-in user can choose
 notification permission and a cold/live notification tap can reach the canonical 034 destination
@@ -50,7 +50,8 @@ outputs if free space approaches 10 GiB.
   and route authority.
 - `apps/mobile/src/ui/AppRoot.tsx`, auth provider and WebView/repertoire screens — current screen
   ownership and server-confirmed active-choir boundary.
-- Expo Notifications official SDK reference and installed SDK 57 bundled-module metadata — aligned
+- [Expo Notifications official SDK reference](https://docs.expo.dev/versions/latest/sdk/notifications/)
+  and installed SDK 57 bundled-module metadata — aligned
   package version, channel-before-permission rule, foreground handler, initial response, response
   listener and consumed-response clearing.
 - `docs/mobil-teslim-plani.md` C2 row and `MIGRATION.md` — acceptance and provider limits.
@@ -95,14 +96,14 @@ only; no external state or token is created by tests.
 
 **Done definition:**
 
-- [ ] Permission is never requested on mount; user press yields granted or explicit denied/error UI.
-- [ ] Initial and live tap responses use 034 data, clear the consumed initial response and suppress
+- [x] Permission is never requested on mount; user press yields granted or explicit denied/error UI.
+- [x] Initial and live tap responses use 034 data, clear the consumed initial response and suppress
       exact duplicates.
-- [ ] Web routes, exact accessible repertoire song and unavailable/invalid routes behave visibly
+- [x] Web routes, exact accessible repertoire song and unavailable/invalid routes behave visibly
       under the current authenticated active choir.
-- [ ] Sign-out/unmount removes the tap listener; no token or provider call exists.
-- [ ] Mobile check, Expo config and production JS export pass; binary/runtime boundary stays open.
-- [ ] Diff/records/cleanup pass and free space remains at least 10 GiB.
+- [x] Sign-out/unmount removes the tap listener; no token or provider call exists.
+- [x] Mobile check, Expo config and production JS export pass; binary/runtime boundary stays open.
+- [x] Diff/records/cleanup pass and free space remains at least 10 GiB.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -112,20 +113,33 @@ only; no external state or token is created by tests.
 |---|---|---|---|---|
 | 2026-09-19 | Source/dependency/official-reference inventory | local repo + official Expo docs | PASS | SDK 57 maps `expo-notifications` to `~57.0.20`; current app has no native consumer. Official reference says plugin changes need a rebuilt binary and documents channel/permission and tap APIs. |
 | 2026-09-19 | Resource preflight | local filesystem | PASS | 14,530,904 KiB free; no native build/runtime planned; stop floor 10 GiB. |
+| 2026-09-19 | `npx expo install expo-notifications` | local mobile workspace | PASS | Installed SDK-aligned `~57.0.20` plus three small dependencies. Installer reported 11 moderate audit findings; no automatic/force fix or downgrade was attempted. |
+| 2026-09-19 | First typecheck and hook-test attempts | local uncommitted diff | FAIL | Initial typecheck exposed only overly narrow test-double inference. After correction, two hook-render approaches leaked React async `act` scope and destabilized later tests. Per the two-attempt rule, the routing/dedupe decision moved to a pure core rather than repeating the same harness. Required criteria stayed intact. |
+| 2026-09-19 | Focused replacement matrix | local corrected diff | PASS | Gateway/channel/permission, pure tap resolver, shell, AppRoot and repertoire tests passed: 5 suites / 30 tests; final AppRoot additions passed 15/15. Cold/live routing, exact song, unavailable failure, user prompt/adapter error and sign-out cleanup are covered. |
+| 2026-09-19 | `npm run check` | mobile workspace, product commit `04319e3` | PASS | TypeScript and 36 Jest suites / 216 tests passed. Existing punycode and SafeAreaView deprecation warnings remain; they are not new acceptance passes or runtime failures. |
+| 2026-09-19 | Expo public config resolution | mobile workspace | PASS | `expo-notifications` resolved with `defaultChannel=genova-updates` and background remote notifications disabled. No credentials or native build. |
+| 2026-09-19 | `npm run bundle:check` and bundle inspection | local iOS production JS export | PASS | 1,424 modules; 4.2 MB Hermes bundle. Strings confirm notification runtime inclusion; scans found no exact hosted endpoint, acceptance flag, VAPID private key, service role or refresh-token literal. Export is not a native binary. |
+| 2026-09-19 | Token/provider source scan and self-review | product commit `04319e3` | PASS | No token getter, auto-registration enable, push API, provider or subscription call in product sources. Permission is user-triggered; ready-shell mount gates response consumption; initial response clears; sign-out removes listener; inaccessible targets fail visibly. Self-review is not independent review. |
+| 2026-09-19 | Cleanup and disk check | local filesystem | PASS | Removed exact `.expo/bundle-check` output; no native build/runtime created. 12,091,576 KiB (~11.5 GiB) free; unrelated `supabase/.temp/cli-latest` remains unstaged. |
+| 2026-09-19 | Acceptance-record consistency gate | five changed Markdown files | PASS | 91 local links checked with zero missing; no stale 035 pending marker, superseded product hash or test count remained; `git diff --check` passed. |
 
-**Delivery:** Pending implementation, evidence, cleanup and separate product/record commits.
+**Delivery:** Planning commit `ac769ce`; product commit `04319e3`; this acceptance record follows.
+Rollback `04319e3` to remove the native consumer/config. Device-token account/choir lifecycle,
+backend registration/unsubscribe, provider send and native binary/runtime evidence remain C2 work.
+The next bounded step is an inventory and local contract for that token lifecycle; do not allocate a
+DB/native runtime while the disk margin is this close to the floor.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| No mount-time prompt; explicit press handles granted, denied and adapter failure | yes | NOT RUN | focused mobile tests pending | Permission state only; no token acquisition. |
-| Android channel is prepared before permission request; iOS authorization mapping accepts authorized/provisional/ephemeral | yes | NOT RUN | gateway tests/config review pending | Native OS prompt remains unproved without binary runtime. |
-| Initial and live tap responses resolve through 034; consumed initial response is cleared | yes | NOT RUN | runtime/component tests pending | Synthetic adapter evidence only. |
-| Exact duplicates navigate once; invalid/hostile data fails visibly | yes | NOT RUN | negative/duplicate tests pending | Persistence beyond the process is not claimed. |
-| Web destinations and exact accessible repertoire song route under ready auth/choir; assignment unavailable is visible | yes | NOT RUN | AppRoot/Repertoire tests pending | Destination data loaders retain authorization responsibility. |
-| Unmount/sign-out removes listener and no token/provider call exists | yes | NOT RUN | lifecycle test + source scan pending | Backend token lifecycle remains later C2 work. |
-| Mobile typecheck and Jest | yes | NOT RUN | `npm run check` pending | JS/unit/component evidence, not native binary. |
-| Expo config and production iOS JS export resolve the module | yes | NOT RUN | config + `npm run bundle:check` pending | Export is not native compile/runtime evidence. |
+| No mount-time prompt; explicit press handles granted, denied and adapter failure | yes | PASS | 2026-09-19, `04319e3`, gateway/shell/AppRoot tests | No mount request; user press denial and caught adapter error are explicit. Permission state only; no token acquisition. |
+| Android channel is prepared before permission request; iOS authorization mapping accepts authorized/provisional/ephemeral | yes | PASS | 2026-09-19, `04319e3`, gateway tests + config review | Call order and all three iOS accepted states passed synthetically. Native OS prompt remains unproved without binary runtime. |
+| Initial and live tap responses resolve through 034; consumed initial response is cleared | yes | PASS | 2026-09-19, `04319e3`, resolver/AppRoot tests | Both response paths use 034 data; exact cold response clears. Synthetic adapter evidence only. |
+| Exact duplicates navigate once; invalid/hostile data fails visibly | yes | PASS | 2026-09-19, `04319e3`, pure resolver negative matrix | Same server UUID is suppressed; hostile URL is refused without reserving the identity. Persistence beyond the process is not claimed. |
+| Web destinations and exact accessible repertoire song route under ready auth/choir; assignment unavailable is visible | yes | PASS | 2026-09-19, `04319e3`, AppRoot/Repertoire tests | Canonical WebView path and exact accessible song passed; inaccessible song and unavailable assignment show explicit errors. Data loaders retain authorization responsibility. |
+| Unmount/sign-out removes listener and no token/provider call exists | yes | PASS | 2026-09-19, `04319e3`, AppRoot lifecycle test + source scan | Sign-out unsubscribes. No token getter, provider, backend push route or subscription call exists in app sources. |
+| Mobile typecheck and Jest | yes | PASS | 2026-09-19, `04319e3`, `npm run check` | 36 suites / 216 tests. JS/unit/component evidence, not native binary. |
+| Expo config and production iOS JS export resolve the module | yes | PASS | 2026-09-19, `04319e3`, Expo public config + `npm run bundle:check` | Plugin/channel resolved; 1,424-module production bundle included the notification runtime. Export is not native compile/runtime evidence. |
 | Native binary permission/tap runtime, provider delivery, real recipient and hardware | N/A — outside this bounded slice | N/A | not executed | Required in later C2 acceptance; official reference requires a rebuilt binary for plugin effects. |
-| Cleanup/disk floor/dirty ownership and record consistency | yes | NOT RUN | post-gate checks pending | Remove export output; preserve unrelated temp marker. |
+| Cleanup/disk floor/dirty ownership and record consistency | yes | PASS | 2026-09-19, exact path/status/disk checks plus record gates | Export absent; 12,091,576 KiB free; only unrelated temp marker dirty. Document link/status/diff checks passed before record commit. |

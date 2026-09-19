@@ -18,8 +18,10 @@ original-fixture sign-in proved restoration without exposing a password to the a
 accepted locally and all owned native/runtime outputs were cleaned; screen ownership is unchanged.
 Package 034 accepts the shared seven-event notification/deep-link contract at `6883b3b`: canonical
 owner/availability, assignment-query repair, hostile payload refusal and stable duplicate identity
-pass locally. Current next action: the smallest native C2 consumer/lifecycle slice; provider keys,
-real delivery/recipients and hardware remain gated.
+pass locally. Package 035 accepts the user-triggered permission and authenticated cold/live tap
+consumer at `04319e3`; exact WebView/repertoire routing, duplicate refusal and sign-out cleanup pass
+in 36 suites/216 tests plus production JS export. Current next action: C2 device-token lifecycle
+inventory/local contract; native binary, provider keys, real delivery/recipients and hardware remain gated.
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**
@@ -95,7 +97,7 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 | `supabase/functions/repertoire-file` | yerel kabul edildi (015/018/021/022/026/027), **canlıya alınmadı**; gerçek yerel mobil dosya/PDF yaşam döngüsü ve foreground native ses/mini-player iki simüle platformda, mevcut web PDF/ses/offline yolu üretim Chrome'da geçti. Bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
-| Push (VAPID → FCM/APNs) | 034 ortak olay/hedef sözleşmesini yerelde kabul etti; native kanal, token/izin yaşam döngüsü ve gerçek teslim bekliyor |
+| Push (VAPID → FCM/APNs) | 034 ortak olay/hedef sözleşmesini, 035 kullanıcı izin + auth-korumalı native tap tüketicisini yerelde kabul etti; token/backend/provider ve gerçek cihaz teslimi bekliyor |
 
 ---
 
