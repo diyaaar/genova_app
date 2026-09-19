@@ -1186,61 +1186,29 @@ export async function getOrCreateDm(
 
 /** Edit a message (only own messages, text only) */
 export async function editMessage(messageId: string, newContent: string) {
-  const { error } = await supabase
-    .from('chat_messages')
-    .update({
-      content: newContent,
-      is_edited: true,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', messageId);
+  const { error } = await supabase.rpc('edit_chat_message', {
+    p_message_id: messageId,
+    p_content: newContent,
+  });
 
   if (error) throw error;
 }
 
 /** Soft-delete a message (only own messages) */
 export async function deleteMessage(messageId: string) {
-  const { error } = await supabase
-    .from('chat_messages')
-    .update({
-      is_deleted: true,
-      content: null,
-      metadata_json: {},
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', messageId);
+  const { error } = await supabase.rpc('delete_chat_message_for_everyone', {
+    p_message_id: messageId,
+  });
 
   if (error) throw error;
 }
 
 /** Soft-delete a message for current user only */
-export async function deleteMessageForMe(messageId: string, memberId: string) {
-  const { data, error: fetchErr } = await supabase
-    .from('chat_messages')
-    .select('metadata_json')
-    .eq('id', messageId)
-    .single();
-    
-  if (fetchErr) throw fetchErr;
-  
-  const currentMetadata = (data.metadata_json as Record<string, any>) || {};
-  const deletedFor = Array.isArray(currentMetadata.deleted_for) ? currentMetadata.deleted_for : [];
-  
-  if (!deletedFor.includes(memberId)) {
-    deletedFor.push(memberId);
-  }
-  
-  const { error: updateErr } = await supabase
-    .from('chat_messages')
-    .update({
-      metadata_json: {
-        ...currentMetadata,
-        deleted_for: deletedFor
-      }
-    })
-    .eq('id', messageId);
-    
-  if (updateErr) throw updateErr;
+export async function deleteMessageForMe(messageId: string) {
+  const { error } = await supabase.rpc('hide_chat_message_for_self', {
+    p_message_id: messageId,
+  });
+  if (error) throw error;
 }
 
 // =============================================

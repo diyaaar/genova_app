@@ -645,16 +645,8 @@ export function ChatRoom({ slug }: ChatRoomProps) {
             metadata_json: {},
           });
         } else if (type === 'me' && member?.id) {
-          await deleteMessageForMe(msg.id, member.id);
-          const currentMetadata = msg.metadata_json || {};
-          const deletedFor = Array.isArray(currentMetadata.deleted_for) ? [...currentMetadata.deleted_for] : [];
-          deletedFor.push(member.id);
-          useChatStore.getState().updateMessage(roomId, msg.id, {
-            metadata_json: {
-              ...currentMetadata,
-              deleted_for: deletedFor,
-            }
-          });
+          await deleteMessageForMe(msg.id);
+          useChatStore.getState().removeOptimisticMessage(roomId, msg.id);
         }
       } catch (err) {
         console.error('Delete failed:', err);
