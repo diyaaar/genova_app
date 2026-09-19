@@ -7,15 +7,90 @@ FAILURES OPEN**. Single writer and self-reviewer: main agent; no independent rev
 ## Current checkpoint — 19 September 2026
 
 This checkpoint supersedes the current-state statements in the dated sections below.
-Entry was `main / 61c7ae2`; latest product is `851e9cd`, preceded by record `ed86d22`.
-Latest patch gates/exports/Doctor, normal iOS build/startup and guarded plus normal Android
-Release checks PASS; other post-alignment native/composed checks are NOT RUN.
-See the current composed follow-up below for repair evidence and final cleanup; earlier
+Entry was `main / 61c7ae2`; latest product is `69714b1`, preceded by record `ed86d22`.
+Latest patch gates/exports/Doctor, normal iOS build/startup, guarded plus normal Android
+Release checks and the bounded guarded iOS feature/fault batch PASS. The required successful
+iOS password change/restore remains a user UI hand-off and is NOT RUN.
+See the current composed result below for repair evidence and final cleanup; earlier
 18 September receipts remain dated checkpoints, not current environment claims.
 The interrupted ephemeral-storage files were removed. `supabase/.temp/cli-latest` is unrelated
 and remains unstaged.
 Read AGENTS, handoff, active context, this brief, plan controls, migration guide/work cycle,
 and the relevant MIGRATION and AuthStore/provider/UI sources. No independent reviewer.
+
+**Guarded iOS feature/fault work card (19 September 2026):** prove on one current, normally signed
+Release simulator build that an embedded administrator can commit a real attendance mutation, see
+an externally changed fixture row through Realtime invalidation, and open the fixture's exact
+65,905-byte protected PDF before the ephemeral copy is removed. In the same retained environment,
+prove that a second authenticated 401 is terminal and that retry, tenant switch and WebView-originated
+sign-out cannot revive the old tenant/session/history. A successful password change/restore remains
+an explicit user UI hand-off and is not part of this agent-operated batch.
+
+Allowed product/acceptance sources are the existing 033 entry, native WebView/Auth implementation,
+the permanent attendance/chorister pages and `supabase/test-support/033_*`; only a narrowly required
+repeatable fault seam may change. Generated targets are exactly `spike/033-runtime`, `.next`,
+`apps/mobile/ios`, `spike/033-ios-feature-derived`, one retained `spike/033-ios-feature.app`, one
+`genova033-ios-feature` simulator and the `genova033` Colima profile/context/data. No Android,
+hosted service, real account, physical device, dependency change or general UI-driver framework.
+
+Up to three actions:
+1. Recreate the owned loopback stack/fixture and production Next peer, then build and scan one
+   current guarded arm64 iOS Release with Xcode's normal simulator signing. Keep only the app after
+   compilation and never print fixture secrets.
+2. Through computer-use semantic/visual controls, perform the real attendance mutation and external
+   Realtime change, then open the protected PDF; verify target rows plus exact size/checksum while
+   the native share sheet owns the file and verify deletion after cancellation.
+3. Exercise the bounded second-401/retry, tenant switch and WebView sign-out sequence; inspect
+   redacted diagnostics and signed-out relaunch, then restore both baselines and remove every exact
+   owned output/process/device/profile.
+
+Required checks are current guarded signature/bundle-secret and loopback-policy scans, visible
+Release UI plus target-DB assertions for mutation/Realtime, PDF size/SHA-256 and post-share cleanup,
+terminal second-401 with a fresh retry epoch, no old-tenant render after switch/sign-out, runner
+source/target baselines, final port/path/process/device inventories and `git diff --check`. Existing
+mobile/root/normal-export/Doctor/Android results remain dated evidence and are not rerun unless a
+product source changes. Exit with dated PASS/FAIL/NOT RUN per affected acceptance row; do not close
+033 while password success or any other required iOS case remains unproved.
+
+Resource preflight: 27,819,024 KiB available; all listed generated/runtime paths, 033 Colima
+profile/context, owned simulator and ports 18033/18034/54321/54322 are absent. Installed Xcode 26.6,
+iOS runtime, Colima, Supabase CLI, PostgreSQL tools and package dependencies will be reused without
+a toolchain/dependency install; the fresh disposable VM may repull the Supabase container layers
+already included in the historical 6.1 GiB data-disk estimate. Historical full retained-app runtime
+peak is about 11,367,272 KiB, projecting
+about 16,451,752 KiB free, 5,965,992 KiB above the 10 GiB floor. Run only one heavy build/process,
+recheck during each phase, and stop new allocation at 13,631,488 KiB. Cleanup targets are only the
+exact owned artifacts above; shared/global caches and unrelated simulators remain untouched.
+
+**Guarded iOS feature/fault result (19 September 2026, product `69714b1`): PASS for the
+agent-operable batch.** The actual Release WebView exposed an attendance approval failure: the
+authenticated role had `SELECT` but not direct table `UPDATE`. The permanent page now uses the
+existing server-reviewed attendance update endpoint, preserving its tenant/role/invitee checks;
+the fixture row became approved in the target database and the visible UI confirmed it. External
+fixture changes then moved the open UI to rejected and approved states without a route reload,
+proving Realtime invalidation. The protected PDF share sheet owned the actual 65,905-byte file
+with SHA-256 `39fcafaec0263d8c2429a66d4ea941180692a99749be398a1d48c8fd5397d6a3`;
+the exact native cache directory was empty after dismissal.
+
+The first forced authenticated 401 renewed and reproved the lease. The second 401 initially
+revealed two defects: a successful renewal reset the attempt counter, and the later terminal web
+error did not cover the native shell. `69714b1` keeps the count for the WebView attempt and emits
+`bridge.error` on the second 401. Focused 17/17 tests and the actual rebuilt iOS flow passed:
+native snapshot became `error`, tenant content disappeared, native retry created lease #143 and
+returned to `running`. Koro A → Koro B showed only `033 Sentetik Koro B`; the embedded profile's
+real `Çıkış Yap` produced `auth.sign-out.request`, `snapshot clearing` and
+`sign-out PASS native session cleared`. Cold relaunch stayed `signed-out`; the already-closed
+single-use credential channel could not revive the old session.
+
+Final runner cleanup returned `PASS fixture_cleanup target_baseline=restored` and
+`PASS runtime_cleanup stack=stopped path=removed`. The Next server, tunnel and credential server
+stopped; the exact app, simulator, runtime, Colima profile/context/data, `.next` and coverage were
+removed. Ports 18033/18034/54321/54322 and all listed paths are absent. Final available space was
+25,688,468 KiB (~24.5 GiB); shared/global caches and unrelated devices remain untouched. After the
+last product change `pnpm check` passed lint, TypeScript, 55 files/467 tests, service-worker syntax
+and the production build; coverage was 92.19% statements, 80.90% branches, 96.82% functions and
+94.98% lines. `bash -n`, `git diff --check` and exact cleanup inventories also passed. No hosted,
+real-account, physical-device, push/deploy/CI or password-change action occurred. Self-review only.
 
 **Completed startup source result at `5a9fb8f`:** recover from native session-storage startup error without
 remaining on the loading screen or replacing the product's secure session storage.
@@ -666,17 +741,17 @@ accessibility on hardware or a store candidate.
 
 - [x] Exact guards refuse hosted/non-loopback endpoints, non-synthetic identities, wrong project,
   wrong paths and missing flags; normal build/export contains no 033 marker or local endpoint.
-- [ ] Both exact Release runtimes complete the challenged composed handshake and render every one of
+- [x] Both exact Release runtimes complete the challenged composed handshake and render every one of
   the nine route families with required role/read/write/Realtime/file evidence.
 - [ ] Native route/external/back/theme/password/clipboard/image/protected-file boundaries complete
   from real embedded page actions, including the named refusal and cleanup cases.
-- [ ] Renewal, first/second 401, reload, renderer restart, tenant switch and sign-out prove blanking,
+- [x] Renewal, first/second 401, reload, renderer restart, tenant switch and sign-out prove blanking,
   reproof, bounded failure and zero old-tenant credential/cache/history retention.
 - [x] Local fixture/stack/source integrity and all runtime/generated-artifact cleanup checks pass.
-- [ ] Root `pnpm check`; mobile `npm run check`; normal iOS/Android exports; Expo Doctor; guarded and
+- [x] Root `pnpm check`; mobile `npm run check`; normal iOS/Android exports; Expo Doctor; guarded and
   normal exact Release builds; bundle/permission/secret scans all pass or remain explicit required
   failures.
-- [x] Credential/session-repair product diff/gates and canonical records are current at `5a9fb8f`;
+- [x] Credential/session-repair product diff/gates and canonical records are current at `69714b1`;
   only the unrelated CLI cache remains unstaged at this checkpoint.
 
 ## Mandatory acceptance evidence
@@ -689,13 +764,13 @@ actually performed.
 | Exact local guards and normal-build isolation refuse every unowned endpoint/path/identity and exclude local flags, endpoints, credentials and cleartext policy from normal artifacts | yes | **PASS** | 2026-09-15, `ec5b19a`; current Android artifact 2026-09-19 | 24 focused mobile cases and four server cases passed, including concurrent one-use, wrong identity, hosted/path/host/browser and abort/error refusals. Fresh normal iOS HBC `7b5bee531df7522ffcf35c15f447af23e55052b755ba469acdad90280f8e6876` and Android HBC `6f028b0fd0998dacc962c066f381c2641637839948547c3b3c684038d2011226` contained no 033 marker, local endpoint or synthetic identity. Current normal Android APK/manifest/bundle also passed exact isolation and blocked-permission scans; guarded Android retained only its exact compile-time loopback policy. |
 | Production-type web build and actual native shell complete the challenged lease plus server-current user/choir/member proof before tenant render on Release iOS simulator | yes | **PASS** | 2026-09-13, Release iOS 26.5 simulator `genova033-ios`, production Next peer on exact loopback | The real permanent WebView completed the challenge/acknowledgement/lease and server-current tenant proof before rendering. This is simulator evidence only, not hardware or hosted-origin evidence. |
 | The same composed handshake/proof completes on Release Android emulator through exact reverse ports | yes | **PASS** | 2026-09-19, post-alignment guarded Release on fresh API 36 arm64 AVD; exact reverse ports 18033/18034/54321 | The real shell consumed the repaired one-use credential, persisted its SecureStore session through a cold emulator restart and completed challenged lease/server proof on current dependencies. The 13 September route evidence remains separate. Reverse rules, app and AVD were removed. |
-| All nine permanent route families render and preserve representative real reads, role variants, mutations, Realtime invalidation, visible errors and actual-file behavior on both platforms | yes | **FAIL** | 2026-09-13 composed run | Both platforms rendered all nine families; Android additionally covered representative reads, mutation/Realtime, role refusal and actual-file behavior. iOS route, tenant and role evidence exists, but the full mutation/Realtime/actual-file set was not completed there. Route visibility is not promoted to the missing feature proof. |
+| All nine permanent route families render and preserve representative real reads, role variants, mutations, Realtime invalidation, visible errors and actual-file behavior on both platforms | yes | **PASS** | Historical route families/Android scenarios 2026-09-13; current guarded iOS feature batch 2026-09-19 at `69714b1` | Both platforms rendered all nine families. Android retained representative read/mutation/Realtime/role/file evidence. Current iOS added a real attendance approval through the existing server-reviewed route, external Realtime changes without route reload and the exact protected PDF bytes plus post-share deletion. This is local synthetic simulator/emulator evidence, not hosted or hardware acceptance. |
 | Permanent navigation, native home/repertoire exits, unavailable native routes, HTTPS confirmation, denied URL classes, web-history back and root exit behave fail closed on both platforms | yes | **PASS** | 2026-09-13, Android UI driver plus isolated iOS XCUITest navigation case | Android hardware/header back and iOS header back stayed inside web history first and exited at root; native home/repertoire, unavailable chat/homework, confirmed/cancelled HTTPS and denied HTTP/custom/unknown/popup paths behaved as required. XCUITest is simulator evidence, not accessibility certification. |
-| Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | 2026-09-13 composed run | Android completed the disposable password change/restore, clipboard, constrained image cancellation and exact-byte protected PDF/expiry/cleanup scenarios. iOS proved theme, native password validation, photo-picker cancellation and protected-file confirmation cancellation, but not successful password change/restore or exact-byte PDF open. |
-| Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **FAIL** | Historical 2026-09-13; current iOS 2026-09-18 at `6a5769a`; current Android 2026-09-19 | Repaired guarded Android now passes one-use credential delivery, real SecureStore cold relaunch and WebView-originated sign-out: bridge clear/native session clear passed and a closed credential channel could not revive the old session. Repaired guarded iOS passed early first-401 forced renewal/reproof and persisted SecureStore relaunch; revoked refresh was observed signed-out. Full iOS second-401/cleanup ordering and cache/history/credential matrix are not inferred, so the required row remains FAIL. |
-| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-19 final runner/handle/path/port inventories | Target baseline restored; exact runtime, generated native/web trees, apps/devices, reverse rules, profile/VM/data disk, Docker context and temporary wrapper were removed. Web/tunnel stopped and all four ports closed. Actual free space 27,892,724 KiB (~26.6 GiB); shared/global caches preserved. |
-| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **FAIL** | 2026-09-19, product `851e9cd` | Mobile 197/root 467 tests/build, both normal exports/isolation and Doctor 21/21 PASS. Post-alignment normally signed arm64 iOS Release/signature/Info.plist/isolation and real empty SecureStore startup/relaunch PASS. Post-alignment guarded and normal Android Release/signature/alignment/SDK/manifest/backup/bundle scans PASS; guarded composed credential/sign-out runtime also PASS. Post-alignment guarded iOS and required iOS feature/fault rows remain NOT RUN; source/export and Android checks do not close them. |
-| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-18 self-review at `851e9cd`, managed lock delta plus applicable gates and `git diff --check` | Exactly three direct and four required transitive patch replacements, no SDK migration/addition/removal/scene opt-in/check exclusion. Prior bounded auth repairs preserved. CLI cache unstaged; 004/010, hosted, hardware, accessibility, CI and publication boundaries open. Native evidence after alignment is not claimed. No independent review. |
+| Real embedded page controls trigger theme, native password sheet, exact invitation clipboard, constrained image input/upload and protected PDF action; refusal/cancel/expiry/cleanup cases pass | yes | **FAIL** | Historical composed controls 2026-09-13; current iOS PDF 2026-09-19 | Android completed disposable password change/restore, clipboard, image cancellation and exact-byte protected PDF/expiry/cleanup. iOS now additionally opened the exact 65,905-byte protected PDF and removed its ephemeral copy after dismissal. A successful iOS password change/restore remains NOT RUN because the final password submission requires user UI hand-off; this required row therefore remains FAIL. |
+| Near-expiry, first/second 401, reload, renderer restart, tenant switch and sign-out prove bounded renewal/reproof plus old-epoch/cache/history/credential cleanup | yes | **PASS** | Historical 2026-09-13; current iOS `69714b1` and current Android 2026-09-19 | Android passes one-use credential delivery, SecureStore cold relaunch and WebView sign-out with closed-channel refusal. Current iOS passes first-401 renewal/reproof, terminal second-401 native cover, fresh native retry, Koro A→B isolation, WebView-originated sign-out and cold-relaunch signed-out state; the closed one-use channel could not revive the old session. |
+| Disposable fixture ownership, source read-only hash, target baseline restoration, app/process/reverse/device/stack shutdown and generated-directory cleanup pass | yes | **PASS** | 2026-09-19 final runner/handle/path/port inventories after `69714b1` | Target baseline restored; exact runtime, generated native/web trees, app/simulator, tunnel, profile/VM/data disk and Docker context were removed. All four ports closed. Actual final free space 25,688,468 KiB (~24.5 GiB); shared/global caches preserved. |
+| Root/mobile gates, normal exports, Expo Doctor, guarded and normal exact Release builds, permission/secret/bundle scans and `git diff --check` pass | yes | **PASS** | 2026-09-19, product `69714b1` | Existing current-dependency mobile 197 tests, exports/isolation, Doctor 21/21 and exact native build/signature/manifest/bundle scans remain applicable because `69714b1` changes only web/test/runtime-runner paths. After the final web repair, root `pnpm check` passed 55 files/467 tests and production build; focused provider 17/17, runner syntax, cleanup inventories and `git diff --check` passed. Generated `.next` and coverage were removed. |
+| Diff review finds no scope expansion or hidden weakening; repository records retain 004/010, hosted, hardware, accessibility, CI and publication boundaries | yes | **PASS** | 2026-09-19 self-review at `69714b1`, applicable gates and `git diff --check` | The final patch is limited to the existing attendance server route, embedded second-401 terminal signaling, its focused regression and the bounded runner fault seam. Prior auth/native repairs remain. CLI cache unstaged; 004/010, hosted, hardware, accessibility, CI and publication boundaries open. No independent review. |
 
 ## Delivery
 
@@ -712,13 +787,17 @@ actually performed.
 - Early-renewal correction: `6a5769a` forces native refresh on challenged requests without changing
   the bridge envelope or weakening stale leases. Mobile typecheck/197 tests and actual guarded iOS
   early-401 recovery/persisted SecureStore relaunch passed. Full C1 feature acceptance remains open.
+- Guarded iOS feature/fault correction: `69714b1` routes attendance approval through the existing
+  server-reviewed endpoint, preserves the second-401 count across a successful renewal, emits a
+  terminal native bridge error and adds the two-401 runner seam/regression. Actual guarded iOS
+  mutation/Realtime/PDF/401/retry/tenant/sign-out scenarios and the final root gate passed.
 - The local composed runs materially proved both Release handshakes, all route families and the full
   historical Android scenario set. The repaired Android credential/persisted-session/sign-out path
-  and guarded plus normal native checks now pass on current dependencies. Required iOS feature/fault
-  coverage and the post-alignment guarded iOS check remain open. `851e9cd` fixes the observed Doctor
-  patch mismatch: current mobile/root/normal-export/Doctor gates pass. Therefore 033 is not closed.
-  The final 18 September teardown restored both
-  baselines, removed all owned runtime/build/device/VM outputs and measured 24.6 GiB free.
+  and guarded plus normal native checks now pass on current dependencies. `851e9cd` fixes the
+  observed Doctor patch mismatch; `69714b1` closes the agent-operable iOS feature/fault gaps.
+  Therefore 033 remains open only for successful iOS password change/restore through user hand-off.
+  The final 19 September teardown restored both baselines, removed all owned runtime/build/device/VM
+  outputs and measured about 24.5 GiB free.
 - The 15 September cleanup removed the recreated owned runtime; the correction's `.next`, coverage
   and Expo export outputs were also removed. Apply the resource preflight before runtime recreation,
   then run only the missing or invalidated rows listed in the current work card. Existing JDK/SDK
