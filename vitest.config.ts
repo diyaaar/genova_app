@@ -25,6 +25,7 @@ export default defineConfig({
         'lib/drive-file-url.ts',
         'lib/internalPageLinks.ts',
         'lib/notification-deep-link.ts',
+        'lib/native-push-registration.ts',
         'lib/richText.ts',
         'lib/server/drive-file-content.ts',
         'lib/server/drive-file-token.ts',
