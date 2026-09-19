@@ -17,7 +17,7 @@ SOURCE_PORT="${PGPORT:-5432}"
 PSQL_COMMAND="${PSQL_BIN:-psql}"
 PG_DUMP_COMMAND="${PG_DUMP_BIN:-pg_dump}"
 
-case "$ACTION" in initialize|serve-loopback-tunnel|start|prepare|status|serve-credential|refresh-ticket|expire-ticket|arm-single-401|disarm-401|revoke-admin-refresh|cleanup|stop) ;; *) refuse 'unsupported 033 action' ;; esac
+case "$ACTION" in initialize|serve-loopback-tunnel|start|prepare|status|serve-credential|refresh-ticket|expire-ticket|arm-single-401|arm-double-401|disarm-401|revoke-admin-refresh|cleanup|stop) ;; *) refuse 'unsupported 033 action' ;; esac
 [ -n "$RUNTIME_INPUT" ] || refuse 'GENOVA_033_WORKDIR is required'
 RUNTIME_PARENT="$(cd "$(dirname "$RUNTIME_INPUT")" && pwd -P)"
 [ "$RUNTIME_PARENT/$(basename "$RUNTIME_INPUT")" = "$REPO_ROOT/spike/033-runtime" ] || refuse 'runtime must resolve exactly to spike/033-runtime'
@@ -184,7 +184,7 @@ const source = fs.readFileSync(path, 'utf8');
 const before = `Deno.serve(createInvitationHandler((authorization) => {\n`;
 const after = `const handleInvitation = createInvitationHandler((authorization) => {\n`;
 if (source.split(before).length !== 2) throw new Error('expected one invitation serve declaration');
-const withHandler = source.replace(before, after).replace(/\n\}\)\);\s*$/, `\n});\n\nlet forcedUnauthorizedRemaining = 0; // GENOVA_033_SINGLE_401\n\nDeno.serve((request) => {\n  if (forcedUnauthorizedRemaining > 0 && request.method === 'POST' && /^Bearer\\s+.+/i.test(request.headers.get('Authorization') ?? '')) {\n    forcedUnauthorizedRemaining -= 1;\n    return new Response(JSON.stringify({ error: '033 forced local unauthorized' }), {\n      status: 401,\n      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' },\n    });\n  }\n  return handleInvitation(request);\n});\n`);
+const withHandler = source.replace(before, after).replace(/\n\}\)\);\s*$/, `\n});\n\nlet forcedUnauthorizedRemaining = 0; // GENOVA_033_FORCED_401\n\nDeno.serve((request) => {\n  if (forcedUnauthorizedRemaining > 0 && request.method === 'POST' && /^Bearer\\s+.+/i.test(request.headers.get('Authorization') ?? '')) {\n    forcedUnauthorizedRemaining -= 1;\n    return new Response(JSON.stringify({ error: '033 forced local unauthorized' }), {\n      status: 401,\n      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' },\n    });\n  }\n  return handleInvitation(request);\n});\n`);
 fs.writeFileSync(path, withHandler);
 NODE
   docker --context "$DOCKER_CONTEXT_INPUT" restart "supabase_edge_runtime_${PROJECT_ID}" >/dev/null
@@ -222,16 +222,21 @@ NODE
   echo 'PASS admin_refresh revoked=owned-local-session'
   exit 0
 fi
-if [ "$ACTION" = 'arm-single-401' ] || [ "$ACTION" = 'disarm-401' ]; then
+if [ "$ACTION" = 'arm-single-401' ] || [ "$ACTION" = 'arm-double-401' ] || [ "$ACTION" = 'disarm-401' ]; then
   INVITATION_INDEX="$RUNTIME_DIR/supabase/functions/choir-invitations/index.ts"
-  GENOVA_033_INVITATION_INDEX="$INVITATION_INDEX" GENOVA_033_FAULT_COUNT="$([ "$ACTION" = 'arm-single-401' ] && printf 1 || printf 0)" node <<'NODE'
+  case "$ACTION" in
+    arm-single-401) FAULT_COUNT=1 ;;
+    arm-double-401) FAULT_COUNT=2 ;;
+    disarm-401) FAULT_COUNT=0 ;;
+  esac
+  GENOVA_033_INVITATION_INDEX="$INVITATION_INDEX" GENOVA_033_FAULT_COUNT="$FAULT_COUNT" node <<'NODE'
 const fs = require('node:fs');
 const path = process.env.GENOVA_033_INVITATION_INDEX;
 const nextCount = process.env.GENOVA_033_FAULT_COUNT;
 const source = fs.readFileSync(path, 'utf8');
-const pattern = /let forcedUnauthorizedRemaining = [01]; \/\/ GENOVA_033_SINGLE_401/;
-if (!pattern.test(source)) throw new Error('033 single 401 seam missing');
-fs.writeFileSync(path, source.replace(pattern, `let forcedUnauthorizedRemaining = ${nextCount}; // GENOVA_033_SINGLE_401`));
+const pattern = /let forcedUnauthorizedRemaining = [012]; \/\/ GENOVA_033_(?:SINGLE_401|FORCED_401)/;
+if (!pattern.test(source)) throw new Error('033 forced 401 seam missing');
+fs.writeFileSync(path, source.replace(pattern, `let forcedUnauthorizedRemaining = ${nextCount}; // GENOVA_033_FORCED_401`));
 NODE
   docker --context "$DOCKER_CONTEXT_INPUT" restart "supabase_edge_runtime_${PROJECT_ID}" >/dev/null
   for _attempt in $(seq 1 30); do

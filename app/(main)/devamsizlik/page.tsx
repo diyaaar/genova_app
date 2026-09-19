@@ -374,27 +374,24 @@ export default function DevamsizlikPage() {
   }, [member?.id, queryClient]);
 
   const approveMutation = useMutation({
-    mutationFn: async (attendanceId: string) => {
-      const { error } = await supabase
-        .from('attendance')
-        .update({ status: 'approved', approved_by: member!.id, approved_at: new Date().toISOString() })
-        .eq('id', attendanceId);
+    mutationFn: async (attendance: PendingAttendance) => {
+      await postJsonWithAuth<{ ok: true }>('/api/rehearsals/attendance/update', {
+        rehearsal_id: attendance.rehearsal_id,
+        member_id: attendance.member_id,
+        status: 'approved',
+      });
 
-      if (error) {
-        throw error;
-      }
-
-      return attendanceId;
+      return attendance.id;
     },
-    onMutate: async (attendanceId) => {
+    onMutate: async (attendance) => {
       await queryClient.cancelQueries({ queryKey: ['devamsizlik', 'pending', member?.id] });
       const previousPending = queryClient.getQueryData<PendingAttendance[]>(['devamsizlik', 'pending', member?.id]);
       queryClient.setQueryData<PendingAttendance[]>(['devamsizlik', 'pending', member?.id], (current = []) =>
-        current.filter((attendance) => attendance.id !== attendanceId),
+        current.filter((currentAttendance) => currentAttendance.id !== attendance.id),
       );
       return { previousPending };
     },
-    onError: (error, _attendanceId, context) => {
+    onError: (error, _attendance, context) => {
       if (context?.previousPending) {
         queryClient.setQueryData(['devamsizlik', 'pending', member?.id], context.previousPending);
       }
@@ -529,7 +526,7 @@ export default function DevamsizlikPage() {
 
   const loading = finalizePastAttendanceQuery.isPending || monthDataQuery.isPending || (canApprove && pendingQuery.isPending);
   const hasQueryError = monthDataQuery.isError || pendingQuery.isError;
-  const approvingId = approveMutation.isPending ? approveMutation.variables : null;
+  const approvingId = approveMutation.isPending ? approveMutation.variables?.id ?? null : null;
   const participants = participantsQuery.data ?? [];
   const manualAttendanceVariables = manualAttendanceMutation.variables;
   const selectedRehearsalNotes = selectedDay?.rehearsal?.notes ?? null;
@@ -907,7 +904,7 @@ export default function DevamsizlikPage() {
                           </p>
                         </div>
                         <button
-                          onClick={() => approveMutation.mutate(attendance.id)}
+                          onClick={() => approveMutation.mutate(attendance)}
                           disabled={approveMutation.isPending}
                           className="flex items-center gap-1.5 rounded-[6px] bg-[var(--color-accent)] px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.15em] text-black transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
                         >

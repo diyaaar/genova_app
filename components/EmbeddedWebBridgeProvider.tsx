@@ -85,7 +85,7 @@ interface EmbeddedWebBridgeValue {
   requestTheme: (scheme: 'light' | 'dark' | 'system') => void;
   requestClipboardWrite: (text: string) => boolean;
   requestFileOpen: (input: BridgePayloads['file.open.request']) => boolean;
-  failContext: (code: 'choir-context-changed' | 'member-context-failed') => void;
+  failContext: (code: 'choir-context-changed' | 'member-context-failed' | 'second-unauthorized') => void;
 }
 
 const EmbeddedWebBridgeContext = createContext<EmbeddedWebBridgeValue | null>(null);
@@ -310,7 +310,7 @@ export function EmbeddedWebBridgeProvider({
     transitionPhase(nextPhase);
   }, [clearCaches, clearTimers, transitionPhase, updateIdentity]);
 
-  const failContext = useCallback((code: 'choir-context-changed' | 'member-context-failed') => {
+  const failContext = useCallback((code: 'choir-context-changed' | 'member-context-failed' | 'second-unauthorized') => {
     send('bridge.error', { code });
     clearContext('error', code);
   }, [clearContext, send]);
@@ -378,9 +378,9 @@ export function EmbeddedWebBridgeProvider({
     return setEmbeddedUnauthorizedHandler(() => {
       unauthorizedCountRef.current += 1;
       if (unauthorizedCountRef.current === 1) requestRenewal('unauthorized');
-      else clearContext('error', 'second-unauthorized');
+      else failContext('second-unauthorized');
     });
-  }, [clearContext, detection?.mode, requestRenewal]);
+  }, [detection?.mode, failContext, requestRenewal]);
 
   useEffect(() => {
     if (detection?.mode !== 'embedded' || typeof window === 'undefined') return;
@@ -451,7 +451,6 @@ export function EmbeddedWebBridgeProvider({
             choirId: result.value.choirId,
             memberId: result.value.memberId,
           };
-          unauthorizedCountRef.current = 0;
           updateIdentity(nextIdentity);
           setErrorCode(null);
           transitionPhase('ready');

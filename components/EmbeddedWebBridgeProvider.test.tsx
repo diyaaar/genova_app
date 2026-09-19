@@ -402,19 +402,29 @@ describe('EmbeddedWebBridgeProvider', () => {
     expect(postMessage.mock.calls.map(([raw]) => JSON.parse(raw).type)).toContain('navigation.native.request');
   });
 
-  it('coalesces renewal and makes a second authenticated 401 terminal', async () => {
+  it('makes a second authenticated 401 terminal even after the first renewal succeeds', async () => {
     const postMessage = vi.fn();
     mount({ environment: embeddedEnvironment(postMessage), verifyContext: vi.fn(async (value) => ({ ok: true, value })) });
-    await hydrate(postMessage);
+    const { context } = await hydrate(postMessage);
     postMessage.mockClear();
 
     act(() => mocks.unauthorizedHandler?.());
     expect(postMessage.mock.calls.map(([raw]) => JSON.parse(raw).type)).toContain('context.renew.request');
     expect(mocks.beginRenewal).toHaveBeenCalledOnce();
 
+    act(() => dispatchNative(incoming('context.apply', {
+      ...context,
+      accessToken: 'renewed-header.payload.signature',
+      expiresAt: context.expiresAt + 300,
+    }, 'context_renewed_401')));
+    await waitFor(() => expect(screen.getByTestId('phase')).toHaveTextContent('ready'));
+
     act(() => mocks.unauthorizedHandler?.());
     expect(screen.getByRole('alert')).toHaveTextContent('Uygulama bağlantısı kurulamadı.');
     expect(screen.queryByText('tenant child')).not.toBeInTheDocument();
+    expect(postMessage.mock.calls.map(([raw]) => JSON.parse(raw))).toEqual(expect.arrayContaining([
+      expect.objectContaining({ type: 'bridge.error', payload: { code: 'second-unauthorized' } }),
+    ]));
   });
 
   it('keeps reads visible during renewal and resumes only after a newer proved lease', async () => {
