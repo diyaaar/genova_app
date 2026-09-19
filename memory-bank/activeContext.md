@@ -1,9 +1,9 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [039](../docs/briefs/039-chat-tenant-memory-teardown.md) now owns C3's first
-accepted safety repair after 038's feature inventory. Product `7a6a78e` resets chat process memory
-at accepted ordinary/embedded tenant teardown; `b1d565f` remains the provider-neutral native
+owns resource controls; [040](../docs/briefs/040-shared-chat-read-contract.md) now owns C3's accepted
+shared read boundary after 038's inventory and 039's tenant teardown. Product `2dfe6ab` validates
+room/message/scope/cursor data; `7a6a78e` resets chat process memory; `b1d565f` remains the native
 push registration protocol after [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md)
 fixed the lifecycle, `04319e3` added the permission/tap consumer and `6883b3b` added the C2 event
 contract, following the final C1 product repair `69714b1`.
@@ -14,7 +14,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `7a6a78e`. Recorded remote `a13f696`;
+- Product revision: `2dfe6ab`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -56,8 +56,14 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - [039](../docs/briefs/039-chat-tenant-memory-teardown.md) is **ACCEPTED LOCALLY** at `7a6a78e`:
   successful ordinary/embedded tenant teardown synchronously resets the real chat Zustand store;
   rejected sign-out preserves it. Focused 23 tests and the 57-file/542-test root gate pass. Exact
-  489 MiB `.next`/332 KiB coverage outputs were removed, leaving 15,592,952 KiB free. The shared
-  room/message read contract is next; DB authority, Realtime and native runtime remain open.
+  489 MiB `.next`/332 KiB coverage outputs were removed, leaving 15,592,952 KiB free. Its then-next
+  shared room/message contract is now accepted under 040; DB authority, Realtime and native runtime
+  remain open.
+- [040](../docs/briefs/040-shared-chat-read-contract.md) is **ACCEPTED LOCALLY** at `2dfe6ab`:
+  framework-free room/message validators, compatible-unknown fallback, account/choir/member scope
+  and microsecond `(created_at,id)` order/dedup pass 29 focused root tests, the mobile 37-suite/
+  218-test gate and root 58-file/571-test gate. Exact 490 MiB `.next`/332 KiB coverage outputs were
+  removed, leaving 15,624,884 KiB free. No current query, DB or native runtime adopts it yet.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -76,9 +82,9 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
   After 037 cleanup 12,092,896 KiB (~11.5 GiB) remained free. C2's next schema/runtime cannot fit
   its required DB evidence safely near the floor, and its adapter awaits the Expo-vs-direct owner
-  choice. C3 inventory is accepted at 038 and tenant-memory teardown at 039; the shared room/
-  message read contract is the next ready local package. Do not infer DB/runtime or provider/device
-  delivery from local tests.
+  choice. C3 is accepted through 040's shared read contract. Authority/Realtime foundation is next
+  only after fresh DB/resource/operation gates; do not infer DB/runtime or provider/device delivery
+  from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -87,7 +93,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 039,
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 040,
 C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
