@@ -1,5 +1,12 @@
+import { randomUUID } from 'node:crypto';
+
 import webpush from 'web-push';
 
+import {
+  createNotificationDeepLink,
+  type NotificationEvent,
+  type NotificationRoutingData,
+} from '@/lib/notification-deep-link';
 import { stripHtmlTags } from '@/lib/richText';
 import { createSupabaseServiceClient } from '@/lib/server/supabase-auth';
 
@@ -65,7 +72,7 @@ interface PushPayload {
   title: string;
   body?: string;
   url: string;
-  data: Record<string, unknown>;
+  data: NotificationRoutingData;
   icon?: string;
 }
 
@@ -88,6 +95,14 @@ function stripMillisecondsFromIsoTimestamp(value: string) {
 
 function getNotificationTimestampIso() {
   return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+}
+
+function createRoutingFields(event: NotificationEvent): Pick<PushPayload, 'url' | 'data'> {
+  const route = createNotificationDeepLink(event, {
+    notificationId: randomUUID(),
+    at: getNotificationTimestampIso(),
+  });
+  return { url: route.canonicalPath, data: route.data };
 }
 
 function simplifyNotificationText(value: string | null | undefined, maxLength = DEFAULT_BODY_MAX_LENGTH) {
@@ -149,12 +164,10 @@ function buildProfileDecisionPayload(input: SendProfileDecisionPushInput): PushP
   return {
     title: baseTitle,
     body,
-    url: '/profil/degisiklikler',
-    data: {
+    ...createRoutingFields({
       type: 'profile_change_request_reviewed',
       status: input.status,
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 }
 
@@ -165,12 +178,10 @@ function buildAnnouncementPublishedPayload(input: SendAnnouncementPublishedPushI
   return {
     title: 'Yeni Duyuru',
     body: `${titleLine}: ${content}`,
-    url: `/announcements/${input.announcementId}`,
-    data: {
+    ...createRoutingFields({
       type: 'announcement_published',
       announcementId: input.announcementId,
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 }
 
@@ -182,18 +193,14 @@ function buildRehearsalCreatedPayload(input: SendRehearsalCreatedPushInput): Pus
     : details;
   const body = truncateText(rawBody, 220);
 
-  const dateQuery = input.rehearsalDate?.trim() ? `?date=${encodeURIComponent(input.rehearsalDate.trim())}` : '';
-
   return {
     title: `Yeni Etkinlik - ${titleLine}`,
     body,
-    url: `/devamsizlik${dateQuery}`,
-    data: {
+    ...createRoutingFields({
       type: 'rehearsal_created',
       rehearsalId: input.rehearsalId,
       rehearsalDate: input.rehearsalDate ?? null,
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 }
 
@@ -203,12 +210,10 @@ function buildAssignmentCreatedPayload(input: SendAssignmentCreatedPushInput): P
   return {
     title: 'Yeni Ödev',
     body: `${deadlineText} tarihine kadar teslim edilmesi gerek.`,
-    url: `/odevler/${input.assignmentId}?aid=${input.assignmentId}`,
-    data: {
+    ...createRoutingFields({
       type: 'assignment_created',
       assignmentId: input.assignmentId,
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 }
 
@@ -219,13 +224,11 @@ function buildAssignmentSubmittedPayload(input: SendAssignmentSubmittedPushInput
   return {
     title: input.isResubmission ? 'Ödev Teslimi Güncellendi' : 'Yeni Ödev Teslimi',
     body: `${submitterName}: ${assignmentTitle}`,
-    url: `/odevler/${input.assignmentId}?aid=${input.assignmentId}`,
-    data: {
+    ...createRoutingFields({
       type: 'assignment_submitted',
       assignmentId: input.assignmentId,
       isResubmission: Boolean(input.isResubmission),
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 }
 
@@ -236,13 +239,11 @@ function buildRepertoireAssignmentPayload(input: SendRepertoireAssignmentPushInp
   return {
     title: 'Yeni Repertuvar Ataması',
     body: partLine ? `${titleLine} - ${partLine}` : titleLine,
-    url: `/repertuvar/${input.songId}`,
-    data: {
+    ...createRoutingFields({
       type: 'repertoire_assignment_created',
       songId: input.songId,
       partName: input.partName ?? null,
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 }
 
@@ -254,13 +255,11 @@ function buildAssignmentReviewPayload(input: SendAssignmentReviewPushInput): Pus
 
   const payload: PushPayload = {
     title,
-    url: `/odevler/${input.assignmentId}?aid=${input.assignmentId}`,
-    data: {
+    ...createRoutingFields({
       type: 'assignment_reviewed',
       status: input.status,
       assignmentId: input.assignmentId,
-      at: getNotificationTimestampIso(),
-    },
+    }),
   };
 
   if (body) {

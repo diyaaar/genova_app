@@ -24,6 +24,7 @@ export default defineConfig({
         'lib/assignment-cache.ts',
         'lib/drive-file-url.ts',
         'lib/internalPageLinks.ts',
+        'lib/notification-deep-link.ts',
         'lib/richText.ts',
         'lib/server/drive-file-content.ts',
         'lib/server/drive-file-token.ts',
