@@ -6,7 +6,7 @@ vi.mock('@/lib/supabase', () => ({
   supabase: { rpc },
 }));
 
-import { deleteMessage, deleteMessageForMe, editMessage } from '@/lib/chat';
+import { deleteMessage, deleteMessageForMe, editMessage, sendMessage } from '@/lib/chat';
 
 describe('chat message mutation adapters', () => {
   beforeEach(() => {
@@ -40,5 +40,50 @@ describe('chat message mutation adapters', () => {
     const refusal = new Error('refused');
     rpc.mockResolvedValueOnce({ data: null, error: refusal });
     await expect(editMessage('bad', 'text')).rejects.toBe(refusal);
+  });
+
+  it('sends text through the idempotent RPC and returns its acknowledgement', async () => {
+    rpc.mockResolvedValueOnce({
+      data: {
+        id: '00000000-0000-4000-8000-000000000099',
+        room_id: '00000000-0000-4000-8000-000000000010',
+        sender_id: '00000000-0000-4000-8000-000000000011',
+        content: 'Merhaba',
+        message_type: 'text',
+        reply_to_id: null,
+        metadata_json: {},
+        is_edited: false,
+        is_deleted: false,
+        created_at: '2026-09-19T12:00:00.000Z',
+        updated_at: '2026-09-19T12:00:00.000Z',
+      },
+      error: null,
+    });
+
+    const message = await sendMessage(
+      '00000000-0000-4000-8000-000000000010',
+      '00000000-0000-4000-8000-000000000011',
+      'Merhaba',
+      { clientMutationId: '00000000-0000-4000-8000-000000000012' },
+    );
+
+    expect(rpc).toHaveBeenCalledWith('send_chat_text_message', {
+      p_room_id: '00000000-0000-4000-8000-000000000010',
+      p_client_mutation_id: '00000000-0000-4000-8000-000000000012',
+      p_content: 'Merhaba',
+      p_reply_to_id: null,
+      p_metadata_json: {},
+    });
+    expect(message).toMatchObject({
+      id: '00000000-0000-4000-8000-000000000099',
+      client_mutation_id: '00000000-0000-4000-8000-000000000012',
+    });
+  });
+
+  it('refuses an unkeyed text send before network access', async () => {
+    await expect(sendMessage('room', 'sender', 'message')).rejects.toThrow(
+      'Text messages require a client mutation id.',
+    );
+    expect(rpc).not.toHaveBeenCalled();
   });
 });

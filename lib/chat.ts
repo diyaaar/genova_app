@@ -57,6 +57,8 @@ export interface ChatRoomMember {
 
 export interface ChatMessage {
   id: string;
+  /** Local retry key for text sends; the server acknowledgement remains `id`. */
+  client_mutation_id?: string | null;
   room_id: string;
   sender_id: string;
   content: string | null;
@@ -856,7 +858,7 @@ export async function fetchMessages(
   let query = supabase
     .from('chat_messages')
     .select(`
-      id, room_id, sender_id, content, message_type, reply_to_id,
+      id, room_id, sender_id, content, message_type, reply_to_id, client_mutation_id,
       metadata_json, is_edited, is_deleted, created_at, updated_at,
       choir_members!chat_messages_sender_id_fkey (
         id, first_name, last_name, photo_url
@@ -911,15 +913,44 @@ export async function sendMessage(
     messageType?: ChatMessageType;
     replyToId?: string | null;
     metadataJson?: Record<string, unknown>;
+    clientMutationId?: string;
   }
 ) {
+  const messageType = options?.messageType ?? 'text';
+  if (messageType === 'text') {
+    if (!options?.clientMutationId) {
+      throw new Error('Text messages require a client mutation id.');
+    }
+
+    const { data, error } = await supabase.rpc('send_chat_text_message', {
+      p_room_id: roomId,
+      p_client_mutation_id: options.clientMutationId,
+      p_content: content,
+      p_reply_to_id: options.replyToId ?? null,
+      p_metadata_json: options.metadataJson ?? {},
+    });
+    if (error) throw error;
+
+    const rpcRow = Array.isArray(data) ? data[0] : data;
+    if (!rpcRow || typeof rpcRow !== 'object') {
+      throw new Error('Text message acknowledgement is missing.');
+    }
+    const row = rpcRow as Record<string, unknown>;
+    return {
+      ...row,
+      client_mutation_id: options.clientMutationId,
+      metadata_json: (row.metadata_json ?? {}) as Record<string, unknown>,
+      message_type: (row.message_type as ChatMessageType | undefined) ?? 'text',
+    } as ChatMessage;
+  }
+
   const { data, error } = await supabase
     .from('chat_messages')
     .insert({
       room_id: roomId,
       sender_id: senderId,
       content,
-      message_type: options?.messageType ?? 'text',
+      message_type: messageType,
       reply_to_id: options?.replyToId ?? null,
       metadata_json: options?.metadataJson ?? {},
     })

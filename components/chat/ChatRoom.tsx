@@ -30,15 +30,19 @@ import {
 } from '@/lib/chat';
 import type { ChatMessage, ChatRoomMember, LinkPreviewData } from '@/lib/chat';
 import {
+  createChatClientMutationId,
   markPendingRoomMessageFailed,
   mergeChatMessages,
   readCachedChatRooms,
   readCachedRoomSnapshot,
   readPendingRoomMessages,
+  reconcilePendingChatMessage,
+  reconcilePendingChatSnapshot,
   removePendingRoomMessage,
   upsertPendingRoomMessage,
   writeCachedRoomSnapshot,
 } from '@/lib/chat-cache';
+import type { ChatPendingScope } from '@/lib/chat-cache';
 import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
 import { MessageContextMenu } from './MessageContextMenu';
@@ -94,23 +98,34 @@ async function loadRoomSnapshot(memberId: string, roomId: string) {
   };
 }
 
-function readInitialRoomSnapshot(memberId: string, roomId: string) {
-  const cached = readCachedRoomSnapshot(memberId, roomId);
+function readInitialRoomSnapshot(scope: ChatPendingScope) {
+  const cached = readCachedRoomSnapshot(scope.memberId, scope.roomId);
   if (!cached) return undefined;
+  const reconciled = reconcilePendingChatSnapshot(
+    cached.messages,
+    readPendingRoomMessages(scope),
+  );
+  for (const pendingId of reconciled.acknowledgedPendingIds) {
+    removePendingRoomMessage(scope, pendingId);
+  }
 
   return {
-    messages: mergeChatMessages(cached.messages, readPendingRoomMessages(memberId, roomId)),
+    messages: reconciled.messages,
     roomMembers: cached.roomMembers,
     starredMessageIds: cached.starredMessageIds,
     hasMore: cached.hasMore,
   };
 }
 
+function serverTextMetadata(metadata: Record<string, unknown>) {
+  return metadata.link_preview ? { link_preview: metadata.link_preview } : {};
+}
+
 export function ChatRoom({ slug }: ChatRoomProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { member, isLoading: isAuthLoading } = useAuth();
+  const { activeChoir, member, user, isLoading: isAuthLoading } = useAuth();
   const setActiveRoomId = useChatStore((state) => state.setActiveRoomId);
   const setRoomInfoOpen = useChatStore((state) => state.setRoomInfoOpen);
   const setRooms = useChatStore((state) => state.setRooms);
@@ -148,6 +163,15 @@ export function ChatRoom({ slug }: ChatRoomProps) {
   const retriedPendingRoomRef = useRef<string | null>(null);
 
   const roomId = resolvedRoomId;
+  const pendingScope = useMemo<ChatPendingScope | null>(() => {
+    if (!user?.id || !activeChoir?.choir_id || !member?.id || !roomId) return null;
+    return {
+      accountId: user.id,
+      choirId: activeChoir.choir_id,
+      memberId: member.id,
+      roomId,
+    };
+  }, [activeChoir?.choir_id, member?.id, roomId, user?.id]);
   const room = roomId ? rooms.find((r) => r.id === roomId) : undefined;
   const { sendTyping } = useChatRealtime(member?.id ?? null, roomId);
 
@@ -164,18 +188,23 @@ export function ChatRoom({ slug }: ChatRoomProps) {
       }
 
       const fresh = await loadRoomSnapshot(member.id, roomId);
-      const pendingMessages = readPendingRoomMessages(member.id, roomId);
+      if (!pendingScope) return fresh;
+      const pendingMessages = readPendingRoomMessages(pendingScope);
+      const reconciled = reconcilePendingChatSnapshot(fresh.messages, pendingMessages);
+      for (const pendingId of reconciled.acknowledgedPendingIds) {
+        removePendingRoomMessage(pendingScope, pendingId);
+      }
       const snapshot = {
         ...fresh,
-        messages: mergeChatMessages(fresh.messages, pendingMessages),
+        messages: reconciled.messages,
       };
       writeCachedRoomSnapshot(member.id, roomId, snapshot);
       return snapshot;
     },
-    enabled: Boolean(member?.id && roomId),
+    enabled: Boolean(member?.id && roomId && pendingScope),
     initialData: () => (
-      member?.id && roomId
-        ? readInitialRoomSnapshot(member.id, roomId)
+      pendingScope
+        ? readInitialRoomSnapshot(pendingScope)
         : undefined
     ),
     staleTime: 10_000,
@@ -347,39 +376,105 @@ export function ChatRoom({ slug }: ChatRoomProps) {
       .catch((err) => console.error('Failed to mark room as read:', err));
   }, [roomId, member?.id]);
 
+  const transmitPendingText = useCallback(async (queuedMessage: ChatMessage) => {
+    if (!pendingScope || !member?.id || !roomId || !queuedMessage.content
+      || !queuedMessage.client_mutation_id) return;
+
+    const sendingMessage: ChatMessage = {
+      ...queuedMessage,
+      metadata_json: { ...queuedMessage.metadata_json, _status: 'pending' },
+    };
+    delete sendingMessage.metadata_json._failed;
+    delete sendingMessage.metadata_json._queue_write_failed;
+
+    if (!upsertPendingRoomMessage(pendingScope, sendingMessage)) {
+      useChatStore.getState().updateMessage(roomId, queuedMessage.id, {
+        metadata_json: {
+          ...queuedMessage.metadata_json,
+          _status: 'failed',
+          _failed: true,
+          _queue_write_failed: true,
+        },
+      });
+      return;
+    }
+
+    useChatStore.getState().updateMessage(roomId, queuedMessage.id, {
+      metadata_json: sendingMessage.metadata_json,
+    });
+
+    try {
+      const real = await sendMessage(roomId, member.id, queuedMessage.content, {
+        replyToId: queuedMessage.reply_to_id,
+        metadataJson: serverTextMetadata(queuedMessage.metadata_json),
+        clientMutationId: queuedMessage.client_mutation_id,
+      });
+      removePendingRoomMessage(pendingScope, queuedMessage.id);
+
+      const acknowledged: ChatMessage = {
+        ...queuedMessage,
+        ...real,
+        id: real.id,
+        client_mutation_id: queuedMessage.client_mutation_id,
+        metadata_json: real.metadata_json,
+        sender: queuedMessage.sender,
+        reply_to: real.reply_to ?? queuedMessage.reply_to,
+      };
+      const state = useChatStore.getState();
+      const nextMessages = reconcilePendingChatMessage(
+        state.messagesByRoom[roomId] ?? [],
+        queuedMessage.id,
+        acknowledged,
+      );
+      state.setMessages(roomId, nextMessages);
+      writeCachedRoomSnapshot(member.id, roomId, {
+        messages: nextMessages,
+        roomMembers,
+        starredMessageIds,
+        hasMore,
+      });
+    } catch {
+      markPendingRoomMessageFailed(pendingScope, queuedMessage.id);
+      useChatStore.getState().updateMessage(roomId, queuedMessage.id, {
+        metadata_json: {
+          ...queuedMessage.metadata_json,
+          _status: 'failed',
+          _failed: true,
+        },
+      });
+    }
+  }, [hasMore, member?.id, pendingScope, roomId, roomMembers, starredMessageIds]);
+
+  const handleRetryPendingText = useCallback((message: ChatMessage) => {
+    void transmitPendingText(message);
+  }, [transmitPendingText]);
+
+  const handleCancelPendingText = useCallback((message: ChatMessage) => {
+    if (!pendingScope || !roomId) return;
+    if (removePendingRoomMessage(pendingScope, message.id)) {
+      useChatStore.getState().removeOptimisticMessage(roomId, message.id);
+    }
+  }, [pendingScope, roomId]);
+
   useEffect(() => {
-    if (!member?.id || !roomId) return;
-    if (retriedPendingRoomRef.current === roomId) return;
+    if (!pendingScope) return;
+    const scopeKey = `${pendingScope.accountId}:${pendingScope.choirId}:${pendingScope.memberId}:${pendingScope.roomId}`;
+    if (retriedPendingRoomRef.current === scopeKey) return;
     if (typeof navigator !== 'undefined' && !navigator.onLine) return;
 
-    const queued = readPendingRoomMessages(member.id, roomId)
-      .filter((message) => message.message_type === 'text' && message.content);
+    const queued = readPendingRoomMessages(pendingScope).filter((message) => (
+      message.message_type === 'text'
+      && message.content
+      && message.metadata_json._status !== 'failed'
+      && !message.metadata_json._legacy_unkeyed
+    ));
     if (queued.length === 0) return;
 
-    retriedPendingRoomRef.current = roomId;
+    retriedPendingRoomRef.current = scopeKey;
     for (const queuedMessage of queued) {
-      const metadataJson = { ...queuedMessage.metadata_json };
-      delete metadataJson._status;
-      delete metadataJson._failed;
-
-      void sendMessage(roomId, member.id, queuedMessage.content ?? '', {
-        replyToId: queuedMessage.reply_to_id,
-        metadataJson,
-      })
-        .then((real) => {
-          removePendingRoomMessage(member.id, roomId, queuedMessage.id);
-          useChatStore.getState().updateMessage(roomId, queuedMessage.id, {
-            id: real.id,
-            created_at: real.created_at,
-            metadata_json: real.metadata_json,
-            reply_to: real.reply_to ?? queuedMessage.reply_to,
-          });
-        })
-        .catch(() => {
-          markPendingRoomMessageFailed(member.id, roomId, queuedMessage.id);
-        });
+      void transmitPendingText(queuedMessage);
     }
-  }, [member?.id, roomId]);
+  }, [pendingScope, transmitPendingText]);
 
   useEffect(() => {
     if (!member?.id || !roomId || messages.length === 0) return;
@@ -467,7 +562,7 @@ export function ChatRoom({ slug }: ChatRoomProps) {
   // Send message (or update if editing)
   const handleSend = useCallback(
     async (content: string, linkPreview?: LinkPreviewData | null) => {
-      if (!member?.id || !roomId) return;
+      if (!member?.id || !roomId || !pendingScope) return;
 
       // If editing, update the existing message
       if (editingMessage) {
@@ -489,9 +584,11 @@ export function ChatRoom({ slug }: ChatRoomProps) {
       // Normal send with optimistic UI
       const replyTo = useChatStore.getState().replyingTo;
       const metadataJson = linkPreview ? { link_preview: linkPreview } : {};
-      const tempId = `temp-${Date.now()}`;
+      const clientMutationId = createChatClientMutationId();
+      const tempId = `temp-${clientMutationId}`;
       const opt: ChatMessage = {
         id: tempId,
+        client_mutation_id: clientMutationId,
         room_id: roomId,
         sender_id: member.id,
         content,
@@ -523,38 +620,10 @@ export function ChatRoom({ slug }: ChatRoomProps) {
         },
       };
       useChatStore.getState().addMessage(roomId, opt);
-      upsertPendingRoomMessage(member.id, roomId, opt);
       setReplyingTo(null);
-      try {
-        const real = await sendMessage(roomId, member.id, content, {
-          replyToId: replyTo?.id ?? null,
-          metadataJson,
-        });
-        removePendingRoomMessage(member.id, roomId, tempId);
-        useChatStore
-          .getState()
-          .updateMessage(roomId, tempId, {
-            id: real.id,
-            created_at: real.created_at,
-            metadata_json: real.metadata_json,
-            reply_to: real.reply_to ?? opt.reply_to,
-          });
-        writeCachedRoomSnapshot(member.id, roomId, {
-          messages: mergeChatMessages(useChatStore.getState().messagesByRoom[roomId] ?? [], [real]),
-          roomMembers,
-          starredMessageIds,
-          hasMore,
-        });
-      } catch {
-        markPendingRoomMessageFailed(member.id, roomId, tempId);
-        useChatStore
-          .getState()
-          .updateMessage(roomId, tempId, {
-            metadata_json: { ...metadataJson, _status: 'failed', _failed: true },
-          });
-      }
+      void transmitPendingText(opt);
     },
-    [editingMessage, hasMore, member, roomId, roomMembers, setEditingMessage, setReplyingTo, starredMessageIds]
+    [editingMessage, member, pendingScope, roomId, setEditingMessage, setReplyingTo, transmitPendingText]
   );
 
   // Image upload handler
@@ -884,6 +953,8 @@ export function ChatRoom({ slug }: ChatRoomProps) {
                       onLongPress={(m, pos) => useChatStore.getState().openContextMenu(m, pos)}
                       onReactionToggle={handleReactionToggle}
                       onReply={(m) => setReplyingTo(m)}
+                      onRetry={handleRetryPendingText}
+                      onCancelPending={handleCancelPendingText}
                       onImageClick={handleImageClick}
                       isStarred={starredMessageIds.includes(msg.id)}
                     />

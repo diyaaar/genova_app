@@ -48,6 +48,7 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
       // Build ChatMessage from the raw payload
       const newMessage: ChatMessage = {
         id: msg.id as string,
+        client_mutation_id: (msg.client_mutation_id as string | null) ?? null,
         room_id: msgRoomId,
         sender_id: senderId,
         content: (msg.content as string) ?? null,

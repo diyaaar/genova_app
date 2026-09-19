@@ -17,6 +17,8 @@ interface MessageBubbleProps {
   onLongPress?: (message: ChatMessage, position: { x: number; y: number }) => void;
   onReactionToggle?: (messageId: string, emoji: string) => void;
   onReply?: (message: ChatMessage) => void;
+  onRetry?: (message: ChatMessage) => void;
+  onCancelPending?: (message: ChatMessage) => void;
   onImageClick?: (message: ChatMessage, imageIndex: number) => void;
   isStarred?: boolean;
 }
@@ -69,6 +71,8 @@ export function MessageBubble({
   onLongPress,
   onReactionToggle,
   onReply,
+  onRetry,
+  onCancelPending,
   onImageClick,
   isStarred = false,
 }: MessageBubbleProps) {
@@ -136,6 +140,7 @@ export function MessageBubble({
     () => parseLinkPreview((message.metadata_json as Record<string, unknown> | null)?.link_preview),
     [message.metadata_json]
   );
+  const isFailedPending = Boolean(message.metadata_json?._failed);
 
   const [isHighlighted, setIsHighlighted] = useState(false);
 
@@ -430,6 +435,29 @@ export function MessageBubble({
             currentMemberId={currentMemberId}
             onReactionClick={(emoji) => onReactionToggle?.(message.id, emoji)}
           />
+        )}
+        {isOwn && isFailedPending && (
+          <div className="mt-1 flex items-center gap-2 px-1 text-[0.7rem]">
+            <span className="text-red-500">
+              {message.metadata_json._queue_write_failed
+                ? 'Kuyruğa kaydedilemedi'
+                : 'Gönderilemedi · 7 gün saklanır'}
+            </span>
+            <button
+              type="button"
+              onClick={() => onRetry?.(message)}
+              className="font-semibold text-[var(--color-accent)] underline underline-offset-2"
+            >
+              Tekrar dene
+            </button>
+            <button
+              type="button"
+              onClick={() => onCancelPending?.(message)}
+              className="font-semibold text-[var(--color-text-low)] underline underline-offset-2"
+            >
+              İptal
+            </button>
+          </div>
         )}
       </div>
     </motion.div>
