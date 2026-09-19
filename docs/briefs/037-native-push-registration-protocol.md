@@ -1,6 +1,6 @@
 # 037 — Native push registration protocol
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Add one framework-free, provider-neutral wire contract that lets the
 future native client and Edge registration path exchange only validated registration/revocation
@@ -84,14 +84,14 @@ member/access/refresh fields are not part of any accepted shape. Rollback is cod
 
 **Done definition:**
 
-- [ ] Valid register/revoke/receipt messages normalize without modifying opaque token/secret bytes.
-- [ ] Unknown/version/field/type/UUID/generation/transport-platform/application/environment and
+- [x] Valid register/revoke/receipt messages normalize without modifying opaque token/secret bytes.
+- [x] Unknown/version/field/type/UUID/generation/transport-platform/application/environment and
       overlong/control/whitespace-bearing sensitive values fail closed.
-- [ ] User/member/choir/access/refresh or arbitrary extra fields cannot cross the wire contract.
-- [ ] Generation/scope helpers reject stale auth/choir/installation work and overflow.
-- [ ] Diagnostic summaries contain no token, revocation secret, account, choir, member or
+- [x] User/member/choir/access/refresh or arbitrary extra fields cannot cross the wire contract.
+- [x] Generation/scope helpers reject stale auth/choir/installation work and overflow.
+- [x] Diagnostic summaries contain no token, revocation secret, account, choir, member or
       installation identifier.
-- [ ] Focused tests and root `pnpm check` pass; diff/records/cleanup/disk floor pass.
+- [x] Focused tests and root `pnpm check` pass; diff/records/cleanup/disk floor pass.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -100,18 +100,29 @@ member/access/refresh fields are not part of any accepted shape. Rollback is cod
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-19 | Contract-source/resource preflight | local repository at `1456495` | PASS | 036 and existing shared protocol patterns read; 12,078,044 KiB free; no dependency/runtime planned. |
+| 2026-09-19 | First focused contract run | local uncommitted product diff | PASS | 1 file / 51 tests. Register/revoke/receipt, transports, hostile fields, scope/generation and diagnostic redaction passed. |
+| 2026-09-19 | Product self-review and inherited-field hardening | local uncommitted product diff | PASS | Required keys now use own-property checks so an attacker-controlled prototype cannot supply protocol fields; one regression was added. No acceptance criterion was weakened. Self-review is not independent review. |
+| 2026-09-19 | Focused test with global coverage configuration | local corrected diff | FAIL | The 52 contract tests passed and the new module reached 92.62% statements, 92.85% branches, 100% functions/lines, but the one-file run left all other configured critical modules at zero and therefore failed global thresholds. The same partial-coverage approach was not repeated; the required full gate followed. |
+| 2026-09-19 | Focused lint and root typecheck | local corrected diff | PASS | New contract/test/config lint passed with zero warnings; root TypeScript passed. |
+| 2026-09-19 | `pnpm check` | local content committed as `b1d565f` | PASS | Lint/typecheck; 57 test files / 540 tests; coverage 90.98% statements, 84.98% branches, 97.80% functions and 96.79% lines; Service Worker syntax and Next production build passed. Local code proof only. |
+| 2026-09-19 | Network/provider/secret surface review | product commit `b1d565f` | PASS | No fetch, Supabase client, token getter/listener, console logging, service key or provider call exists. Exact v1 keys refuse caller identity/credential fields; diagnostic output omits all sensitive/identity values. |
+| 2026-09-19 | Generated-output cleanup and disk check | local filesystem | PASS | Removed exact task-owned `.next` (472,560 KiB) and coverage (332 KiB); 12,092,896 KiB (~11.5 GiB) free. No dependency/native/DB runtime created; unrelated temp marker remains unstaged. |
+| 2026-09-19 | Acceptance-record consistency gate | five changed Markdown files | PASS | 102 local links, zero missing; no stale 037 pending marker; owned outputs absent and `git diff --check` passed. |
 
-**Delivery:** Pending. No product revision exists yet. Schema/Edge/mobile/provider work remains
-outside this slice; the next step will be selected only from passed evidence and current resources.
+**Delivery:** Planning commit `f330b5d`; product commit `b1d565f`; this acceptance record follows.
+Rollback `b1d565f` to remove the pure protocol and coverage entry. Schema/Edge/mobile/provider work
+remains outside this slice. The next C2 schema/runtime brief is not resource-ready near the 10 GiB
+floor and the transport adapter awaits the 036 owner choice; select another dependency-ready local
+package rather than manufacturing DB/provider evidence.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact valid v1 register/revoke/receipt normalization | yes | NOT RUN | pending implementation | Opaque values must be preserved byte-for-byte. |
-| Malformed/hostile/unknown/oversized input fails closed without identity authority | yes | NOT RUN | pending implementation | Includes forbidden account/tenant/credential fields and cross-platform transport. |
-| Generation and current-scope stale-work guards | yes | NOT RUN | pending implementation | Includes duplicate, older, newer and safe-integer overflow boundaries. |
-| Diagnostic output is secret/identity safe | yes | NOT RUN | pending implementation | No raw token, revocation secret, user/member/choir/installation identifier. |
-| Focused tests and root shared/web gate | yes | NOT RUN | pending local gates | Local code proof only. |
-| Diff review, output cleanup, free-space floor and record consistency | yes | NOT RUN | pending final checks | Self-review is not independent review. |
+| Exact valid v1 register/revoke/receipt normalization | yes | PASS | 2026-09-19, `b1d565f`, focused/full tests | Expo iOS/Android, APNs/iOS and FCM/Android accepted; UUIDs normalize while opaque token/secret values remain exact. |
+| Malformed/hostile/unknown/oversized input fails closed without identity authority | yes | PASS | 2026-09-19, `b1d565f`, negative matrix | Version/action/keys/types/UUID/generation/pair/application/environment/token/secret/time and inherited fields refuse without fallback. User/member/choir/access/refresh and arbitrary extras cannot cross. |
+| Generation and current-scope stale-work guards | yes | PASS | 2026-09-19, `b1d565f`, scope/generation tests | Exact normalized scope passes; different user/choir/installation and older/newer generation fail; unsafe increment returns null. No persistent queue exists. |
+| Diagnostic output is secret/identity safe | yes | PASS | 2026-09-19, `b1d565f`, serialized redaction tests | Accepted and hostile rejected input expose no token, revocation secret, user/member/choir/installation/registration value or key. |
+| Focused tests and root shared/web gate | yes | PASS | 2026-09-19, `b1d565f`, focused test + `pnpm check` | Focused 52 tests; full 57 files / 540 tests, coverage thresholds, SW syntax and build. Local code proof only. |
+| Diff review, output cleanup, free-space floor and record consistency | yes | PASS | 2026-09-19, commit/disk/status/document checks | Product diff self-reviewed; exact outputs removed; 12,092,896 KiB free; 102 links and status/diff checks pass. Self-review is not independent review. |
 | DB/Edge/mobile runtime/provider/real recipient/hardware | N/A — pure protocol slice | N/A | not executed | Required in later C2 briefs. |

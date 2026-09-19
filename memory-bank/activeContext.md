@@ -1,10 +1,11 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md)
-documentation-accepts the native registration lifecycle after `04319e3` added the notification
-permission/tap consumer and `6883b3b` added the C2 shared contract, following
-the final C1 product repair `69714b1`, Expo alignment `851e9cd` and early-401 repair `6a5769a`.
+owns resource controls; `b1d565f` contains the accepted provider-neutral native push registration
+protocol after [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md) fixed the
+lifecycle, `04319e3` added the permission/tap consumer and `6883b3b` added the C2 event contract,
+following the final C1 product repair `69714b1`, Expo alignment `851e9cd` and early-401 repair
+`6a5769a`.
 The product SecureStore remains unchanged; 033/C1 runtime acceptance is locally complete.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
 [delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
@@ -12,7 +13,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `04319e3`. Recorded remote `a13f696`;
+- Product revision: `b1d565f`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -42,6 +43,10 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   relation/transport path preserves web behavior. Account, current choir, installation, token
   generation/rotation, permission refusal, sign-out/offline revocation and stale-provider cleanup
   are specified. Expo-first is recommended; the owner transport choice remains open.
+- [037](../docs/briefs/037-native-push-registration-protocol.md) is **ACCEPTED LOCALLY** at
+  `b1d565f`: fail-closed v1 register/revoke/receipt shapes, explicit transport/platform,
+  safe generation/current-scope guards and redacted diagnostics pass focused 52 tests and the full
+  57-file/540-test root gate. It performs no token, network, storage, schema or provider action.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -58,9 +63,10 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  During 036, about 12.1 million KiB (~11.5 GiB) remained free. Next: the smallest provider-neutral
-  C2 registration protocol/core; do not allocate a native/DB runtime near the floor or infer
-  provider/device delivery from local contract tests.
+  After 037 cleanup 12,092,896 KiB (~11.5 GiB) remained free. C2's next schema/runtime cannot fit
+  its required DB evidence safely near the floor, and its adapter awaits the Expo-vs-direct owner
+  choice. Next ready local package is C3 chat inventory; do not infer provider/device delivery from
+  local contract tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -69,7 +75,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–036, C3–C5 and release/store work remain pending; C1
+C2 token/provider delivery beyond accepted 034–037, C3–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
 Local-work authority persists within current scope. External actions, real data/accounts,
