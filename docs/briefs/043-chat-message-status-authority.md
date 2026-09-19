@@ -1,6 +1,6 @@
 # 043 — Durable chat message-status authority
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Give delivered/read status a room-authorized, actor-bound and
 server-timestamped write path without trusting caller identity or mutable client timestamps.
@@ -67,11 +67,11 @@ objects. Hosted rollback remains separately approved.
 
 **Done definition:**
 
-- [ ] RPC writes only the current member in an accessible message room with server timestamps.
-- [ ] Delivered/read transitions are idempotent and monotonic; direct/invalid/foreign writes refuse.
-- [ ] Sender reads all message statuses; other members only own; nonmember/cross boundaries refuse.
-- [ ] Forward/down/re-forward, exact prior state, source/root gates, cleanup and records pass.
-- [ ] Hosted/client/Realtime/native boundaries remain explicit.
+- [x] RPC writes only the current member in an accessible message room with server timestamps.
+- [x] Delivered/read transitions are idempotent and monotonic; direct/invalid/foreign writes refuse.
+- [x] Sender reads all message statuses; other members only own; nonmember/cross boundaries refuse.
+- [x] Forward/down/re-forward, exact prior state, source/root gates, cleanup and records pass.
+- [x] Hosted/client/Realtime/native boundaries remain explicit.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -80,15 +80,25 @@ objects. Hosted rollback remains separately approved.
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-19 | Source/caller/resource preflight | repository at `c6e33d1`; restored loopback PostgreSQL 17 | PASS | Current web has one sender-only detail reader and no status-table writer; public Broadcast remains non-durable. 21,682,484 KiB free; no clone/build started. |
+| 2026-09-19 | Guarded forward/down/restored-forward runner | loopback PostgreSQL 17, disposable `genova_043_test_restore`, 041–042 applied first | PASS | Final sender/reader/nonmember/two-room/two-choir matrix passed twice. Exact post-042 status policies/API/data restored on down; source unchanged; target dropped. |
+| 2026-09-19 | RPC transition/refusal matrix | synthetic local transaction | PASS | Server-time delivered/read, repeated delivered/read and late-delivered calls are monotonic/idempotent; direct writes, invalid value, wrong room, cross choir and nonmember refuse. |
+| 2026-09-19 | Runner name/refusal guard | local shell | PASS | Shell syntax passed and unsafe database name refused before database action. |
+| 2026-09-19 | Root `pnpm check` | local repository, product `1434464` | PASS | Lint/typecheck, 58 test files / 571 tests, coverage, service-worker syntax and Next production build passed. |
+| 2026-09-19 | DDL/API/query/diff review | four product/test files | PASS | Public execution is revoked then granted only to authenticated; SECURITY DEFINER function derives choir/member/time server-side with fixed search path. Sender-all/member-own policy uses indexed message and membership keys. Self-review only. |
+| 2026-09-19 | Generated-output/database cleanup | local filesystem/PostgreSQL | PASS | Target absent; exact `.next` (472,608 KiB) and `coverage` (332 KiB) removed; 21,680,984 KiB (~20.7 GiB) free; unrelated marker unstaged. |
+| 2026-09-19 | Documentation consistency gate | five changed Markdown files | PASS | 129 local links resolve with zero missing; stale 043 pending/next-status markers absent; `git diff --check` passes. |
 
-**Delivery:** Pending migration/test implementation and acceptance record.
+**Delivery:** Planning commit `8ad0893`; product/test commit `1434464`; this acceptance/status
+record follows separately. Rollback is the scoped down migration locally, or the product commit
+before hosted application. Next: core message edit/delete/identity/time-window authority; client
+adoption and publication/private Realtime remain later slices.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Evidence and limit |
 |---|---|---|---|
-| Server-time own delivered/read RPC and idempotent monotonic progression | yes | NOT RUN | Pending local SQL matrix. |
-| Direct/invalid/other-identity/inaccessible-room/cross-choir refusal | yes | NOT RUN | Pending two-room/two-choir matrix. |
-| Sender-all versus member-own read visibility | yes | NOT RUN | Must preserve current sender info flow without room-wide disclosure. |
-| Forward/down/re-forward, exact restore, source/root gates and cleanup | yes | NOT RUN | Disposable post-042 baseline only. |
+| Server-time own delivered/read RPC and idempotent monotonic progression | yes | PASS | `1434464`; repeated and reordered local RPC matrix passed. |
+| Direct/invalid/other-identity/inaccessible-room/cross-choir refusal | yes | PASS | Direct table writes and all foreign/invalid scenarios refuse locally. |
+| Sender-all versus member-own read visibility | yes | PASS | Sender sees two recipient rows; reader sees only own; nonmember sees zero. |
+| Forward/down/re-forward, exact restore, source/root gates and cleanup | yes | PASS | Exact roundtrip/source baseline; 58 files/571 tests/build; outputs removed; ~20.7 GiB free; 129 links and diff check pass. |
 | Client adoption/core messages/Realtime/native/hosted | N/A — later slices | N/A | Explicitly not executed. |

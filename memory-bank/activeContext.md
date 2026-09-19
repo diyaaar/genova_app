@@ -1,8 +1,9 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [042](../docs/briefs/042-chat-social-membership-authority.md) now owns C3's
-second accepted authority repair after 038–041. Product `c58f4da` binds social rows to room/actor;
+owns resource controls; [043](../docs/briefs/043-chat-message-status-authority.md) now owns C3's
+accepted durable status authority after 038–042. Product `1434464` adds the server-time status RPC;
+`c58f4da` binds social rows to room/actor;
 `cb4e7ec` closes arbitrary room self-join/membership escalation; `2dfe6ab` validates shared read
 data; `7a6a78e` resets chat process memory; `b1d565f` remains the native
 push registration protocol after [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md)
@@ -15,7 +16,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `c58f4da`. Recorded remote `a13f696`;
+- Product revision: `1434464`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -73,7 +74,12 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - [042](../docs/briefs/042-chat-social-membership-authority.md) is **ACCEPTED LOCALLY** at `c58f4da`:
   reactions, polls, votes and stars now require current room/actor authority; exact reaction/vote
   no-op upserts and current web flows remain. Two-room/two-choir forward/down/re-forward and root
-  58 files/571 tests/build pass. Message status, core messages, poll anonymity and Realtime remain.
+  58 files/571 tests/build pass. Status authority is accepted separately under 043; core messages,
+  poll anonymity and Realtime remain.
+- [043](../docs/briefs/043-chat-message-status-authority.md) is **ACCEPTED LOCALLY** at `1434464`:
+  authenticated room members mark only their status with server time; transitions are monotonic and
+  idempotent; senders see all recipient rows while other members see only own. Roundtrip and root
+  gates pass. No web/native writer adopts the RPC; core messages and Realtime remain.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -91,9 +97,9 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
   An orphan inactive task-owned 033 VM disk was removed before 041. After 041's exact DB/build
-  cleanup, 21,683,500 KiB (~20.7 GiB) remained free. C2's adapter still awaits the Expo-vs-direct
-  owner choice. C3 is accepted through 042's social authority slice; durable message-status
-  authority is next, with core messages/publication/private Realtime/native runtime separate. Do not infer hosted DB,
+  cleanup, 21,680,984 KiB (~20.7 GiB) remained free. C2's adapter still awaits the Expo-vs-direct
+  owner choice. C3 is accepted through 043's durable status authority; core-message rules are next,
+  with client adoption/publication/private Realtime/native runtime separate. Do not infer hosted DB,
   provider or device delivery from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
@@ -103,7 +109,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 042,
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 043,
 C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
