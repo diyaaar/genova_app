@@ -1,9 +1,10 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [044](../docs/briefs/044-chat-core-message-mutation-authority.md) now owns
-C3's accepted core-message mutation authority after 038–043. Product `621147e` adds server-owned
-edit/delete/hide and tightens message insertion; `1434464` adds the server-time status RPC;
+owns resource controls; [045](../docs/briefs/045-chat-text-send-idempotency.md) now owns C3's
+accepted idempotent text-send/retry authority after 038–044. Product `361ab7c` adds sender-keyed
+text/reply/link acknowledgement plus bounded web retry/cancel; `621147e` adds server-owned
+edit/delete/hide and tightened insertion; `1434464` adds the server-time status RPC;
 `c58f4da` binds social rows to room/actor;
 `cb4e7ec` closes arbitrary room self-join/membership escalation; `2dfe6ab` validates shared read
 data; `7a6a78e` resets chat process memory; `b1d565f` remains the native
@@ -17,7 +18,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `621147e`. Recorded remote `a13f696`;
+- Product revision: `361ab7c`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -86,6 +87,11 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   ineffective shared metadata. Tightened member send/same-room reply, refusal matrix, exact
   forward/down/re-forward and root 59-file/575-test/build gates pass. No hosted schema was touched;
   idempotent text send/retry, status client adoption, private Realtime and native runtime remain.
+- [045](../docs/briefs/045-chat-text-send-idempotency.md) is **ACCEPTED LOCALLY** at `361ab7c`:
+  sender-scoped keys and immutable payload hashes acknowledge one text/reply/link message across
+  lost responses; mismatch/revocation refuse. The web persists before network, scopes by account/
+  choir/member/room, caps at 50/seven days, exposes retry/cancel and reconciles reload duplicates.
+  SQL roundtrip and root 60-file/582-test/build gates pass. No hosted schema or native runtime ran.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -102,11 +108,11 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  An orphan inactive task-owned 033 VM disk was removed before 041. After 044's exact DB/build
-  cleanup, 21,673,820 KiB (~20.7 GiB) remained free. C2's adapter still awaits the Expo-vs-direct
-  owner choice. C3 is accepted through 044's core-message mutation authority; idempotent text
-  send/retry is next, with status client adoption/publication/private Realtime/native runtime separate. Do not infer hosted DB,
-  provider or device delivery from local tests.
+  An orphan inactive task-owned 033 VM disk was removed before 041. After 045's exact DB/build
+  cleanup, 21,635,476 KiB (~20.6 GiB) remained free. C2's adapter still awaits the Expo-vs-direct
+  owner choice. C3 is accepted through 045's idempotent text-send/retry authority; private room
+  Realtime authorization/publication is next, with status client adoption/native runtime separate.
+  Do not infer hosted DB, provider or device delivery from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -115,7 +121,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 044,
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 045,
 C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.

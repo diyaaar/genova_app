@@ -1,6 +1,6 @@
 # 045 — Idempotent chat text send and bounded retry
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Ensure a text, reply or link-preview message is stored once when the
 network loses the acknowledgement, while giving the sender explicit retry and cancel controls.
@@ -87,14 +87,14 @@ down would remove retry correlation and remains separately reviewed/approved.
 
 **Done definition:**
 
-- [ ] Same key + same accepted payload returns one server ID after lost acknowledgement/retry;
+- [x] Same key + same accepted payload returns one server ID after lost acknowledgement/retry;
       mismatched reuse and unauthorized scopes fail closed.
-- [ ] Web persists before send, restores after reload, exposes retry/cancel and reconciles duplicate
+- [x] Web persists before send, restores after reload, exposes retry/cancel and reconciles duplicate
       acknowledgement/event without duplicate bubbles or silent removal.
-- [ ] Queue keys include account/choir/member/room; seven-day expiry, 50-item cap, failed writes and
+- [x] Queue keys include account/choir/member/room; seven-day expiry, 50-item cap, failed writes and
       tenant teardown have explicit tested behavior and no confidentiality overclaim.
-- [ ] Exact forward/down/re-forward/source checks, focused tests and root `pnpm check` pass.
-- [ ] Diff/security/UX review, cleanup, disk/docs gates and later boundaries are recorded.
+- [x] Exact forward/down/re-forward/source checks, focused tests and root `pnpm check` pass.
+- [x] Diff/security/UX review, cleanup, disk/docs gates and later boundaries are recorded.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -103,15 +103,28 @@ down would remove retry correlation and remains separately reviewed/approved.
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-19 | Source/resource/ownership preflight | local product `621147e`, records `2891e51` | PASS | Direct insert + unkeyed mount retry/no controls reproduced in source. Existing source DB present, disposable target absent, 21,647,120 KiB free; no runtime/build started. |
+| 2026-09-19 | First SQL matrix run | disposable PostgreSQL 17 clone | FAIL | The test itself queried the intentionally private send-key table while still under `authenticated`; PostgreSQL refused the query. No product criterion was weakened and the target was removed by the runner trap. |
+| 2026-09-19 | Corrected forward/down/re-forward matrix | loopback PostgreSQL 17; 041–044 applied first | PASS | Same key/payload returns one ID/row, immutable hash survives later edit, mismatch/metadata/reply/nonmember/cross-choir/revoked-member paths refuse, sender-scoped same UUID is independent. Down restores exact post-044 API/schema/policy/data, source unchanged, target removed. |
+| 2026-09-19 | Reload duplicate design review and repair | product source/self-review | PASS | The accepted server key is also exposed on its message row; fresh/cached snapshots reconcile and remove the matching temp item before render. Private mapping retains the immutable request hash. |
+| 2026-09-19 | Focused web gates | local Vitest/lint/typecheck | PASS | Three files / 15 tests pass: RPC/no-key adapter, account/choir scope, TTL/capacity/write refusal/legacy migration, snapshot/ack dedup and retry/cancel controls. Focused lint and root typecheck pass. |
+| 2026-09-19 | Unsafe runner target guard | local shell | PASS | `PGDATABASE=postgres` refuses with status 2 before database action; runner syntax and executable mode pass. |
+| 2026-09-19 | Security/data/UX/diff review | migration, queue and web adoption | PASS | RPC derives actor/choir/room, fixes search path, hashes canonical payload and exposes no internal mapping privileges. Client persists before network, server metadata excludes local flags, failed bubbles show retry/cancel and seven-day retention. Self-review only. |
+| 2026-09-19 | Final root `pnpm check` | local product `361ab7c` | PASS | Lint/typecheck, 60 test files/582 tests, coverage, service-worker syntax and Next production build pass. |
+| 2026-09-19 | Cleanup/resource recheck | local filesystem/PostgreSQL | PASS | First direct-delete formulation was tool-refused before action; safe exact deletion removed `.next` 472,900 KiB and coverage 332 KiB. Disposable DB absent; 21,635,476 KiB (~20.6 GiB) free; CLI marker remains unstaged. |
+| 2026-09-19 | Documentation consistency gate | five changed Markdown files | PASS | 136 local links resolve with zero missing targets/anchors; stale 045 pending/next-idempotency markers are absent and `git diff --check` passes. |
 
-**Delivery:** Pending implementation and acceptance records.
+**Delivery:** Planning `339ac6e`; product/test `361ab7c`; this acceptance record follows.
+Rollback is the scoped down plus product revert locally. A hosted down would discard retry mappings
+and the message correlation column, so it remains a separately reviewed/approved data operation.
+Next ready foundation: private room Realtime authorization/publication; status client adoption and
+native list/read remain separate later packages.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Server idempotency and payload mismatch refusal | yes | NOT RUN | Pending local SQL matrix | Must prove one row/ID and fail changed room/content/reply/metadata. |
-| Sender/member/room/choir/reply/revocation refusal | yes | NOT RUN | Pending local SQL matrix | Server derives actor and current choir. |
-| Queue scope, persistence, retention, capacity and write failure | yes | NOT RUN | Pending focused browser-unit tests | Plain localStorage limitation stays explicit. |
-| Retry/cancel and duplicate acknowledgement/event reconciliation | yes | NOT RUN | Pending focused adapter/UI/store tests | No silent loss or duplicate bubble. |
-| Forward/down/re-forward, root compatibility and cleanup | yes | NOT RUN | Pending | Hosted/native/provider/device layers remain unrun. |
+| Server idempotency and payload mismatch refusal | yes | PASS | 2026-09-19, `361ab7c`, loopback PostgreSQL 17 | One message/ID for repeated exact payload; changed room/content/reply/metadata refuses and the immutable hash survives edit. |
+| Sender/member/room/choir/reply/revocation refusal | yes | PASS | 2026-09-19, local SQL matrix | Server-derived actor/choir plus room/reply membership matrix passes; revoked member cannot receive even an existing acknowledgement. |
+| Queue scope, persistence, retention, capacity and write failure | yes | PASS | 2026-09-19, focused Vitest | Account/choir/member/room key, reload, seven-day TTL, 50 cap, quota refusal and legacy explicit-failure migration pass. Plain localStorage remains non-confidential. |
+| Retry/cancel and duplicate acknowledgement/event reconciliation | yes | PASS | 2026-09-19, focused Vitest and diff review | Failed sender bubble exposes both actions; temp/server ID and fresh-snapshot mutation-key paths each collapse to one row. |
+| Forward/down/re-forward, root compatibility and cleanup | yes | PASS | 2026-09-19, `361ab7c`, local only | Exact SQL roundtrip, 60/582/build, target/output removal and disk floor pass. Hosted/native/provider/device layers remain NOT RUN. |
