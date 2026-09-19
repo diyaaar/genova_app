@@ -3,7 +3,7 @@
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
 owns resource controls; `69714b1` contains the final agent-operable iOS feature/fault repair after
 the Expo alignment `851e9cd` and early-401 repair `6a5769a`.
-The product SecureStore remains unchanged; runtime acceptance stays open.
+The product SecureStore remains unchanged; 033/C1 runtime acceptance is locally complete.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
 [delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
 dependencies and resource controls. Do not duplicate the historical brief narrative here.
@@ -12,8 +12,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 - Product revision: `69714b1`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
-- 033/C1 remains OPEN. Guarded Android credential/session/sign-out and the bounded guarded iOS
-  feature/fault batch now pass. Only successful iOS password change/restore through user UI hand-off persists. See
+- 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
+  iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
   [033](../docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
 - Real synthetic credential delivery and fixture-backed bundle scans passed in the interrupted
   run; the unsigned build's SecureStore failure was repaired operationally by using Xcode's normal
@@ -27,20 +27,22 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
-  sign-out and cold-relaunch signed-out state. Password change/restore requires user UI hand-off.
+  sign-out and cold-relaunch signed-out state. The owner then performed both native password
+  submissions; the change showed visible success and a fresh one-use original fixture credential
+  opened a new Auth session after restoration. The agent never handled either password.
 - Current Android evidence: cached-toolchain guarded arm64 Release/signature/alignment/SDK/manifest
   and fixture-password scan PASS; fresh API 36 AVD consumed one credential, persisted SecureStore
   through cold restart, then WebView sign-out cleared native session and refused closed-channel reuse.
 - Current normal Android Release/signature/alignment/SDK/ABI/manifest/SecureStore-backup/bundle
   isolation also PASS on post-alignment dependencies; all exact generated outputs were removed.
-- Final cleanup: target baseline restored; runtime, generated native/web builds, exact app/AVD,
-  wrapper and Colima profile/data/context removed; owned service ports closed. Final available
-  latest recheck 25,688,468 KiB (~24.5 GiB). Shared caches/device pool were not purged. Recheck before allocating.
+- Final cleanup: target baseline restored; runtime, generated native/web builds, exact app/simulators,
+  wrapper and Colima profile/data/context removed; owned service ports closed. Final password-run
+  recheck 18,478,116 KiB (~17.6 GiB). Shared caches/device pool were not purged. Recheck before allocating.
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  Next: only the bounded successful iOS password change/restore user hand-off; do not replay passed
-  Android/iOS scenarios and never enter or submit the user's new password.
+  Next: select the first bounded C2 notification/deep-link contract slice; do not replay accepted
+  033 Android/iOS scenarios or infer provider/device delivery from local payload tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -49,7 +51,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2–C5 and release/store work remain pending; no C1 acceptance is inferred.
+C2–C5 and release/store work remain pending; C1 acceptance is local simulator/emulator evidence,
+not hosted-provider, real-account, hardware or distribution acceptance.
 Local-work authority persists within current scope. External actions, real data/accounts,
 email, credentials, spending, CI dispatch, publication and hardware retain their gates.
 Decision #17/account risk and historical GitHub-token revocation remain unresolved.

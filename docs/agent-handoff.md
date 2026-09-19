@@ -25,9 +25,9 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 
 - M0/A1–A3 local read foundation accepted; 018–032 accepted their bounded local scopes.
   Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
-- 033/C1 OPEN: both local Release handshakes/routes and the agent-operable Android/iOS composed
-  scenarios now pass. Only the required successful iOS password change/restore user UI hand-off
-  remains open; the agent must not enter or submit the new password.
+- 033/C1 **ACCEPTED LOCALLY**: both local Release handshakes/routes, the agent-operable Android/iOS
+  composed scenarios and the owner-operated iOS password change/restore now pass. The agent never
+  entered, inspected or submitted either password; a fresh original-fixture sign-in proved restore.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -39,9 +39,10 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   Repaired guarded iOS Release passed early-401 recovery and persisted SecureStore relaunch on
   the real disposable services. `69714b1` then passes real attendance mutation, Realtime invalidation,
   exact PDF cleanup, terminal second-401/native retry, tenant isolation and WebView sign-out on iOS.
-- Final 19 September cleanup restored the disposable target baseline and removed the exact runtime,
-  generated native/web builds, app/AVD, wrapper and Colima profile/data/context; all four ports closed.
-  Latest available: 25,688,468 KiB (~24.5 GiB). Sources/dependencies/shared caches preserved.
+- Final 19 September password-run cleanup restored the disposable target baseline and removed the
+  exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
+  all four ports closed. Latest available: 18,478,116 KiB (~17.6 GiB).
+  Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
@@ -52,10 +53,11 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 `851e9cd` aligns three direct/four required transitive Expo patches. Mobile 197/root 467 tests,
 root build, exports/isolation, Doctor 21/21, normal signed iOS startup/relaunch and guarded Android
 credential/session/sign-out plus normal Android Release/isolation PASS. `69714b1` adds the passing
-guarded iOS feature/fault batch and final root 467-test/build gate. Next: user takes over only the
-successful iOS password change/restore controls in 033; recreate no stack until that hand-off is
-about to happen and its bounded resource card is current. Reuse accepted evidence. C2 still depends
-on C1; 023 owner choices gate final native-writing UX.
+guarded iOS feature/fault batch and final root 467-test/build gate. The owner-operated password
+change/restore closes 033 without product changes. Next: define and execute the smallest ready C2
+notification/deep-link contract slice, beginning with current-source inventory and local payload
+tests. Reuse accepted evidence; provider keys, real delivery/recipients and hardware remain gated.
+The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
 
 ## Authority

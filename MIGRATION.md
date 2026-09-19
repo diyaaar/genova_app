@@ -12,10 +12,11 @@ SecureStore; mobile typecheck and 194 tests pass. The real fixture-backed creden
 passed. A current Xcode-signed normal iOS Release now reaches sign-in on first launch/relaunch with
 real SecureStore and no keychain failure; substitute memory storage remains invalid evidence.
 The repaired guarded Android one-use credential, persisted SecureStore cold relaunch and actual
-WebView sign-out plus the normal Android Release/isolation gate now pass on current dependencies.
-033/C1 stays open for composed iOS feature/fault rows and a post-alignment guarded iOS check. All
-owned native/runtime outputs were cleaned; screen ownership is unchanged.
-Current next action: [033 checkpoint](docs/briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
+WebView sign-out plus the normal Android Release/isolation gate pass on current dependencies.
+The guarded iOS feature/fault batch and owner-operated password change/restore also pass; a fresh
+original-fixture sign-in proved restoration without exposing a password to the agent. 033/C1 is
+accepted locally and all owned native/runtime outputs were cleaned; screen ownership is unchanged.
+Current next action: bounded C2 notification/deep-link contract inventory and local payload tests.
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**
@@ -65,15 +66,15 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Ekran | ≈ satır | Hedef | Durum | Faz |
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
-| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028 sözleşme, 029 ortak saf politika, 030 dormant web adapter, 031 native WebView kabuğu ve 032 platform yeteneklerini yerelde kabul etti; 033 iki yerel Release handshake'ini ve rota kabuğunu kanıtladı ama iOS özellik/hata satırları açık, push bekliyor | 1 |
+| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028–032 WebView katmanlarını ve 033 iki platformlu bileşik yaşam döngüsünü yerelde kabul etti; push/C2 bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
-| Duyurular | 977 | **WebView — kalıcı** | 028–032 katmanları kabul edildi; 033 gerçek yerel bileşik handshake ve rotaları iki platformda çalıştırdı, ancak iOS mutation/Realtime/dosya ve hata yaşam döngüsü eksikleri nedeniyle C1 açık | — |
-| Koristler | 2.511 | **WebView — kalıcı** | 028–032 rol/dosya katmanları kabul edildi; 033 iki platformda rota/rol ve Android'de gerçek dosya akışını kanıtladı, iOS gerçek dosya ve fault kanıtı açık | — |
-| Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | 028–032 auth/tema/yazma katmanları kabul edildi; 033 iki platformda bileşik rota/tema ve Android'de parola yaşam döngüsünü kanıtladı, iOS başarılı parola/çıkış kanıtı açık | — |
-| Devamsızlık | 1.461 | **WebView — kalıcı** | 028–032 rol/Realtime katmanları kabul edildi; 033 iki platformda rotayı çalıştırdı ve Android senaryosunu tamamladı, iOS mutation/Realtime/fault kanıtı açık | — |
+| Duyurular | 977 | **WebView — kalıcı** | 028–032 katmanları ve 033 iki platformlu gerçek yerel bileşik rota/yaşam döngüsü kabul edildi | — |
+| Koristler | 2.511 | **WebView — kalıcı** | 028–032 rol/dosya katmanları ve 033 iki platformlu rota/rol/gerçek dosya yaşam döngüsü yerelde kabul edildi | — |
+| Profil + değişiklik talepleri | 2.038 | **WebView — kalıcı** | 028–032 auth/tema/yazma katmanları ile 033 iki platformlu bileşik rota, parola ve çıkış yaşam döngüsü yerelde kabul edildi | — |
+| Devamsızlık | 1.461 | **WebView — kalıcı** | 028–032 rol/Realtime katmanları ile 033 iki platformlu rota, mutation, Realtime ve fault yaşam döngüsü yerelde kabul edildi | — |
 
 Kalıcı WebView ekranları native yeniden yazılmaz. Oturum, geri navigasyon,
 erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık varsayılmaz.
@@ -220,10 +221,9 @@ image input and ephemeral protected-file sharing at `fa2e4b7`: mobile 30-suite/1
 cleanup/permission gates passed. Package 033 implemented the guarded composition at `d295c62`: the
 real web/native peers completed both local Release handshakes and all route families, and the Android
 scenario set passed. Current repaired Android credential/session/sign-out then passed on 19 September.
-Required iOS mutation/Realtime/actual-file, successful password/PDF and remaining 401/sign-out/retry
-evidence plus one current guarded iOS Release check remain open, so
-C1 is not accepted. Hosted, provider, device,
-release and hardware remain gated.
+The current guarded iOS mutation/Realtime/PDF/401/sign-out batch then passed at `69714b1`; the owner
+completed the native password change/restore, and a fresh original-fixture sign-in proved restoration.
+033/C1 is accepted locally. Hosted, provider, real-account, device, distribution and hardware remain gated.
 010 6/7 kalır;
 yeni canlı fikstür kurulmaz. 004'ün iki cihaz ölçütü ertelendi ve sıradaki eylem değildir.
 

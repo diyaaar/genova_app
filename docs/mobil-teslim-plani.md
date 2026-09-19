@@ -2,7 +2,7 @@
 
 Execution controls updated 2026-09-15 under
 [WF-007](briefs/WF-007-bounded-execution-and-disk-budget.md) after the owner's disk-pressure
-and delivery-focus review. Product acceptance remains partial at 033. Originally prepared under
+and delivery-focus review. Local C1 acceptance is complete at 033; C2 is next. Originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -22,7 +22,7 @@ boundary, not a progress percentage. Screen ownership remains solely in [MIGRATI
 | M0: local read foundation | Catalogue, ticket and reader units compose without tenant leakage | **COMPLETE locally:** 013–022; actual local Auth/RLS/Edge/Storage, iOS/Android lifecycle and production-browser web compatibility passed. 023 separately accepted the write-contract inventory |
 | M1: operational read pilot | Approved chef/chorist accounts read protected content on approved iOS/Android hardware; refusal, cleanup and relaunch work | NOT RUN; hardware postponed, new Edge path not deployed |
 | M2: rehearsal tools | Compatible annotation writes, recoverable sync, useful audio and stable navigation | 024 server/revision foundation, 025 web lifecycle and 026–027 foreground native audio/navigation accepted locally; native writing and recoverable sync remain open |
-| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | 028–032 accepted the component/platform layers locally. 033 proved both composed handshakes, all route families, current iOS feature/fault and current guarded/normal Android checks. Its successful iOS password change/restore user hand-off remains required; C2–C5 have not started |
+| M3: wider mobile product | Permanent WebView integration plus native chat, assignments and home, with feature preservation | C1 **COMPLETE locally:** 028–032 accepted the component/platform layers; 033 proved both composed handshakes, all route families, current iOS feature/fault, current guarded/normal Android and owner-operated iOS password change/restore. C2–C5 have not started |
 | M4: release candidate | Multi-choir limits, data lifecycle, provider exit, security/accessibility and distribution requirements pass | Future packages; no current store eligibility claim |
 | M5: released and operable | Approved beta/public release verified at actual destination; support and recovery exercised | NOT RUN; publication and spending remain separately gated |
 
@@ -110,7 +110,8 @@ briefs, not in a second copy here.
   and normal Release checks passed on current dependencies. At `69714b1` the guarded iOS batch also
   passed actual attendance mutation, external Realtime invalidation, exact-byte protected PDF and
   cleanup, terminal second-401/native retry, tenant switch, WebView sign-out and signed-out relaunch.
-  It remains open only for the required successful iOS password change/restore user UI hand-off.
+  The owner-operated iOS password change/restore and fresh restored-value sign-in passed on
+  19 September without exposing a password to the agent, closing 033/C1 locally.
   Hosted/provider/real-account/hardware/release acceptance is not inferred.
 - 016's supplemental dependency audit remains FAIL (10 moderate toolchain findings at that
   revision). A dedicated investigation must determine applicability and safe remediation.
@@ -177,7 +178,7 @@ that product/security boundary before shipping. Offline support is not implied b
 
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
-| C1 / stable A read flow | **Foundation in progress:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted dormant web adapter at `c7d09d3`; [031](briefs/031-native-webview-shell.md) accepted native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted platform capabilities at `fa2e4b7`. [033](briefs/033-composed-permanent-webview-runtime.md) composes both clients; current dependency/native gates and the agent-operable iOS/Android composed scenarios pass through `69714b1`. The required successful iOS password change/restore remains a user UI hand-off, so C1 stays open. Preserve prior native/route/platform proof separately. `apps/mobile/src/ui/`, `MIGRATION.md`, auth | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of permanent WebView routes; native alone owns refresh token; no token in URLs/logs; partial local simulator/emulator proof is not full C1 acceptance or hosted/provider/hardware proof |
+| C1 / stable A read flow | **COMPLETE locally:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted dormant web adapter at `c7d09d3`; [031](briefs/031-native-webview-shell.md) accepted native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted platform capabilities at `fa2e4b7`. [033](briefs/033-composed-permanent-webview-runtime.md) composes both clients; current dependency/native gates, iOS/Android composed scenarios and owner-operated iOS password change/restore pass through product `69714b1`. Preserve prior native/route/platform proof separately. `apps/mobile/src/ui/`, `MIGRATION.md`, auth | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of permanent WebView routes; native alone owns refresh token; no token in URLs/logs; this is local simulator/emulator acceptance, not hosted/provider/real-account/hardware/distribution proof |
 | C2 / C1 | Notification/deep-link contract, then native delivery. `lib/server/push-notifications.ts`, current subscribe/unsubscribe routes | Correct account/device token lifecycle; permission refusal; foreground/background tap routing; destination rechecks tenant/role; unsubscribe/sign-out; duplicate delivery handling | Local payload tests first. Provider keys, push delivery and real recipients separately authorized |
 | C3 / C1 + chat inventory | Native chat, split list/read → send/retry → media/remaining features. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and other inventoried features; RLS on every read/write; realtime reconnect/order/dedup; offline retry; inaccessible room and choir switch | Inventory before scope. Dart UI and Socket.IO from the old reference app are not reusable RN/Supabase code |
 | C4 / C1 + file/upload contract | Native assignments, split read → submission → review. `lib/assignment-scope.ts`, `app/(main)/odevler/`, existing assignment APIs | Existing role/deadline/lock/withdrawal/review rules; authorized upload completion, failed/resumed submission, hidden review, wrong tenant and audit behavior | Native server logic moves to shared Edge paths; web uses the same path. Any schema change requires DB gates |
@@ -260,9 +261,10 @@ relaunch passed against the disposable services. On 19 September the repaired gu
 one-use credential, persisted session and WebView-originated sign-out passed and were cleaned.
 The post-alignment normal Android Release/isolation gate then passed and was cleaned. At `69714b1`
 the remaining agent-operable guarded iOS mutation/Realtime/PDF/second-401/tenant/sign-out batch also
-passed and was exactly cleaned. Resume 033 only for the successful iOS password change/restore
-user hand-off; see the brief's current checkpoint rather than replaying historical checks. Keep C1 open until all
-required evidence passes. Follow the execution and resource controls
+passed and was exactly cleaned. The owner then completed the two required iOS password submissions;
+a fresh original-fixture sign-in proved restoration and the exact runtime was cleaned. Preserve 033
+as accepted evidence and resume at the earliest ready bounded C2 notification/deep-link contract
+slice rather than replaying C1. Follow the execution and resource controls
 below: one active result, at most three next actions, causal reassessment after two failed
 approaches, and a progress review every 60 minutes. Preserve at least 10 GiB of filesystem
 free space; estimate peak allocation before downloads/builds, run heavy work sequentially,
@@ -401,10 +403,11 @@ seams passed the 55-file/462-test root gate and production build. Package 031 ac
 challenge/state machine, route/external/back/theme shell at `0217ac8`; package 032 accepted the
 password, clipboard, constrained image and ephemeral-file capabilities at `fa2e4b7`. Package 033
 implemented the guarded composition at `d295c62` and proved both Release handshakes, every route and
-the historical Android scenario set. **19 September checkpoint: active product work remains 033.**
-The repaired Android credential/session/sign-out, guarded plus normal Release checks and the bounded
-guarded iOS feature/fault batch now pass on current dependencies through `69714b1`. Next is the
-successful iOS password change/restore user UI hand-off; no agent may enter or submit the new password.
-See [033's work card](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
-Do not advance to C2 while required rows are FAIL/NOT RUN. 013–032's historical local acceptance,
+the historical Android scenario set. **19 September checkpoint: 033/C1 is accepted locally.**
+The repaired Android credential/session/sign-out, guarded plus normal Release checks, the bounded
+guarded iOS feature/fault batch and the owner-operated iOS password change/restore pass on current
+dependencies through product `69714b1`. The next ready product work is C2's bounded
+notification/deep-link contract slice; provider delivery remains separately gated. See
+[033's final checkpoint](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
+013–032's historical local acceptance,
 004/010 open criteria and the postponed hardware pilot remain unchanged.
