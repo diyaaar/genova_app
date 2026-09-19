@@ -32,7 +32,6 @@ async function removeExistingChannelsForTopic(topic: string) {
 export function useChatRealtime(memberId: string | null, roomId: string | null) {
   const channelRef = useRef<RealtimeChannel | null>(null);
   const typingTimeoutsRef = useRef<Record<string, NodeJS.Timeout>>({});
-  const isSubscribedRef = useRef(false);
   // Removed useChatStore subscription variables to prevent re-renders
 
   // Handle incoming new messages from Postgres Changes
@@ -190,6 +189,24 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
     [memberId]
   );
 
+  const handleMessageStatus = useCallback(
+    (payload: { new: Record<string, unknown> }) => {
+      if (!payload.new.read_at) return;
+      const messageId = payload.new.message_id as string | undefined;
+      if (!messageId) return;
+
+      const state = useChatStore.getState();
+      for (const [currentRoomId, messages] of Object.entries(state.messagesByRoom)) {
+        const message = messages.find((candidate) => candidate.id === messageId);
+        if (message?.sender_id === memberId) {
+          state.setMessageStatus(currentRoomId, messageId, 'read');
+          return;
+        }
+      }
+    },
+    [memberId],
+  );
+
   // Subscribe to room channel
   useEffect(() => {
     if (!memberId || !roomId) return;
@@ -261,7 +278,19 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
         handleDeleteReaction
       );
 
-      // 5. Broadcast — typing indicators
+      // 5. Durable delivered/read rows; RLS exposes own rows or statuses for own messages.
+      channel.on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'chat_message_status' },
+        handleMessageStatus,
+      );
+      channel.on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'chat_message_status' },
+        handleMessageStatus,
+      );
+
+      // 6. Broadcast — typing indicators
       channel.on('broadcast', { event: 'typing' }, (payload) => {
         if (isCancelled) return;
         const typingMemberId = payload.payload?.member_id as string;
@@ -287,22 +316,6 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
         }, 3000);
       });
 
-      // 6. Broadcast — read receipts
-      channel.on('broadcast', { event: 'read_receipt' }, (payload) => {
-        if (isCancelled) return;
-        const readerMemberId = payload.payload?.member_id as string;
-        if (!readerMemberId || readerMemberId === memberId) return;
-
-        // Mark all own messages in this room as 'read'
-        const state = useChatStore.getState();
-        const msgs = state.messagesByRoom[roomId] ?? [];
-        for (const msg of msgs) {
-          if (msg.sender_id === memberId) {
-            state.setMessageStatus(roomId, msg.id, 'read');
-          }
-        }
-      });
-
       // 7. Presence — track online users
       channel.on('presence', { event: 'sync' }, () => {
         if (isCancelled || !channel) return;
@@ -313,22 +326,11 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
 
       channel.subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
-          isSubscribedRef.current = true;
           if (isCancelled || !channel) return;
           await channel.track({
             member_id: memberId,
             online_at: new Date().toISOString(),
           });
-
-          if (isCancelled) return;
-          // Broadcast read receipt when entering room
-          channel.send({
-            type: 'broadcast',
-            event: 'read_receipt',
-            payload: { member_id: memberId },
-          });
-        } else {
-          isSubscribedRef.current = false;
         }
       });
 
@@ -355,7 +357,7 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
       Object.values(typingTimeoutsRef.current).forEach(clearTimeout);
       typingTimeoutsRef.current = {};
     };
-  }, [memberId, roomId, handleNewMessage, handleMessageUpdate, handleNewReaction, handleDeleteReaction]);
+  }, [memberId, roomId, handleNewMessage, handleMessageUpdate, handleNewReaction, handleDeleteReaction, handleMessageStatus]);
 
   // Send typing indicator
   const sendTyping = useCallback(() => {

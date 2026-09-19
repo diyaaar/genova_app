@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { X, Loader2 } from 'lucide-react';
 import { fetchMessageStatuses } from '@/lib/chat';
@@ -23,21 +23,35 @@ interface StatusItem {
 export function MessageInfoModal({ messageId, onClose }: MessageInfoModalProps) {
   const [statuses, setStatuses] = useState<StatusItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasLoadError, setHasLoadError] = useState(false);
   const [activeTab, setActiveTab] = useState<'delivered' | 'read'>('delivered');
+  const requestVersion = useRef(0);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await fetchMessageStatuses(messageId);
+  const load = useCallback(async () => {
+    const version = ++requestVersion.current;
+    setIsLoading(true);
+    setHasLoadError(false);
+    try {
+      const data = await fetchMessageStatuses(messageId);
+      if (requestVersion.current === version) {
         setStatuses(data);
-      } catch (err) {
-        console.error('Failed to load message statuses:', err);
-      } finally {
+      }
+    } catch {
+      if (requestVersion.current === version) {
+        setStatuses([]);
+        setHasLoadError(true);
+      }
+    } finally {
+      if (requestVersion.current === version) {
         setIsLoading(false);
       }
-    };
-    load();
+    }
   }, [messageId]);
+
+  useEffect(() => {
+    void load();
+    return () => { requestVersion.current += 1; };
+  }, [load]);
 
   const readBy = statuses.filter((s) => s.read_at).sort((a, b) => 
     new Date(b.read_at!).getTime() - new Date(a.read_at!).getTime()
@@ -87,6 +101,7 @@ export function MessageInfoModal({ messageId, onClose }: MessageInfoModalProps) 
           <h3 className="font-semibold text-[var(--color-text-high)]">Mesaj Bilgisi</h3>
           <button
             onClick={onClose}
+            aria-label="Kapat"
             className="rounded-full p-1.5 hover:bg-[var(--color-surface)]"
           >
             <X size={18} className="text-[var(--color-text-medium)]" />
@@ -97,6 +112,17 @@ export function MessageInfoModal({ messageId, onClose }: MessageInfoModalProps) 
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="animate-spin text-[var(--color-accent)]" size={24} />
+            </div>
+          ) : hasLoadError ? (
+            <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+              <p className="text-sm text-[var(--color-text-medium)]">Mesaj bilgisi yüklenemedi.</p>
+              <button
+                type="button"
+                onClick={() => void load()}
+                className="rounded-xl bg-[var(--color-accent)] px-4 py-2 text-sm font-semibold text-white"
+              >
+                Tekrar dene
+              </button>
             </div>
           ) : statuses.length === 0 ? (
             <div className="py-12 text-center text-sm text-[var(--color-text-low)]">

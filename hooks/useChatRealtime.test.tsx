@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   channel: vi.fn(),
   removeChannel: vi.fn().mockResolvedValue(undefined),
   getChannels: vi.fn(() => []),
+  channels: [] as any[],
 }));
 
 vi.mock('@/lib/supabase', () => ({
@@ -18,6 +19,7 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 import { useChatRealtime } from './useChatRealtime';
+import { useChatStore } from '@/store/useChatStore';
 
 function createChannel() {
   const channel: any = {
@@ -28,6 +30,7 @@ function createChannel() {
     send: vi.fn().mockResolvedValue(undefined),
     presenceState: vi.fn(() => ({})),
   };
+  mocks.channels.push(channel);
   return channel;
 }
 
@@ -37,6 +40,8 @@ describe('useChatRealtime private room setup', () => {
     mocks.authorize.mockResolvedValue(undefined);
     mocks.getChannels.mockReturnValue([]);
     mocks.channel.mockImplementation(() => createChannel());
+    mocks.channels.length = 0;
+    useChatStore.getState().reset();
   });
 
   it('authorizes before creating the stable private room channel', async () => {
@@ -84,5 +89,44 @@ describe('useChatRealtime private room setup', () => {
     mounted.unmount();
     await act(async () => { release?.(); });
     expect(mocks.channel).not.toHaveBeenCalled();
+  });
+
+  it('uses durable status changes for own bubbles and has no Broadcast read receipt', async () => {
+    const roomId = '11111111-1111-4111-8111-111111111111';
+    const memberId = '22222222-2222-4222-8222-222222222222';
+    const messageId = '33333333-3333-4333-8333-333333333333';
+    useChatStore.setState({
+      messagesByRoom: {
+        [roomId]: [{
+          id: messageId,
+          room_id: roomId,
+          sender_id: memberId,
+          content: 'own',
+          message_type: 'text',
+          reply_to_id: null,
+          metadata_json: {},
+          is_edited: false,
+          is_deleted: false,
+          created_at: '2026-09-19T12:00:00.000Z',
+          updated_at: '2026-09-19T12:00:00.000Z',
+        }],
+      },
+    });
+    const mounted = renderHook(() => useChatRealtime(memberId, roomId));
+    await waitFor(() => expect(mocks.channel).toHaveBeenCalledOnce());
+    const channel = mocks.channels[0];
+    const statusCall = channel.on.mock.calls.find((call: any[]) => (
+      call[0] === 'postgres_changes'
+      && call[1]?.table === 'chat_message_status'
+      && call[1]?.event === 'INSERT'
+    ));
+    expect(statusCall).toBeDefined();
+    expect(channel.on.mock.calls.some((call: any[]) => (
+      call[0] === 'broadcast' && call[1]?.event === 'read_receipt'
+    ))).toBe(false);
+
+    act(() => statusCall?.[2]({ new: { message_id: messageId, read_at: '2026-09-19T12:01:00.000Z' } }));
+    expect(useChatStore.getState().messagesByRoom[roomId][0].metadata_json).toMatchObject({ _status: 'read' });
+    mounted.unmount();
   });
 });

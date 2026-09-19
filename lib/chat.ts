@@ -1197,6 +1197,30 @@ export async function fetchMessageStatuses(messageId: string) {
   }[];
 }
 
+/** Read-only sender hydration; RLS returns only status rows the current actor may inspect. */
+export async function fetchReadMessageIds(messageIds: string[]): Promise<Set<string>> {
+  if (messageIds.length === 0) return new Set();
+  const { data, error } = await supabase
+    .from('chat_message_status')
+    .select('message_id')
+    .in('message_id', messageIds)
+    .not('read_at', 'is', null);
+  if (error) throw error;
+  return new Set((data ?? []).map((row) => row.message_id as string));
+}
+
+/** The server derives actor, room, choir and timestamps; the client supplies only message + transition. */
+export async function markChatMessageStatus(
+  messageId: string,
+  status: 'delivered' | 'read',
+): Promise<void> {
+  const { error } = await supabase.rpc('mark_chat_message_status', {
+    p_message_id: messageId,
+    p_status: status,
+  });
+  if (error) throw error;
+}
+
 /** Get or create DM room */
 export async function getOrCreateDm(
   currentMemberId: string,

@@ -6,7 +6,7 @@ vi.mock('@/lib/supabase', () => ({
   supabase: { rpc },
 }));
 
-import { deleteMessage, deleteMessageForMe, editMessage, sendMessage } from '@/lib/chat';
+import { deleteMessage, deleteMessageForMe, editMessage, markChatMessageStatus, sendMessage } from '@/lib/chat';
 
 describe('chat message mutation adapters', () => {
   beforeEach(() => {
@@ -40,6 +40,14 @@ describe('chat message mutation adapters', () => {
     const refusal = new Error('refused');
     rpc.mockResolvedValueOnce({ data: null, error: refusal });
     await expect(editMessage('bad', 'text')).rejects.toBe(refusal);
+  });
+
+  it('marks durable status without client identity or timestamps', async () => {
+    await markChatMessageStatus('00000000-0000-4000-8000-000000000004', 'read');
+    expect(rpc).toHaveBeenCalledWith('mark_chat_message_status', {
+      p_message_id: '00000000-0000-4000-8000-000000000004',
+      p_status: 'read',
+    });
   });
 
   it('sends text through the idempotent RPC and returns its acknowledgement', async () => {

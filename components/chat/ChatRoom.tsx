@@ -27,6 +27,7 @@ import {
   starMessage,
   unstarMessage,
   fetchStarredMessages,
+  fetchReadMessageIds,
 } from '@/lib/chat';
 import type { ChatMessage, ChatRoomMember, LinkPreviewData } from '@/lib/chat';
 import {
@@ -51,6 +52,8 @@ import { CreatePollModal } from './CreatePollModal';
 import { StickerPicker } from './StickerPicker';
 import { ImageGalleryViewer } from './ImageGalleryViewer';
 import { MessageInfoModal } from './MessageInfoModal';
+import { useDurableChatStatus } from '@/hooks/useDurableChatStatus';
+import { applyReadStatusToOwnMessages } from '@/lib/chat-status-runtime';
 
 interface ChatRoomProps {
   slug: string;
@@ -82,13 +85,15 @@ async function loadRoomSnapshot(memberId: string, roomId: string) {
   const reversedMsgs = msgs.reverse();
 
   const msgIds = reversedMsgs.map((m) => m.id);
-  const [reactionsMap, starredData] = await Promise.all([
+  const ownMessageIds = reversedMsgs.filter((message) => message.sender_id === memberId).map((message) => message.id);
+  const [reactionsMap, starredData, readMessageIds] = await Promise.all([
     fetchReactionsForMessages(msgIds),
     fetchStarredMessages(memberId, roomId),
+    fetchReadMessageIds(ownMessageIds).catch(() => new Set<string>()),
   ]);
 
   return {
-    messages: reversedMsgs.map((message) => ({
+    messages: applyReadStatusToOwnMessages(reversedMsgs, readMessageIds, memberId).map((message) => ({
       ...message,
       reactions: reactionsMap[message.id] ?? [],
     })),
@@ -216,6 +221,7 @@ export function ChatRoom({ slug }: ChatRoomProps) {
     return messagesByRoom[roomId] ?? roomSnapshotQuery.data?.messages ?? [];
   }, [messagesByRoom, roomId, roomSnapshotQuery.data?.messages]);
   const isLoading = !roomSnapshotQuery.data && roomSnapshotQuery.isPending;
+  useDurableChatStatus(member?.id ?? null, roomId, messages);
 
   useEffect(() => {
     let cancelled = false;
