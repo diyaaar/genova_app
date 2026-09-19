@@ -35,6 +35,7 @@ its generated `.next` output after evidence is recorded and confirm at least 10 
 - `lib/notification-deep-link.ts` — new framework-free event/destination contract.
 - `lib/notification-deep-link.test.ts` — contract and failure-case evidence.
 - `lib/server/push-notifications.ts` — make the seven existing payload builders use the contract.
+- `vitest.config.ts` — include the new critical shared contract in the existing coverage gate.
 - This brief and, after acceptance, `docs/mobil-teslim-plani.md`, `MIGRATION.md`,
   `memory-bank/activeContext.md`, `docs/agent-handoff.md` — concise status indexes.
 
