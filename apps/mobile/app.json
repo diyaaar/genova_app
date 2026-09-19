@@ -26,6 +26,13 @@
     },
     "plugins": [
       "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "defaultChannel": "genova-updates",
+          "enableBackgroundRemoteNotifications": false
+        }
+      ],
       "./src/acceptance/with-local-loopback-network.js",
       "./src/acceptance/with-platform-capability-loopback.js",
       "./src/acceptance/with-composed-webview-loopback.js",

@@ -23,6 +23,7 @@ interface RepertoireScreenProps {
   choirName: string;
   gateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
+  initialSongId?: string | null;
   onOpenAudio: (session: NativeAudioSession) => void;
   canSwitchChoir: boolean;
   onBack: () => void;
@@ -36,6 +37,7 @@ export function RepertoireScreen({
   choirName,
   gateway: suppliedGateway,
   readerGateway,
+  initialSongId = null,
   onOpenAudio,
   canSwitchChoir,
   onBack,
@@ -52,6 +54,7 @@ export function RepertoireScreen({
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [focusedSongId, setFocusedSongId] = useState(initialSongId);
   const [selectedFile, setSelectedFile] = useState<import('@shared/repertuvar/catalog-core').RepertoireFile | null>(null);
   const requestVersion = useRef(0);
 
@@ -102,15 +105,21 @@ export function RepertoireScreen({
     if (activeTag && !tagNames.includes(activeTag)) setActiveTag(null);
   }, [activeTag, tagNames]);
 
-  const songs = useMemo(() => catalogue
-    ? filterRepertoireCatalogSongs({
+  useEffect(() => setFocusedSongId(initialSongId), [initialSongId]);
+
+  const songs = useMemo(() => {
+    const filtered = catalogue
+      ? filterRepertoireCatalogSongs({
       songs: catalogue.songs,
       assignedSongIds: catalogue.assignedSongIds,
       roleScope: catalogue.roleScope,
       search,
       tag: activeTag,
     })
-    : [], [activeTag, catalogue, search]);
+      : [];
+    return focusedSongId ? filtered.filter((song) => song.id === focusedSongId) : filtered;
+  }, [activeTag, catalogue, focusedSongId, search]);
+  const focusedSongAvailable = !focusedSongId || accessibleSongs.some((song) => song.id === focusedSongId);
 
   if (selectedFile) {
     return (
@@ -177,7 +186,14 @@ export function RepertoireScreen({
             ))}
           </ScrollView>
 
-          {accessibleSongs.length === 0 ? (
+          {focusedSongId && !focusedSongAvailable ? (
+            <View style={styles.center} testID="repertoire-notification-target-unavailable">
+              <Text style={styles.error}>Bu bildirimdeki eser bu koro için erişilebilir değil.</Text>
+              <Pressable onPress={() => setFocusedSongId(null)} accessibilityRole="button" testID="repertoire-show-all-after-notification">
+                <Text style={styles.action}>Tüm repertuvarı göster</Text>
+              </Pressable>
+            </View>
+          ) : accessibleSongs.length === 0 ? (
             <View style={styles.center} testID="repertoire-empty">
               <Text style={styles.muted}>Bu koro için erişilebilir repertuvar bulunamadı.</Text>
             </View>
@@ -187,6 +203,14 @@ export function RepertoireScreen({
             </View>
           ) : (
             <ScrollView contentContainerStyle={styles.list} testID="repertoire-list">
+              {focusedSongId ? (
+                <View style={styles.notificationTarget} testID="repertoire-notification-target">
+                  <Text style={styles.notificationTargetText}>Bildirimden açılan eser</Text>
+                  <Pressable onPress={() => setFocusedSongId(null)} accessibilityRole="button" testID="repertoire-show-all-after-notification">
+                    <Text style={styles.action}>Tümünü göster</Text>
+                  </Pressable>
+                </View>
+              ) : null}
               {songs.map((song) => {
                 const scoreFiles = getScorePdfFiles(song.files);
                 const audioTracks = getNativeAudioTracks(song.files);
@@ -256,6 +280,8 @@ const styles = StyleSheet.create({
   tag: { color: theme.colors.textMuted, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
   tagActive: { color: theme.colors.text, borderColor: theme.colors.accent },
   list: { gap: theme.spacing(1.5), paddingBottom: theme.spacing(2) },
+  notificationTarget: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: theme.spacing(2), padding: theme.spacing(1.5), borderRadius: theme.radius, backgroundColor: theme.colors.surface },
+  notificationTargetText: { color: theme.colors.text, fontSize: 13, fontWeight: '600' },
   card: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing(2), padding: theme.spacing(2), borderRadius: theme.radius, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
   cardText: { flex: 1, gap: 4 },
   songTitle: { color: theme.colors.text, fontSize: 18, fontWeight: '700' },

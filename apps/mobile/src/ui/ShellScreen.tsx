@@ -10,6 +10,7 @@ import { theme } from './theme';
 export function ShellScreen({
   activeChoir,
   canSwitchChoir,
+  notification,
   onOpenRepertoire,
   onOpenWeb,
   onSwitchChoir,
@@ -17,6 +18,12 @@ export function ShellScreen({
 }: {
   activeChoir: ChoirMembershipOption;
   canSwitchChoir: boolean;
+  notification?: {
+    permission: 'undetermined' | 'granted' | 'denied' | 'loading' | 'error';
+    requesting: boolean;
+    message: string | null;
+    onRequest: () => void;
+  };
   onOpenRepertoire: () => void;
   onOpenWeb: (path: '/announcements' | '/koristler' | '/devamsizlik' | '/profil') => void;
   onSwitchChoir: () => void;
@@ -57,6 +64,40 @@ export function ShellScreen({
             </Pressable>
           ))}
         </View>
+        {notification ? (
+          <View style={styles.notificationCard} testID="shell-notification-card">
+            <View style={styles.notificationText}>
+              <Text style={styles.notificationTitle}>Bildirimler</Text>
+              <Text style={styles.note} testID="shell-notification-status">
+                {notification.permission === 'granted'
+                  ? 'Açık'
+                  : notification.permission === 'loading'
+                    ? 'Durum kontrol ediliyor…'
+                    : notification.permission === 'denied'
+                      ? 'İzin verilmedi'
+                      : notification.permission === 'error'
+                        ? 'Durum alınamadı'
+                        : 'Kapalı'}
+              </Text>
+              {notification.message ? (
+                <Text style={styles.notificationMessage} testID="shell-notification-message">
+                  {notification.message}
+                </Text>
+              ) : null}
+            </View>
+            {notification.permission !== 'granted' && notification.permission !== 'loading' ? (
+              <Pressable
+                onPress={notification.onRequest}
+                disabled={notification.requesting}
+                accessibilityRole="button"
+                style={styles.notificationAction}
+                testID="shell-request-notification-permission"
+              >
+                <Text style={styles.action}>{notification.requesting ? 'İsteniyor…' : 'İzin ver'}</Text>
+              </Pressable>
+            ) : null}
+          </View>
+        ) : null}
       </View>
 
       <View style={styles.actions}>
@@ -85,6 +126,11 @@ const styles = StyleSheet.create({
   webActions: { flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing(1) },
   webAction: { minHeight: 48, minWidth: '47%', flexGrow: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: theme.spacing(1.5), borderRadius: theme.radius, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
   webActionText: { color: theme.colors.accent, fontSize: 15, fontWeight: '700' },
+  notificationCard: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing(2), padding: theme.spacing(1.5), borderRadius: theme.radius, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface },
+  notificationText: { flex: 1, gap: 3 },
+  notificationTitle: { color: theme.colors.text, fontSize: 15, fontWeight: '700' },
+  notificationMessage: { color: theme.colors.textMuted, fontSize: 12, lineHeight: 17 },
+  notificationAction: { minHeight: 44, justifyContent: 'center', paddingHorizontal: theme.spacing(1) },
   actions: { gap: theme.spacing(2), paddingBottom: theme.spacing(2) },
   action: { color: theme.colors.accent, fontSize: 16, fontWeight: '600' },
 });

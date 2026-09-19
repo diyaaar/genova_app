@@ -54,6 +54,7 @@ async function renderScreen(
   preparedGateway: NativeRepertoireGateway,
   readerGateway?: NativeScoreReaderGateway,
   onOpenAudio: (session: NativeAudioSession) => void = jest.fn(),
+  initialSongId: string | null = null,
 ) {
   return await render(
     <RepertoireScreen
@@ -62,6 +63,7 @@ async function renderScreen(
       choirName="Genova A"
       gateway={preparedGateway}
       readerGateway={readerGateway}
+      initialSongId={initialSongId}
       onOpenAudio={onOpenAudio}
       canSwitchChoir
       onBack={jest.fn()}
@@ -107,6 +109,35 @@ describe('RepertoireScreen', () => {
     await screen.findByTestId('repertoire-list');
     await fireEvent.changeText(screen.getByTestId('repertoire-search'), 'bulunmaz');
     expect(screen.getByTestId('repertoire-no-results')).toBeTruthy();
+  });
+
+  it('opens only the accessible song targeted by a notification and can return to all songs', async () => {
+    const targetId = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
+    const preparedGateway = gateway(async () => catalogue({
+      songs: [song(), song({ id: targetId, title: 'Bildirim Eseri' })],
+      assignedSongIds: ['song-a', targetId],
+    }));
+    await renderScreen(preparedGateway, undefined, jest.fn(), targetId);
+
+    expect(await screen.findByTestId('repertoire-notification-target')).toBeTruthy();
+    expect(screen.getByTestId(`repertoire-song-${targetId}`)).toBeTruthy();
+    expect(screen.queryByTestId('repertoire-song-song-a')).toBeNull();
+
+    await fireEvent.press(screen.getByTestId('repertoire-show-all-after-notification'));
+    expect(screen.getByTestId('repertoire-song-song-a')).toBeTruthy();
+  });
+
+  it('does not reveal an inaccessible notification song', async () => {
+    const preparedGateway = gateway(async () => catalogue());
+    await renderScreen(
+      preparedGateway,
+      undefined,
+      jest.fn(),
+      '6ba7b810-9dad-41d1-80b4-00c04fd430c8',
+    );
+
+    expect(await screen.findByTestId('repertoire-notification-target-unavailable')).toBeTruthy();
+    expect(screen.queryByTestId('repertoire-list')).toBeNull();
   });
 
   it('shows source errors and retries with a forced refresh', async () => {

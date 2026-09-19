@@ -13,6 +13,9 @@ import type { NativeRepertoireGateway } from '../repertoire/catalog-gateway';
 import type { NativeScoreReaderGateway } from '../repertoire/reader-contract';
 import { NativeWebViewScreen } from '../webview/NativeWebViewScreen';
 import { registerTenantCache } from '../auth/tenant-cache';
+import type { AcceptedNotificationDeepLink } from '@shared/notification-deep-link';
+import type { NativeNotificationGateway } from '../notifications/notification-gateway';
+import { useNotificationRuntime } from '../notifications/use-notification-runtime';
 import { ChoirSelectScreen } from './ChoirSelectScreen';
 import { ShellScreen } from './ShellScreen';
 import { SignInScreen } from './SignInScreen';
@@ -33,6 +36,7 @@ interface ReadyShellProps {
   onSignOut: () => void;
   getWebViewLease: ReturnType<typeof useAuth>['getWebViewLease'];
   changePassword: ReturnType<typeof useAuth>['changePassword'];
+  notificationGateway?: NativeNotificationGateway;
 }
 
 function ReadyShellRoutes({
@@ -44,10 +48,28 @@ function ReadyShellRoutes({
   onSignOut,
   getWebViewLease,
   changePassword,
+  notificationGateway,
 }: Omit<ReadyShellProps, 'audioGateway'>) {
   const playback = useAudioPlayback();
   const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio' | 'web'>('home');
   const [webPath, setWebPath] = useState('/announcements');
+  const [repertoireSongId, setRepertoireSongId] = useState<string | null>(null);
+
+  const openNotification = (destination: AcceptedNotificationDeepLink) => {
+    if (destination.owner === 'web') {
+      setWebPath(destination.canonicalPath);
+      setScreen('web');
+      return;
+    }
+    if (destination.routeFamily === 'repertoire') {
+      const segments = destination.canonicalPath.split('/').filter(Boolean);
+      setRepertoireSongId(segments.length > 1 ? segments.at(-1) ?? null : null);
+      setScreen('repertoire');
+      return;
+    }
+    setScreen('home');
+  };
+  const notifications = useNotificationRuntime({ gateway: notificationGateway, onOpen: openNotification });
 
   useEffect(() => {
     if (screen === 'audio' && !playback.session) setScreen('repertoire');
@@ -59,9 +81,24 @@ function ReadyShellRoutes({
   };
 
   let content;
-  if (screen === 'web') {
+  if (notifications.tapError) {
+    content = (
+      <StatusScreen
+        title="Bildirim açılamadı"
+        message={notifications.tapError}
+        tone="error"
+        actionLabel="Ana sayfaya dön"
+        onAction={() => {
+          notifications.clearTapError();
+          setScreen('home');
+        }}
+        testID="notification-route-error"
+      />
+    );
+  } else if (screen === 'web') {
     content = (
       <NativeWebViewScreen
+        key={webPath}
         initialPath={webPath}
         getLease={getWebViewLease}
         onNativeRoute={(route) => setScreen(route === 'repertoire' ? 'repertoire' : 'home')}
@@ -80,6 +117,7 @@ function ReadyShellRoutes({
         choirName={activeChoir.choir_name}
         gateway={repertoireGateway}
         readerGateway={readerGateway}
+        initialSongId={repertoireSongId}
         canSwitchChoir={canSwitchChoir}
         onOpenAudio={openAudio}
         onBack={() => setScreen('home')}
@@ -92,7 +130,16 @@ function ReadyShellRoutes({
       <ShellScreen
         activeChoir={activeChoir}
         canSwitchChoir={canSwitchChoir}
-        onOpenRepertoire={() => setScreen('repertoire')}
+        notification={notificationGateway ? {
+          permission: notifications.permission === 'unavailable' ? 'error' : notifications.permission,
+          requesting: notifications.requestingPermission,
+          message: notifications.permissionMessage,
+          onRequest: () => void notifications.requestPermission(),
+        } : undefined}
+        onOpenRepertoire={() => {
+          setRepertoireSongId(null);
+          setScreen('repertoire');
+        }}
         onOpenWeb={(path) => {
           setWebPath(path);
           setScreen('web');
@@ -119,10 +166,11 @@ function ReadyShell({ audioGateway, ...routeProps }: ReadyShellProps) {
   );
 }
 
-export function AppRoot({ repertoireGateway, readerGateway, audioGateway }: {
+export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway }: {
   repertoireGateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
   audioGateway?: NativeAudioSourceGateway;
+  notificationGateway?: NativeNotificationGateway;
 } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
@@ -212,6 +260,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway }: {
           onSignOut={() => void auth.signOut()}
           getWebViewLease={auth.getWebViewLease}
           changePassword={auth.changePassword}
+          notificationGateway={notificationGateway}
         />
       </>
     );

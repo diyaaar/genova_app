@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react-native';
+import { act, render, screen, waitFor, fireEvent } from '@testing-library/react-native';
 import { AuthProvider } from '../../auth/AuthProvider';
 import { AuthStore } from '../../auth/auth-store';
 import { AppRoot } from '../AppRoot';
@@ -13,6 +13,7 @@ import {
   sessionFor,
 } from '../../test/doubles';
 import type { NativeRepertoireGateway } from '../../repertoire/catalog-gateway';
+import type { NativeNotificationGateway, NativeNotificationResponse } from '../../notifications/notification-gateway';
 
 async function renderWithStore(options: {
   memberships?: ReturnType<typeof membership>[];
@@ -22,6 +23,7 @@ async function renderWithStore(options: {
   sessionReadFailsOnce?: boolean;
   repertoireGateway?: NativeRepertoireGateway;
   audioGateway?: NativeAudioSourceGateway;
+  notificationGateway?: NativeNotificationGateway;
 }) {
   const clientDouble = createClientDouble({
     memberships: options.memberships ?? [membership()],
@@ -43,7 +45,11 @@ async function renderWithStore(options: {
 
   const root = (
     <AuthProvider store={store}>
-      <AppRoot repertoireGateway={options.repertoireGateway} audioGateway={options.audioGateway} />
+      <AppRoot
+        repertoireGateway={options.repertoireGateway}
+        audioGateway={options.audioGateway}
+        notificationGateway={options.notificationGateway}
+      />
     </AuthProvider>
   );
   const view = await render(root);
@@ -51,6 +57,30 @@ async function renderWithStore(options: {
 }
 
 describe('shell routing', () => {
+  function preparedNotificationGateway(initial: NativeNotificationResponse | null): NativeNotificationGateway & {
+    clearInitialResponse: jest.Mock;
+    requestPermission: jest.Mock;
+    unsubscribe: jest.Mock;
+    emit(response: NativeNotificationResponse): void;
+  } {
+    let listener: ((response: NativeNotificationResponse) => void) | null = null;
+    const unsubscribe = jest.fn();
+    return {
+      getPermissionState: jest.fn(async () => 'undetermined' as const),
+      requestPermission: jest.fn(async () => 'denied' as const),
+      getInitialResponse: jest.fn(() => initial),
+      clearInitialResponse: jest.fn(),
+      subscribeToResponses: jest.fn((next) => {
+        listener = next;
+        return unsubscribe;
+      }),
+      unsubscribe,
+      emit(response) {
+        listener?.(response);
+      },
+    };
+  }
+
   it('shows a safe startup error and retries before opening tenant content', async () => {
     await renderWithStore({ sessionReadFailsOnce: true, activeChoirId: CHOIR_A });
     expect(await screen.findByTestId('context-error-screen')).toBeTruthy();
@@ -136,6 +166,98 @@ describe('shell routing', () => {
     expect(await screen.findByTestId('shell-screen')).toBeTruthy();
   });
 
+  it('consumes a cold notification only after auth and opens the exact accessible repertoire song', async () => {
+    const songId = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
+    const notificationGateway = preparedNotificationGateway({
+      data: {
+        type: 'repertoire_assignment_created',
+        songId,
+        partName: 'Alto',
+        notificationId: '123e4567-e89b-42d3-a456-426614174000',
+        at: '2026-09-19T08:00:00Z',
+      },
+    });
+    const repertoireGateway: NativeRepertoireGateway = {
+      load: jest.fn(async (): Promise<import('../../repertoire/catalog-gateway').NativeRepertoireCatalog> => ({
+        version: 1,
+        versionUpdatedAt: null,
+        cachedAt: 1,
+        songs: [{
+          id: songId,
+          title: 'Bildirim Eseri',
+          composer: null,
+          drive_folder_id: null,
+          is_visible: true,
+          created_at: '2026-09-19T00:00:00Z',
+          files: [],
+          tags: [],
+        }],
+        tags: [],
+        userParts: { [songId]: 'Alto' },
+        assignedSongIds: [songId],
+        roleScope: 'chorist',
+        scopeKey: `${CHOIR_A}:33333333-3333-4333-8333-333333333333:chorist`,
+      })),
+      clear: jest.fn(),
+    };
+
+    await renderWithStore({ repertoireGateway, notificationGateway });
+    expect(await screen.findByTestId('repertoire-notification-target')).toBeTruthy();
+    expect(screen.getByTestId(`repertoire-song-${songId}`)).toBeTruthy();
+    expect(notificationGateway.clearInitialResponse).toHaveBeenCalledTimes(1);
+  });
+
+  it('requests permission only after the signed-in user presses the shell control', async () => {
+    const notificationGateway = preparedNotificationGateway(null);
+    await renderWithStore({ notificationGateway });
+    expect(await screen.findByTestId('shell-notification-card')).toBeTruthy();
+    expect(notificationGateway.requestPermission).not.toHaveBeenCalled();
+
+    await fireEvent.press(screen.getByTestId('shell-request-notification-permission'));
+    await waitFor(() => expect(notificationGateway.requestPermission).toHaveBeenCalledTimes(1));
+    expect(await screen.findByTestId('shell-notification-message'))
+      .toHaveTextContent(/Bildirim izni verilmedi/u);
+  });
+
+  it('keeps a permission adapter failure visible and retryable', async () => {
+    const notificationGateway = preparedNotificationGateway(null);
+    notificationGateway.requestPermission.mockRejectedValueOnce(new Error('native unavailable'));
+    await renderWithStore({ notificationGateway });
+    await screen.findByTestId('shell-notification-card');
+
+    await fireEvent.press(screen.getByTestId('shell-request-notification-permission'));
+    expect(await screen.findByTestId('shell-notification-message'))
+      .toHaveTextContent(/Bildirim izni kontrol edilemedi/u);
+    expect(screen.getByTestId('shell-request-notification-permission')).toBeTruthy();
+  });
+
+  it('routes a live response and removes its listener when sign-out unmounts the ready shell', async () => {
+    const announcementId = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
+    const notificationGateway = preparedNotificationGateway(null);
+    const { store } = await renderWithStore({ notificationGateway });
+    await screen.findByTestId('shell-screen');
+
+    await act(async () => notificationGateway.emit({
+      data: {
+        type: 'announcement_published',
+        announcementId,
+        notificationId: '123e4567-e89b-42d3-a456-426614174000',
+        at: '2026-09-19T08:00:00Z',
+      },
+    }));
+    expect(await screen.findByTestId('native-webview-screen')).toBeTruthy();
+
+    const webViewMock = jest.requireMock('react-native-webview') as {
+      __getLatestProps(): { source?: { uri?: string } } | null;
+    };
+    expect(webViewMock.__getLatestProps()?.source?.uri)
+      .toBe(`https://app.genesinovachoir.com/announcements/${announcementId}`);
+
+    await act(async () => store.signOut());
+    await waitFor(() => expect(notificationGateway.unsubscribe).toHaveBeenCalledTimes(1));
+    expect(await screen.findByTestId('sign-in-screen')).toBeTruthy();
+  });
+
   it('opens a permanent web-owned destination behind the native locked shell', async () => {
     await renderWithStore({});
     await screen.findByTestId('shell-screen');
@@ -145,6 +267,42 @@ describe('shell routing', () => {
     expect(await screen.findByTestId('native-webview-screen')).toBeTruthy();
     expect(screen.getByTestId('permanent-webview')).toBeTruthy();
     expect(screen.getByTestId('webview-locked')).toBeTruthy();
+    expect(screen.queryByTestId('shell-screen')).toBeNull();
+  });
+
+  it('routes a cold web notification to its canonical permanent WebView path', async () => {
+    const announcementId = '6ba7b810-9dad-41d1-80b4-00c04fd430c8';
+    const notificationGateway = preparedNotificationGateway({
+      data: {
+        type: 'announcement_published',
+        announcementId,
+        notificationId: '123e4567-e89b-42d3-a456-426614174000',
+        at: '2026-09-19T08:00:00Z',
+      },
+    });
+
+    await renderWithStore({ notificationGateway });
+    expect(await screen.findByTestId('native-webview-screen')).toBeTruthy();
+    const webViewMock = jest.requireMock('react-native-webview') as {
+      __getLatestProps(): { source?: { uri?: string } } | null;
+    };
+    expect(webViewMock.__getLatestProps()?.source?.uri)
+      .toBe(`https://app.genesinovachoir.com/announcements/${announcementId}`);
+  });
+
+  it('fails visibly instead of falling back for an unavailable assignment notification', async () => {
+    const notificationGateway = preparedNotificationGateway({
+      data: {
+        type: 'assignment_created',
+        assignmentId: '6ba7b810-9dad-41d1-80b4-00c04fd430c8',
+        notificationId: '123e4567-e89b-42d3-a456-426614174000',
+        at: '2026-09-19T08:00:00Z',
+      },
+    });
+
+    await renderWithStore({ notificationGateway });
+    expect(await screen.findByTestId('notification-route-error')).toBeTruthy();
+    expect(screen.getByText('Bu bildirim hedefi mobil uygulamada henüz kullanılamıyor.')).toBeTruthy();
     expect(screen.queryByTestId('shell-screen')).toBeNull();
   });
 
