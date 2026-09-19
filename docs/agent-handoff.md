@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 19 September 2026 under [045](briefs/045-chat-text-send-idempotency.md).
+Updated 19 September 2026 under [046](briefs/046-private-room-realtime-authorization.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [045](briefs/045-chat-text-send-idempotency.md).
+   [046](briefs/046-private-room-realtime-authorization.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -16,7 +16,8 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `361ab7c`; it contains idempotent text-send/retry and web adoption;
+Current local product HEAD: `bed8032`; it contains the private room Realtime contract/adoption;
+`361ab7c` contains idempotent text-send/retry and web adoption;
 `621147e` contains server-owned core-message mutation authority;
 `1434464` contains durable status authority, `c58f4da` contains the social authority repair,
 `cb4e7ec` contains the room-membership repair,
@@ -68,27 +69,34 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - [041](briefs/041-chat-room-membership-authority.md) is **ACCEPTED LOCALLY** at `cb4e7ec`: local
   PostgreSQL proves creator/admin member management and own preferences while arbitrary self-join,
   role escalation and reidentity refuse. Exact down/re-forward and the root 58-file/571-test build
-  pass. Its social-table follow-up is accepted separately under 042; hosted schema,
-  publication/private Realtime and native runtime remain unproved.
+  pass. Its social-table follow-up is accepted separately under 042 and local private-room
+  Realtime under 046; hosted application/socket and native runtime remain unproved.
 - [042](briefs/042-chat-social-membership-authority.md) is **ACCEPTED LOCALLY** at `c58f4da`: room
   members retain reaction/poll/vote reads and actor-owned writes/stars while inaccessible-room and
   other-member paths refuse. Exact no-op upserts, down/re-forward and root 58 files/571 tests/build
-  pass. Status authority is accepted separately under 043; core messages, poll anonymity and
-  Realtime remain open.
+  pass. Status/core/private-room foundations are accepted separately under 043/044/046; poll
+  anonymity and later Realtime/runtime layers remain open.
 - [043](briefs/043-chat-message-status-authority.md) is **ACCEPTED LOCALLY** at `1434464`: a
   server-time authenticated RPC gives room members monotonic own delivered/read state; senders see
   all recipient rows and other members only own. Roundtrip and root 58 files/571 tests/build pass.
-  No client adopts it yet; core-message rules and Realtime remain open.
+  No client adopts it yet; core-message and private-room Realtime foundations are now accepted
+  separately under 044 and 046.
 - [044](briefs/044-chat-core-message-mutation-authority.md) is **ACCEPTED LOCALLY** at `621147e`:
   sender-only server-timed one-hour edit/delete, per-member hide and tightened member/reply inserts
   replace direct UPDATE/shared hide metadata. The refusal matrix, exact down/re-forward and root
-  59-file/575-test build pass. Hosted schema, idempotent send/retry, status client adoption,
-  private Realtime and native runtime remain open.
+  59-file/575-test build pass. Idempotent send and private-room Realtime are now accepted under
+  045/046; hosted application, status client adoption and native runtime remain open.
 - [045](briefs/045-chat-text-send-idempotency.md) is **ACCEPTED LOCALLY** at `361ab7c`: exact
   sender-key/payload reuse returns one text/reply/link message while mismatches and revoked scope
   refuse. The account/choir/member/room web queue persists before network, expires after seven days,
   caps at 50, shows retry/cancel and reconciles duplicate acknowledgements/reloads. SQL roundtrip and
   root 60 files/582 tests/build pass. Browser storage is plain; hosted/native evidence is absent.
+- [046](briefs/046-private-room-realtime-authorization.md) is **ACCEPTED LOCALLY** at `bed8032`:
+  exact room-member Broadcast/Presence policies and three-table publication state pass a reversible
+  PostgreSQL fixture matrix; the guarded browser/embedded JWT is set before the stable private web
+  room channel. Root 62 files/591 tests/build pass. The fixture is not Supabase Realtime: hosted
+  migration/settings, socket join/revocation, global-list/delete delivery, reconnect recovery and
+  caller-supplied ephemeral identity remain unproved.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -103,7 +111,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - Final 19 September password-run cleanup restored the disposable target baseline and removed the
   exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
   all four ports closed. A later orphan inactive task-owned 033 VM disk was removed before 041.
-  After 045 database/build cleanup: 21,635,476 KiB (~20.6 GiB) free.
+  After 046 database/build cleanup: 21,677,152 KiB (~20.7 GiB) free.
   Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
@@ -126,9 +134,10 @@ protocol under 57 files/540 tests and the root build. Its exact outputs were rem
 adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory; `7a6a78e`/039 accepts
 tenant-memory teardown, `2dfe6ab`/040 accepts the shared read contract, `cb4e7ec`/041 accepts room
 membership authority, `c58f4da`/042 accepts social authority, `1434464`/043 accepts durable
-message-status authority, `621147e`/044 accepts core-message mutation authority and `361ab7c`/045
-accepts idempotent text-send/retry. After cleanup, 21,635,476 KiB is free. Private room Realtime
-authorization/publication is next; status client adoption and native chat runtime remain separate.
+message-status authority, `621147e`/044 accepts core-message mutation authority, `361ab7c`/045
+accepts idempotent text-send/retry and `bed8032`/046 accepts the local private-room Realtime
+contract/adoption. After cleanup, 21,677,152 KiB is free. Durable status client adoption is next;
+global-list/reconnect Realtime and native chat runtime remain separate.
 Provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
@@ -149,7 +158,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 045 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 046 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

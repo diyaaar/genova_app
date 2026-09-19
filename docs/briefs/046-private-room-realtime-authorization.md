@@ -1,6 +1,6 @@
 # 046 — Private room Realtime authorization contract
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Prevent a browser that is not a current room member from joining chat
 Broadcast/Presence topics, while keeping the current web room channel compatible with the shared
@@ -100,13 +100,13 @@ and approved.
 
 **Done definition:**
 
-- [ ] Exact room-member Broadcast/Presence read/write passes; nonmember, cross-tenant, revoked,
+- [x] Exact room-member Broadcast/Presence read/write passes; nonmember, cross-tenant, revoked,
       anonymous, malformed and unsupported-extension cases fail closed.
-- [ ] `chat_messages`, `chat_reactions` and `chat_message_status` publication membership is
+- [x] `chat_messages`, `chat_reactions` and `chat_message_status` publication membership is
       deterministic and down restores the fixture's exact prior publication/policy/API state.
-- [ ] Web room setup authenticates before channel creation, uses `private: true` and a stable exact
+- [x] Web room setup authenticates before channel creation, uses `private: true` and a stable exact
       room topic, and creates no channel after auth failure or effect cancellation.
-- [ ] Focused tests and root `pnpm check` pass; self-review, cleanup, disk/docs and live boundaries
+- [x] Focused tests and root `pnpm check` pass; self-review, cleanup, disk/docs and live boundaries
       are recorded without calling the fixture a Realtime runtime.
 
 **Optional subtask:** None. One writer; no delegation.
@@ -117,16 +117,25 @@ and approved.
 |---|---|---|---|---|
 | 2026-09-19 | Source/resource/ownership preflight | local product `361ab7c`, records `0352dbc` | PASS | Only unrelated CLI marker is dirty; 21,282,400 KiB free. Room channel is public in source. Local PostgreSQL 17.11 reports `realtime.messages=absent`, publications=`none`; no runtime/build started. |
 | 2026-09-19 | Official Realtime contract review | current Supabase documentation | PASS | Private Broadcast/Presence requires `realtime.messages` policies plus `private: true`; publication is required for Postgres Changes. Authorization caching and delete/RLS limits are retained as open boundaries. |
+| 2026-09-19 | Guarded forward/down/re-forward runner | loopback PostgreSQL 17, disposable clone | PASS | Product migration first refused the non-Realtime clone without changes. With the runner-only contract fixture, member/two-room/two-choir/nonmember/revoked/anon/malformed/extension matrix passed twice; down restored exact policy/publication/API/data state, source stayed unchanged and target was removed. The local `wal_level` warning confirms this was not a logical-replication/socket runtime. |
+| 2026-09-19 | Focused web gates | local Vitest/lint/typecheck | PASS | Three files / 14 tests pass. Stable UUID topic, token-before-join, ordinary and guarded embedded token selection, missing-session refusal, `private: true`, auth failure and cancellation are covered; focused lint and root typecheck pass. No socket was opened. |
+| 2026-09-19 | Unsafe runner target guard | local shell | PASS | The first wrapper used zsh's reserved `status` variable and stopped before the runner result was printed; its exact temporary output was removed. The corrected wrapper confirms `PGDATABASE=postgres` refuses with status 2 before database action. |
+| 2026-09-19 | Security/data/lifecycle/diff review | migration and room hook at `bed8032` | PASS | Exact canonical room topics only; active actor/choir/room membership is server-derived, policies cover only Broadcast/Presence, prior publication state is retained, and client creates no channel before guarded JWT setup. Caller-supplied ephemeral identity, cached authorization, global list/delete delivery and reconnect recovery remain explicit. Self-review only. |
+| 2026-09-19 | Final root `pnpm check` | local product `bed8032` | PASS | Lint/typecheck, 62 test files/591 tests, coverage, service-worker syntax and Next production build pass. |
+| 2026-09-19 | Cleanup/resource recheck | local filesystem/PostgreSQL | PASS | `.next` 472,996 KiB and coverage 332 KiB removed; disposable DB absent; 21,677,152 KiB (~20.7 GiB) free. Unrelated CLI marker remains unstaged. |
+| 2026-09-19 | Documentation consistency gate | five changed Markdown files | PASS | Local links/anchors resolve with zero missing targets, stale 046 pending/next-private-room markers are absent and `git diff --check` passes. |
 
-**Delivery:** Pending planning commit, product/test commit and separate acceptance-record commit.
-Next work is not selected until this local package is evaluated and recorded.
+**Delivery:** Planning `14fa7a8`; product/test `bed8032`; this acceptance record follows.
+Rollback is the scoped down plus product revert locally. Hosted application/down remains separately
+reviewed and approved. Next ready package: adopt 043's durable delivered/read RPC in the current web
+room, while global-list Realtime, reconnect recovery and native list/read remain separate.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Exact room-topic policy and refusal matrix | yes | NOT RUN | pending disposable PostgreSQL 17 fixture | Fixture can prove SQL policy behavior only, not a Realtime server join. |
-| Publication prior-state preservation and forward/down/re-forward | yes | NOT RUN | pending disposable PostgreSQL 17 fixture | Product migration must not create Supabase-owned Realtime objects. |
-| Guarded JWT-before-private-room-join, failure and cancellation | yes | NOT RUN | pending focused Vitest/typecheck | No network/socket is permitted in this test. |
-| Root compatibility, diff review and cleanup | yes | NOT RUN | pending local root gate | Self-review only; generated outputs and target must be removed. |
+| Exact room-topic policy and refusal matrix | yes | PASS | 2026-09-19, `bed8032`, disposable PostgreSQL 17 fixture | Member Broadcast/Presence read/write passes; other-room/choir, nonmember, revoked, anon, malformed and unsupported extension refuse. Fixture is not a Realtime server join. |
+| Publication prior-state preservation and forward/down/re-forward | yes | PASS | 2026-09-19, `bed8032`, guarded runner | Three event tables present forward; down restores the one prior fixture table exactly; source/target lifecycle passes. Product migration creates no Supabase-owned Realtime object. |
+| Guarded JWT-before-private-room-join, failure and cancellation | yes | PASS | 2026-09-19, focused 3 files/14 tests | Ordinary/embedded token reaches Realtime before stable private channel creation; missing token, rejected auth and cancelled effect create no channel. No network/socket was used. |
+| Root compatibility, diff review and cleanup | yes | PASS | 2026-09-19, product `bed8032`, local root | 62 files/591 tests/build pass; self-review complete; target/build outputs removed and ~20.7 GiB free. |
 | Hosted migration/settings and real WebSocket authorization | no — separately approved release/runtime gate | NOT RUN | no hosted access authorized | Blocks deployed/private-Realtime and native-runtime claims, not this bounded local contract. |
