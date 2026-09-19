@@ -1,6 +1,6 @@
 # 042 — Chat social membership authority
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Stop same-choir users from reading or mutating reactions, polls, votes
 and stars outside rooms they belong to, while preserving the current web member flows and
@@ -79,8 +79,8 @@ is required. Root build output must be removed after evidence; preserve the 10 G
 
 - `chat_message_status`, durable receipt semantics, typing or Presence.
 - Core message edit/delete/time-window/delete-for-me rules and atomic poll/message creation.
-- Poll closing/multiple-choice business rules or changing current product behavior beyond room and
-  actor authority.
+- Poll closing/multiple-choice/anonymity business rules or changing current product behavior beyond
+  room and actor authority.
 - Realtime publication, `realtime.messages` policy, private channel/client changes or catch-up.
 - Live schema comparison/application, new backup, production/web deploy or real-user fixtures.
 
@@ -100,11 +100,11 @@ rollback is separately approved after fresh backup/restore proof.
 
 **Done definition:**
 
-- [ ] Nonmembers cannot read or mutate reactions, polls, votes or stars in another room.
-- [ ] Room members retain reads, own add/remove/star and sender poll creation.
-- [ ] Reaction/vote no-op upserts pass; identity-changing or other-member writes refuse.
-- [ ] Forward/down/restored-forward, exact prior restore, source baseline and root gate pass.
-- [ ] Diff/DDL review, cleanup, disk floor and documentation gates pass; later slices stay open.
+- [x] Nonmembers cannot read or mutate reactions, polls, votes or stars in another room.
+- [x] Room members retain reads, own add/remove/star and sender poll creation.
+- [x] Reaction/vote no-op upserts pass; identity-changing or other-member writes refuse.
+- [x] Forward/down/restored-forward, exact prior restore, source baseline and root gate pass.
+- [x] Diff/DDL review, cleanup, disk floor and documentation gates pass; later slices stay open.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -113,16 +113,25 @@ rollback is separately approved after fresh backup/restore proof.
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-19 | Source/resource/ownership preflight | local repository at `1bb9c17`; restored loopback PostgreSQL 17 | PASS | 23 dated policies and supporting keys/indexes inspected read-only; 21,688,352 KiB free; no clone/build/runtime started. |
+| 2026-09-19 | Guarded forward/down/restored-forward runner | loopback PostgreSQL 17, disposable `genova_042_test_restore`, 041 applied first | PASS | Final four-table room/member/actor matrix passed twice. Exact post-041 policies/triggers/indexes/data restored on down; source baseline stayed unchanged; target was dropped. Dated local source is not hosted evidence. |
+| 2026-09-19 | Runner name/refusal guard | local shell | PASS | Shell syntax passed and an unsafe database name was refused before any database action. |
+| 2026-09-19 | Root `pnpm check` | local repository, product `c58f4da` | PASS | Lint/typecheck, 58 test files / 571 tests, configured coverage, service-worker syntax and Next production build passed. |
+| 2026-09-19 | DDL/query/index/diff review | four product/test files | PASS | Fifteen broad/duplicated policies become thirteen authenticated room/actor policies; security-definer helpers are auth-bound and public execution is revoked. Exact no-op upserts pass; two supporting read indexes were added. Self-review only. |
+| 2026-09-19 | Generated-output/database cleanup | local filesystem/PostgreSQL | PASS | Disposable database is absent; exact `.next` (472,612 KiB) and `coverage` (332 KiB) were removed. 21,683,500 KiB (~20.7 GiB) remained free; unrelated CLI marker stayed unstaged. |
+| 2026-09-19 | Documentation consistency gate | five changed Markdown files | PASS | 125 local links resolve with zero missing; stale 042 pending/next-secondary-RLS markers are absent; `git diff --check` passes. |
 
-**Delivery:** Pending migration/test implementation and acceptance record.
+**Delivery:** Planning commit `467e08d`; product/test commit `c58f4da`; this acceptance/status
+record follows separately. Rollback is the scoped down migration locally, or the product commit
+before hosted application. Next: durable `chat_message_status` room/actor authority; core message
+rules and publication/private Realtime remain later slices.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Room-member reads and nonmember/cross-room/cross-choir refusal on all four surfaces | yes | NOT RUN | pending local SQL matrix | Must exercise every table, not infer from one helper. |
-| Own reaction/vote/star and sender-poll compatibility | yes | NOT RUN | pending local SQL matrix | Includes PostgREST-style no-op upsert conflict behavior. |
-| Other-member and identity-changing mutation refusal | yes | NOT RUN | pending local SQL matrix | Reaction/vote row identity must be immutable. |
-| Forward/down/restored-forward, exact prior state and source baseline | yes | NOT RUN | pending guarded runner | Disposable post-041 baseline only. |
-| Root gate, review, cleanup, disk floor and records | yes | NOT RUN | pending | Preserve unrelated CLI marker unstaged. |
+| Room-member reads and nonmember/cross-room/cross-choir refusal on all four surfaces | yes | PASS | 2026-09-19, `c58f4da`, local SQL matrix | Every table is exercised across two rooms/two choirs; same-choir nonmember sees zero. |
+| Own reaction/vote/star and sender-poll compatibility | yes | PASS | 2026-09-19, `c58f4da`, local SQL matrix | Own add/remove and current-sender poll creation pass; exact reaction/vote conflict upserts pass. |
+| Other-member and identity-changing mutation refusal | yes | PASS | 2026-09-19, `c58f4da`, local SQL matrix | Other-member insert/delete and inaccessible-room writes refuse; reaction/vote changes raise 42501. |
+| Forward/down/restored-forward, exact prior state and source baseline | yes | PASS | 2026-09-19, guarded local runner | Exact post-041 policy/trigger/index/data snapshots restore; second forward passes; source unchanged. |
+| Root gate, review, cleanup, disk floor and records | yes | PASS | 2026-09-19, local source/filesystem/docs | Root 58 files/571 tests/build pass; DB/build outputs removed; ~20.7 GiB free; 125 links and diff check pass. |
 | Message status/core message/Realtime/native runtime/hosted | N/A — later C3 slices | N/A | not executed | Explicitly remains open. |
