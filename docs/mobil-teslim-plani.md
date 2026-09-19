@@ -2,7 +2,8 @@
 
 Execution controls updated 2026-09-15 under
 [WF-007](briefs/WF-007-bounded-execution-and-disk-budget.md) after the owner's disk-pressure
-and delivery-focus review. Local C1 acceptance is complete at 033; C2 is next. Originally prepared under
+and delivery-focus review. Local C1 acceptance is complete at 033; C2's shared contract is accepted
+at 034 and native delivery remains next. Originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
 plan, not implementation evidence or an authorization grant. Agent instructions are English;
@@ -179,7 +180,7 @@ that product/security boundary before shipping. Offline support is not implied b
 | Package / dependency | Bounded outcome and relevant sources | Acceptance, including failure cases | Authority / stop |
 |---|---|---|---|
 | C1 / stable A read flow | **COMPLETE locally:** [028](briefs/028-permanent-webview-bridge-inventory.md) fixes the [bridge contract](webview-bridge-contract.md); [029](briefs/029-permanent-webview-policy-core.md) accepted policy at `4289da4`; [030](briefs/030-web-embedded-adapter.md) accepted dormant web adapter at `c7d09d3`; [031](briefs/031-native-webview-shell.md) accepted native shell at `0217ac8`; [032](briefs/032-webview-platform-capabilities.md) accepted platform capabilities at `fa2e4b7`. [033](briefs/033-composed-permanent-webview-runtime.md) composes both clients; current dependency/native gates, iOS/Android composed scenarios and owner-operated iOS password change/restore pass through product `69714b1`. Preserve prior native/route/platform proof separately. `apps/mobile/src/ui/`, `MIGRATION.md`, auth | Correct native/WebView route ownership; shared access-token lease and server-confirmed active choir; logout everywhere; external URL allowlist, back navigation, accessibility, attachments and expired-session recovery | No native rewrites of permanent WebView routes; native alone owns refresh token; no token in URLs/logs; this is local simulator/emulator acceptance, not hosted/provider/real-account/hardware/distribution proof |
-| C2 / C1 | Notification/deep-link contract, then native delivery. `lib/server/push-notifications.ts`, current subscribe/unsubscribe routes | Correct account/device token lifecycle; permission refusal; foreground/background tap routing; destination rechecks tenant/role; unsubscribe/sign-out; duplicate delivery handling | Local payload tests first. Provider keys, push delivery and real recipients separately authorized |
+| C2 / C1 | [034](briefs/034-notification-deep-link-contract.md) accepts the shared notification/deep-link contract and binds all seven existing server payload types at `6883b3b`; native delivery is next. `lib/server/push-notifications.ts`, current subscribe/unsubscribe routes | Correct account/device token lifecycle; permission refusal; foreground/background tap routing; destination rechecks tenant/role; unsubscribe/sign-out; duplicate delivery handling | 034 proves local payload routing/dedupe identity only. Provider keys, push delivery, real recipients and hardware remain separately authorized |
 | C3 / C1 + chat inventory | Native chat, split list/read → send/retry → media/remaining features. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and other inventoried features; RLS on every read/write; realtime reconnect/order/dedup; offline retry; inaccessible room and choir switch | Inventory before scope. Dart UI and Socket.IO from the old reference app are not reusable RN/Supabase code |
 | C4 / C1 + file/upload contract | Native assignments, split read → submission → review. `lib/assignment-scope.ts`, `app/(main)/odevler/`, existing assignment APIs | Existing role/deadline/lock/withdrawal/review rules; authorized upload completion, failed/resumed submission, hidden review, wrong tenant and audit behavior | Native server logic moves to shared Edge paths; web uses the same path. Any schema change requires DB gates |
 | C5 / C1, C3–C4 as needed | Native home and performance views. Existing main pages, `lib/korist-performance.ts` | Same role/data meaning; empty/error/refresh and tenant change; counters cannot leak a prior choir; deep links resolve correctly | No new analytics product or silent change to calculations |
@@ -406,8 +407,10 @@ implemented the guarded composition at `d295c62` and proved both Release handsha
 the historical Android scenario set. **19 September checkpoint: 033/C1 is accepted locally.**
 The repaired Android credential/session/sign-out, guarded plus normal Release checks, the bounded
 guarded iOS feature/fault batch and the owner-operated iOS password change/restore pass on current
-dependencies through product `69714b1`. The next ready product work is C2's bounded
-notification/deep-link contract slice; provider delivery remains separately gated. See
+dependencies through product `69714b1`. Package 034 then accepted the fail-closed seven-event
+notification/deep-link contract at `6883b3b`, removed assignment query drift and exposed stable
+duplicate identity; provider/device delivery was not run. The next ready product work is the
+smallest native C2 consumer/lifecycle slice. See
 [033's final checkpoint](briefs/033-composed-permanent-webview-runtime.md#current-checkpoint--19-september-2026).
 013–032's historical local acceptance,
 004/010 open criteria and the postponed hardware pilot remain unchanged.

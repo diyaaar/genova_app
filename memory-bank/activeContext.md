@@ -1,8 +1,8 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; `69714b1` contains the final agent-operable iOS feature/fault repair after
-the Expo alignment `851e9cd` and early-401 repair `6a5769a`.
+owns resource controls; `6883b3b` contains the accepted C2 notification/deep-link contract after
+the final C1 product repair `69714b1`, Expo alignment `851e9cd` and early-401 repair `6a5769a`.
 The product SecureStore remains unchanged; 033/C1 runtime acceptance is locally complete.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
 [delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
@@ -10,7 +10,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `69714b1`. Recorded remote `a13f696`;
+- Product revision: `6883b3b`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -25,6 +25,11 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   normal exports/isolation and Doctor 21/21 PASS. Post-alignment normal signed iOS native build,
   signature/Info.plist/isolation and empty SecureStore startup/relaunch PASS; others NOT RUN.
 - The unrelated `supabase/.temp/cli-latest` change stays unstaged.
+- [034](../docs/briefs/034-notification-deep-link-contract.md) is **ACCEPTED LOCALLY**: all seven
+  server event types derive C1-policy canonical destinations, assignment query drift is removed,
+  malformed/override fields fail closed and the server-owned notification UUID is the duplicate
+  key. Root 56 files / 488 tests, coverage, service-worker syntax and build pass. Provider/device
+  delivery, permission and token lifecycle were not run.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -41,8 +46,9 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  Next: select the first bounded C2 notification/deep-link contract slice; do not replay accepted
-  033 Android/iOS scenarios or infer provider/device delivery from local payload tests.
+  After 034 cleanup 16,935,320 KiB (~16.2 GiB) remained free. Next: select the smallest native C2
+  consumer/lifecycle slice; do not replay accepted C1 scenarios or infer provider/device delivery
+  from local contract tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -51,7 +57,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2–C5 and release/store work remain pending; C1 acceptance is local simulator/emulator evidence,
+C2 delivery beyond its accepted 034 contract, C3–C5 and release/store work remain pending; C1
+acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
 Local-work authority persists within current scope. External actions, real data/accounts,
 email, credentials, spending, CI dispatch, publication and hardware retain their gates.

@@ -1,6 +1,6 @@
 # 034 — Notification deep-link contract
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Establish one shared, fail-closed contract that turns every
 existing push event into a canonical app destination before native notification delivery is
@@ -90,14 +90,14 @@ state is changed.
 
 **Done definition:**
 
-- [ ] All seven existing event types resolve to canonical routes accepted by C1 policy.
-- [ ] Assignment events omit the rejected redundant query; raw/foreign URL fields cannot override
+- [x] All seven existing event types resolve to canonical routes accepted by C1 policy.
+- [x] Assignment events omit the rejected redundant query; raw/foreign URL fields cannot override
       a derived destination.
-- [ ] Invalid type, identifier, date, delivery identity and timestamp fail closed.
-- [ ] Route owner/availability and exact duplicate key are exposed without granting access.
-- [ ] Migration start check and delivery checks are evidenced.
-- [ ] Root `pnpm check` passes at the product revision.
-- [ ] Diff is self-reviewed, scope indexes are updated, generated output is cleaned and free space
+- [x] Invalid type, identifier, date, delivery identity and timestamp fail closed.
+- [x] Route owner/availability and exact duplicate key are exposed without granting access.
+- [x] Migration start check and delivery checks are evidenced.
+- [x] Root `pnpm check` passes at the product revision.
+- [x] Diff is self-reviewed, scope indexes are updated, generated output is cleaned and free space
       remains at least 10 GiB.
 
 **Optional subtask:** None. One writer; no delegation.
@@ -108,21 +108,30 @@ state is changed.
 |---|---|---|---|---|
 | 2026-09-19 | Source inventory and route comparison | local repository at `f63481b` | PASS | Seven server event types found; assignment query conflicts with accepted C1 policy; no native notification implementation. No provider/device claim. |
 | 2026-09-19 | Resource preflight | local filesystem | PASS | 18,462,640 KiB free; no new runtime/download planned; unrelated dirty temp marker preserved. |
+| 2026-09-19 | `pnpm vitest run lib/notification-deep-link.test.ts lib/mobile-webview-bridge.test.ts` | local, uncommitted product diff | PASS | 2 files / 129 tests; all seven event paths, route policy and negative cases passed. |
+| 2026-09-19 | First `pnpm typecheck` | local, uncommitted product diff | FAIL | The old generic `Record<string, unknown>` payload field did not accept the new discriminated union. The field was narrowed to `NotificationRoutingData`; the next typecheck passed. No acceptance row was removed. |
+| 2026-09-19 | `pnpm typecheck` and focused ESLint | local, corrected product diff | PASS | Shared contract, tests and server integration passed with zero warnings. |
+| 2026-09-19 | `pnpm check` | local at product content committed as `6883b3b` | PASS | Lint/typecheck; 56 files / 488 tests; coverage 90.43% statements, 81.75% branches, 97.22% functions, 95.92% lines; service worker syntax and Next production build passed. No provider or device operation. |
+| 2026-09-19 | Product diff self-review | local commit `6883b3b` | PASS | Seven builders use the shared creator; text and recipient selection are unchanged; assignment query duplication is removed. Contract derives destinations from validated event data, rejects route override fields and marks authorization recheck required. Self-review is not independent review. |
+| 2026-09-19 | Exact generated-output cleanup and disk check | local filesystem | PASS | Removed task-owned `.next` (461 MiB) and `coverage` (284 KiB); 16,935,320 KiB (~16.2 GiB) free. No runtime/download was created; unrelated temp marker remains unstaged. |
+| 2026-09-19 | Local-link, status and diff checks | five changed Markdown files | PASS | 88 local links, zero missing targets; no stale 034 pending marker; `git diff --check` passed. |
 
-**Delivery:** Pending implementation, acceptance, product commit, record commit and next C2 slice
-selection.
+**Delivery:** Planning commits `ed42a85` and `eda1f9e`; product commit `6883b3b`; this record commit
+follows. Roll back `6883b3b` to remove the local contract. Provider delivery, permission UI,
+device-token lifecycle, tap adapters and real-device evidence remain C2 work. The next bounded slice
+must consume this contract without claiming provider or hardware acceptance.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Seven known event types produce typed metadata and canonical paths | yes | NOT RUN | focused local contract test pending | Must cover profile decision, announcement, rehearsal, assignment create/submit/review and repertoire assignment. |
-| C1 policy determines web/native owner and current availability | yes | NOT RUN | focused local contract test pending | This is route classification, not authorization or navigation. |
-| Assignment paths omit `aid`; raw or foreign URL input cannot override the route | yes | NOT RUN | focused hostile-input cases pending | Destination pages still recheck current session/tenant/role. |
-| Malformed/unknown type, identifier, date, delivery identity and timestamp fail closed | yes | NOT RUN | focused negative cases pending | No permissive fallback to `/` or caller URL. |
-| Duplicate delivery exposes the same stable dedupe key; distinct identities remain distinct | yes | NOT RUN | focused duplicate cases pending | Persistence/eviction belongs to the delivery adapter brief. |
-| Existing server builders use the shared contract and retain notification text/recipient behavior | yes | NOT RUN | typecheck, tests and diff review pending | No provider send will run. |
-| Root shared/web gate | yes | NOT RUN | `pnpm check` pending | Does not prove provider, hosted DB, native runtime or hardware behavior. |
+| Seven known event types produce typed metadata and canonical paths | yes | PASS | 2026-09-19, `6883b3b`, focused local contract test | Profile decision, announcement, rehearsal, assignment create/submit/review and repertoire assignment all passed. |
+| C1 policy determines web/native owner and current availability | yes | PASS | 2026-09-19, `6883b3b`, focused contract + route-policy tests | Web destinations are available; repertoire is native/available; assignments are native/unavailable until C4. This is classification, not authorization or navigation. |
+| Assignment paths omit `aid`; raw or foreign URL input cannot override the route | yes | PASS | 2026-09-19, `6883b3b`, focused hostile-input tests + diff review | All assignment events resolve to `/odevler/<uuid>`; forbidden `url`, `path`, route and credential/identity fields fail closed. Destination pages still recheck current access. |
+| Malformed/unknown type, identifier, date, delivery identity and timestamp fail closed | yes | PASS | 2026-09-19, `6883b3b`, focused negative matrix | No permissive fallback to `/` or caller URL; invalid route policy also rejects. |
+| Duplicate delivery exposes the same stable dedupe key; distinct identities remain distinct | yes | PASS | 2026-09-19, `6883b3b`, focused duplicate test | The server-owned UUID is preserved as the exact dedupe key. Persistence/eviction belongs to the delivery adapter brief. |
+| Existing server builders use the shared contract and retain notification text/recipient behavior | yes | PASS | 2026-09-19, `6883b3b`, typecheck/build + self-review | Seven builders changed only routing fields; text and recipient code stayed intact. No provider send ran. |
+| Root shared/web gate | yes | PASS | 2026-09-19, `6883b3b`, `pnpm check` | 56 files / 488 tests, thresholds, service-worker syntax and production build passed. Does not prove provider, hosted DB, native runtime or hardware behavior. |
 | Provider delivery, real recipients and foreground/background device tap | N/A — explicitly outside this first C2 contract slice | N/A | not executed | Remain required in later C2 delivery acceptance. |
-| Cleanup, disk floor and dirty-path ownership verified | yes | NOT RUN | post-gate check pending | Remove `.next`; preserve `supabase/.temp/cli-latest`. |
-| Diff review and record consistency | yes | NOT RUN | self-review/document gates pending | Self-review is not independent review. |
+| Cleanup, disk floor and dirty-path ownership verified | yes | PASS | 2026-09-19, exact path checks + `df -k .` | `.next` and `coverage` absent; 16,935,320 KiB free; `supabase/.temp/cli-latest` remains the only unrelated dirty path. |
+| Diff review and record consistency | yes | PASS | 2026-09-19, `6883b3b` and record diff | Product diff self-reviewed; document links/status/diff gate passed before the record commit. Self-review is not independent review. |
