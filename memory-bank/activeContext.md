@@ -1,11 +1,11 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; `b1d565f` contains the accepted provider-neutral native push registration
-protocol after [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md) fixed the
-lifecycle, `04319e3` added the permission/tap consumer and `6883b3b` added the C2 event contract,
-following the final C1 product repair `69714b1`, Expo alignment `851e9cd` and early-401 repair
-`6a5769a`.
+owns resource controls; [038](../docs/briefs/038-native-chat-feature-inventory.md) now owns C3's
+accepted feature/safety inventory. Product `b1d565f` remains the accepted provider-neutral native
+push registration protocol after [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md)
+fixed the lifecycle, `04319e3` added the permission/tap consumer and `6883b3b` added the C2 event
+contract, following the final C1 product repair `69714b1`.
 The product SecureStore remains unchanged; 033/C1 runtime acceptance is locally complete.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
 [delivery plan](../docs/mobil-teslim-plani.md#revised-goal-text) owns the revised objective,
@@ -47,6 +47,12 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   `b1d565f`: fail-closed v1 register/revoke/receipt shapes, explicit transport/platform,
   safe generation/current-scope guards and redacted diagnostics pass focused 52 tests and the full
   57-file/540-test root gate. It performs no token, network, storage, schema or provider action.
+- [038](../docs/briefs/038-native-chat-feature-inventory.md) is **DOCUMENTATION ACCEPTED**: every
+  current chat capability is assigned to a bounded C3 slice. The dated repository schema exposes
+  self-expanded room membership/role, broad same-choir poll/reaction/star policies, public
+  Broadcast/Presence, unstable pagination/retry and stale in-memory tenant state. This is not a
+  live-schema check or remediation. The bounded tenant-memory teardown repair is next and can
+  proceed without a DB/runtime allocation.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -65,8 +71,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
   After 037 cleanup 12,092,896 KiB (~11.5 GiB) remained free. C2's next schema/runtime cannot fit
   its required DB evidence safely near the floor, and its adapter awaits the Expo-vs-direct owner
-  choice. Next ready local package is C3 chat inventory; do not infer provider/device delivery from
-  local contract tests.
+  choice. C3 inventory is accepted at 038; its bounded tenant-memory teardown repair is the next
+  ready local package. Do not infer DB/runtime or provider/device delivery from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
 
@@ -75,7 +81,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3–C5 and release/store work remain pending; C1
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 038,
+C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
 Local-work authority persists within current scope. External actions, real data/accounts,

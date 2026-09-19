@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 19 September 2026 under [037](briefs/037-native-push-registration-protocol.md).
+Updated 19 September 2026 under [038](briefs/038-native-chat-feature-inventory.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [037](briefs/037-native-push-registration-protocol.md).
+   [038](briefs/038-native-chat-feature-inventory.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -46,6 +46,10 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   exact v1 register/revoke/receipt parsing, transport/platform compatibility, stale scope/
   generation refusal and secret-safe diagnostics pass 57 files/540 tests and the root build.
   It has no token getter, network, schema, Edge, provider or runtime behavior.
+- [038](briefs/038-native-chat-feature-inventory.md) is **DOCUMENTATION ACCEPTED**: it preserves
+  every current chat capability across a seven-step C3 split and records dated room-authority,
+  RLS, Realtime, cache, order and retry blockers. No live schema was queried and no defect was
+  remediated. The next ready slice is the bounded tenant-memory teardown repair.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -79,8 +83,9 @@ consumer under 36 suites/216 tests, config and production JS export. 036 documen
 separate native registration lifecycle; `b1d565f` then accepts its pure provider-neutral v1
 protocol under 57 files/540 tests and the root build. Its exact outputs were removed with about
 12.1 million KiB free. C2 schema/runtime is not resource-ready near the floor and the transport
-adapter awaits the Expo-vs-direct owner choice. Next ready local work: C3 chat inventory; provider
-keys, real delivery/recipients and hardware remain gated.
+adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory without allocating
+a runtime; next ready local work is its tenant-memory teardown repair. Chat RLS/Realtime migration,
+provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
 
@@ -100,7 +105,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 037 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 038 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.
