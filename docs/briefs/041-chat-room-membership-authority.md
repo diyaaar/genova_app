@@ -1,0 +1,125 @@
+# 041 — Chat room-membership authority repair
+
+**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+
+**Purpose and user need:** Stop an authenticated choir member from joining an arbitrary same-choir
+room or changing membership authority fields while preserving creator/admin member management and
+each member's own read/mute/hide preferences.
+
+**Delivery focus:** This is the first bounded part of C3 order 3. It repairs only
+`chat_room_members` insert/update authority and immutable identity fields. Broad reaction/poll/star
+policies, message mutations, publication, private Broadcast/Presence and native runtime remain
+sequential packages; they are not hidden or accepted here.
+
+**Starting evidence:** 038 found that dated policy `Add room members` permits
+`member_id = current_chat_member_id()` for any same-choir room, while `Update own membership` has
+no `WITH CHECK` or column guard. Current web uses self updates for `nickname`, `last_read_at`,
+`notifications_enabled` and `hidden_at`, creator/admin inserts for room members, and admin role
+updates. 040 at `2dfe6ab` defines the read contract but does not change authority. Product/status
+record is `b3bd07a`; the unrelated `supabase/.temp/cli-latest` remains unstaged.
+
+**Current work card:** Observable result: same-choir non-members cannot self-join, a member cannot
+self-promote or move/reidentify their membership, creator/admin add and admin role update still
+work, and own preference updates still work. Next actions: (1) add reversible policy/trigger DDL and
+a two-room/two-choir role matrix; (2) run guarded forward/down/restored-forward against a disposable
+clone of the restored local PostgreSQL 17 source; (3) run web/root compatibility, clean and record.
+Exit with all rows passing or leave the package open without any hosted operation.
+
+**Resources:** Start after cleanup correction: 21,691,844 KiB (~20.7 GiB) free. A previously
+unregistered, stopped `colima-genova033` data disk was found at 6,072,144 KiB and removed under the
+owner's standing temporary-output cleanup request; no other Colima profile/cache was removed and
+`.colima` now uses 24 KiB. The existing loopback PostgreSQL 17 source
+`genova_008_test_restore` is 15,382,195 bytes. Use a guarded disposable database clone only;
+no Colima/Docker/download/build is required. Drop the clone after evidence, then remove root build
+outputs and preserve the 10 GiB floor.
+
+**Allowed files / modules:**
+
+- `supabase/migrations/20260919190000_chat_room_membership_authority_041.sql` — forward repair and
+  rollback metadata.
+- `supabase/rollback/041_chat_room_membership_authority_down.sql` — exact prior-policy restore.
+- `supabase/tests/041_chat_room_membership_authority.sql` — synthetic role/room/choir matrix.
+- `supabase/test-support/041_chat_room_membership_authority_runner.sh` — guarded local clone,
+  roundtrip, baseline and cleanup.
+- `lib/chat.ts` and focused tests only if the exact current creator/admin flow exposes a required
+  compatibility repair; scope expansion must be recorded before editing.
+- This brief and, after acceptance, plan/MIGRATION/active-context/handoff records.
+
+**Sources / existing patterns:**
+
+- [038](038-native-chat-feature-inventory.md) and [040](040-shared-chat-read-contract.md) — blocker,
+  order and unchanged read/runtime boundaries.
+- `backup_schema_2026-09-07.sql` and `20260903214901_tenant_schema_003.sql` — dated policies,
+  current-choir/member helpers and same-tenant trigger contract; not fresh hosted evidence.
+- `lib/chat.ts`, `ChatRoomList` and `RoomInfoDrawer` — current creator/admin/self-update behavior.
+- 024 migration/test/runner — reversible local-clone and role-matrix pattern.
+- [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security) — current
+  official policy semantics. Policy predicates use indexed membership/room keys and server-derived
+  current member/choir helpers; client identity is not authority.
+
+**Migration start check:**
+
+- Read: `AGENTS.md`, handoff, active context, plan controls/C3, 038–040, transition guide/work
+  cycle/template, relevant decisions, dated schema/migration, all membership policies, callers and
+  024's local migration pattern. Supabase and Postgres best-practice skill instructions were used.
+- Boundary: shared database authority DDL and synthetic local verification only. Web behavior is
+  preserved; native remains unimplemented. This is not the full chat authority/Realtime package.
+- Preserve: room creator bootstrap/member add, admin add/remove/role update, self leave and own
+  nickname/read/mute/hide updates, current-choir restrictive policy and tenant-link trigger.
+- Authority/writer: one primary writer; local SQL/test/commits and owned temporary DB cleanup are
+  authorized. No hosted query/migration/write, deploy, CI, credential, real data/account, provider,
+  hardware or publication. A future hosted application needs fresh backup/restore and approval.
+- Required proof: creator/admin/nonmember/self role matrix across two rooms/two choirs; immutable
+  ID/room/member/choir/joined fields; policy/function/trigger forward state; exact down restore;
+  restored-forward; source/fixture baseline; focused SQL, root `pnpm check`, cleanup/disk floor.
+
+**Out of scope:**
+
+- Reactions, polls, votes, stars, messages/status, one-hour rules or atomic room creation RPC.
+- Realtime publication, `realtime.messages` policy, private channel/client changes or catch-up.
+- Live schema comparison/application, new backup, production/web deploy or real-user fixtures.
+- Treating local RLS success as proof that the hosted 7 September snapshot is still current.
+
+**Risk / authority / rollback:** A policy-only repair could still let a self-update change `role`,
+`room_id`, `member_id`, `choir_id`, `id` or `joined_at`; a trigger-only repair could preserve the
+arbitrary self-add path. Use both fail-closed policies and a narrow update guard. Local tests run in
+a disposable database cloned from the restored source, with transaction-local synthetic rows.
+Rollback restores the captured prior policies and removes only 041 objects. Hosted rollback would
+be a separately approved operation after fresh backup/restore proof.
+
+**Small implementation steps:**
+
+1. Store prior insert/update policy definitions, replace self-add/update paths and add the update
+   guard without weakening existing restrictive tenant isolation.
+2. Prove creator/admin/self and refusal cases, forward/down/restored-forward and source baseline in
+   a guarded disposable local PostgreSQL 17 clone.
+3. Run root compatibility, self-review DDL/API impact, clean exact outputs and update records.
+
+**Done definition:**
+
+- [ ] Same-choir nonmember self-add and self role/identity escalation fail closed.
+- [ ] Creator/admin member management and own preference/read-state updates still pass.
+- [ ] Two-room/two-choir matrix, forward/down/restored-forward and exact prior restore pass.
+- [ ] Source/fixture baseline, root `pnpm check`, cleanup and 10 GiB floor pass.
+- [ ] Diff/DDL review and documentation gates pass; hosted/live/Realtime remain explicitly open.
+
+**Optional subtask:** None. One writer; no delegation.
+
+**Result record:**
+
+| Date | Command / action | Environment | Result | Evidence / limit |
+|---|---|---|---|---|
+| 2026-09-19 | Source/resource/ownership preflight | local repository at `b3bd07a` | PASS | PostgreSQL 17 loopback source exists and is ~14.7 MiB; no DB clone/runtime started. Exact orphan `colima-genova033` disk (6,072,144 KiB) was inactive/unregistered and removed; free space rose to 21,691,844 KiB. |
+
+**Delivery:** Pending migration/test implementation and acceptance record.
+
+## Mandatory acceptance evidence
+
+| Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
+|---|---|---|---|---|
+| Nonmember self-add and member self-escalation/identity mutation refuse | yes | NOT RUN | pending local SQL matrix | Same choir and cross-choir negatives required. |
+| Creator/admin add/remove/role and own preference/read-state compatibility | yes | NOT RUN | pending local SQL matrix | Existing web direct-table behaviors remain. |
+| Forward/down/restored-forward and exact prior policy/trigger state | yes | NOT RUN | pending guarded runner | Disposable local clone only. |
+| Source/fixture baseline and root web/shared gate | yes | NOT RUN | pending | No retained synthetic rows/database/build outputs. |
+| Diff/DDL review, cleanup, disk floor and records | yes | NOT RUN | pending | Preserve unrelated CLI marker unstaged. |
+| Secondary chat RLS/Realtime/native runtime/hosted | N/A — later C3 slices | N/A | not executed | Explicitly remains open. |
