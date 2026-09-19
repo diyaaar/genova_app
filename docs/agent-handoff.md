@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 19 September 2026 under [035](briefs/035-native-notification-tap-runtime.md).
+Updated 19 September 2026 under [036](briefs/036-native-push-token-lifecycle-inventory.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [035](briefs/035-native-notification-tap-runtime.md).
+   [036](briefs/036-native-push-token-lifecycle-inventory.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -36,6 +36,11 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   authenticated cold/live taps reuse 034; exact WebView/repertoire, duplicate, hostile/unavailable
   and sign-out cleanup paths pass under 36 suites/216 tests and a production JS export. Native
   binary/OS prompt, device token/backend/provider and real delivery remain unrun.
+- [036](briefs/036-native-push-token-lifecycle-inventory.md) is **DOCUMENTATION ACCEPTED**: the
+  current Web Push-only table/RPC/VAPID sender is kept separate from a native registration
+  relation; account/choir/installation/token rotation, sign-out/offline revocation and compatible
+  rollout are fixed as later acceptance requirements. Expo Push Service is the recommended first
+  transport, but the owner choice and all account/credential/provider actions remain open.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -54,7 +59,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
   [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-  C2 delivery beyond 034–035, C3–C5, release candidate and stores remain pending. Dependencies live
+  C2 delivery beyond 034–036, C3–C5, release candidate and stores remain pending. Dependencies live
   only in the plan.
 
 ## Active bounded sequence
@@ -65,10 +70,11 @@ credential/session/sign-out plus normal Android Release/isolation PASS. `69714b1
 guarded iOS feature/fault batch and final root 467-test/build gate. The owner-operated password
 change/restore closes 033 without product changes. `6883b3b` accepts 034's shared seven-event
 contract under the 56-file/488-test root gate. `04319e3` accepts 035's native permission/tap
-consumer under 36 suites/216 tests, config and production JS export; output was cleaned with
-12,091,576 KiB free. Next: inventory device-token account/choir lifecycle and define its smallest
-local contract without allocating a native/DB runtime near the floor. Provider keys, real
-delivery/recipients and hardware remain gated.
+consumer under 36 suites/216 tests, config and production JS export. 036 then documentation-accepts
+the separate native registration lifecycle and compatible rollout without creating a token,
+schema or runtime. Next: implement the smallest provider-neutral registration protocol/core; do
+not allocate a native/DB runtime near the floor. The Expo-vs-direct transport choice is required
+before its adapter. Provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
 
@@ -88,7 +94,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 033 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 036 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

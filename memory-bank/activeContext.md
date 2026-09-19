@@ -1,8 +1,9 @@
 # Active context
 
 Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; `04319e3` contains the accepted native notification permission/tap consumer
-after the C2 shared contract `6883b3b` and
+owns resource controls; [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md)
+documentation-accepts the native registration lifecycle after `04319e3` added the notification
+permission/tap consumer and `6883b3b` added the C2 shared contract, following
 the final C1 product repair `69714b1`, Expo alignment `851e9cd` and early-401 repair `6a5769a`.
 The product SecureStore remains unchanged; 033/C1 runtime acceptance is locally complete.
 The [handoff](../docs/agent-handoff.md) is the short entry; the
@@ -36,6 +37,11 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   WebView/access-controlled repertoire targets and fail visibly for unavailable/hostile targets.
   Mobile 36 suites/216 tests, Expo config and production iOS JS export pass. Native binary/runtime,
   token/backend/provider and real delivery remain unrun.
+- [036](../docs/briefs/036-native-push-token-lifecycle-inventory.md) is **DOCUMENTATION ACCEPTED**:
+  the browser table/RPC/VAPID sender cannot accept native tokens safely, so a separate native
+  relation/transport path preserves web behavior. Account, current choir, installation, token
+  generation/rotation, permission refusal, sign-out/offline revocation and stale-provider cleanup
+  are specified. Expo-first is recommended; the owner transport choice remains open.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -52,8 +58,8 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  After 035 cleanup 12,091,576 KiB (~11.5 GiB) remained free. Next: C2 token-lifecycle inventory
-  and smallest local contract; do not allocate a native/DB runtime near the floor or infer
+  During 036, about 12.1 million KiB (~11.5 GiB) remained free. Next: the smallest provider-neutral
+  C2 registration protocol/core; do not allocate a native/DB runtime near the floor or infer
   provider/device delivery from local contract tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
@@ -63,7 +69,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–035, C3–C5 and release/store work remain pending; C1
+C2 token/provider delivery beyond accepted 034–036, C3–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
 Local-work authority persists within current scope. External actions, real data/accounts,

@@ -20,8 +20,11 @@ Package 034 accepts the shared seven-event notification/deep-link contract at `6
 owner/availability, assignment-query repair, hostile payload refusal and stable duplicate identity
 pass locally. Package 035 accepts the user-triggered permission and authenticated cold/live tap
 consumer at `04319e3`; exact WebView/repertoire routing, duplicate refusal and sign-out cleanup pass
-in 36 suites/216 tests plus production JS export. Current next action: C2 device-token lifecycle
-inventory/local contract; native binary, provider keys, real delivery/recipients and hardware remain gated.
+in 36 suites/216 tests plus production JS export. Package 036 documentation-accepts a separate
+native registration relation and the account/choir/installation/rotation/sign-out lifecycle while
+preserving the browser table and VAPID sender. Current next action: provider-neutral registration
+protocol/core; Expo-first is recommended but the owner transport choice remains open. Native binary,
+provider keys, real delivery/recipients and hardware remain gated.
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
 **Faz 1 — kiracı şeması (`choir_id`): TAMAMLANDI ve CANLIDA (4 Eyl).**
@@ -71,7 +74,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Ekran | ≈ satır | Hedef | Durum | Faz |
 |---|---:|---|---|---|
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
-| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028–032 WebView katmanlarını ve 033 iki platformlu bileşik yaşam döngüsünü yerelde kabul etti; push/C2 bekliyor | 1 |
+| Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028–032 WebView katmanlarını ve 033 iki platformlu bileşik yaşam döngüsünü yerelde kabul etti; 034–035 push sözleşmesi/tap tüketicisi yerelde, 036 token yaşam döngüsü belgede kabul edildi; backend/provider bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
 | Chat | 8.552 | **native** (RN UI ve veri uyarlaması bekliyor) | bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
@@ -97,7 +100,7 @@ erişilebilirlik ve dosya etkileşimleri cihazda doğrulanır; kayıpsızlık va
 | `supabase/functions/repertoire-file` | yerel kabul edildi (015/018/021/022/026/027), **canlıya alınmadı**; gerçek yerel mobil dosya/PDF yaşam döngüsü ve foreground native ses/mini-player iki simüle platformda, mevcut web PDF/ses/offline yolu üretim Chrome'da geçti. Bilet üretimi JWT + aktif koro RLS, içerik GET/HEAD kısa ömürlü imzalı bilet kullanır |
 | `supabase/functions/link-preview` | canlı |
 | `app/api/*` — 27 route, ~5.600 satır | Next.js'te. Ekran native olduğunda o route Edge Function'a taşınır, web de aynı fonksiyona bağlanır. |
-| Push (VAPID → FCM/APNs) | 034 ortak olay/hedef sözleşmesini, 035 kullanıcı izin + auth-korumalı native tap tüketicisini yerelde kabul etti; token/backend/provider ve gerçek cihaz teslimi bekliyor |
+| Push (VAPID + seçilecek native transport) | 034 ortak olay/hedef sözleşmesini, 035 kullanıcı izin + auth-korumalı native tap tüketicisini yerelde kabul etti; 036 browser/native kayıt ayrımını ve token yaşam döngüsünü belgede kabul etti. Provider-neutral protokol, şema/Edge, Expo-vs-direct seçimi, provider ve gerçek cihaz teslimi bekliyor |
 
 ---
 
