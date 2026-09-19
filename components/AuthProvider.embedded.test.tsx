@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BRIDGE_CHANNEL, BRIDGE_VERSION } from '@/lib/mobile-webview-bridge';
@@ -116,19 +116,48 @@ vi.mock('@/lib/repertuvar/cache', () => ({ clearRepertoireMetadataCaches: vi.fn(
 vi.mock('@/lib/repertuvar/offline', () => ({ clearProtectedDriveFileCaches: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('@/lib/drive-file-url', () => ({ clearProtectedDriveFileUrlCache: vi.fn() }));
 vi.mock('@/lib/repertuvar/annotation-save-runtime', () => ({ annotationSaveQueue: { discardAll: vi.fn() } }));
-vi.mock('@/lib/repertuvar/annotation-tenant-transition', () => ({ commitAnnotationTenantTransition: vi.fn() }));
+vi.mock('@/lib/repertuvar/annotation-tenant-transition', () => ({
+  commitAnnotationTenantTransition: vi.fn(async (
+    _queue: unknown,
+    _memberId: string | null,
+    transition: () => Promise<unknown>,
+  ) => transition()),
+}));
 vi.mock('@/lib/realtime', () => ({ createRealtimeTopic: (value: string) => value }));
 
 import { EmbeddedWebBridgeProvider } from './EmbeddedWebBridgeProvider';
 import { AuthProvider, useAuth } from './AuthProvider';
+import { useChatStore } from '@/store/useChatStore';
+
+function seedStaleChatState() {
+  useChatStore.setState({
+    activeRoomId: 'prior-room',
+    rooms: [{
+      id: 'prior-room',
+      name: 'Prior choir room',
+      slug: 'prior-choir-room',
+      description: null,
+      type: 'custom',
+      created_by: null,
+      avatar_url: null,
+      is_archived: false,
+      created_at: '2026-09-19T00:00:00.000Z',
+      updated_at: '2026-09-19T00:00:00.000Z',
+    }],
+    messagesByRoom: { 'prior-room': [] },
+  });
+}
 
 function Probe() {
   const auth = useAuth();
   return (
-    <p>
-      {auth.authMode}:{String(auth.isAuthenticated)}:{auth.user?.id ?? 'no-user'}:
-      {auth.member?.id ?? 'no-member'}:{auth.activeChoir?.choir_id ?? 'no-choir'}
-    </p>
+    <>
+      <p>
+        {auth.authMode}:{String(auth.isAuthenticated)}:{auth.user?.id ?? 'no-user'}:
+        {auth.member?.id ?? 'no-member'}:{auth.activeChoir?.choir_id ?? 'no-choir'}
+      </p>
+      <button onClick={() => void auth.signOut()}>sign-out</button>
+    </>
   );
 }
 
@@ -157,6 +186,7 @@ function incoming(type: string, payload: unknown, id: string) {
 describe('AuthProvider embedded split', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    useChatStore.getState().reset();
     mocks.memberships = [{
       choir_id: CHOIR_ID,
       member_id: MEMBER_ID,
@@ -181,6 +211,33 @@ describe('AuthProvider embedded split', () => {
     expect(mocks.browserOnAuth).toHaveBeenCalledOnce();
     expect(mocks.setPreferred).toHaveBeenCalledWith(USER_ID, CHOIR_ID);
     expect(mocks.enter).not.toHaveBeenCalled();
+  });
+
+  it('resets chat memory only after ordinary browser sign-out succeeds', async () => {
+    mocks.browserSignOut.mockResolvedValue({ error: null });
+    mount({ href: 'https://app.genesinovachoir.com/profil', isTopFrame: true });
+    await screen.findByText(`browser:true:${USER_ID}:${MEMBER_ID}:${CHOIR_ID}`);
+    seedStaleChatState();
+
+    fireEvent.click(screen.getByRole('button', { name: 'sign-out' }));
+
+    await waitFor(() => expect(useChatStore.getState().rooms).toEqual([]));
+    expect(useChatStore.getState().activeRoomId).toBeNull();
+    expect(useChatStore.getState().messagesByRoom).toEqual({});
+    expect(mocks.browserSignOut).toHaveBeenCalledOnce();
+  });
+
+  it('keeps chat memory when ordinary browser sign-out fails', async () => {
+    mocks.browserSignOut.mockResolvedValue({ error: { message: 'sign-out refused' } });
+    mount({ href: 'https://app.genesinovachoir.com/profil', isTopFrame: true });
+    await screen.findByText(`browser:true:${USER_ID}:${MEMBER_ID}:${CHOIR_ID}`);
+    seedStaleChatState();
+
+    fireEvent.click(screen.getByRole('button', { name: 'sign-out' }));
+
+    await waitFor(() => expect(mocks.browserSignOut).toHaveBeenCalledOnce());
+    expect(useChatStore.getState().rooms).toHaveLength(1);
+    expect(useChatStore.getState().activeRoomId).toBe('prior-room');
   });
 
   it('adopts only the proved embedded identity and never reads browser Auth or preferences', async () => {

@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTheme } from 'next-themes';
 import { clearAssignmentCaches } from '@/lib/assignment-cache';
 import { clearChatCaches } from '@/lib/chat-cache';
+import { useChatStore } from '@/store/useChatStore';
 import {
   detectEmbeddedBootstrap,
   EMBEDDED_LEASE_SAFETY_SECONDS,
@@ -268,6 +269,7 @@ export function EmbeddedWebBridgeProvider({
   const clearCaches = useCallback(async () => {
     clearAssignmentCaches();
     clearChatCaches();
+    useChatStore.getState().reset();
     clearRepertoireMetadataCaches();
     clearProtectedDriveFileUrlCache();
     clearMainNotificationCaches();

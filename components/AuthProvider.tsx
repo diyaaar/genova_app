@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { browserSupabase, supabase, type ChoirMember, type UserRole } from '@/lib/supabase';
 import { clearAssignmentCaches } from '@/lib/assignment-cache';
 import { clearChatCaches } from '@/lib/chat-cache';
+import { useChatStore } from '@/store/useChatStore';
 import {
   activateChoir,
   clearPreferredChoirId,
@@ -103,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const clearTenantData = useCallback(async () => {
     clearAssignmentCaches();
     clearChatCaches();
+    useChatStore.getState().reset();
     clearRepertoireMetadataCaches();
     clearProtectedDriveFileUrlCache();
     clearMainNotificationCaches();

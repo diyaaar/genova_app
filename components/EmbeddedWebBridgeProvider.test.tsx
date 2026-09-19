@@ -34,6 +34,7 @@ vi.mock('@/lib/drive-file-url', () => ({ clearProtectedDriveFileUrlCache: vi.fn(
 vi.mock('@/lib/repertuvar/annotation-save-runtime', () => ({ annotationSaveQueue: { discardAll: vi.fn() } }));
 
 import { EmbeddedWebBridgeProvider, useEmbeddedWebBridge } from './EmbeddedWebBridgeProvider';
+import { useChatStore } from '@/store/useChatStore';
 
 const INSTANCE_ID = 'instance_1234567890';
 const NONCE = 'nonce_1234567890123456';
@@ -71,6 +72,25 @@ function incoming(type: string, payload: unknown, id = `message_${Math.random().
 
 function dispatchNative(raw: string) {
   window.dispatchEvent(new MessageEvent('message', { data: raw }));
+}
+
+function seedStaleChatState() {
+  useChatStore.setState({
+    activeRoomId: 'prior-room',
+    rooms: [{
+      id: 'prior-room',
+      name: 'Prior choir room',
+      slug: 'prior-choir-room',
+      description: null,
+      type: 'custom',
+      created_by: null,
+      avatar_url: null,
+      is_archived: false,
+      created_at: '2026-09-19T00:00:00.000Z',
+      updated_at: '2026-09-19T00:00:00.000Z',
+    }],
+    messagesByRoom: { 'prior-room': [] },
+  });
 }
 
 function Actions() {
@@ -127,6 +147,7 @@ describe('EmbeddedWebBridgeProvider', () => {
   beforeEach(() => {
     vi.useRealTimers();
     vi.clearAllMocks();
+    useChatStore.getState().reset();
     mocks.beginRenewal.mockReturnValue(true);
     mocks.install.mockResolvedValue(undefined);
     mocks.clear.mockResolvedValue(undefined);
@@ -212,11 +233,15 @@ describe('EmbeddedWebBridgeProvider', () => {
     const postMessage = vi.fn();
     mount({ environment: embeddedEnvironment(postMessage), verifyContext: vi.fn(async (value) => ({ ok: true, value })) });
     await hydrate(postMessage);
+    seedStaleChatState();
 
     act(() => dispatchNative(incoming('context.clear', { reason: 'choir-switch' }, 'clear_123456789012345')));
 
     expect(screen.queryByText('tenant child')).not.toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('içerik kapalı');
+    expect(useChatStore.getState().rooms).toEqual([]);
+    expect(useChatStore.getState().activeRoomId).toBeNull();
+    expect(useChatStore.getState().messagesByRoom).toEqual({});
     expect(mocks.clear).toHaveBeenCalled();
   });
 
