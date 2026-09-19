@@ -9,6 +9,7 @@ import {
   type EmbeddedLeaseSnapshot,
 } from '@/lib/embedded-web-runtime';
 import { loadMyChoirs } from '@/lib/choir-context-core';
+import { authorizeRealtimeBeforeJoin } from '@/lib/realtime';
 
 export {
   normalizeRepertoireSong,
@@ -132,6 +133,27 @@ export function notifyEmbeddedUnauthorized(): void {
 
 export function requireEmbeddedAccess(kind: EmbeddedAccessKind = 'read') {
   return embeddedLeaseVault.requireAccess(kind);
+}
+
+export async function authorizeCurrentRealtime(): Promise<void> {
+  if (embeddedLeaseVault.snapshot().mode === 'embedded') {
+    return enqueueEmbeddedRealtime(async () => {
+      if (!embeddedSupabase) throw new Error('chat-realtime-client-unavailable');
+      await authorizeRealtimeBeforeJoin({
+        getAccessToken: async () => embeddedLeaseVault.requireAccess('read').accessToken,
+        setAuth: (accessToken) => embeddedSupabase!.realtime.setAuth(accessToken),
+      });
+    });
+  }
+
+  await authorizeRealtimeBeforeJoin({
+    getAccessToken: async () => {
+      const { data, error } = await browserSupabase.auth.getSession();
+      if (error) throw new Error('chat-realtime-session-failed', { cause: error });
+      return data.session?.access_token ?? null;
+    },
+    setAuth: (accessToken) => browserSupabase.realtime.setAuth(accessToken),
+  });
 }
 
 export async function installEmbeddedLease(candidate: EmbeddedContextCandidate): Promise<EmbeddedLeaseSnapshot> {

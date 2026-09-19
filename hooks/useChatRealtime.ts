@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
-import { createRealtimeTopic } from '@/lib/realtime';
+import { authorizeCurrentRealtime, supabase } from '@/lib/supabase';
+import { createPrivateChatRoomTopic, createRealtimeTopic } from '@/lib/realtime';
 import { useChatStore } from '@/store/useChatStore';
 import type { ChatMessage, ChatMessageType, ChatReaction, ChatRoom } from '@/lib/chat';
 import type { RealtimeChannel } from '@supabase/supabase-js';
@@ -196,7 +196,7 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
 
     let isCancelled = false;
     let channel: RealtimeChannel | null = null;
-    const topic = `chat:${roomId}`;
+    const topic = createPrivateChatRoomTopic(roomId);
 
     const setupChannel = async () => {
       if (channelRef.current) {
@@ -208,8 +208,11 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
       await removeExistingChannelsForTopic(topic);
       if (isCancelled) return;
 
+      await authorizeCurrentRealtime();
+      if (isCancelled) return;
+
       channel = supabase.channel(topic, {
-        config: { presence: { key: memberId } },
+        config: { private: true, presence: { key: memberId } },
       });
 
       // 1. Postgres Changes — new messages in this room
@@ -332,7 +335,9 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
       channelRef.current = channel;
     };
 
-    void setupChannel();
+    void setupChannel().catch((error) => {
+      if (!isCancelled) console.error('Failed to authorize chat realtime channel:', error);
+    });
 
     return () => {
       isCancelled = true;

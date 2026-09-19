@@ -50,6 +50,36 @@ describe('embedded Supabase capability', () => {
     expect(clients).toHaveLength(1);
   });
 
+  it('sets the current browser session JWT before a private Realtime join', async () => {
+    const supabaseModule = await import('./supabase');
+    void supabaseModule.browserSupabase.auth;
+    const browser = clients[0] as {
+      auth: { getSession: ReturnType<typeof vi.fn> };
+      realtime: { setAuth: ReturnType<typeof vi.fn> };
+    };
+    browser.auth.getSession.mockResolvedValue({
+      data: { session: { access_token: candidate.accessToken } },
+      error: null,
+    });
+
+    await supabaseModule.authorizeCurrentRealtime();
+    expect(browser.auth.getSession).toHaveBeenCalledOnce();
+    expect(browser.realtime.setAuth).toHaveBeenCalledWith(candidate.accessToken);
+  });
+
+  it('refuses browser Realtime authorization without a current session', async () => {
+    const supabaseModule = await import('./supabase');
+    void supabaseModule.browserSupabase.auth;
+    const browser = clients[0] as {
+      auth: { getSession: ReturnType<typeof vi.fn> };
+      realtime: { setAuth: ReturnType<typeof vi.fn> };
+    };
+    browser.auth.getSession.mockResolvedValue({ data: { session: null }, error: null });
+
+    await expect(supabaseModule.authorizeCurrentRealtime()).rejects.toThrow('chat-realtime-auth-required');
+    expect(browser.realtime.setAuth).not.toHaveBeenCalled();
+  });
+
   it('switches the live binding before a lease and refuses bearer access while locked', async () => {
     const supabaseModule = await import('./supabase');
 
@@ -95,6 +125,18 @@ describe('embedded Supabase capability', () => {
     expect(embedded.removeAllChannels).toHaveBeenCalledOnce();
     expect(embedded.realtime.setAuth).toHaveBeenLastCalledWith(null);
     expect(supabaseModule.supabase).toBe(embedded);
+  });
+
+  it('reuses only the installed embedded lease for private Realtime authorization', async () => {
+    const supabaseModule = await import('./supabase');
+    supabaseModule.enterEmbeddedSupabaseMode();
+    const embedded = clients[0] as { realtime: { setAuth: ReturnType<typeof vi.fn> } };
+    await supabaseModule.installEmbeddedLease(candidate);
+    embedded.realtime.setAuth.mockClear();
+
+    await supabaseModule.authorizeCurrentRealtime();
+    expect(embedded.realtime.setAuth).toHaveBeenCalledOnce();
+    expect(embedded.realtime.setAuth).toHaveBeenCalledWith(candidate.accessToken);
   });
 
   it('verifies with explicit-token seams without installing a failed candidate', async () => {
