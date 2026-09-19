@@ -115,6 +115,7 @@ state is changed.
 | 2026-09-19 | Product diff self-review | local commit `6883b3b` | PASS | Seven builders use the shared creator; text and recipient selection are unchanged; assignment query duplication is removed. Contract derives destinations from validated event data, rejects route override fields and marks authorization recheck required. Self-review is not independent review. |
 | 2026-09-19 | Exact generated-output cleanup and disk check | local filesystem | PASS | Removed task-owned `.next` (461 MiB) and `coverage` (284 KiB); 16,935,320 KiB (~16.2 GiB) free. No runtime/download was created; unrelated temp marker remains unstaged. |
 | 2026-09-19 | Local-link, status and diff checks | five changed Markdown files | PASS | 88 local links, zero missing targets; no stale 034 pending marker; `git diff --check` passed. |
+| 2026-09-19 | Post-record disk anomaly recheck | local filesystem, read-only inventory | PASS | One immediate sample fell to 5,013,560 KiB, so product work stopped. Owned `.next`, coverage, simulator/context/profile and heavy process checks stayed empty; an unrelated 1.3 GiB App Store temporary package was active. No global cache/user data was removed. Two later samples recovered to 16,067,216 and 15,952,236 KiB (~15.2 GiB), above the floor. |
 
 **Delivery:** Planning commits `ed42a85` and `eda1f9e`; product commit `6883b3b`; this record commit
 follows. Roll back `6883b3b` to remove the local contract. Provider delivery, permission UI,
