@@ -1,6 +1,6 @@
 # 053 — Private R2 repertoire read integration
 
-**Status/date/writer:** READY FOR LOCAL IMPLEMENTATION / 2026-09-20 / primary agent.
+**Status/date/writer:** LOCAL ACCEPTANCE COMPLETE / 2026-09-21 / primary agent.
 
 **Observable result:** Existing web/native protected file requests read the exact PDF/audio from
 an authorized, verified private R2 mapping without sending keys to clients or buffering full files
@@ -9,7 +9,7 @@ for seek. Preserve file/annotation UUIDs and existing ticket response contract.
 **Sources/start:** [052 inventory](052-drive-exit-inventory.md), [018 runtime](018-protected-file-runtime-acceptance.md),
 [015 contract](015-shared-protected-repertoire-file.md), [021 composed read](021-mobile-protected-file-runtime-acceptance.md),
 [022 web](022-web-protected-file-compatibility.md), decisions #14/#29 and delivery resource controls.
-Starting product `22a19d6`; verify HEAD/ownership. Single writer. 052 read the Cloudflare/Supabase
+Starting product `22a19d6`; implementation commit `beb4842`. Single writer. 052 read the Cloudflare/Supabase
 skills; implementation must revalidate applicable references and read Postgres security/index rules.
 
 **Work card:** (1) inspect local schema/runtime availability and add/test server-owned mapping;
@@ -36,7 +36,7 @@ Add a narrow server-owned location relation bound to `(file UUID, choir UUID)` f
 Store provider/bucket/immutable key, expected byte size/MIME/SHA-256 and verification/active state;
 retain legacy columns and originals. Exact DDL depends on inspected current keys/constraints.
 Reject cross-choir references, empty/invalid keys, duplicate active mappings and client-created
-verification claims. RLS/default privileges deny anon/authenticated writes and unnecessary direct
+verification claims. RLS/table privileges deny anon/authenticated writes and unnecessary direct
 location reads; existing file authorization stays with the authenticated file RLS query.
 Service-role lookups must bind both file and choir, and may use only verified/active mappings.
 Absence, query error and invalid mapping are distinct; errors never mean permission to use Drive.
@@ -69,7 +69,8 @@ R2 is selected, without breaking deliberate legacy mode. Activation is not autho
 
 ## Resources, release and rollback
 
-Planning preflight 21,307,160 KiB free; no runtime allocated. Implementation must measure current
+Planning preflight 21,307,160 KiB free; implementation rechecked 21,294,040 KiB before allocation.
+The pinned signer occupies 80 KiB installed. Implementation measured current
 installed signer/runtime/DB/tool availability and additional peak **before** installation or runtime
 start. Prefer existing local PostgreSQL + synthetic fixture; do not make a full real-data DB copy
 without need. Exact DB/runtime/scratch targets and cleanup point go here before allocation.
@@ -87,17 +88,37 @@ activation; any failed server/provider gate blocks its client release.
 
 | Criterion | Required? | Status | Proof to collect | Limit |
 |---|---|---|---|---|
-| Verified mapping/tenant constraint, default privilege and client-write refusal | yes | NOT RUN | Actual isolated SQL and exact forward/down/forward | Hosted migration separate. |
-| Private signed R2 adapter, exact target and secret/redirect refusal | yes | NOT RUN | Fixed synthetic credentials + signer/HTTP request assertions | Fake R2 is not provider acceptance. |
-| Current Edge HTTP authorization -> mapping -> exact PDF/audio bytes/Range/HEAD | yes | NOT RUN | Actual local service endpoint and deterministic hash/range checks | Isolated Auth/RLS/provider labels explicit. |
-| Missing/corrupt/unverified mapping, wrong choir/role, expired ticket, active MIME, upstream/length/range failures | yes | NOT RUN | Negative SQL/handler/HTTP cases; no Drive fallback after mapped failure | No real-account/hardware inference. |
-| Existing web/native contract and required final gates | yes | NOT RUN | Focused tests, `pnpm check`; mobile typecheck/tests if client/shared surface changes | Android integration priority, grouped iOS unless platform-sensitive. |
-| Resource cleanup, scoped diff/security self-review, source baseline, split code/evidence commits | yes | NOT RUN | Exact artifacts/free space and acceptance record | Not independent review. |
+| Verified mapping/tenant constraint, table privilege and client-write refusal | yes | **PASS** | 2026-09-21, `beb4842`; PostgreSQL 17 clone, exact forward/down/forward, cross-choir/unsafe-key/duplicate-active/client DML and immutable active metadata refusals | Hosted migration separate. |
+| Private signed R2 adapter, exact target and secret/redirect refusal | yes | **PASS** | `aws4fetch@1.0.20`; 9 adapter cases plus actual signed loopback request; account/jurisdiction/bucket/key and explicit loopback-test guard asserted | Fake R2 is not provider acceptance. |
+| Current Edge HTTP authorization -> mapping -> exact PDF/audio bytes/Range/HEAD | yes | **PASS** | Actual `Deno.serve` entrypoint: 69-byte PDF SHA-256 `cfa3181c…716ec6`, 48-byte WAV `eb2a1929…ffe002`, full/range/HEAD | Mock Auth/PostgREST and signed loopback S3 transport; real R2 remains NOT RUN. |
+| Missing/corrupt/unverified mapping, wrong choir/role, expired ticket, active MIME, upstream/length/range failures | yes | **PASS** | 44 focused cases plus HTTP wrong-role/wrong-choir/expired/416/active MIME/length/unmapped matrix; `provider_hits=8`, Drive fallback 0 | No real-account/hardware inference. |
+| Existing web/native contract and required final gates | yes | **PASS** | Unchanged ticket/client contract; final `pnpm check`: 66 files / 615 tests, coverage/service-worker/build PASS; Deno entrypoint check PASS | No mobile surface changed, so mobile/device rerun was not required. |
+| Resource cleanup, scoped diff/security self-review, source baseline, split code/evidence commits | yes | **PASS** | `beb4842`; source DB hash/data unchanged; disposable DB/listeners removed; 473,572 KiB `.next` + 332 KiB coverage removed; final 21,355,504 KiB free | Self-review only; unrelated CLI marker unstaged. |
 | Actual R2 account/region/credentials, hosted copy/cutover/deploy and phone | no — separate approved gates | NOT RUN | Prepared after local candidate | Required for operational beta, not local acceptance. |
 
 **Out of scope:** New file upload/write APIs, all-data migration, client capability rewrites,
 public buckets, new Worker service, paid/account activation, live schema/data/secret changes,
 push/deploy/CI, source deletion/public ACL revocation, hardware. No new Next API route.
 
-**Result/next:** No implementation yet. After local acceptance, extend Drive-free writes and
-remaining file families from 052 while preparing precise provider/data release approvals.
+## Evaluation and bounded failures
+
+The local result is an additive read candidate, not a production Drive exit. Default `legacy`
+mode leaves current deployments unchanged; `mixed` selects a verified mapping and never falls back
+after mapped failure; `r2-required` refuses unmapped files. `HEAD` performs provider `HEAD`, ranged
+GET streams the exact provider range, and provider bodies/credentials are not copied into errors.
+The mapping is tenant-bound, client-inaccessible and immutable after activation for identity and
+verification metadata. Existing file UUIDs and ticket URLs remain unchanged.
+
+Two initial schema-hash comparisons stopped before migration because PostgreSQL 18 `pg_dump`
+emits random `\\restrict` guards; the runner now removes only those volatile lines before hashing.
+The first standalone HTTP driver stopped before product execution because TSX CJS disallowed
+top-level await; it was converted to an explicit promise exit. Adding the immutability trigger
+exposed one down-order defect; the disposable target was removed, the function is now dropped
+before its private schema, and the full round trip passes. None of these failures changed the
+source database or left a listener/artifact.
+
+**Result/next:** `beb4842` completes 053 locally. [054](054-private-r2-repertoire-upload.md) is the
+next ready local package: one authorized repertoire PDF/audio upload is streamed to private R2,
+verified, committed atomically to the existing file UUID/mapping contract and visible in both
+catalogues without a Drive-folder requirement. Real provider activation, hosted schema/secrets,
+copy/cutover, deployment and phone remain separate approvals.

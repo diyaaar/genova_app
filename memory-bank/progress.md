@@ -1,11 +1,11 @@
 # İlerleme indeksi
 
-20 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
+21 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 051 is accepted locally at `22a19d6`: mobile 49/287,
-root 65/602/build and both JS exports pass; ~471 MiB output cleaned, ~20.31 GiB free. Next is
-Drive-exit/private-R2 read integration. 052 source inventory now accepted; 053 ready for local
-implementation. No hosted inventory/provider/DB change or file migration occurred. Follow the current priority; older checkpoints below
+$5/month preference and five free choir seats. 053 is accepted locally at `beb4842`: PostgreSQL
+forward/down/forward, 44 focused cases, actual signed loopback-R2 Deno HTTP and root 66/615/build
+pass; ~463 MiB output cleaned, ~20.37 GiB free. Next is 054's one private upload/catalogue flow.
+No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 
 19 September 2026: `851e9cd` aligns three direct/four required transitive Expo patches: mobile
@@ -31,6 +31,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 006 üyelik yönetimi güvenlik kapısı | Kapatıldı; kalan 27 hesap riski ürün sahibi tarafından kabul edildi | [006](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md); eski public bootstrap silindi, 15 restrictive politika ve hosted 003/005/006 testleri geçti. Toplu parola/oturum düzeltmesi ve e-posta bilinçli olarak yapılmadı; bu hesapların güvenli olduğu anlamına gelmez |
 | 007 operatör kontrollü koro oluşturma | Tamamlandı; authenticated başarı yolu canlıda kabul edildi | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); taze backup/restore, DB `20260905160539`, Edge v1 ve hosted 003/005/006/007 geçti. Allow-list dolduruldu ve RPC canlıda gerçek operatör JWT'siyle koro oluşturdu. Oluşturulan test korosu 010'un 8. adımında silindi; kabul kaydı geçerli |
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
+| 052–053 Drive exit read foundation | 052 inventory accepted; 053 local acceptance complete | [052](../docs/briefs/052-drive-exit-inventory.md) maps every current file family and legacy trap. [053](../docs/briefs/053-private-r2-repertoire-read.md), `beb4842`, adds a tenant-bound private mapping and streamed signed R2 PDF/audio read behind existing tickets. Real R2, hosted schema/secrets, copy/cutover/deploy/device are NOT RUN; 054 owns first upload/catalogue flow |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
 | Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |
@@ -87,9 +88,10 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 19 September 2026
+## Latest handoff — 21 September 2026
 
 [Current handoff](../docs/agent-handoff.md) and [active context](activeContext.md) carry only
 the current checkpoint. Historical acceptance stays in the table's linked briefs.
 WF-006 owns the original long-term plan; [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns the revised execution controls and verified cleanup. 033 remains open; no milestone advanced.
+owns the revised execution controls and verified cleanup. 053 is local-only; no provider or beta
+milestone advanced. 054 is the current ready package.

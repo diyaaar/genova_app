@@ -1,6 +1,6 @@
 # Active context
 
-Updated 20 September 2026. [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
+Updated 21 September 2026. [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records the owner's approved delivery reset; the [delivery plan](../docs/mobil-teslim-plani.md)
 owns priorities, the objective and resource/test controls. [Handoff](../docs/agent-handoff.md)
 is the short startup source. Historical acceptance remains in briefs and [progress](progress.md).
@@ -9,7 +9,7 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-051 is now locally accepted; prioritize Drive-exit/private-storage read integration
+053 is now locally accepted; prioritize one Drive-free repertoire upload/catalogue flow
 and the actual Android user flow rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
@@ -28,19 +28,19 @@ and the actual Android user flow rather than continuing tiny chat features autom
 
 ## Exact work checkpoint
 
-- Last accepted product `22a19d6`/051. Verify actual HEAD; no unfinished product changes.
-- Final mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS exports
-  pass. Star state/toggle/panel and lifecycle accepted locally, not live. Detailed evidence:
-  [051](../docs/briefs/051-native-chat-starred-messages.md).
+- Last accepted product `beb4842`/053. Verify actual HEAD; no unfinished product changes.
+- 053 passes tenant/immutable mapping SQL forward/down/forward, 44 focused cases, actual signed
+  loopback R2 through `Deno.serve`, and root 66/615/build. Detailed evidence:
+  [053](../docs/briefs/053-private-r2-repertoire-read.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next implement [053](../docs/briefs/053-private-r2-repertoire-read.md): verified server-owned
-  mapping and streamed private PDF/audio through current Edge tickets; preflight schema/runtime first.
+- Next implement [054](../docs/briefs/054-private-r2-repertoire-upload.md): one authorized,
+  verified private PDF/audio upload plus web/native catalogue readiness without Drive folders.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- After 052: 21,300,280 KiB (~20.31 GiB) free. 051 build/coverage/exports (~471 MiB) removed.
-  No runtime/VM/device or install created. Recheck before allocating.
-- Cloudflare/R2 account availability asked without credentials. Local 053 can proceed without
+- After 053: 21,355,504 KiB (~20.37 GiB) free. Build/coverage, disposable DB and loopback
+  listeners removed; pinned signer is 80 KiB. No VM/simulator/device created.
+- Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 
 ## Remaining requirements and authority

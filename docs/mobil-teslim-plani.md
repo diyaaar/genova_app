@@ -1,6 +1,6 @@
 # Genova — long-term mobile delivery plan and execution directive
 
-## Current delivery priority — 20 September 2026
+## Current delivery priority — 21 September 2026
 
 [WF-008](briefs/WF-008-android-first-delivery-reset.md) and decisions #28–31 supersede stale
 next-task pointers below. Deliver one evolving production product: first a usable Android beta,
@@ -13,7 +13,7 @@ or store-publication date. Report remaining release blockers, not completed-brie
 | Order | Outcome / exit | Dependency and boundary |
 |---|---|---|
 | 0 | **COMPLETE locally:** 051 personal stars/room panel at `22a19d6` | Final mobile 49/287, root 65/602/build and both JS exports pass; output cleaned, ~20.31 GiB free. Hosted/device proof remains separate. Next is storage/read, not another chat feature. |
-| 1 | Drive-exit file integration: [052 source inventory](briefs/052-drive-exit-inventory.md) accepted; implement [053 private PDF/audio read](briefs/053-private-r2-repertoire-read.md) next | Retain Supabase DB/Auth/Realtime/Edge and hosting. Preserve stable identities, role/tenant refusal, Range/seek and new uploads; fix catalogue folder gate/history-destructive writes. Then remaining file families, restartable verified copy and rollback. Activation/copy/cutover/source deletion remain separate authority. No files migrated yet. |
+| 1 | Drive-exit file integration: [052 inventory](briefs/052-drive-exit-inventory.md) and [053 private PDF/audio read](briefs/053-private-r2-repertoire-read.md) accepted locally; implement [054 private upload/catalogue readiness](briefs/054-private-r2-repertoire-upload.md) next | Retain Supabase DB/Auth/Realtime/Edge and hosting. 053 preserves stable identities, role/tenant refusal and streamed Range/seek. 054 adds one verified new upload and removes the Drive-folder catalogue gate; later packages retain replacement/history and remaining file families. Activation/copy/cutover/source deletion remain separate authority. No real files migrated yet. |
 | 2 | Usable Android beta on the owner's phone: sign-in/invite, choir selection, catalogue, protected PDF/current annotations, foreground audio, navigation and sign-out | Same product/source as the final release. All exposed routes must work against their declared backend; do not ship local-only migrations as live features. Show the exact beta feature matrix and pending work. Real user/provider/device actions require applicable authority. Production use must no longer require Drive; a synthetic preview is not this exit. |
 | 3 | Finish complete rehearsal/mobile scope and release blockers in coherent user flows | Native annotation write/sync/offline, remaining C2–C5, limits, deletion/retention, security and all A–E requirements remain tracked. Beta may precede these; full completion may not. Route ownership remains in MIGRATION. Ask pending product choices just before their dependent work. |
 | 4 | One stable candidate passes Android and iOS device acceptance and store preparation | Privacy/terms, deletion entry and web resource, disclosures, review access, signing, listings, billing assessment, developer accounts, backup/restore and rollback. Developer-account verification, required closed tests and store review are external calendar dependencies. |
@@ -324,10 +324,10 @@ compatibility until an explicit supported-version policy permits retirement.
 ## Revised goal text
 
 Deliver the complete Genova mobile product and all outcomes in docs/mobil-teslim-plani.md,
-using its 20 September Android-first sequence. Aim for a usable Android beta within a few days,
+using its 21 September Android-first sequence. Aim for a usable Android beta within a few days,
 then complete the preserved feature scope, both-platform store readiness, authorized release and
 operational handoff; the beta is an intermediate milestone, not final success or a throwaway demo.
-Resume verified current work, including unfinished 051, without replaying accepted 018–050 work.
+Resume verified current work from locally accepted 053 into 054 without replaying accepted work.
 Retain Supabase DB/Auth/Realtime/Edge; remove production Drive dependency via private R2 storage
 with verified authorization, migration and rollback. Do not migrate hosting/database to Railway
 without a new measured reason and owner decision. Prefer total recurring infrastructure <=$5/month;
