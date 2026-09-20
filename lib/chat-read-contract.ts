@@ -83,6 +83,7 @@ export interface ChatReadReplyPreview {
 
 export interface ChatReadMessage {
   id: string;
+  clientMutationId: string | null;
   roomId: string;
   senderId: string;
   content: string | null;
@@ -312,9 +313,17 @@ export function isChatReadScopeCurrent(candidate: ChatReadScope, current: ChatRe
 export function parseChatReadMessage(input: unknown, expectedRoomId?: string): ChatReadDecision<ChatReadMessage> {
   if (!isRecord(input)) return rejected('invalid-payload', 'message');
   const id = uuid(input.id);
+  const clientMutationId = input.client_mutation_id === null || input.client_mutation_id === undefined
+    ? null
+    : uuid(input.client_mutation_id);
   const roomId = uuid(input.room_id);
   const senderId = uuid(input.sender_id);
   if (!id) return rejected('invalid-uuid', 'message.id');
+  if (clientMutationId === null
+    && input.client_mutation_id !== null
+    && input.client_mutation_id !== undefined) {
+    return rejected('invalid-uuid', 'message.client_mutation_id');
+  }
   if (!roomId) return rejected('invalid-uuid', 'message.room_id');
   if (!senderId) return rejected('invalid-uuid', 'message.sender_id');
   const normalizedExpectedRoomId = expectedRoomId === undefined ? undefined : uuid(expectedRoomId);
@@ -361,6 +370,7 @@ export function parseChatReadMessage(input: unknown, expectedRoomId?: string): C
 
   return accepted({
     id,
+    clientMutationId,
     roomId,
     senderId,
     content,

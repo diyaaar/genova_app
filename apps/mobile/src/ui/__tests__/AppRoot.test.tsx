@@ -15,6 +15,8 @@ import {
 import type { NativeRepertoireGateway } from '../../repertoire/catalog-gateway';
 import type { NativeNotificationGateway, NativeNotificationResponse } from '../../notifications/notification-gateway';
 import type { NativeChatReadGateway } from '../../chat/chat-read-gateway';
+import type { NativeChatSendGateway } from '../../chat/chat-send-gateway';
+import { clearTenantCaches } from '../../auth/tenant-cache';
 
 async function renderWithStore(options: {
   memberships?: ReturnType<typeof membership>[];
@@ -26,6 +28,7 @@ async function renderWithStore(options: {
   audioGateway?: NativeAudioSourceGateway;
   notificationGateway?: NativeNotificationGateway;
   chatGateway?: NativeChatReadGateway;
+  chatSendGateway?: NativeChatSendGateway;
 }) {
   const clientDouble = createClientDouble({
     memberships: options.memberships ?? [membership()],
@@ -52,6 +55,14 @@ async function renderWithStore(options: {
         audioGateway={options.audioGateway}
         notificationGateway={options.notificationGateway}
         chatGateway={options.chatGateway}
+        chatSendGateway={options.chatSendGateway ?? {
+          prepare: jest.fn(async () => { throw new Error('unexpected chat send'); }),
+          transmit: jest.fn(async () => { throw new Error('unexpected chat send'); }),
+          restore: jest.fn(async () => []),
+          reconcile: jest.fn(async () => []),
+          cancel: jest.fn(async () => []),
+          clear: jest.fn(async () => {}),
+        }}
       />
     </AuthProvider>
   );
@@ -188,6 +199,23 @@ describe('shell routing', () => {
 
     await fireEvent.press(screen.getByTestId('chat-back'));
     expect(await screen.findByTestId('shell-screen')).toBeTruthy();
+  });
+
+  it('registers an injected protected chat send queue for tenant cleanup', async () => {
+    const chatSendGateway: NativeChatSendGateway = {
+      prepare: jest.fn(async () => { throw new Error('unexpected chat send'); }),
+      transmit: jest.fn(async () => { throw new Error('unexpected chat send'); }),
+      restore: jest.fn(async () => []),
+      reconcile: jest.fn(async () => []),
+      cancel: jest.fn(async () => []),
+      clear: jest.fn(async () => {}),
+    };
+    await renderWithStore({ chatSendGateway });
+    await screen.findByTestId('shell-screen');
+
+    await clearTenantCaches();
+
+    expect(chatSendGateway.clear).toHaveBeenCalledTimes(1);
   });
 
   it('consumes a cold notification only after auth and opens the exact accessible repertoire song', async () => {

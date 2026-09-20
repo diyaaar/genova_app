@@ -10,7 +10,7 @@ import {
 } from './chat-read-gateway';
 
 const MESSAGE_SELECT = `
-  id, room_id, sender_id, content, message_type, reply_to_id,
+  id, client_mutation_id, room_id, sender_id, content, message_type, reply_to_id,
   metadata_json, is_edited, is_deleted, created_at, updated_at,
   sender:choir_members!chat_messages_sender_id_fkey (
     id, first_name, last_name, photo_url

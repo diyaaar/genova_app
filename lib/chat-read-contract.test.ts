@@ -109,6 +109,7 @@ describe('chat read scope', () => {
 describe('chat message parser', () => {
   it('accepts a known message and normalizes sender and reply relations', () => {
     const result = parseChatReadMessage(message({
+      client_mutation_id: MESSAGE_C,
       reply_to_id: MESSAGE_B,
       reply_to: [{
         id: MESSAGE_B,
@@ -122,6 +123,7 @@ describe('chat message parser', () => {
       kind: 'accepted',
       value: {
         id: MESSAGE_A,
+        clientMutationId: MESSAGE_C,
         roomId: ROOM_ID,
         messageType: 'text',
         sourceMessageType: 'text',
@@ -158,6 +160,7 @@ describe('chat message parser', () => {
   it.each([
     [null, 'invalid-payload', 'message'],
     [message({ id: 'not-a-uuid' }), 'invalid-uuid', 'message.id'],
+    [message({ client_mutation_id: 'not-a-uuid' }), 'invalid-uuid', 'message.client_mutation_id'],
     [message({ room_id: OTHER_ROOM_ID }), 'room-mismatch', 'message.room_id'],
     [message({ message_type: 'Voice Note' }), 'invalid-message-type', 'message.message_type'],
     [message({ created_at: '2026-02-30T12:00:00Z' }), 'invalid-timestamp', 'message.created_at'],

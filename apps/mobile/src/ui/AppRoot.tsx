@@ -6,6 +6,7 @@ import { createChatReadScope } from '@shared/chat-read-contract';
 import { useAuth } from '../auth/AuthProvider';
 import { ChatScreen } from '../chat/ChatScreen';
 import type { NativeChatReadGateway } from '../chat/chat-read-gateway';
+import type { NativeChatSendGateway } from '../chat/chat-send-gateway';
 import { AudioPlaybackProvider, useAudioPlayback } from '../repertoire/AudioPlaybackProvider';
 import { AudioPlayerScreen } from '../repertoire/AudioPlayerScreen';
 import { MiniAudioPlayer } from '../repertoire/MiniAudioPlayer';
@@ -42,6 +43,7 @@ interface ReadyShellProps {
   changePassword: ReturnType<typeof useAuth>['changePassword'];
   notificationGateway?: NativeNotificationGateway;
   chatGateway?: NativeChatReadGateway;
+  chatSendGateway?: NativeChatSendGateway;
 }
 
 function ReadyShellRoutes({
@@ -56,6 +58,7 @@ function ReadyShellRoutes({
   changePassword,
   notificationGateway,
   chatGateway,
+  chatSendGateway,
 }: Omit<ReadyShellProps, 'audioGateway'>) {
   const playback = useAudioPlayback();
   const [screen, setScreen] = useState<'home' | 'repertoire' | 'chat' | 'audio' | 'web'>('home');
@@ -127,6 +130,7 @@ function ReadyShellRoutes({
         scope={chatScope}
         choirName={activeChoir.choir_name}
         gateway={chatGateway}
+        sendGateway={chatSendGateway}
         onBack={() => setScreen('home')}
       />
     ) : (
@@ -197,12 +201,13 @@ function ReadyShell({ audioGateway, ...routeProps }: ReadyShellProps) {
   );
 }
 
-export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway, chatGateway }: {
+export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway, chatGateway, chatSendGateway }: {
   repertoireGateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
   audioGateway?: NativeAudioSourceGateway;
   notificationGateway?: NativeNotificationGateway;
   chatGateway?: NativeChatReadGateway;
+  chatSendGateway?: NativeChatSendGateway;
 } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
@@ -219,12 +224,16 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
     const unregisterChat = chatGateway
       ? registerTenantCache(chatGateway.clear)
       : () => {};
+    const unregisterChatSend = chatSendGateway
+      ? registerTenantCache(chatSendGateway.clear)
+      : () => {};
     return () => {
       unregisterCatalogue();
       unregisterReader();
       unregisterChat();
+      unregisterChatSend();
     };
-  }, [chatGateway, readerGateway, repertoireGateway]);
+  }, [chatGateway, chatSendGateway, readerGateway, repertoireGateway]);
 
   const showSelection = auth.phase === 'selection-required' || (switching && auth.choirs.length > 1);
 
@@ -299,6 +308,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
           changePassword={auth.changePassword}
           notificationGateway={notificationGateway}
           chatGateway={chatGateway}
+          chatSendGateway={chatSendGateway}
         />
       </>
     );

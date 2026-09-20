@@ -15,13 +15,20 @@ import type {
   ChatReadRoomSummary,
   ChatReadScope,
 } from '@shared/chat-read-contract';
+import { mergeChatReadMessagePages } from '@shared/chat-read-contract';
 import { theme } from '../ui/theme';
+import {
+  NativeChatSendError,
+  type NativeChatSendGateway,
+} from './chat-send-gateway';
 import {
   getNativeChatRoomTitle,
   NativeChatReadError,
   type NativeChatReadGateway,
 } from './chat-read-gateway';
+import type { NativeChatQueuedText } from './native-chat-send-queue';
 import { getDefaultNativeChatReadGateway } from './supabase-chat-read-transport';
+import { getDefaultNativeChatSendGateway } from './supabase-chat-send-transport';
 
 function safeReadError(error: unknown, fallback: string): string {
   if (error instanceof NativeChatReadError) {
@@ -52,20 +59,44 @@ function lastMessageText(room: ChatReadRoomSummary): string {
   return room.lastMessage ? messageBody(room.lastMessage) : 'Henüz mesaj yok';
 }
 
+function safeSendError(error: unknown): string {
+  if (error instanceof NativeChatSendError) {
+    if (error.code === 'queue-full') return 'Gönderme kuyruğu dolu. Bir öğeyi iptal edip tekrar deneyin.';
+    if (error.code === 'queue-too-large') return 'Bekleyen mesajlar güvenli depolama sınırını aşıyor.';
+    if (error.code === 'storage-failed') return 'Mesaj güvenli biçimde saklanamadığı için gönderilmedi.';
+    if (error.code === 'invalid-draft') return 'Mesaj veya yanıt hedefi geçerli değil.';
+    if (error.code === 'invalid-acknowledgement') return 'Sunucu yanıtı doğrulanamadı; mesaj kuyrukta tutuldu.';
+    if (error.code === 'stale-scope') return 'Koro değiştiği için eski gönderme iptal edildi.';
+  }
+  return 'Mesaj gönderilemedi. Kuyrukta tutuldu; tekrar deneyebilirsiniz.';
+}
+
+interface ReplyDraft {
+  id: string;
+  sender: string;
+  body: string;
+}
+
 export function ChatScreen({
   scope,
   choirName,
   gateway: suppliedGateway,
+  sendGateway: suppliedSendGateway,
   onBack,
 }: {
   scope: ChatReadScope;
   choirName: string;
   gateway?: NativeChatReadGateway;
+  sendGateway?: NativeChatSendGateway;
   onBack: () => void;
 }) {
   const gateway = useMemo(
     () => suppliedGateway ?? getDefaultNativeChatReadGateway(),
     [suppliedGateway],
+  );
+  const sendGateway = useMemo(
+    () => suppliedSendGateway ?? getDefaultNativeChatSendGateway(),
+    [suppliedSendGateway],
   );
   const [rooms, setRooms] = useState<ChatReadRoomSummary[] | null>(null);
   const [roomsError, setRoomsError] = useState<string | null>(null);
@@ -77,11 +108,17 @@ export function ChatScreen({
   const [nextCursor, setNextCursor] = useState<ChatReadMessageCursor | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loadingOlder, setLoadingOlder] = useState(false);
+  const [queuedMessages, setQueuedMessages] = useState<NativeChatQueuedText[]>([]);
+  const [composerText, setComposerText] = useState('');
+  const [replyingTo, setReplyingTo] = useState<ReplyDraft | null>(null);
+  const [preparingSend, setPreparingSend] = useState(false);
+  const [sendNotice, setSendNotice] = useState<string | null>(null);
   const [listConnection, setListConnection] = useState<'connected' | 'disconnected'>('connected');
   const [roomConnection, setRoomConnection] = useState<'connected' | 'disconnected'>('connected');
   const roomRequest = useRef(0);
   const messageRequest = useRef(0);
   const selectedRoomIdRef = useRef<string | null>(null);
+  const autoRetried = useRef(new Set<string>());
 
   useEffect(() => {
     selectedRoomIdRef.current = selectedRoomId;
@@ -110,6 +147,43 @@ export function ChatScreen({
     }
   }, [gateway, scope]);
 
+  const transmitQueued = useCallback(async (record: NativeChatQueuedText) => {
+    try {
+      const acknowledgement = await sendGateway.transmit(scope, record);
+      const restored = await sendGateway.restore(scope, record.roomId);
+      if (selectedRoomIdRef.current !== record.roomId) return;
+      setMessages((current) => mergeChatReadMessagePages(current ?? [], [acknowledgement]));
+      setQueuedMessages(restored);
+      void loadRooms(true);
+    } catch (error) {
+      if (selectedRoomIdRef.current !== record.roomId) return;
+      try {
+        const restored = await sendGateway.restore(scope, record.roomId);
+        if (selectedRoomIdRef.current !== record.roomId) return;
+        setQueuedMessages(restored);
+      } catch {
+        // The visible error below remains authoritative when protected storage is unavailable.
+      }
+      if (selectedRoomIdRef.current !== record.roomId) return;
+      setSendNotice(safeSendError(error));
+    }
+  }, [loadRooms, scope, sendGateway]);
+
+  const reconcileQueue = useCallback(async (roomId: string, serverMessages: ChatReadMessage[]) => {
+    try {
+      const queued = await sendGateway.reconcile(scope, roomId, serverMessages);
+      if (selectedRoomIdRef.current !== roomId) return;
+      setQueuedMessages(queued);
+      for (const record of queued) {
+        if (record.status !== 'pending' || autoRetried.current.has(record.clientMutationId)) continue;
+        autoRetried.current.add(record.clientMutationId);
+        void transmitQueued(record);
+      }
+    } catch (error) {
+      if (selectedRoomIdRef.current === roomId) setSendNotice(safeSendError(error));
+    }
+  }, [scope, sendGateway, transmitQueued]);
+
   const loadMessages = useCallback(async (before: ChatReadMessageCursor | null) => {
     if (!selectedRoomId) return;
     const request = ++messageRequest.current;
@@ -121,6 +195,7 @@ export function ChatScreen({
       setMessages(page.messages);
       setNextCursor(page.nextCursor);
       setHasMore(page.hasMore);
+      void reconcileQueue(selectedRoomId, page.messages);
       if (!before) {
         void gateway.markRoomRead(scope, selectedRoomId).catch(() => {
           if (request === messageRequest.current) {
@@ -142,7 +217,7 @@ export function ChatScreen({
     } finally {
       if (request === messageRequest.current) setLoadingOlder(false);
     }
-  }, [gateway, loadRooms, scope, selectedRoomId]);
+  }, [gateway, loadRooms, reconcileQueue, scope, selectedRoomId]);
 
   useEffect(() => {
     void loadRooms(false);
@@ -166,6 +241,10 @@ export function ChatScreen({
     setMessages(null);
     setNextCursor(null);
     setHasMore(false);
+    setQueuedMessages([]);
+    setReplyingTo(null);
+    setSendNotice(null);
+    setPreparingSend(false);
     void loadMessages(null);
     const stop = gateway.watchRoom(scope, selectedRoomId, {
       invalidate: () => void loadMessages(null),
@@ -176,6 +255,55 @@ export function ChatScreen({
       stop();
     };
   }, [gateway, loadMessages, scope, selectedRoomId]);
+
+  const sendComposerMessage = useCallback(async () => {
+    if (!selectedRoomId || preparingSend || composerText.trim().length === 0) return;
+    setPreparingSend(true);
+    setSendNotice(null);
+    try {
+      const prepared = await sendGateway.prepare(
+        scope,
+        selectedRoomId,
+        composerText,
+        replyingTo?.id ?? null,
+      );
+      if (selectedRoomIdRef.current !== selectedRoomId) return;
+      setQueuedMessages((current) => [
+        ...current.filter((item) => item.clientMutationId !== prepared.record.clientMutationId),
+        prepared.record,
+      ]);
+      setComposerText('');
+      setReplyingTo(null);
+      if (prepared.previewWarning) {
+        setSendNotice('Bağlantı önizlemesi alınamadı; mesaj metin olarak gönderiliyor.');
+      }
+      autoRetried.current.add(prepared.record.clientMutationId);
+      void transmitQueued(prepared.record);
+    } catch (error) {
+      if (selectedRoomIdRef.current === selectedRoomId) setSendNotice(safeSendError(error));
+    } finally {
+      setPreparingSend(false);
+    }
+  }, [composerText, preparingSend, replyingTo?.id, scope, selectedRoomId, sendGateway, transmitQueued]);
+
+  const cancelQueued = useCallback(async (record: NativeChatQueuedText) => {
+    try {
+      const queued = await sendGateway.cancel(scope, record.roomId, record.clientMutationId);
+      if (selectedRoomIdRef.current === record.roomId) setQueuedMessages(queued);
+    } catch (error) {
+      if (selectedRoomIdRef.current === record.roomId) setSendNotice(safeSendError(error));
+    }
+  }, [scope, sendGateway]);
+
+  const retryQueued = useCallback((record: NativeChatQueuedText) => {
+    const pending = { ...record, status: 'pending' as const };
+    setSendNotice(null);
+    setQueuedMessages((current) => current.map((item) => (
+      item.clientMutationId === record.clientMutationId ? pending : item
+    )));
+    autoRetried.current.add(record.clientMutationId);
+    void transmitQueued(pending);
+  }, [transmitQueued]);
 
   const visibleRooms = useMemo(() => {
     const query = search.trim().toLocaleLowerCase('tr-TR');
@@ -192,7 +320,15 @@ export function ChatScreen({
     return (
       <View style={styles.container} testID="chat-room-screen">
         <View style={styles.header}>
-          <Pressable onPress={() => setSelectedRoomId(null)} accessibilityRole="button" testID="chat-room-back">
+          <Pressable
+            onPress={() => {
+              setSelectedRoomId(null);
+              setReplyingTo(null);
+              setSendNotice(null);
+            }}
+            accessibilityRole="button"
+            testID="chat-room-back"
+          >
             <Text style={styles.action}>Sohbetler</Text>
           </Pressable>
           <View style={styles.headerText}>
@@ -221,7 +357,12 @@ export function ChatScreen({
             </Pressable>
           </View>
         ) : (
-          <ScrollView contentContainerStyle={styles.messageList} testID="chat-message-list">
+          <>
+            <ScrollView
+              style={styles.messageScroll}
+              contentContainerStyle={styles.messageList}
+              testID="chat-message-list"
+            >
             {hasMore ? (
               <Pressable
                 onPress={() => nextCursor && void loadMessages(nextCursor)}
@@ -232,7 +373,7 @@ export function ChatScreen({
                 <Text style={styles.action}>{loadingOlder ? 'Yükleniyor…' : 'Daha eski mesajları yükle'}</Text>
               </Pressable>
             ) : null}
-            {messages?.length === 0 ? (
+            {messages?.length === 0 && queuedMessages.length === 0 ? (
               <Text style={styles.muted} testID="chat-messages-empty">Bu odada henüz mesaj yok.</Text>
             ) : messages?.map((message) => {
               const body = messageBody(message);
@@ -249,13 +390,103 @@ export function ChatScreen({
                   ) : null}
                   <Text style={message.isDeleted ? styles.deleted : styles.messageText}>{body}</Text>
                   {message.isEdited && !message.isDeleted ? <Text style={styles.meta}>düzenlendi</Text> : null}
+                  {!message.isDeleted ? (
+                    <Pressable
+                      onPress={() => setReplyingTo({ id: message.id, sender: senderName(message), body })}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${senderName(message)} mesajını yanıtla`}
+                      testID={`chat-reply-${message.id}`}
+                    >
+                      <Text style={styles.inlineAction}>Yanıtla</Text>
+                    </Pressable>
+                  ) : null}
                 </View>
               );
             })}
+            {queuedMessages.map((record) => (
+              <View
+                key={record.clientMutationId}
+                style={[styles.message, styles.ownMessage, styles.pendingMessage]}
+                accessibilityLabel={`Siz: ${record.content}, ${record.status === 'failed' ? 'gönderilemedi' : 'gönderiliyor'}`}
+                testID={`chat-pending-${record.clientMutationId}`}
+              >
+                <Text style={styles.sender}>Siz</Text>
+                {record.replyToId ? <Text style={styles.reply}>Yanıtlanan mesaj</Text> : null}
+                <Text style={styles.messageText}>{record.content}</Text>
+                {record.linkPreview ? (
+                  <Text style={styles.reply}>Bağlantı: {record.linkPreview.title ?? record.linkPreview.domain}</Text>
+                ) : null}
+                <Text style={record.status === 'failed' ? styles.warning : styles.meta}>
+                  {record.status === 'failed' ? 'Gönderilemedi' : 'Gönderiliyor…'}
+                </Text>
+                {record.status === 'failed' ? (
+                  <View style={styles.pendingActions}>
+                    <Pressable
+                      onPress={() => retryQueued(record)}
+                      accessibilityRole="button"
+                      testID={`chat-retry-${record.clientMutationId}`}
+                    >
+                      <Text style={styles.inlineAction}>Tekrar dene</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => void cancelQueued(record)}
+                      accessibilityRole="button"
+                      testID={`chat-cancel-${record.clientMutationId}`}
+                    >
+                      <Text style={styles.inlineDanger}>İptal et</Text>
+                    </Pressable>
+                  </View>
+                ) : null}
+              </View>
+            ))}
             {messagesError && messages !== null ? (
               <Text style={styles.warning} accessibilityRole="alert" testID="chat-read-warning">{messagesError}</Text>
             ) : null}
-          </ScrollView>
+            </ScrollView>
+            <View style={styles.composer} testID="chat-composer">
+              {replyingTo ? (
+                <View style={styles.replyDraft} testID="chat-reply-draft">
+                  <Text style={styles.reply} numberOfLines={2}>
+                    {replyingTo.sender}: {replyingTo.body}
+                  </Text>
+                  <Pressable
+                    onPress={() => setReplyingTo(null)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Yanıtı iptal et"
+                    testID="chat-reply-cancel"
+                  >
+                    <Text style={styles.inlineDanger}>Kapat</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+              {sendNotice ? (
+                <Text style={styles.warning} accessibilityRole="alert" testID="chat-send-notice">{sendNotice}</Text>
+              ) : null}
+              <View style={styles.composerRow}>
+                <TextInput
+                  value={composerText}
+                  onChangeText={setComposerText}
+                  placeholder="Mesaj yaz"
+                  placeholderTextColor={theme.colors.textMuted}
+                  accessibilityLabel="Mesaj"
+                  multiline
+                  maxLength={20_000}
+                  editable={!preparingSend}
+                  style={styles.composerInput}
+                  testID="chat-composer-input"
+                />
+                <Pressable
+                  onPress={() => void sendComposerMessage()}
+                  accessibilityRole="button"
+                  disabled={preparingSend || composerText.trim().length === 0}
+                  style={styles.sendButton}
+                  testID="chat-send"
+                >
+                  <Text style={styles.sendButtonText}>{preparingSend ? 'Hazırlanıyor' : 'Gönder'}</Text>
+                </Pressable>
+              </View>
+            </View>
+          </>
         )}
       </View>
     );
@@ -361,12 +592,23 @@ const styles = StyleSheet.create({
   roomText: { flex: 1, gap: 4 },
   roomTitle: { color: theme.colors.text, fontSize: 17, fontWeight: '700' },
   unread: { minWidth: 28, height: 28, borderRadius: 14, overflow: 'hidden', textAlign: 'center', paddingTop: 4, color: theme.colors.onAccent, backgroundColor: theme.colors.accent, fontWeight: '800' },
+  messageScroll: { flex: 1 },
   messageList: { gap: theme.spacing(1), paddingBottom: theme.spacing(3) },
   message: { alignSelf: 'flex-start', maxWidth: '88%', gap: 4, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface, borderRadius: theme.radius, padding: theme.spacing(1.25) },
   ownMessage: { alignSelf: 'flex-end', borderColor: theme.colors.accent },
+  pendingMessage: { opacity: 0.92 },
   sender: { color: theme.colors.accent, fontSize: 12, fontWeight: '700' },
   reply: { color: theme.colors.textMuted, fontSize: 12, borderLeftWidth: 2, borderLeftColor: theme.colors.accent, paddingLeft: theme.spacing(0.75) },
   messageText: { color: theme.colors.text, fontSize: 15, lineHeight: 21 },
   deleted: { color: theme.colors.textMuted, fontSize: 15, fontStyle: 'italic' },
   meta: { color: theme.colors.textMuted, fontSize: 11 },
+  inlineAction: { color: theme.colors.accent, fontSize: 12, fontWeight: '700' },
+  inlineDanger: { color: theme.colors.danger, fontSize: 12, fontWeight: '700' },
+  pendingActions: { flexDirection: 'row', gap: theme.spacing(2), alignItems: 'center' },
+  composer: { borderTopWidth: 1, borderTopColor: theme.colors.border, paddingTop: theme.spacing(1), gap: theme.spacing(1) },
+  replyDraft: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing(1), backgroundColor: theme.colors.surface, borderRadius: 8, padding: theme.spacing(1) },
+  composerRow: { flexDirection: 'row', alignItems: 'flex-end', gap: theme.spacing(1) },
+  composerInput: { flex: 1, maxHeight: 120, minHeight: 48, color: theme.colors.text, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: theme.colors.surface, borderRadius: theme.radius, paddingHorizontal: theme.spacing(1.25), paddingVertical: theme.spacing(1) },
+  sendButton: { minHeight: 48, justifyContent: 'center', borderRadius: theme.radius, backgroundColor: theme.colors.accent, paddingHorizontal: theme.spacing(1.5) },
+  sendButtonText: { color: theme.colors.onAccent, fontWeight: '800' },
 });

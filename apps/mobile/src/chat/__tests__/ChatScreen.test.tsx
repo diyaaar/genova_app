@@ -2,6 +2,8 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-
 import type { ChatReadMessage, ChatReadRoomSummary, ChatReadScope } from '@shared/chat-read-contract';
 import { ChatScreen } from '../ChatScreen';
 import { NativeChatReadError, type NativeChatReadGateway } from '../chat-read-gateway';
+import { NativeChatSendError, type NativeChatSendGateway } from '../chat-send-gateway';
+import type { NativeChatQueuedText } from '../native-chat-send-queue';
 
 const scope: ChatReadScope = {
   userId: '11111111-1111-4111-8111-111111111111',
@@ -15,6 +17,7 @@ const messageId = '66666666-6666-4666-8666-666666666666';
 function message(overrides: Partial<ChatReadMessage> = {}): ChatReadMessage {
   return {
     id: messageId,
+    clientMutationId: null,
     roomId,
     senderId: peerId,
     content: 'Prova saat dokuzda.',
@@ -96,10 +99,49 @@ function gatewayDouble(): GatewayDouble {
   return gateway;
 }
 
+function queued(overrides: Partial<NativeChatQueuedText> = {}): NativeChatQueuedText {
+  return {
+    version: 1,
+    scope,
+    roomId,
+    clientMutationId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    content: 'https://example.invalid prova',
+    replyToId: messageId,
+    linkPreview: {
+      url: 'https://example.invalid/',
+      title: 'Prova',
+      description: null,
+      image: null,
+      favicon: null,
+      domain: 'example.invalid',
+    },
+    queuedAt: 100,
+    status: 'pending',
+    ...overrides,
+  };
+}
+
+function sendGatewayDouble(): NativeChatSendGateway {
+  return {
+    prepare: jest.fn(async () => ({ record: queued(), previewWarning: false })),
+    transmit: jest.fn(async () => message({
+      id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      clientMutationId: queued().clientMutationId,
+      content: queued().content,
+      replyToId: queued().replyToId,
+      metadata: { link_preview: queued().linkPreview },
+    })),
+    restore: jest.fn(async () => []),
+    reconcile: jest.fn(async () => []),
+    cancel: jest.fn(async () => []),
+    clear: jest.fn(async () => {}),
+  };
+}
+
 describe('ChatScreen', () => {
   it('shows an authorized searchable room list and opens an accessible message history', async () => {
     const gateway = gatewayDouble();
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
 
     expect(await screen.findByText('Ada Lovelace')).toBeTruthy();
     expect(screen.getByTestId(`chat-unread-${roomId}`)).toHaveTextContent('2');
@@ -142,7 +184,7 @@ describe('ChatScreen', () => {
         nextCursor: null,
         hasMore: false,
       });
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
     expect(await screen.findByText('Bu mesaj silindi.')).toBeTruthy();
@@ -160,7 +202,7 @@ describe('ChatScreen', () => {
     gateway.loadRooms = jest.fn()
       .mockRejectedValueOnce(new Error('secret transport detail'))
       .mockResolvedValue([room()]);
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
 
     expect(await screen.findByText('Sohbet odaları yüklenemedi.')).toBeTruthy();
     expect(screen.queryByText('secret transport detail')).toBeNull();
@@ -186,7 +228,7 @@ describe('ChatScreen', () => {
         hasMore: false,
       })
       .mockRejectedValueOnce(new Error('offline room'));
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
 
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
     expect(await screen.findByText('Prova saat dokuzda.')).toBeTruthy();
@@ -208,10 +250,66 @@ describe('ChatScreen', () => {
       throw new NativeChatReadError('inaccessible-room');
     });
     gateway.loadRooms = jest.fn(async () => revoked ? [] : [room()]);
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
     expect(await screen.findByTestId('chat-list-screen')).toBeTruthy();
     expect(await screen.findByText(/erişiminiz sona erdi/u)).toBeTruthy();
+  });
+
+  it('persists a reply/link draft, exposes failed retry and replaces it with one acknowledgement', async () => {
+    const gateway = gatewayDouble();
+    const sendGateway = sendGatewayDouble();
+    (sendGateway.transmit as jest.Mock)
+      .mockRejectedValueOnce(new NativeChatSendError('transmit-failed'))
+      .mockResolvedValueOnce(message({
+        id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+        clientMutationId: queued().clientMutationId,
+        content: queued().content,
+        replyToId: queued().replyToId,
+        metadata: { link_preview: queued().linkPreview },
+      }));
+    (sendGateway.restore as jest.Mock)
+      .mockResolvedValueOnce([queued({ status: 'failed' })])
+      .mockResolvedValueOnce([]);
+    await render(
+      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} onBack={jest.fn()} />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+    await screen.findByText('Prova saat dokuzda.');
+
+    await fireEvent.press(screen.getByTestId(`chat-reply-${messageId}`));
+    expect(screen.getByTestId('chat-reply-draft')).toBeTruthy();
+    await fireEvent.changeText(screen.getByTestId('chat-composer-input'), 'https://example.invalid prova');
+    await fireEvent.press(screen.getByTestId('chat-send'));
+
+    await waitFor(() => expect(sendGateway.prepare).toHaveBeenCalledWith(
+      scope,
+      roomId,
+      'https://example.invalid prova',
+      messageId,
+    ));
+    expect(await screen.findByText('Gönderilemedi')).toBeTruthy();
+    expect(screen.getByText('Bağlantı: Prova')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId(`chat-retry-${queued().clientMutationId}`));
+
+    await waitFor(() => expect(sendGateway.transmit).toHaveBeenCalledTimes(2));
+    expect(await screen.findByTestId('chat-message-bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb')).toBeTruthy();
+    expect(screen.queryByTestId(`chat-pending-${queued().clientMutationId}`)).toBeNull();
+  });
+
+  it('restores a failed protected item and cancels it explicitly', async () => {
+    const gateway = gatewayDouble();
+    const sendGateway = sendGatewayDouble();
+    (sendGateway.reconcile as jest.Mock).mockResolvedValueOnce([queued({ status: 'failed' })]);
+    await render(
+      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} onBack={jest.fn()} />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+
+    expect(await screen.findByTestId(`chat-cancel-${queued().clientMutationId}`)).toBeTruthy();
+    await fireEvent.press(screen.getByTestId(`chat-cancel-${queued().clientMutationId}`));
+    await waitFor(() => expect(sendGateway.cancel).toHaveBeenCalledWith(scope, roomId, queued().clientMutationId));
+    expect(screen.queryByTestId(`chat-pending-${queued().clientMutationId}`)).toBeNull();
   });
 });
