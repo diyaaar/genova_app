@@ -7,7 +7,8 @@
 20 September delivery reset: decisions #28–31 refine #21. Android-first beta is an intermediate
 release of the same product; all native/WebView ownership below remains unchanged. Supabase stays;
 private R2 storage preparation replaces production Drive dependency before operational delivery.
-051 is unfinished, with two latest focused test failures; no new screen acceptance is claimed.
+051 is locally accepted at `22a19d6`: personal stars and a bounded room panel pass mobile 49/287,
+root 65/602/build and both JS exports. No hosted/device acceptance is claimed.
 Follow [the current critical path](docs/mobil-teslim-plani.md#current-delivery-priority--20-september-2026),
 not historical next-step prose below. Both platforms remain required for the full store candidate.
 

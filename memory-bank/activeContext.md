@@ -9,7 +9,7 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-Resolve/checkpoint unfinished 051 first; then prioritize Drive-exit/private-storage read integration
+051 is now locally accepted; prioritize Drive-exit/private-storage read integration
 and the actual Android user flow rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
@@ -28,22 +28,21 @@ and the actual Android user flow rather than continuing tiny chat features autom
 
 ## Exact work checkpoint
 
-- Planning base `d8dd8e3`; last accepted product `9edda60`/050. Verify actual HEAD.
-- Agent owns unfinished 051 changes in mobile chat and AppRoot/tests. Preserve them.
-- Latest focused run after state serialization change: 43 PASS, 2 FAIL. Earlier full gate/export
-  successes do not validate the latest revision. See [051](../docs/briefs/051-native-chat-starred-messages.md).
-- Next bounded action: fix transport-start test synchronization and review unknown/panel-only star
-  state, stale lifecycle callbacks and cursor handling; close with required evidence or explicitly
-  checkpoint remaining failures, then proceed along the storage/read critical path.
+- Last accepted product `22a19d6`/051. Verify actual HEAD; no unfinished product changes.
+- Final mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS exports
+  pass. Star state/toggle/panel and lifecycle accepted locally, not live. Detailed evidence:
+  [051](../docs/briefs/051-native-chat-starred-messages.md).
+- Next: inventory all Drive file classes and prepare private-R2 PDF/audio access integration
+  with stable identities, authorization, Range, migration/checksum and rollback.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- WF-008 documentation preflight: 21,340,568 KiB (~20.35 GiB) free. 051 build/export outputs removed.
-  No runtime/build/install created by planning. Recheck before allocating.
+- 051 cleanup: 21,300,624 KiB (~20.31 GiB) free. Build/coverage/exports (~471 MiB) removed.
+  No runtime/VM/device or install created. Recheck before allocating.
 
 ## Remaining requirements and authority
 
 004 remains 25/27 with postponed hardware. 010 remains 6/7; revoked-link/wrong-account live UI
 refusals remain unproved and deleted fixtures must not be silently recreated. 018 history remains.
-033/C1 and 034–050 local acceptance is preserved, without upgrading it to hosted/device evidence.
+033/C1 and 034–051 local acceptance is preserved, without upgrading it to hosted/device evidence.
 023 annotation decisions, 036 transport, commercial prices/member counting, retention policy,
 provider region/accounts and controlled deployment/migration remain actionable decision gates.
 Native write/sync/offline, remaining chat/C4/C5, provider delivery, plan/lifecycle/security,

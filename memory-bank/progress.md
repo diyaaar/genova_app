@@ -2,8 +2,9 @@
 
 20 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 050 is accepted locally; 051 is IN PROGRESS with
-two latest focused failures. Follow the delivery plan's current priority; older checkpoints below
+$5/month preference and five free choir seats. 051 is accepted locally at `22a19d6`: mobile 49/287,
+root 65/602/build and both JS exports pass; ~471 MiB output cleaned, ~20.31 GiB free. Next is
+Drive-exit/private-R2 read integration. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 
 19 September 2026: `851e9cd` aligns three direct/four required transitive Expo patches: mobile

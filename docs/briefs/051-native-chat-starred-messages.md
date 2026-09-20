@@ -1,8 +1,8 @@
 # 051 — Native chat starred-message state and room panel
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-20 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-20 / primary agent
 
-**Interrupted implementation checkpoint — WF-008:** Agent-owned product changes exist in
+**Historical interrupted checkpoint — WF-008:** Agent-owned product changes existed in
 `apps/mobile/src/chat/` and `apps/mobile/src/ui/AppRoot.tsx` with accompanying tests. Last focused
 run after adding the state serialization queue: 43 PASS / 2 FAIL (transport-start synchronization
 in gateway tests). Earlier mobile 48/272, root 65/602/build and iOS/Android exports are pre-change
@@ -10,7 +10,22 @@ evidence, not final acceptance. Review panel-only stars, unknown initial state, 
 callbacks and strict cursors as well as the reported failures before closing. Exact .next,
 coverage and 051 exports were cleaned. Preserve these source edits; unrelated CLI cache stays
 unstaged. After this coherent checkpoint, follow WF-008's storage/read delivery path instead of
-automatically selecting another chat capability. All required acceptance rows below remain open.
+automatically selecting another chat capability. Superseded by final acceptance below.
+
+**Resumed checkpoint — 20 September:** Previous goal turn made progress (WF-008 committed and
+the revised goal activated). Verified owned changes against `a4fead8`; unrelated CLI marker is
+preserved. Disk preflight 21,325,708 KiB, before full gates 21,314,408 KiB. Existing dependencies
+reused; estimated additional peak <1 GiB, exact cleanup targets unchanged. No runtime/VM/device
+started. Read current handoff/context, guide/work cycle/template, delivery/resource controls,
+MIGRATION/decisions and actual star gateway/transport/UI/tests plus 042 policy/web callers.
+
+The two previous failures were test synchronization assumptions after queue serialization; tests
+now wait for explicit transport-start signals. Self-review also repaired real panel-only removal,
+unknown/lost-acknowledgement state, same-room return/tenant/unmount invalidation, old-room queued
+work blocking a new room, invalid-calendar/cursor-boundary refusal, message-key dedup and manual
+snapshot refresh. Added direct hook regression coverage. Focused 6 suites/53 tests passed, then
+final mobile typecheck and 49 suites/282 tests passed after the last refresh/paging additions.
+Final evidence below supersedes these intermediate test counts. No hosted/device acceptance.
 
 **Purpose and user need:** Let the current native member star or unstar an authorized room message
 and browse that room's own starred messages without trusting another member, choir or hidden row.
@@ -101,15 +116,15 @@ but is not server freshness. Revert the product commit for client rollback; no D
 
 **Done definition:**
 
-- [ ] Loaded messages show only the current member's authoritative star state; exact acknowledged
+- [x] Loaded messages show only the current member's authoritative star state; exact acknowledged
       add/remove toggles it and repeated/refused/lost responses never silently invent state.
-- [ ] The current-room panel pages at most 40 strict authorized rows per request with stable order,
+- [x] The current-room panel pages at most 40 strict authorized rows per request with stable order,
       dedup, empty/error/refresh/older states and no hidden/deleted/inaccessible content.
-- [ ] Member/choir/room/message mismatch, malformed nested row, late room/tenant callback and tenant
+- [x] Member/choir/room/message mismatch, malformed nested row, late room/tenant callback and tenant
       clear fail closed; no Realtime or offline mutation guarantee is implied.
-- [ ] Focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`, sequential iOS/Android
+- [x] Focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`, sequential iOS/Android
       Expo bundles, diff review, cleanup and >=10 GiB free-space check pass.
-- [ ] Migration controls and separate product/evidence commits are recorded; hosted, real-account,
+- [x] Migration controls and separate product/evidence commits are recorded; hosted, real-account,
       socket, simulator/device and release layers remain explicitly NOT RUN.
 
 **Optional subtask:** None. One writer; no delegation.
@@ -121,15 +136,26 @@ but is not server freshness. Revert the product commit for client rollback; no D
 | 2026-09-20 | Source/ownership/resource preflight | local product `9edda60`, records `d8cca11` | PASS | Only unrelated CLI marker is dirty; 21,371,364 KiB free. 042 policies/index/unique key, web star behavior and native strict read/action patterns exist. No runtime/build/download started. |
 | 2026-09-20 | Scope and publication review | local schema/migrations/source | PASS | Stars are own-member and accessible-message constrained, but not in 046's declared Realtime tables. The brief therefore requires snapshots/refresh and no socket claim. Hosted state was not inspected. |
 
-**Delivery:** Pending planning commit, product/test commit and separate acceptance-record commit.
+| 2026-09-20 | Focused star/transport/panel/screen/tenant tests | local synthetic renderer/transport | PASS | Six suites/53 tests after first repairs; final run below adds refresh, paging and acknowledgement-refusal cases. |
+| 2026-09-20 | `npx tsc --noEmit && npm test -- --runInBand` | `apps/mobile`, final `22a19d6` source | PASS | 49 suites/287 tests. Existing SafeAreaView/punycode/npm-config warnings remain unrelated. |
+| 2026-09-20 | `pnpm check` | root, unchanged final production source | PASS | lint/typecheck, 65 files/602 tests, service-worker syntax and Next production build. Only mobile test cases added afterward; final mobile gate includes those. |
+| 2026-09-20 | `npx expo export --platform android --output-dir .expo/bundle-check-051-android`, then corresponding `ios` export | local production JS/Hermes, synthetic URL/key, `EXPO_NO_DOTENV=1` | PASS | 1438 modules each; Android 4.4 MB / iOS 4.3 MB. No native compile, simulator/device. Existing 051 export gate retained; later ordinary UI work follows grouped-iOS policy. |
+| 2026-09-20 | Self-review of final diff and 042 authority dependency | local source | PASS | Own-row acknowledgement, inner join, strict cursor/calendar/microseconds, panel-only removal, unknown-state refresh, lost-ack recovery, serialized state writes, A-B-A/tenant/unmount refusal reviewed/tested. No web/schema/publication change. ChatScreen size reviewed; new state/panel logic is separate, no unrelated refactor. Self-review is not independent review. |
+| 2026-09-20 | Owned output cleanup | local filesystem | PASS | Removed `.next` 473,556 KiB, coverage 332 KiB, Android export 4,260 KiB and iOS export 4,252 KiB (~471 MiB total); all rebuildable. Free afterward 21,300,624 KiB (~20.31 GiB). No runtime/VM/device created or retained. Dependencies/source retained; CLI marker untouched. |
+
+**Delivery:** Planning `d8dd8e3`; product/tests `22a19d6`; separate `051: record starred-message
+acceptance and storage handoff` commit owns this evidence. Revert the client product commit for
+rollback; no DB change made. Hosted 042/PostgREST joins/mutations still need approved integration
+before beta exposure. Next: Drive file inventory and bounded private-R2 protected PDF/audio read
+integration, not another chat feature. Full goal and 004/010 open criteria remain open.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Strict own-member star snapshot/toggle contract | yes | NOT RUN | pending focused contract/adapter/gateway tests | Exact scope/room/message binding, returned-row acknowledgement, malformed/refused/lost/repeated cases required. |
-| Bounded native indicator/toggle and room panel | yes | NOT RUN | pending React Native renderer tests | Stable 40-row paging/dedup, empty/error/refresh/older and accessible actions required. |
-| Room/tenant lifecycle and late-result refusal | yes | NOT RUN | pending focused lifecycle tests | Last trusted state may remain visibly stale; other room/tenant state must never appear. |
-| Mobile/root compatibility and iOS/Android bundle resolution | yes | NOT RUN | pending local gates | Exports are not simulator/device/runtime evidence. |
-| Diff/authority/order/accessibility review, cleanup and records | yes | NOT RUN | pending self-review | Self-review is not independent review. |
+| Strict own-member star snapshot/toggle contract | yes | PASS | 2026-09-20, `22a19d6`, final gateway/adapter tests | Exact scope/room/message binding, returned-row acknowledgement, malformed/refused/lost/repeated cases. Mock transport only. |
+| Bounded native indicator/toggle and room panel | yes | PASS | 2026-09-20, `22a19d6`, screen/panel/hook renderer tests | 40-row paging/cursor, dedup, empty/error/refresh/older, panel-only removal, accessible roles. No device visual claim. |
+| Room/tenant lifecycle and late-result refusal | yes | PASS | 2026-09-20, `22a19d6`, hook/gateway/AppRoot tests | Old-room stall, A-B-A room/tenant, late panel, unknown/lost acknowledgement and tenant/unmount clear. |
+| Mobile/root compatibility and iOS/Android bundle resolution | yes | PASS | 2026-09-20, final commands above | Mobile 49/287, root 65/602/build, both exports. Not simulator/device/runtime evidence. |
+| Diff/authority/order/accessibility review, cleanup and records | yes | PASS | 2026-09-20, scoped diff, cleanup and documentation validation | Self-review, not independent review. >=10 GiB maintained. |
 | Hosted 042 queries/writes, real account/data, socket, simulator/hardware/provider/deploy/release | no — separately approved later gates | NOT RUN | no external authority | Blocks deployed/runtime/device claims, not bounded local implementation evidence. |

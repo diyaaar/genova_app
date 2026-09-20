@@ -7,21 +7,19 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--20-september-2026).
-2. Read [051](briefs/051-native-chat-starred-messages.md) before touching its owned unfinished
-   code. Use [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+2. [051](briefs/051-native-chat-starred-messages.md) is locally accepted. Prepare the bounded
+   Drive-exit/private-R2 read brief; use [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Planning base: `d8dd8e3` (051). Last accepted product: `9edda60` (050); verify current HEAD.
-- Owned unfinished 051: ChatScreen/action-panel and tests; AppRoot/tenant-cleanup tests; new
-  star gateway/transport/hook/panel and tests under `apps/mobile/src/chat/`.
+- Last accepted product: `22a19d6` (051); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
-- Latest 051 focused run after serialization change: 43 PASS / 2 FAIL. Earlier full mobile
-  48/272, root 65/602/build and platform exports predate that change and are not final acceptance.
-- Next action: review/fix 051's synchronization and lifecycle/state concerns, then its required
-  final gates or an explicit unfinished checkpoint. Do not start another chat feature by default.
+- Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
+  exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
+- Next: inventory all Drive file classes and prepare private-R2 protected PDF/audio integration
+  with copy/checksum/rollback boundaries; do not add another chat feature.
 
 ## Delivery decisions
 
@@ -34,12 +32,12 @@ This is the current entry point; dated acceptance remains in individual briefs.
 - First five choir members free, additional members billable. Individual sales deferred.
   Initial invoicing remains manual/web; price, period and seat-count lifecycle remain undecided.
 - Web onboarding/payment preference does not waive mobile privacy, deletion or store review.
-- After 051: protected storage/read integration -> operational Android beta -> complete features/
+- Now: protected storage/read integration -> operational Android beta -> complete features/
   release obligations -> stable two-platform acceptance -> approved distribution and operations.
 
 ## Acceptance and resources
 
-- 018–050 have dated local evidence; 033/C1 is locally accepted, including owner password restore.
+- 018–051 have dated local evidence; 033/C1 is locally accepted, including owner password restore.
   Their boundaries are in their briefs, not inferred hosted/runtime acceptance.
 - 004 remains 25/27 with hardware postponed; 010 remains 6/7 with two live-product refusals open.
   Do not recreate deleted fixtures without applicable authority.
@@ -47,8 +45,8 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 21,340,568 KiB (~20.35 GiB) free at WF-008 preflight. Recheck before allocation.
-  Previous .next, coverage and 051 export outputs were removed; no new runtime was started.
+- 21,300,624 KiB (~20.31 GiB) free after 051 cleanup. Recheck before allocation.
+  Removed .next, coverage and both 051 exports (~471 MiB); no runtime/device started.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;
   iOS runs at integration/candidate gates or earlier when a platform-sensitive change requires it.
