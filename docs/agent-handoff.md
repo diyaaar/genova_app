@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 20 September 2026 under [049](briefs/049-native-chat-text-send-retry.md).
+Updated 20 September 2026 under [050](briefs/050-native-chat-core-message-actions.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [049](briefs/049-native-chat-text-send-retry.md).
+   [050](briefs/050-native-chat-core-message-actions.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -16,7 +16,8 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `2118182`; it contains protected native text/reply/link send/retry;
+Current local product HEAD: `9edda60`; it contains native copy/edit/delete/hide message actions;
+`2118182` contains protected native text/reply/link send/retry;
 `dc86d5d` contains the native chat room list/read flow;
 `3c563d1` contains durable delivered/read web adoption;
 `bed8032` contains the private room Realtime contract/adoption;
@@ -121,6 +122,12 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   storage refusal and tenant clear pass. Mobile 43/248, root 65/602/build and sequential 1,431-module
   iOS/Android exports pass. Hosted RPC/preview/socket, simulator/device and real account/data remain
   unproved.
+- [050](briefs/050-native-chat-core-message-actions.md) is **ACCEPTED LOCALLY** at `9edda60`:
+  native copy, sender text edit/global delete and per-member hide use 044's exact RPCs and validated
+  UUID acknowledgements. Accessible action/edit/confirmation panels preserve trusted state on
+  malformed/wrong results, backend/clipboard refusal, expired/type/owner hints, repeated taps and
+  stale room/tenant work. Mobile 45/256, root 65/602/build and sequential 1,434-module exports pass.
+  Hosted 044 RPC, real account/data, simulator/device and release remain unproved.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -135,7 +142,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - Final 19 September password-run cleanup restored the disposable target baseline and removed the
   exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
   all four ports closed. A later orphan inactive task-owned 033 VM disk was removed before 041.
-  After 049 build/export cleanup: 21,370,380 KiB (~20.4 GiB) free.
+  After 050 build/export cleanup: 21,370,328 KiB (~20.4 GiB) free.
   Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
@@ -162,8 +169,9 @@ message-status authority, `621147e`/044 accepts core-message mutation authority,
 accepts idempotent text-send/retry, `bed8032`/046 accepts the local private-room Realtime contract
 and `3c563d1`/047 accepts durable-status web adoption; `dc86d5d`/048 accepts the memory-only native
 room list/read flow and reconnect snapshot; `2118182`/049 accepts protected native text/reply/link
-send and bounded restart retry/cancel. After cleanup, 21,370,380 KiB is free. Native core-message
-actions are next; reactions/polls/Presence/media/administration remain later.
+send and bounded restart retry/cancel; `9edda60`/050 accepts copy/edit/global-delete/self-hide.
+After cleanup, 21,370,328 KiB is free. Native starred-message state is next;
+reactions/polls/receipts/Presence/media/administration remain later.
 Provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
@@ -184,7 +192,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 049 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 050 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

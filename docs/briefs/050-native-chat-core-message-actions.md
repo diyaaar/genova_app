@@ -1,6 +1,6 @@
 # 050 — Native chat core message actions
 
-**Status / date / responsible writer:** PLANNED / 2026-09-20 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-20 / primary agent
 
 **Purpose and user need:** Let an authorized native chat member copy or hide a visible message and
 let its sender edit or delete it for everyone through the existing server-authoritative rules,
@@ -92,15 +92,15 @@ Revert the product commit for client rollback; no DB down is needed.
 
 **Done definition:**
 
-- [ ] Copy, sender text edit, confirmed global delete and current-member hide expose only their
+- [x] Copy, sender text edit, confirmed global delete and current-member hide expose only their
       valid native controls and update visible state only after accepted local acknowledgements.
-- [ ] Malformed/wrong-message acknowledgement, backend refusal, expired/other-sender/deleted/type,
+- [x] Malformed/wrong-message acknowledgement, backend refusal, expired/other-sender/deleted/type,
       clipboard failure, repeated action and stale room/tenant results fail visibly and safely.
-- [ ] No direct table message update or client authority is added; exact 044 RPC shapes, UUID
+- [x] No direct table message update or client authority is added; exact 044 RPC shapes, UUID
       acknowledgement parsing and tenant invalidation pass focused tests.
-- [ ] Focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`, sequential iOS/Android
+- [x] Focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`, sequential iOS/Android
       Expo bundles, diff review, cleanup and >=10 GiB free-space check pass.
-- [ ] Migration start/delivery controls and separate product/evidence commits are recorded; hosted,
+- [x] Migration start/delivery controls and separate product/evidence commits are recorded; hosted,
       socket, real-account, simulator/device and release layers remain explicitly NOT RUN.
 
 **Optional subtask:** None. One writer; no delegation.
@@ -111,16 +111,25 @@ Revert the product commit for client rollback; no DB down is needed.
 |---|---|---|---|---|
 | 2026-09-20 | Source/ownership/resource preflight | local product `2118182`, records `148bf80` | PASS | Only unrelated CLI marker is dirty; 21,373,724 KiB free. 044 RPCs, web adoption, parsed native messages and installed clipboard exist. No runtime/build/download started. |
 | 2026-09-20 | Scope selection and current API review | local source plus 049 official Supabase review | PASS | Order 6 was split at the core action family. Existing authenticated RPC calls return UUIDs; stars/reactions/polls/Presence remain later. No hosted target was read or changed. |
+| 2026-09-20 | Two-attempt reassessment | focused gateway/renderer tests | PASS after repair | Attempt 1 waited one microtask before the serialized action began; attempt 2 used an ambiguous text selector because the open panel repeats the message. Tests were corrected to the actual async queue and stable UI identity without weakening behavior. |
+| 2026-09-20 | Action coordinator and native UX focused acceptance | local product `9edda60` | PASS | Four suites / 32 tests cover exact RPC/UUID boundaries, copy/edit/global-delete/self-hide, sender/type/deleted/expiry hints, confirmation/cancel, clipboard/backend errors, duplicate in-flight action, tenant clear and late room result. |
+| 2026-09-20 | Full mobile and root compatibility gates | local Node 24, product `9edda60` | PASS | Mobile TypeScript plus 45 suites / 256 tests pass. Root lint/typecheck, 65 files / 602 tests, service-worker syntax and Next production build pass. Existing SafeAreaView/punycode warnings remain non-failing and visible. |
+| 2026-09-20 | Sequential bundle resolution and cleanup | local Expo export, product `9edda60` | PASS | iOS and Android each resolve 1,434 modules / 4.3 MB. Both bundle directories, root `.next` and coverage are removed; 21,370,328 KiB (~20.4 GiB) remains free. Bundles are not simulator/device execution. |
+| 2026-09-20 | Authority/lifecycle/accessibility self-review | local product diff | PASS | Native uses only 044's three RPCs and the selected visible text clipboard call; there is no direct message update, service credential, schema or new dependency. Results bind to scope/room/message, destructive actions confirm and refusal preserves trusted state. Self-review is not independent review. |
+| 2026-09-20 | Acceptance-record consistency gate | five changed Markdown files | PASS | 158 local file links resolve with zero missing; stale 050 pending/next-core-action markers are absent and `git diff --check` passes. Only the unrelated CLI marker remains outside the document set. |
 
-**Delivery:** Pending planning commit, product/test commit and separate acceptance-record commit.
+**Delivery:** Planning commit `535db15`; product/tests `9edda60`; this separate acceptance/status
+record follows. No hosted DB/RPC/socket, real account/data, simulator/device, deploy, push or release
+was run. The next ready bounded order-6 family is native per-member starred-message state; reactions,
+polls, receipts and ephemeral social state remain separate.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Strict 044 action/acknowledgement boundary | yes | NOT RUN | pending focused coordinator/adapter tests | Exact RPC shape, UUID results, message/scope binding, repeated action and refusal must pass. |
-| Native copy/edit/delete/hide UX | yes | NOT RUN | pending React Native renderer tests | Eligibility hints, explicit confirmation/cancel, clipboard/backend errors and trusted-state preservation required. |
-| Room/tenant lifecycle and late-result refusal | yes | NOT RUN | pending focused lifecycle tests | No callback may change a different room/tenant; cleanup must include the action coordinator. |
-| Mobile/root compatibility and iOS/Android bundle resolution | yes | NOT RUN | pending local gates | Exports are not simulator/device/runtime evidence. |
-| Diff/authority/accessibility review, cleanup and records | yes | NOT RUN | pending self-review | Self-review is not independent review. |
+| Strict 044 action/acknowledgement boundary | yes | PASS | 2026-09-20, `9edda60`, focused coordinator/adapter tests | Exact three RPC shapes, UUID/message binding, malformed/wrong result, backend refusal and identical in-flight dedup pass. |
+| Native copy/edit/delete/hide UX | yes | PASS | 2026-09-20, `9edda60`, React Native renderer | Accessible action/edit panels, sender/time/type hints, destructive confirmation/cancel and clipboard/backend errors pass; state changes only after accepted acknowledgement. |
+| Room/tenant lifecycle and late-result refusal | yes | PASS | 2026-09-20, `9edda60`, focused lifecycle tests | Room departure ignores late results; tenant clear invalidates the coordinator and injected/default gateways participate in cache teardown. |
+| Mobile/root compatibility and iOS/Android bundle resolution | yes | PASS | 2026-09-20, `9edda60`, local gates | Mobile 45/256, root 65/602/build and sequential 1,434-module iOS/Android exports pass. Exports are not simulator/device/runtime evidence. |
+| Diff/authority/accessibility review, cleanup and records | yes | PASS | 2026-09-20, `9edda60`, local self-review | Exact outputs removed, 21,370,328 KiB free; only unrelated CLI marker remains dirty. Self-review is not independent review. |
 | Hosted 044 RPC, real account/data, socket, simulator/hardware/provider/deploy/release | no — separately approved later gates | NOT RUN | no external authority | Blocks deployed/runtime/device claims, not bounded local implementation evidence. |
