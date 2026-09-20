@@ -1,6 +1,6 @@
 # 047 — Durable chat delivered/read web adoption
 
-**Status / date / responsible writer:** IN PROGRESS / 2026-09-19 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-19 / primary agent
 
 **Purpose and user need:** Make the current web room record and display durable delivered/read
 state through 043's server-authorized RPC instead of treating an untrusted Broadcast payload as a
@@ -91,11 +91,11 @@ valid observations.
 
 **Done definition:**
 
-- [ ] Inbound server messages write delivered/read according to activity; own/temp rows never write.
-- [ ] Dedup, monotonic upgrade, serialization, later-trigger retry and scope reset pass focused tests.
-- [ ] Broadcast read receipt is absent; durable table events/reload drive sender read state and info
+- [x] Inbound server messages write delivered/read according to activity; own/temp rows never write.
+- [x] Dedup, monotonic upgrade, serialization, later-trigger retry and scope reset pass focused tests.
+- [x] Broadcast read receipt is absent; durable table events/reload drive sender read state and info
       errors are visibly distinct from no rows.
-- [ ] Focused tests and root `pnpm check` pass; self-review, cleanup, disk/docs and external
+- [x] Focused tests and root `pnpm check` pass; self-review, cleanup, disk/docs and external
       boundaries are recorded.
 
 **Optional subtask:** None. One writer; no delegation.
@@ -105,15 +105,25 @@ valid observations.
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-19 | Source/resource/ownership preflight | local product `bed8032`, records `82a3129` | PASS | Only unrelated CLI marker is dirty; 21,677,152 KiB free. Direct `last_read_at` plus Broadcast-only bubble state reproduced; 043 RPC/info reader exist but no client writer/status event handler. No runtime/build started. |
+| 2026-09-19 | First focused gate | local Vitest + ESLint | FAIL | All 5 files/19 behavior tests passed, but React 19 lint rejected reading `ref.current` during render. The coordinator was moved to lazy one-time state; no rule or test was weakened. |
+| 2026-09-19 | Scope-switch design review and repair | framework-free coordinator/self-review | PASS | Review found that clearing the running marker could overlap an old-scope RPC with a new-scope writer. The queue now preserves the running promise, serializes the new flush behind it and invalidates old acknowledgement state; a concurrent scope-switch regression proves max one in flight. |
+| 2026-09-19 | Final focused gates | local Vitest/lint/typecheck | PASS | Five files / 19 tests pass: eligibility, hydration, hidden→visible upgrade, offline/later retry, monotonic dedup, serialization/scope reset, RPC shape, durable Realtime event/Broadcast removal and visible info retry. Scoped lint and root typecheck pass. |
+| 2026-09-19 | Semantics/lifecycle/UI/diff review | product `3c563d1` | PASS | RPC gets only message ID + transition; actor/room/time remain server-derived. Own/temp rows refuse before network, hidden data is delivered at most, visible+focused upgrades read, failures pause until a later flush, and tenant scope invalidates queued acknowledgements. Status hydration failure does not block message reads; info failure is visible. Self-review only. |
+| 2026-09-19 | Final root `pnpm check` | local product `3c563d1` | PASS | Lint/typecheck, 65 test files/601 tests, coverage, service-worker syntax and Next production build pass. |
+| 2026-09-19 | Cleanup/resource recheck | local filesystem | PASS | `.next` 473,536 KiB and coverage 332 KiB removed; 21,657,760 KiB (~20.7 GiB) free. No DB/runtime was created; unrelated CLI marker remains unstaged. |
+| 2026-09-19 | Documentation consistency gate | five changed Markdown files | PASS | Local links/anchors resolve with zero missing targets, stale 047 pending/next-status markers are absent and `git diff --check` passes. |
 
-**Delivery:** Pending planning commit, product/test commit and separate acceptance-record commit.
+**Delivery:** Planning `092dde2`; product/test `3c563d1`; this acceptance record follows. Revert
+the product commit to restore the previous web behavior; durable rows need no data rollback. Next
+ready user outcome: the first memory-only React Native chat list/read slice, with inaccessible-room,
+tenant teardown and reconnect snapshot acceptance; send/social/media remain later slices.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Activity semantics, eligibility, monotonic dedup and serialized retry | yes | NOT RUN | pending focused unit/hook tests | Must distinguish delivered/read from provider guarantees. |
-| Durable RPC/event/reload adoption and Broadcast removal | yes | NOT RUN | pending focused adapter/Realtime/UI tests | Existing 043 SQL authority is historical local evidence, not rerun here. |
-| Info empty/error behavior and compatibility | yes | NOT RUN | pending focused component test | Failure must not be rendered as “Henüz bilgi yok”. |
-| Root compatibility, diff review and cleanup | yes | NOT RUN | pending local root gate | Self-review only; exact generated outputs must be removed. |
+| Activity semantics, eligibility, monotonic dedup and serialized retry | yes | PASS | 2026-09-19, `3c563d1`, focused unit/hook tests | Hidden delivered, focused read, own/temp exclusion, offline/later flush, monotonic upgrade, one writer and scope invalidation pass. “Delivered” remains this client observation, not provider guarantee. |
+| Durable RPC/event/reload adoption and Broadcast removal | yes | PASS | 2026-09-19, focused adapter/Realtime/runtime tests | RPC sends no actor/time; status INSERT/UPDATE and reload hydration drive own bubbles; Broadcast receipt is absent. 043 SQL authority was not rerun. |
+| Info empty/error behavior and compatibility | yes | PASS | 2026-09-19, focused component test | Load failure shows “Mesaj bilgisi yüklenemedi” + retry; successful empty result alone shows “Henüz bilgi yok”. |
+| Root compatibility, diff review and cleanup | yes | PASS | 2026-09-19, product `3c563d1`, local root | 65 files/601 tests/build pass; self-review complete; exact outputs removed and ~20.7 GiB free. |
 | Hosted/native/provider/socket runtime | no — separately approved later gate | NOT RUN | no external authority | Blocks deployed/native receipt claims, not this bounded local web adoption. |

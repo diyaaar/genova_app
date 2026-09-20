@@ -1,10 +1,11 @@
 # Active context
 
-Updated 19 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [046](../docs/briefs/046-private-room-realtime-authorization.md) now owns
-C3's accepted local private-room Realtime contract after 038–045. Product `bed8032` adds exact
-room-member Broadcast/Presence policies, declared event-table publication and guarded private web
-room setup; `361ab7c` adds sender-keyed text/reply/link acknowledgement plus bounded web retry/cancel;
+Updated 20 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
+owns resource controls; [047](../docs/briefs/047-durable-chat-status-web-adoption.md) now owns C3's
+accepted durable-status web adoption after 038–046. Product `3c563d1` records delivered/read through
+043's server RPC, consumes durable status events/reload state and removes Broadcast receipt authority;
+`bed8032` adds exact room-member Broadcast/Presence policies, declared event-table publication and
+guarded private web room setup; `361ab7c` adds sender-keyed text/reply/link acknowledgement plus bounded web retry/cancel;
 `621147e` adds server-owned
 edit/delete/hide and tightened insertion; `1434464` adds the server-time status RPC;
 `c58f4da` binds social rows to room/actor;
@@ -20,7 +21,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 
 ## Current checkpoint
 
-- Product revision: `bed8032`. Recorded remote `a13f696`;
+- Product revision: `3c563d1`. Recorded remote `a13f696`;
   no fetch/push/deploy. [Progress](progress.md) links dated historical acceptance.
 - 033/C1 is **ACCEPTED LOCALLY**. Guarded Android credential/session/sign-out, the bounded guarded
   iOS feature/fault batch and the owner-operated iOS password change/restore all pass. See
@@ -103,6 +104,12 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   refusal and exact rollback; root 62-file/591-test/build gates pass. The source clone has no
   Supabase Realtime service, so hosted migration/settings, real socket, cached-revocation timing,
   global-list/delete delivery, reconnect recovery and caller-supplied ephemeral identity remain open.
+- [047](../docs/briefs/047-durable-chat-status-web-adoption.md) is **ACCEPTED LOCALLY** at
+  `3c563d1`: inbound server messages are delivered in memory and read only in a visible/focused room;
+  the process queue is scope-safe, monotonic, serialized and later-trigger retryable. Own/temp rows
+  never write, the RPC gets no actor/time, durable status events/reload drive sender bubbles and info
+  failures are visible. Focused 5-file/19-test and root 65-file/601-test/build gates pass. Hosted
+  043/046, real socket/provider and native receipt runtime remain unrun.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -119,10 +126,10 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  An orphan inactive task-owned 033 VM disk was removed before 041. After 046's exact DB/build
-  cleanup, 21,677,152 KiB (~20.7 GiB) remains free. C2's adapter still awaits the Expo-vs-direct
-  owner choice. C3 is accepted through 046's private-room Realtime contract; durable status client
-  adoption is next, with global-list/reconnect Realtime and native runtime separate.
+  An orphan inactive task-owned 033 VM disk was removed before 041. After 047's exact build cleanup,
+  21,657,760 KiB (~20.7 GiB) remains free. C2's adapter still awaits the Expo-vs-direct owner choice.
+  C3 is accepted through 047's durable-status web adoption; the first memory-only native list/read
+  slice is next, with global-list/reconnect acceptance included and send/social/media later.
   Do not infer hosted DB, provider or device delivery from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
@@ -132,7 +139,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 046,
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 047,
 C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.
