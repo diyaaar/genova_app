@@ -38,6 +38,10 @@ import {
   type NativeChatMessageActionGateway,
 } from './chat-message-action-gateway';
 import { getDefaultNativeChatMessageActionGateway } from './supabase-chat-message-action-transport';
+import type { NativeChatStarGateway } from './chat-star-gateway';
+import { getDefaultNativeChatStarGateway } from './supabase-chat-star-transport';
+import { useNativeChatStars } from './use-native-chat-stars';
+import { ChatStarredMessagesPanel } from './ChatStarredMessagesPanel';
 
 function safeReadError(error: unknown, fallback: string): string {
   if (error instanceof NativeChatReadError) {
@@ -107,6 +111,7 @@ export function ChatScreen({
   gateway: suppliedGateway,
   sendGateway: suppliedSendGateway,
   actionGateway: suppliedActionGateway,
+  starGateway: suppliedStarGateway,
   now = Date.now,
   onBack,
 }: {
@@ -115,6 +120,7 @@ export function ChatScreen({
   gateway?: NativeChatReadGateway;
   sendGateway?: NativeChatSendGateway;
   actionGateway?: NativeChatMessageActionGateway;
+  starGateway?: NativeChatStarGateway;
   now?: () => number;
   onBack: () => void;
 }) {
@@ -129,6 +135,10 @@ export function ChatScreen({
   const actionGateway = useMemo(
     () => suppliedActionGateway ?? getDefaultNativeChatMessageActionGateway(),
     [suppliedActionGateway],
+  );
+  const starGateway = useMemo(
+    () => suppliedStarGateway ?? getDefaultNativeChatStarGateway(),
+    [suppliedStarGateway],
   );
   const [rooms, setRooms] = useState<ChatReadRoomSummary[] | null>(null);
   const [roomsError, setRoomsError] = useState<string | null>(null);
@@ -156,6 +166,12 @@ export function ChatScreen({
   const messageRequest = useRef(0);
   const selectedRoomIdRef = useRef<string | null>(null);
   const autoRetried = useRef(new Set<string>());
+  const stars = useNativeChatStars({
+    scope,
+    roomId: selectedRoomId,
+    messages,
+    gateway: starGateway,
+  });
 
   useEffect(() => {
     selectedRoomIdRef.current = selectedRoomId;
@@ -444,16 +460,36 @@ export function ChatScreen({
             <Text style={styles.kicker}>{choirName}</Text>
             <Text style={styles.title} numberOfLines={1}>{getNativeChatRoomTitle(selectedRoom)}</Text>
           </View>
-          <Pressable onPress={() => void loadMessages(null)} accessibilityRole="button" testID="chat-room-refresh">
-            <Text style={styles.action}>Yenile</Text>
-          </Pressable>
+          <View style={styles.headerActions}>
+            <Pressable onPress={stars.openPanel} accessibilityRole="button" testID="chat-open-starred">
+              <Text style={styles.starAction}>★ Yıldızlılar</Text>
+            </Pressable>
+            <Pressable onPress={() => { void loadMessages(null); void stars.refreshStates(); }} accessibilityRole="button" testID="chat-room-refresh">
+              <Text style={styles.action}>Yenile</Text>
+            </Pressable>
+          </View>
         </View>
         {roomConnection === 'disconnected' ? (
           <Text style={styles.connectionWarning} accessibilityRole="alert" testID="chat-offline-warning">
             Bağlantı kesildi. Son görünüm gösteriliyor; yeniden bağlanınca sohbet yenilenecek.
           </Text>
         ) : null}
-        {messages === null && !messagesError ? (
+        {stars.notice ? (
+          <Text style={styles.starNotice} accessibilityRole="alert" testID="chat-star-notice">{stars.notice}</Text>
+        ) : null}
+        {stars.panelOpen ? (
+          <ChatStarredMessagesPanel
+            items={stars.panelItems}
+            loading={stars.panelLoading}
+            error={stars.panelError}
+            hasMore={stars.panelHasMore}
+            busyIds={stars.busyIds}
+            onRefresh={stars.refreshPanel}
+            onLoadOlder={stars.loadOlder}
+            onToggle={(message) => void stars.toggle(message, true)}
+            onClose={stars.closePanel}
+          />
+        ) : messages === null && !messagesError ? (
           <View style={styles.center} testID="chat-messages-loading">
             <ActivityIndicator color={theme.colors.accent} />
             <Text style={styles.muted}>Mesajlar yükleniyor…</Text>
@@ -498,6 +534,9 @@ export function ChatScreen({
                     <Text style={styles.reply}>Yanıt: {message.replyTo.senderName ?? 'Üye'} — {message.replyTo.content ?? 'Mesaj'}</Text>
                   ) : null}
                   <Text style={message.isDeleted ? styles.deleted : styles.messageText}>{body}</Text>
+                  {stars.starredIds.has(message.id) && !message.isDeleted ? (
+                    <Text style={styles.starIndicator} testID={`chat-starred-indicator-${message.id}`}>★ Yıldızlı</Text>
+                  ) : null}
                   {message.isEdited && !message.isDeleted ? <Text style={styles.meta}>düzenlendi</Text> : null}
                   {!message.isDeleted ? (
                     <View style={styles.messageActions}>
@@ -574,6 +613,9 @@ export function ChatScreen({
                 message={actionTarget}
                 canManageForEveryone={actionTarget.senderId === scope.memberId && withinOneHour(actionTarget, now())}
                 busy={actionBusy}
+                starBusy={stars.busyIds.has(actionTarget.id)}
+                starred={stars.starredIds.has(actionTarget.id)}
+                starKnown={stars.knownIds.has(actionTarget.id)}
                 confirmation={actionConfirmation}
                 onCopy={() => void copySelectedMessage()}
                 onEdit={() => {
@@ -586,6 +628,7 @@ export function ChatScreen({
                 onRequestConfirmation={setActionConfirmation}
                 onConfirm={() => void confirmSelectedAction()}
                 onCancelConfirmation={() => setActionConfirmation(null)}
+                onToggleStar={() => void stars.toggle(actionTarget)}
                 onClose={() => {
                   setActionTarget(null);
                   setActionConfirmation(null);
@@ -748,9 +791,12 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: theme.spacing(2), paddingTop: theme.spacing(5), backgroundColor: theme.colors.background },
   header: { flexDirection: 'row', alignItems: 'center', gap: theme.spacing(1.5), marginBottom: theme.spacing(2) },
   headerText: { flex: 1 },
+  headerActions: { alignItems: 'flex-end', gap: 6 },
   kicker: { color: theme.colors.textMuted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.8 },
   title: { color: theme.colors.text, fontSize: 24, fontWeight: '700' },
   action: { color: theme.colors.accent, fontSize: 15, fontWeight: '700' },
+  starAction: { color: '#F6C177', fontSize: 13, fontWeight: '700' },
+  starNotice: { color: '#F6C177', fontSize: 13, lineHeight: 18, marginBottom: theme.spacing(1) },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: theme.spacing(1.5), padding: theme.spacing(2) },
   muted: { color: theme.colors.textMuted, fontSize: 14, lineHeight: 20 },
   error: { color: theme.colors.danger, fontSize: 15, lineHeight: 21, textAlign: 'center' },
@@ -772,6 +818,7 @@ const styles = StyleSheet.create({
   messageText: { color: theme.colors.text, fontSize: 15, lineHeight: 21 },
   deleted: { color: theme.colors.textMuted, fontSize: 15, fontStyle: 'italic' },
   meta: { color: theme.colors.textMuted, fontSize: 11 },
+  starIndicator: { color: '#F6C177', fontSize: 11, fontWeight: '700' },
   inlineAction: { color: theme.colors.accent, fontSize: 12, fontWeight: '700' },
   inlineDanger: { color: theme.colors.danger, fontSize: 12, fontWeight: '700' },
   messageActions: { flexDirection: 'row', gap: theme.spacing(2), alignItems: 'center' },

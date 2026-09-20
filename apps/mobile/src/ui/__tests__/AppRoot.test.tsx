@@ -17,6 +17,7 @@ import type { NativeNotificationGateway, NativeNotificationResponse } from '../.
 import type { NativeChatReadGateway } from '../../chat/chat-read-gateway';
 import type { NativeChatSendGateway } from '../../chat/chat-send-gateway';
 import type { NativeChatMessageActionGateway } from '../../chat/chat-message-action-gateway';
+import type { NativeChatStarGateway } from '../../chat/chat-star-gateway';
 import { clearTenantCaches } from '../../auth/tenant-cache';
 
 async function renderWithStore(options: {
@@ -31,6 +32,7 @@ async function renderWithStore(options: {
   chatGateway?: NativeChatReadGateway;
   chatSendGateway?: NativeChatSendGateway;
   chatActionGateway?: NativeChatMessageActionGateway;
+  chatStarGateway?: NativeChatStarGateway;
 }) {
   const clientDouble = createClientDouble({
     memberships: options.memberships ?? [membership()],
@@ -71,6 +73,12 @@ async function renderWithStore(options: {
           deleteForEveryone: jest.fn(async (_scope, message) => ({ messageId: message.id })),
           hideForSelf: jest.fn(async (_scope, message) => ({ messageId: message.id, hiddenId: message.id })),
           clear: jest.fn(async () => {}),
+        }}
+        chatStarGateway={options.chatStarGateway ?? {
+          loadStates: jest.fn(async () => new Set<string>()),
+          setStarred: jest.fn(async () => new Set<string>()),
+          loadPage: jest.fn(async () => ({ items: [], nextCursor: null, hasMore: false })),
+          clear: jest.fn(),
         }}
       />
     </AuthProvider>
@@ -210,7 +218,7 @@ describe('shell routing', () => {
     expect(await screen.findByTestId('shell-screen')).toBeTruthy();
   });
 
-  it('registers an injected protected chat send queue for tenant cleanup', async () => {
+  it('registers injected protected chat state for tenant cleanup', async () => {
     const chatSendGateway: NativeChatSendGateway = {
       prepare: jest.fn(async () => { throw new Error('unexpected chat send'); }),
       transmit: jest.fn(async () => { throw new Error('unexpected chat send'); }),
@@ -226,13 +234,20 @@ describe('shell routing', () => {
       hideForSelf: jest.fn(async (_scope, message) => ({ messageId: message.id, hiddenId: message.id })),
       clear: jest.fn(async () => {}),
     };
-    await renderWithStore({ chatSendGateway, chatActionGateway });
+    const chatStarGateway: NativeChatStarGateway = {
+      loadStates: jest.fn(async () => new Set<string>()),
+      setStarred: jest.fn(async () => new Set<string>()),
+      loadPage: jest.fn(async () => ({ items: [], nextCursor: null, hasMore: false })),
+      clear: jest.fn(),
+    };
+    await renderWithStore({ chatSendGateway, chatActionGateway, chatStarGateway });
     await screen.findByTestId('shell-screen');
 
     await clearTenantCaches();
 
     expect(chatSendGateway.clear).toHaveBeenCalledTimes(1);
     expect(chatActionGateway.clear).toHaveBeenCalledTimes(1);
+    expect(chatStarGateway.clear).toHaveBeenCalledTimes(1);
   });
 
   it('consumes a cold notification only after auth and opens the exact accessible repertoire song', async () => {

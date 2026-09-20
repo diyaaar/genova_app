@@ -8,6 +8,7 @@ import { ChatScreen } from '../chat/ChatScreen';
 import type { NativeChatReadGateway } from '../chat/chat-read-gateway';
 import type { NativeChatSendGateway } from '../chat/chat-send-gateway';
 import type { NativeChatMessageActionGateway } from '../chat/chat-message-action-gateway';
+import type { NativeChatStarGateway } from '../chat/chat-star-gateway';
 import { AudioPlaybackProvider, useAudioPlayback } from '../repertoire/AudioPlaybackProvider';
 import { AudioPlayerScreen } from '../repertoire/AudioPlayerScreen';
 import { MiniAudioPlayer } from '../repertoire/MiniAudioPlayer';
@@ -46,6 +47,7 @@ interface ReadyShellProps {
   chatGateway?: NativeChatReadGateway;
   chatSendGateway?: NativeChatSendGateway;
   chatActionGateway?: NativeChatMessageActionGateway;
+  chatStarGateway?: NativeChatStarGateway;
 }
 
 function ReadyShellRoutes({
@@ -62,6 +64,7 @@ function ReadyShellRoutes({
   chatGateway,
   chatSendGateway,
   chatActionGateway,
+  chatStarGateway,
 }: Omit<ReadyShellProps, 'audioGateway'>) {
   const playback = useAudioPlayback();
   const [screen, setScreen] = useState<'home' | 'repertoire' | 'chat' | 'audio' | 'web'>('home');
@@ -135,6 +138,7 @@ function ReadyShellRoutes({
         gateway={chatGateway}
         sendGateway={chatSendGateway}
         actionGateway={chatActionGateway}
+        starGateway={chatStarGateway}
         onBack={() => setScreen('home')}
       />
     ) : (
@@ -205,7 +209,7 @@ function ReadyShell({ audioGateway, ...routeProps }: ReadyShellProps) {
   );
 }
 
-export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway, chatGateway, chatSendGateway, chatActionGateway }: {
+export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway, chatGateway, chatSendGateway, chatActionGateway, chatStarGateway }: {
   repertoireGateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
   audioGateway?: NativeAudioSourceGateway;
@@ -213,6 +217,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
   chatGateway?: NativeChatReadGateway;
   chatSendGateway?: NativeChatSendGateway;
   chatActionGateway?: NativeChatMessageActionGateway;
+  chatStarGateway?: NativeChatStarGateway;
 } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
@@ -235,14 +240,18 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
     const unregisterChatAction = chatActionGateway
       ? registerTenantCache(chatActionGateway.clear)
       : () => {};
+    const unregisterChatStar = chatStarGateway
+      ? registerTenantCache(chatStarGateway.clear)
+      : () => {};
     return () => {
       unregisterCatalogue();
       unregisterReader();
       unregisterChat();
       unregisterChatSend();
       unregisterChatAction();
+      unregisterChatStar();
     };
-  }, [chatActionGateway, chatGateway, chatSendGateway, readerGateway, repertoireGateway]);
+  }, [chatActionGateway, chatGateway, chatSendGateway, chatStarGateway, readerGateway, repertoireGateway]);
 
   const showSelection = auth.phase === 'selection-required' || (switching && auth.choirs.length > 1);
 
@@ -319,6 +328,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
           chatGateway={chatGateway}
           chatSendGateway={chatSendGateway}
           chatActionGateway={chatActionGateway}
+          chatStarGateway={chatStarGateway}
         />
       </>
     );

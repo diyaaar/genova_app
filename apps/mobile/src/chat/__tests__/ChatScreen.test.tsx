@@ -8,6 +8,7 @@ import {
   NativeChatMessageActionError,
   type NativeChatMessageActionGateway,
 } from '../chat-message-action-gateway';
+import { NativeChatStarError, type NativeChatStarGateway } from '../chat-star-gateway';
 
 const scope: ChatReadScope = {
   userId: '11111111-1111-4111-8111-111111111111',
@@ -155,10 +156,33 @@ function actionGatewayDouble(): NativeChatMessageActionGateway {
   };
 }
 
+function starGatewayDouble(initiallyStarred = true): NativeChatStarGateway {
+  let state = new Set(initiallyStarred ? [messageId] : []);
+  return {
+    loadStates: jest.fn(async () => new Set(state)),
+    setStarred: jest.fn(async (_scope, _roomId, targetId, desired) => {
+      state = new Set(state);
+      if (desired) state.add(targetId);
+      else state.delete(targetId);
+      return new Set(state);
+    }),
+    loadPage: jest.fn(async () => ({
+      items: state.has(messageId) ? [{
+        starId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+        starredAt: '2026-09-20T10:00:00.000000Z',
+        message: message(),
+      }] : [],
+      nextCursor: null,
+      hasMore: false,
+    })),
+    clear: jest.fn(),
+  };
+}
+
 describe('ChatScreen', () => {
   it('shows an authorized searchable room list and opens an accessible message history', async () => {
     const gateway = gatewayDouble();
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />);
 
     expect(await screen.findByText('Ada Lovelace')).toBeTruthy();
     expect(screen.getByTestId(`chat-unread-${roomId}`)).toHaveTextContent('2');
@@ -172,6 +196,51 @@ describe('ChatScreen', () => {
     expect(gateway.markRoomRead).toHaveBeenCalledWith(scope, roomId);
     await fireEvent.press(screen.getByTestId('chat-room-back'));
     expect(screen.getByTestId('chat-list-screen')).toBeTruthy();
+  });
+
+  it('shows exact star state, toggles after acknowledgement and refreshes the bounded room panel', async () => {
+    const gateway = gatewayDouble();
+    const starGateway = starGatewayDouble(true);
+    await render(
+      <ChatScreen
+        scope={scope}
+        choirName="Genova A"
+        gateway={gateway}
+        sendGateway={sendGatewayDouble()}
+        actionGateway={actionGatewayDouble()}
+        starGateway={starGateway}
+        onBack={jest.fn()}
+      />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+
+    expect(await screen.findByTestId(`chat-starred-indicator-${messageId}`)).toHaveTextContent('★ Yıldızlı');
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+    expect(screen.getByTestId('chat-action-toggle-star')).toHaveTextContent('Yıldızı kaldır');
+    await fireEvent.press(screen.getByTestId('chat-action-toggle-star'));
+    await waitFor(() => expect(starGateway.setStarred).toHaveBeenCalledWith(scope, roomId, messageId, false));
+    expect(screen.queryByTestId(`chat-starred-indicator-${messageId}`)).toBeNull();
+    expect(screen.getByTestId('chat-star-notice')).toHaveTextContent('Mesajın yıldızı kaldırıldı.');
+
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+    await fireEvent.press(screen.getByTestId('chat-action-toggle-star'));
+    await waitFor(() => expect(starGateway.setStarred).toHaveBeenLastCalledWith(scope, roomId, messageId, true));
+    await fireEvent.press(screen.getByTestId('chat-open-starred'));
+    expect(await screen.findByTestId(`chat-starred-${messageId}`)).toBeTruthy();
+    expect(starGateway.loadPage).toHaveBeenCalledWith(scope, roomId, { before: null });
+    (starGateway.loadPage as jest.Mock).mockRejectedValueOnce(new NativeChatStarError('action-failed'));
+    await fireEvent.press(screen.getByTestId('chat-starred-refresh'));
+    expect(await screen.findByTestId('chat-starred-error')).toHaveTextContent(
+      'Yıldız bilgisi güncellenemedi; son doğrulanmış görünüm gösteriliyor.',
+    );
+    expect(screen.getByTestId(`chat-starred-${messageId}`)).toBeTruthy();
+    await fireEvent.press(screen.getByTestId(`chat-starred-remove-${messageId}`));
+    await waitFor(() => expect(screen.queryByTestId(`chat-starred-${messageId}`)).toBeNull());
+    expect(screen.getByTestId('chat-starred-empty')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('chat-starred-close'));
+    (starGateway.loadStates as jest.Mock).mockResolvedValueOnce(new Set([messageId]));
+    await fireEvent.press(screen.getByTestId('chat-room-refresh'));
+    expect(await screen.findByTestId(`chat-starred-indicator-${messageId}`)).toBeTruthy();
   });
 
   it('renders deleted, reply and future-kind fallbacks and merges an older page', async () => {
@@ -201,7 +270,7 @@ describe('ChatScreen', () => {
         nextCursor: null,
         hasMore: false,
       });
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />);
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
     expect(await screen.findByText('Bu mesaj silindi.')).toBeTruthy();
@@ -219,7 +288,7 @@ describe('ChatScreen', () => {
     gateway.loadRooms = jest.fn()
       .mockRejectedValueOnce(new Error('secret transport detail'))
       .mockResolvedValue([room()]);
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />);
 
     expect(await screen.findByText('Sohbet odaları yüklenemedi.')).toBeTruthy();
     expect(screen.queryByText('secret transport detail')).toBeNull();
@@ -245,7 +314,7 @@ describe('ChatScreen', () => {
         hasMore: false,
       })
       .mockRejectedValueOnce(new Error('offline room'));
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />);
 
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
     expect(await screen.findByText('Prova saat dokuzda.')).toBeTruthy();
@@ -267,7 +336,7 @@ describe('ChatScreen', () => {
       throw new NativeChatReadError('inaccessible-room');
     });
     gateway.loadRooms = jest.fn(async () => revoked ? [] : [room()]);
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />);
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
     expect(await screen.findByTestId('chat-list-screen')).toBeTruthy();
@@ -290,7 +359,7 @@ describe('ChatScreen', () => {
       .mockResolvedValueOnce([queued({ status: 'failed' })])
       .mockResolvedValueOnce([]);
     await render(
-      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />,
+      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />,
     );
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
     await screen.findByText('Prova saat dokuzda.');
@@ -320,7 +389,7 @@ describe('ChatScreen', () => {
     const sendGateway = sendGatewayDouble();
     (sendGateway.reconcile as jest.Mock).mockResolvedValueOnce([queued({ status: 'failed' })]);
     await render(
-      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />,
+      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} actionGateway={actionGatewayDouble()} starGateway={starGatewayDouble()} onBack={jest.fn()} />,
     );
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
@@ -346,6 +415,7 @@ describe('ChatScreen', () => {
         gateway={gateway}
         sendGateway={sendGatewayDouble()}
         actionGateway={actionGateway}
+        starGateway={starGatewayDouble()}
         now={() => Date.parse('2026-09-20T09:30:00Z')}
         onBack={jest.fn()}
       />,
@@ -394,6 +464,7 @@ describe('ChatScreen', () => {
         gateway={gateway}
         sendGateway={sendGatewayDouble()}
         actionGateway={actionGateway}
+        starGateway={starGatewayDouble()}
         now={() => Date.parse('2026-09-20T09:30:00Z')}
         onBack={jest.fn()}
       />,
@@ -431,6 +502,7 @@ describe('ChatScreen', () => {
         gateway={gateway}
         sendGateway={sendGatewayDouble()}
         actionGateway={actionGateway}
+        starGateway={starGatewayDouble()}
         now={() => Date.parse('2026-09-20T09:30:00Z')}
         onBack={jest.fn()}
       />,
@@ -471,6 +543,7 @@ describe('ChatScreen', () => {
         gateway={gateway}
         sendGateway={sendGatewayDouble()}
         actionGateway={actionGateway}
+        starGateway={starGatewayDouble()}
         now={() => Date.parse('2026-09-20T10:00:01Z')}
         onBack={jest.fn()}
       />,

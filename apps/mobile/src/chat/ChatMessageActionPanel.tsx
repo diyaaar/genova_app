@@ -8,23 +8,31 @@ export function ChatMessageActionPanel({
   message,
   canManageForEveryone,
   busy,
+  starBusy,
+  starred,
+  starKnown,
   confirmation,
   onCopy,
   onEdit,
   onRequestConfirmation,
   onConfirm,
   onCancelConfirmation,
+  onToggleStar,
   onClose,
 }: {
   message: ChatReadMessage;
   canManageForEveryone: boolean;
   busy: boolean;
+  starBusy: boolean;
+  starred: boolean;
+  starKnown: boolean;
   confirmation: NativeChatActionConfirmation;
   onCopy: () => void;
   onEdit: () => void;
   onRequestConfirmation: (kind: Exclude<NativeChatActionConfirmation, null>) => void;
   onConfirm: () => void;
   onCancelConfirmation: () => void;
+  onToggleStar: () => void;
   onClose: () => void;
 }) {
   if (confirmation) {
@@ -67,6 +75,17 @@ export function ChatMessageActionPanel({
       </View>
       <Text style={styles.body} numberOfLines={2}>{message.content}</Text>
       <View style={styles.row}>
+        <Pressable
+          accessibilityRole="button"
+          disabled={busy || starBusy}
+          onPress={onToggleStar}
+          style={styles.secondaryButton}
+          testID="chat-action-toggle-star"
+        >
+          <Text style={styles.starText}>
+            {starBusy ? 'İşleniyor…' : !starKnown ? 'Yıldız bilgisini yenile' : starred ? 'Yıldızı kaldır' : 'Yıldızla'}
+          </Text>
+        </Pressable>
         {message.content ? (
           <Pressable accessibilityRole="button" disabled={busy} onPress={onCopy} style={styles.secondaryButton} testID="chat-action-copy">
             <Text style={styles.secondaryText}>Kopyala</Text>
@@ -111,6 +130,7 @@ const styles = StyleSheet.create({
   secondaryButton: { minHeight: 42, justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.border, borderRadius: 8, paddingHorizontal: theme.spacing(1.25) },
   dangerButton: { minHeight: 42, justifyContent: 'center', borderWidth: 1, borderColor: theme.colors.danger, borderRadius: 8, paddingHorizontal: theme.spacing(1.25) },
   secondaryText: { color: theme.colors.accent, fontWeight: '700' },
+  starText: { color: '#F6C177', fontWeight: '700' },
   dangerText: { color: theme.colors.danger, fontWeight: '700' },
   closeText: { color: theme.colors.textMuted, fontWeight: '700' },
 });
