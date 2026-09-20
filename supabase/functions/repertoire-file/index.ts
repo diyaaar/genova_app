@@ -1,17 +1,31 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.112.4';
+import { AwsClient } from 'npm:aws4fetch@1.0.20';
 import { resolveSupabasePublicKey } from '../create-choir/create-choir-core.ts';
-import { createRepertoireFileHandler } from './handler.ts';
+import {
+  createRepertoireFileHandler,
+  type RepertoireStorageMode,
+} from './handler.ts';
+import { fetchR2Object, parseR2Jurisdiction } from './r2.ts';
 import { fetchStorageObject } from './storage.ts';
 import { createRepertoireFileTicket, verifyRepertoireFileTicket } from './ticket.ts';
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const FILE_FIELDS = 'id, choir_id, drive_file_id, drive_download_link, file_name, mime_type';
+const LOCATION_FIELDS = 'repertoire_file_id, choir_id, provider, bucket, object_key, content_length, mime_type, sha256_hex, verified_at, is_active';
 
 function requiredEnv(name: string) {
   const value = Deno.env.get(name);
   if (!value) throw new Error(`Missing ${name}`);
   return value;
 }
+
+function storageMode(): RepertoireStorageMode {
+  const value = Deno.env.get('REPERTOIRE_STORAGE_MODE') || 'legacy';
+  if (value === 'legacy' || value === 'mixed' || value === 'r2-required') return value;
+  throw new Error('Invalid REPERTOIRE_STORAGE_MODE');
+}
+
+const REPERTOIRE_STORAGE_MODE = storageMode();
 
 function makeUserClient(authorization: string) {
   const url = requiredEnv('SUPABASE_URL');
@@ -62,6 +76,17 @@ const handler = createRepertoireFileHandler({
     if (error) throw new Error('Ticket file lookup failed');
     return data;
   },
+  async loadR2Location({ fileId, choirId }) {
+    const { data, error } = await makeAdminClient()
+      .from('repertoire_file_storage_locations')
+      .select(LOCATION_FIELDS)
+      .eq('repertoire_file_id', fileId)
+      .eq('choir_id', choirId)
+      .eq('is_active', true)
+      .maybeSingle();
+    if (error) throw new Error('R2 location lookup failed');
+    return data;
+  },
   createTicket(input) {
     return createRepertoireFileTicket(input, requiredEnv('SUPABASE_SERVICE_ROLE_KEY'));
   },
@@ -82,6 +107,35 @@ const handler = createRepertoireFileHandler({
       path,
     });
   },
+  async fetchR2({ location, method, range }) {
+    const accountId = requiredEnv('R2_ACCOUNT_ID');
+    const bucket = requiredEnv('R2_BUCKET');
+    const jurisdiction = parseR2Jurisdiction(Deno.env.get('R2_JURISDICTION'));
+    if (jurisdiction === null) throw new Error('Invalid R2 jurisdiction');
+    if (location.bucket !== bucket) throw new Error('R2 bucket mismatch');
+    const expectedPrefix = `choirs/${location.choir_id}/repertoire/${location.repertoire_file_id}/`;
+    if (!location.object_key.startsWith(expectedPrefix) || location.object_key === expectedPrefix) {
+      throw new Error('R2 object key mismatch');
+    }
+    const client = new AwsClient({
+      service: 's3',
+      region: 'auto',
+      accessKeyId: requiredEnv('R2_ACCESS_KEY_ID'),
+      secretAccessKey: requiredEnv('R2_SECRET_ACCESS_KEY'),
+    });
+    return fetchR2Object({
+      accountId,
+      jurisdiction,
+      bucket,
+      objectKey: location.object_key,
+      method,
+      range: range ?? undefined,
+      signedFetch: (input, init) => client.fetch(input, init),
+      testEndpoint: Deno.env.get('R2_TEST_ENDPOINT'),
+      allowInsecureLoopback: Deno.env.get('R2_ALLOW_INSECURE_LOOPBACK') === 'true',
+    });
+  },
+  storageMode: REPERTOIRE_STORAGE_MODE,
 });
 
 Deno.serve(handler);

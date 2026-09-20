@@ -26,6 +26,21 @@ export interface RepertoireFileAuthorization {
   file: RepertoireFileRecord;
 }
 
+export type RepertoireStorageMode = 'legacy' | 'mixed' | 'r2-required';
+
+export interface RepertoireFileStorageLocation {
+  repertoire_file_id: string;
+  choir_id: string;
+  provider: string;
+  bucket: string;
+  object_key: string;
+  content_length: number;
+  mime_type: string;
+  sha256_hex: string;
+  verified_at: string;
+  is_active: boolean;
+}
+
 export interface RepertoireFileHandlerDependencies {
   authorize(input: {
     authorization: string;
@@ -33,10 +48,20 @@ export interface RepertoireFileHandlerDependencies {
     fileId: string;
   }): Promise<RepertoireFileAuthorization | null>;
   loadTicketFile(input: { fileId: string; choirId: string }): Promise<RepertoireFileRecord | null>;
+  loadR2Location(input: {
+    fileId: string;
+    choirId: string;
+  }): Promise<RepertoireFileStorageLocation | null>;
   createTicket(input: { fileId: string; choirId: string }): Promise<{ token: string; expiresAt: number }>;
   verifyTicket(token: string): Promise<RepertoireFileTicketPayload | null>;
   fetchDrive(driveFileId: string): Promise<Response>;
   fetchStorage(bucket: string, path: string): Promise<Response>;
+  fetchR2(input: {
+    location: RepertoireFileStorageLocation;
+    method: 'GET' | 'HEAD';
+    range: string | null;
+  }): Promise<Response>;
+  storageMode: RepertoireStorageMode;
 }
 
 type ParsedRange = { kind: 'none' } | { kind: 'invalid' } | {
@@ -149,6 +174,92 @@ function parseStorageLocation(value: string | null): { bucket: string; path: str
   return { bucket: location.slice(0, slash), path: location.slice(slash + 1) };
 }
 
+function isValidR2Location(
+  location: RepertoireFileStorageLocation,
+  file: RepertoireFileRecord,
+  choirId: string,
+) {
+  return location.provider === 'r2'
+    && location.repertoire_file_id === file.id
+    && location.choir_id === choirId
+    && location.is_active === true
+    && Number.isSafeInteger(location.content_length)
+    && location.content_length > 0
+    && /^[0-9a-f]{64}$/.test(location.sha256_hex)
+    && !Number.isNaN(Date.parse(location.verified_at))
+    && Date.parse(location.verified_at) <= Date.now()
+    && location.mime_type === location.mime_type.trim()
+    && location.mime_type.length > 0
+    && (!file.mime_type || file.mime_type === location.mime_type);
+}
+
+function parseExactLength(value: string | null) {
+  if (!value || !/^\d+$/.test(value)) return null;
+  const length = Number(value);
+  return Number.isSafeInteger(length) ? length : null;
+}
+
+async function serveR2File(
+  request: Request,
+  file: RepertoireFileRecord,
+  location: RepertoireFileStorageLocation,
+  dependencies: RepertoireFileHandlerDependencies,
+) {
+  const totalSize = location.content_length;
+  const range = parseRangeHeader(request.headers.get('range'), totalSize);
+  const headers = responseHeaders(location.mime_type);
+  headers.set('Accept-Ranges', 'bytes');
+  headers.set('Content-Disposition', makeContentDisposition(file.file_name));
+  if (range.kind === 'invalid') {
+    headers.set('Content-Range', `bytes */${totalSize}`);
+    return new Response(null, { status: 416, headers });
+  }
+
+  const upstreamMethod = request.method === 'HEAD' ? 'HEAD' : 'GET';
+  const upstreamRange = request.method === 'GET' && range.kind === 'range'
+    ? `bytes=${range.start}-${range.end}`
+    : null;
+  const upstream = await dependencies.fetchR2({
+    location,
+    method: upstreamMethod,
+    range: upstreamRange,
+  });
+  const expectedStatus = upstreamRange ? 206 : 200;
+  if (upstream.status !== expectedStatus) {
+    await upstream.body?.cancel().catch(() => undefined);
+    return textResponse('Dosya kaynağına ulaşılamadı.', 502);
+  }
+
+  const upstreamType = upstream.headers.get('content-type')?.split(';', 1)[0]?.trim() ?? '';
+  if (isActiveDriveFileContent({ fileName: file.file_name, mimeType: upstreamType })) {
+    await upstream.body?.cancel().catch(() => undefined);
+    return textResponse('Bu dosya türü desteklenmiyor.', 415);
+  }
+  if (upstreamType !== location.mime_type) {
+    await upstream.body?.cancel().catch(() => undefined);
+    return textResponse('Dosya kaynağı doğrulanamadı.', 502);
+  }
+
+  const expectedLength = range.kind === 'range' ? range.end - range.start + 1 : totalSize;
+  if (parseExactLength(upstream.headers.get('content-length')) !== (request.method === 'HEAD' ? totalSize : expectedLength)) {
+    await upstream.body?.cancel().catch(() => undefined);
+    return textResponse('Dosya kaynağı doğrulanamadı.', 502);
+  }
+  if (upstreamRange && upstream.headers.get('content-range') !== `bytes ${range.kind === 'range' ? `${range.start}-${range.end}` : ''}/${totalSize}`) {
+    await upstream.body?.cancel().catch(() => undefined);
+    return textResponse('Dosya kaynağı doğrulanamadı.', 502);
+  }
+
+  headers.set('Content-Length', String(expectedLength));
+  if (range.kind === 'range') {
+    headers.set('Content-Range', `bytes ${range.start}-${range.end}/${totalSize}`);
+  }
+  return new Response(request.method === 'HEAD' ? null : upstream.body, {
+    status: range.kind === 'range' ? 206 : 200,
+    headers,
+  });
+}
+
 async function issueTicket(request: Request, dependencies: RepertoireFileHandlerDependencies) {
   const authorization = request.headers.get('authorization') ?? '';
   const accessToken = authorization.match(/^Bearer\s+([^\s]+)$/i)?.[1];
@@ -205,6 +316,22 @@ async function serveFile(request: Request, dependencies: RepertoireFileHandlerDe
     }
     if (isActiveDriveFileContent({ fileName: file.file_name, mimeType: file.mime_type })) {
       return textResponse('Bu dosya türü desteklenmiyor.', 415);
+    }
+
+    if (dependencies.storageMode !== 'legacy') {
+      const location = await dependencies.loadR2Location({
+        fileId: ticket.fileId,
+        choirId: ticket.choirId,
+      });
+      if (location) {
+        if (!isValidR2Location(location, file, ticket.choirId)) {
+          return textResponse('Dosya kaynağı doğrulanamadı.', 502);
+        }
+        return serveR2File(request, file, location, dependencies);
+      }
+      if (dependencies.storageMode === 'r2-required') {
+        return textResponse('Dosya kaynağı kullanılamıyor.', 502);
+      }
     }
 
     const storage = parseStorageLocation(file.drive_download_link);

@@ -25,6 +25,7 @@ function makeDependencies(overrides: Partial<RepertoireFileHandlerDependencies> 
   const dependencies: RepertoireFileHandlerDependencies = {
     authorize: vi.fn(async () => ({ choirId, file })),
     loadTicketFile: vi.fn(async () => file),
+    loadR2Location: vi.fn(async () => null),
     createTicket: vi.fn(async () => ({ token: 'signed-ticket', expiresAt: 10_000 })),
     verifyTicket: vi.fn(async () => ({ version: 1, fileId, choirId, expiresAt: 10_000 })),
     fetchDrive: vi.fn(async () => new Response(Uint8Array.from([0, 1, 2, 3, 4]), {
@@ -35,6 +36,11 @@ function makeDependencies(overrides: Partial<RepertoireFileHandlerDependencies> 
       status: 200,
       headers: { 'Content-Type': 'application/pdf' },
     })),
+    fetchR2: vi.fn(async () => new Response(Uint8Array.from([0, 1, 2, 3, 4]), {
+      status: 200,
+      headers: { 'Content-Type': 'application/pdf', 'Content-Length': '5' },
+    })),
+    storageMode: 'legacy',
     ...overrides,
   };
   return { dependencies, handler: createRepertoireFileHandler(dependencies) };
@@ -176,6 +182,132 @@ describe('repertoire-file handler', () => {
     });
     expect((await malformed.handler(read())).status).toBe(502);
     expect(malformed.dependencies.fetchStorage).not.toHaveBeenCalled();
+  });
+
+  it('streams an exact active R2 mapping in mixed mode without Drive fallback', async () => {
+    const location = {
+      repertoire_file_id: fileId,
+      choir_id: choirId,
+      provider: 'r2',
+      bucket: 'genova-private',
+      object_key: `choirs/${choirId}/repertoire/${fileId}/score.pdf`,
+      content_length: 5,
+      mime_type: 'application/pdf',
+      sha256_hex: 'a'.repeat(64),
+      verified_at: '2026-09-20T12:00:00.000Z',
+      is_active: true,
+    };
+    const body = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(Uint8Array.from([0, 1, 2, 3, 4]));
+        controller.close();
+      },
+    });
+    const { handler, dependencies } = makeDependencies({
+      storageMode: 'mixed',
+      loadR2Location: vi.fn(async () => location),
+      fetchR2: vi.fn(async () => new Response(body, {
+        status: 200,
+        headers: { 'Content-Type': 'application/pdf', 'Content-Length': '5' },
+      })),
+    });
+    const response = await handler(read());
+    expect(response.status).toBe(200);
+    expect(Array.from(new Uint8Array(await response.arrayBuffer()))).toEqual([0, 1, 2, 3, 4]);
+    expect(dependencies.fetchR2).toHaveBeenCalledWith({ location, method: 'GET', range: null });
+    expect(dependencies.fetchDrive).not.toHaveBeenCalled();
+  });
+
+  it('forwards an exact R2 range and uses HEAD without fetching a body', async () => {
+    const location = {
+      repertoire_file_id: fileId,
+      choir_id: choirId,
+      provider: 'r2',
+      bucket: 'genova-private',
+      object_key: `choirs/${choirId}/repertoire/${fileId}/score.pdf`,
+      content_length: 5,
+      mime_type: 'application/pdf',
+      sha256_hex: 'a'.repeat(64),
+      verified_at: '2026-09-20T12:00:00.000Z',
+      is_active: true,
+    };
+    const fetchR2 = vi.fn(async ({ method, range }: { method: 'GET' | 'HEAD'; range: string | null }) =>
+      method === 'HEAD'
+        ? new Response(null, {
+          status: 200,
+          headers: { 'Content-Type': 'application/pdf', 'Content-Length': '5' },
+        })
+        : new Response(Uint8Array.from([1, 2, 3]), {
+          status: 206,
+          headers: {
+            'Content-Type': 'application/pdf',
+            'Content-Length': '3',
+            'Content-Range': range?.replace('=', ' ') + '/5',
+          },
+        }));
+    const { handler } = makeDependencies({
+      storageMode: 'mixed',
+      loadR2Location: vi.fn(async () => location),
+      fetchR2,
+    });
+    const ranged = await handler(read('GET', fileId, 'signed-ticket', 'bytes=1-3'));
+    expect(ranged.status).toBe(206);
+    expect(Array.from(new Uint8Array(await ranged.arrayBuffer()))).toEqual([1, 2, 3]);
+    const head = await handler(read('HEAD', fileId, 'signed-ticket', 'bytes=1-2'));
+    expect(head.status).toBe(206);
+    expect(head.headers.get('content-length')).toBe('2');
+    expect(fetchR2).toHaveBeenNthCalledWith(1, { location, method: 'GET', range: 'bytes=1-3' });
+    expect(fetchR2).toHaveBeenNthCalledWith(2, { location, method: 'HEAD', range: null });
+  });
+
+  it('fails closed for required, invalid, missing and corrupt R2 mappings', async () => {
+    const valid = {
+      repertoire_file_id: fileId,
+      choir_id: choirId,
+      provider: 'r2',
+      bucket: 'genova-private',
+      object_key: `choirs/${choirId}/repertoire/${fileId}/score.pdf`,
+      content_length: 5,
+      mime_type: 'application/pdf',
+      sha256_hex: 'a'.repeat(64),
+      verified_at: '2026-09-20T12:00:00.000Z',
+      is_active: true,
+    };
+    const required = makeDependencies({ storageMode: 'r2-required' });
+    expect((await required.handler(read())).status).toBe(502);
+    expect(required.dependencies.fetchDrive).not.toHaveBeenCalled();
+
+    const invalid = makeDependencies({
+      storageMode: 'mixed',
+      loadR2Location: vi.fn(async () => ({ ...valid, choir_id: 'bad' })),
+    });
+    expect((await invalid.handler(read())).status).toBe(502);
+    expect(invalid.dependencies.fetchDrive).not.toHaveBeenCalled();
+
+    const corrupt = makeDependencies({
+      storageMode: 'mixed',
+      loadR2Location: vi.fn(async () => valid),
+      fetchR2: vi.fn(async () => new Response(Uint8Array.from([0, 1]), {
+        status: 200,
+        headers: { 'Content-Type': 'application/pdf', 'Content-Length': '2' },
+      })),
+    });
+    expect((await corrupt.handler(read())).status).toBe(502);
+    expect(corrupt.dependencies.fetchDrive).not.toHaveBeenCalled();
+  });
+
+  it('keeps mixed-mode legacy compatibility only when no mapping exists', async () => {
+    const absent = makeDependencies({ storageMode: 'mixed' });
+    expect((await absent.handler(read())).status).toBe(200);
+    expect(absent.dependencies.loadR2Location).toHaveBeenCalledWith({ fileId, choirId });
+    expect(absent.dependencies.fetchDrive).toHaveBeenCalledTimes(1);
+
+    const lookupError = makeDependencies({
+      storageMode: 'mixed',
+      loadR2Location: vi.fn(async () => { throw new Error('database unavailable'); }),
+    });
+    expect((await lookupError.handler(read())).status).toBe(500);
+    expect(lookupError.dependencies.fetchDrive).not.toHaveBeenCalled();
   });
 
   it('does not leak missing rows or provider errors and rechecks provider MIME', async () => {
