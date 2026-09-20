@@ -29,6 +29,15 @@ import {
 import type { NativeChatQueuedText } from './native-chat-send-queue';
 import { getDefaultNativeChatReadGateway } from './supabase-chat-read-transport';
 import { getDefaultNativeChatSendGateway } from './supabase-chat-send-transport';
+import {
+  ChatMessageActionPanel,
+  type NativeChatActionConfirmation,
+} from './ChatMessageActionPanel';
+import {
+  NativeChatMessageActionError,
+  type NativeChatMessageActionGateway,
+} from './chat-message-action-gateway';
+import { getDefaultNativeChatMessageActionGateway } from './supabase-chat-message-action-transport';
 
 function safeReadError(error: unknown, fallback: string): string {
   if (error instanceof NativeChatReadError) {
@@ -71,6 +80,21 @@ function safeSendError(error: unknown): string {
   return 'Mesaj gönderilemedi. Kuyrukta tutuldu; tekrar deneyebilirsiniz.';
 }
 
+function safeMessageActionError(error: unknown): string {
+  if (error instanceof NativeChatMessageActionError) {
+    if (error.code === 'clipboard-failed') return 'Mesaj panoya kopyalanamadı.';
+    if (error.code === 'invalid-action') return 'Bu işlem bu mesaj için kullanılamıyor.';
+    if (error.code === 'invalid-acknowledgement') return 'Sunucu yanıtı doğrulanamadı; mesaj değiştirilmedi.';
+    if (error.code === 'stale-scope') return 'Oda veya koro değiştiği için eski işlem uygulanmadı.';
+  }
+  return 'Mesaj işlemi tamamlanamadı; mevcut içerik korundu.';
+}
+
+function withinOneHour(message: ChatReadMessage, now: number): boolean {
+  const createdAt = Date.parse(message.createdAt);
+  return Number.isFinite(createdAt) && now >= createdAt && now <= createdAt + 60 * 60 * 1_000;
+}
+
 interface ReplyDraft {
   id: string;
   sender: string;
@@ -82,12 +106,16 @@ export function ChatScreen({
   choirName,
   gateway: suppliedGateway,
   sendGateway: suppliedSendGateway,
+  actionGateway: suppliedActionGateway,
+  now = Date.now,
   onBack,
 }: {
   scope: ChatReadScope;
   choirName: string;
   gateway?: NativeChatReadGateway;
   sendGateway?: NativeChatSendGateway;
+  actionGateway?: NativeChatMessageActionGateway;
+  now?: () => number;
   onBack: () => void;
 }) {
   const gateway = useMemo(
@@ -97,6 +125,10 @@ export function ChatScreen({
   const sendGateway = useMemo(
     () => suppliedSendGateway ?? getDefaultNativeChatSendGateway(),
     [suppliedSendGateway],
+  );
+  const actionGateway = useMemo(
+    () => suppliedActionGateway ?? getDefaultNativeChatMessageActionGateway(),
+    [suppliedActionGateway],
   );
   const [rooms, setRooms] = useState<ChatReadRoomSummary[] | null>(null);
   const [roomsError, setRoomsError] = useState<string | null>(null);
@@ -113,6 +145,11 @@ export function ChatScreen({
   const [replyingTo, setReplyingTo] = useState<ReplyDraft | null>(null);
   const [preparingSend, setPreparingSend] = useState(false);
   const [sendNotice, setSendNotice] = useState<string | null>(null);
+  const [actionTarget, setActionTarget] = useState<ChatReadMessage | null>(null);
+  const [actionConfirmation, setActionConfirmation] = useState<NativeChatActionConfirmation>(null);
+  const [editingMessage, setEditingMessage] = useState<ChatReadMessage | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [listConnection, setListConnection] = useState<'connected' | 'disconnected'>('connected');
   const [roomConnection, setRoomConnection] = useState<'connected' | 'disconnected'>('connected');
   const roomRequest = useRef(0);
@@ -245,6 +282,11 @@ export function ChatScreen({
     setReplyingTo(null);
     setSendNotice(null);
     setPreparingSend(false);
+    setActionTarget(null);
+    setActionConfirmation(null);
+    setEditingMessage(null);
+    setActionBusy(false);
+    setActionNotice(null);
     void loadMessages(null);
     const stop = gateway.watchRoom(scope, selectedRoomId, {
       invalidate: () => void loadMessages(null),
@@ -260,6 +302,28 @@ export function ChatScreen({
     if (!selectedRoomId || preparingSend || composerText.trim().length === 0) return;
     setPreparingSend(true);
     setSendNotice(null);
+    setActionNotice(null);
+    if (editingMessage) {
+      try {
+        const result = await actionGateway.edit(scope, editingMessage, composerText);
+        if (selectedRoomIdRef.current !== editingMessage.roomId) return;
+        setMessages((current) => current?.map((item) => (
+          item.id === result.messageId
+            ? { ...item, content: result.content, isEdited: true }
+            : item
+        )) ?? null);
+        setEditingMessage(null);
+        setComposerText('');
+        setActionNotice('Mesaj düzenlendi.');
+      } catch (error) {
+        if (selectedRoomIdRef.current === editingMessage.roomId) {
+          setActionNotice(safeMessageActionError(error));
+        }
+      } finally {
+        setPreparingSend(false);
+      }
+      return;
+    }
     try {
       const prepared = await sendGateway.prepare(
         scope,
@@ -284,7 +348,52 @@ export function ChatScreen({
     } finally {
       setPreparingSend(false);
     }
-  }, [composerText, preparingSend, replyingTo?.id, scope, selectedRoomId, sendGateway, transmitQueued]);
+  }, [actionGateway, composerText, editingMessage, preparingSend, replyingTo?.id, scope, selectedRoomId, sendGateway, transmitQueued]);
+
+  const copySelectedMessage = useCallback(async () => {
+    if (!actionTarget || actionBusy) return;
+    setActionBusy(true);
+    setActionNotice(null);
+    try {
+      await actionGateway.copy(scope, actionTarget);
+      if (selectedRoomIdRef.current !== actionTarget.roomId) return;
+      setActionTarget(null);
+      setActionNotice('Mesaj kopyalandı.');
+    } catch (error) {
+      if (selectedRoomIdRef.current === actionTarget.roomId) setActionNotice(safeMessageActionError(error));
+    } finally {
+      setActionBusy(false);
+    }
+  }, [actionBusy, actionGateway, actionTarget, scope]);
+
+  const confirmSelectedAction = useCallback(async () => {
+    if (!actionTarget || !actionConfirmation || actionBusy) return;
+    setActionBusy(true);
+    setActionNotice(null);
+    try {
+      if (actionConfirmation === 'delete-everyone') {
+        const result = await actionGateway.deleteForEveryone(scope, actionTarget);
+        if (selectedRoomIdRef.current !== actionTarget.roomId) return;
+        setMessages((current) => current?.map((item) => (
+          item.id === result.messageId
+            ? { ...item, content: null, metadata: {}, isDeleted: true }
+            : item
+        )) ?? null);
+        setActionNotice('Mesaj herkesten silindi.');
+      } else {
+        const result = await actionGateway.hideForSelf(scope, actionTarget);
+        if (selectedRoomIdRef.current !== actionTarget.roomId) return;
+        setMessages((current) => current?.filter((item) => item.id !== result.messageId) ?? null);
+        setActionNotice('Mesaj yalnız sizden silindi.');
+      }
+      setActionTarget(null);
+      setActionConfirmation(null);
+    } catch (error) {
+      if (selectedRoomIdRef.current === actionTarget.roomId) setActionNotice(safeMessageActionError(error));
+    } finally {
+      setActionBusy(false);
+    }
+  }, [actionBusy, actionConfirmation, actionGateway, actionTarget, scope]);
 
   const cancelQueued = useCallback(async (record: NativeChatQueuedText) => {
     try {
@@ -391,14 +500,31 @@ export function ChatScreen({
                   <Text style={message.isDeleted ? styles.deleted : styles.messageText}>{body}</Text>
                   {message.isEdited && !message.isDeleted ? <Text style={styles.meta}>düzenlendi</Text> : null}
                   {!message.isDeleted ? (
-                    <Pressable
-                      onPress={() => setReplyingTo({ id: message.id, sender: senderName(message), body })}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${senderName(message)} mesajını yanıtla`}
-                      testID={`chat-reply-${message.id}`}
-                    >
-                      <Text style={styles.inlineAction}>Yanıtla</Text>
-                    </Pressable>
+                    <View style={styles.messageActions}>
+                      <Pressable
+                        onPress={() => {
+                          setEditingMessage(null);
+                          setReplyingTo({ id: message.id, sender: senderName(message), body });
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${senderName(message)} mesajını yanıtla`}
+                        testID={`chat-reply-${message.id}`}
+                      >
+                        <Text style={styles.inlineAction}>Yanıtla</Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={() => {
+                          setActionTarget(message);
+                          setActionConfirmation(null);
+                          setActionNotice(null);
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${senderName(message)} mesajının işlemlerini aç`}
+                        testID={`chat-actions-${message.id}`}
+                      >
+                        <Text style={styles.inlineAction}>İşlemler</Text>
+                      </Pressable>
+                    </View>
                   ) : null}
                 </View>
               );
@@ -443,7 +569,46 @@ export function ChatScreen({
               <Text style={styles.warning} accessibilityRole="alert" testID="chat-read-warning">{messagesError}</Text>
             ) : null}
             </ScrollView>
+            {actionTarget ? (
+              <ChatMessageActionPanel
+                message={actionTarget}
+                canManageForEveryone={actionTarget.senderId === scope.memberId && withinOneHour(actionTarget, now())}
+                busy={actionBusy}
+                confirmation={actionConfirmation}
+                onCopy={() => void copySelectedMessage()}
+                onEdit={() => {
+                  setEditingMessage(actionTarget);
+                  setComposerText(actionTarget.content ?? '');
+                  setReplyingTo(null);
+                  setActionTarget(null);
+                  setActionConfirmation(null);
+                }}
+                onRequestConfirmation={setActionConfirmation}
+                onConfirm={() => void confirmSelectedAction()}
+                onCancelConfirmation={() => setActionConfirmation(null)}
+                onClose={() => {
+                  setActionTarget(null);
+                  setActionConfirmation(null);
+                }}
+              />
+            ) : null}
             <View style={styles.composer} testID="chat-composer">
+              {editingMessage ? (
+                <View style={styles.replyDraft} testID="chat-edit-draft">
+                  <Text style={styles.reply} numberOfLines={2}>Mesaj düzenleniyor: {editingMessage.content}</Text>
+                  <Pressable
+                    onPress={() => {
+                      setEditingMessage(null);
+                      setComposerText('');
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel="Düzenlemeyi iptal et"
+                    testID="chat-edit-cancel"
+                  >
+                    <Text style={styles.inlineDanger}>Kapat</Text>
+                  </Pressable>
+                </View>
+              ) : null}
               {replyingTo ? (
                 <View style={styles.replyDraft} testID="chat-reply-draft">
                   <Text style={styles.reply} numberOfLines={2}>
@@ -461,6 +626,9 @@ export function ChatScreen({
               ) : null}
               {sendNotice ? (
                 <Text style={styles.warning} accessibilityRole="alert" testID="chat-send-notice">{sendNotice}</Text>
+              ) : null}
+              {actionNotice ? (
+                <Text style={styles.warning} accessibilityRole="alert" testID="chat-action-notice">{actionNotice}</Text>
               ) : null}
               <View style={styles.composerRow}>
                 <TextInput
@@ -482,7 +650,9 @@ export function ChatScreen({
                   style={styles.sendButton}
                   testID="chat-send"
                 >
-                  <Text style={styles.sendButtonText}>{preparingSend ? 'Hazırlanıyor' : 'Gönder'}</Text>
+                  <Text style={styles.sendButtonText}>
+                    {preparingSend ? 'Hazırlanıyor' : editingMessage ? 'Kaydet' : 'Gönder'}
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -604,6 +774,7 @@ const styles = StyleSheet.create({
   meta: { color: theme.colors.textMuted, fontSize: 11 },
   inlineAction: { color: theme.colors.accent, fontSize: 12, fontWeight: '700' },
   inlineDanger: { color: theme.colors.danger, fontSize: 12, fontWeight: '700' },
+  messageActions: { flexDirection: 'row', gap: theme.spacing(2), alignItems: 'center' },
   pendingActions: { flexDirection: 'row', gap: theme.spacing(2), alignItems: 'center' },
   composer: { borderTopWidth: 1, borderTopColor: theme.colors.border, paddingTop: theme.spacing(1), gap: theme.spacing(1) },
   replyDraft: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: theme.spacing(1), backgroundColor: theme.colors.surface, borderRadius: 8, padding: theme.spacing(1) },

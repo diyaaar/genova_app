@@ -16,6 +16,7 @@ import type { NativeRepertoireGateway } from '../../repertoire/catalog-gateway';
 import type { NativeNotificationGateway, NativeNotificationResponse } from '../../notifications/notification-gateway';
 import type { NativeChatReadGateway } from '../../chat/chat-read-gateway';
 import type { NativeChatSendGateway } from '../../chat/chat-send-gateway';
+import type { NativeChatMessageActionGateway } from '../../chat/chat-message-action-gateway';
 import { clearTenantCaches } from '../../auth/tenant-cache';
 
 async function renderWithStore(options: {
@@ -29,6 +30,7 @@ async function renderWithStore(options: {
   notificationGateway?: NativeNotificationGateway;
   chatGateway?: NativeChatReadGateway;
   chatSendGateway?: NativeChatSendGateway;
+  chatActionGateway?: NativeChatMessageActionGateway;
 }) {
   const clientDouble = createClientDouble({
     memberships: options.memberships ?? [membership()],
@@ -61,6 +63,13 @@ async function renderWithStore(options: {
           restore: jest.fn(async () => []),
           reconcile: jest.fn(async () => []),
           cancel: jest.fn(async () => []),
+          clear: jest.fn(async () => {}),
+        }}
+        chatActionGateway={options.chatActionGateway ?? {
+          copy: jest.fn(async () => {}),
+          edit: jest.fn(async (_scope, message, content) => ({ messageId: message.id, content })),
+          deleteForEveryone: jest.fn(async (_scope, message) => ({ messageId: message.id })),
+          hideForSelf: jest.fn(async (_scope, message) => ({ messageId: message.id, hiddenId: message.id })),
           clear: jest.fn(async () => {}),
         }}
       />
@@ -210,12 +219,20 @@ describe('shell routing', () => {
       cancel: jest.fn(async () => []),
       clear: jest.fn(async () => {}),
     };
-    await renderWithStore({ chatSendGateway });
+    const chatActionGateway: NativeChatMessageActionGateway = {
+      copy: jest.fn(async () => {}),
+      edit: jest.fn(async (_scope, message, content) => ({ messageId: message.id, content })),
+      deleteForEveryone: jest.fn(async (_scope, message) => ({ messageId: message.id })),
+      hideForSelf: jest.fn(async (_scope, message) => ({ messageId: message.id, hiddenId: message.id })),
+      clear: jest.fn(async () => {}),
+    };
+    await renderWithStore({ chatSendGateway, chatActionGateway });
     await screen.findByTestId('shell-screen');
 
     await clearTenantCaches();
 
     expect(chatSendGateway.clear).toHaveBeenCalledTimes(1);
+    expect(chatActionGateway.clear).toHaveBeenCalledTimes(1);
   });
 
   it('consumes a cold notification only after auth and opens the exact accessible repertoire song', async () => {

@@ -4,6 +4,10 @@ import { ChatScreen } from '../ChatScreen';
 import { NativeChatReadError, type NativeChatReadGateway } from '../chat-read-gateway';
 import { NativeChatSendError, type NativeChatSendGateway } from '../chat-send-gateway';
 import type { NativeChatQueuedText } from '../native-chat-send-queue';
+import {
+  NativeChatMessageActionError,
+  type NativeChatMessageActionGateway,
+} from '../chat-message-action-gateway';
 
 const scope: ChatReadScope = {
   userId: '11111111-1111-4111-8111-111111111111',
@@ -138,10 +142,23 @@ function sendGatewayDouble(): NativeChatSendGateway {
   };
 }
 
+function actionGatewayDouble(): NativeChatMessageActionGateway {
+  return {
+    copy: jest.fn(async () => {}),
+    edit: jest.fn(async (_scope, target, content) => ({ messageId: target.id, content: content.trim() })),
+    deleteForEveryone: jest.fn(async (_scope, target) => ({ messageId: target.id })),
+    hideForSelf: jest.fn(async (_scope, target) => ({
+      messageId: target.id,
+      hiddenId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+    })),
+    clear: jest.fn(async () => {}),
+  };
+}
+
 describe('ChatScreen', () => {
   it('shows an authorized searchable room list and opens an accessible message history', async () => {
     const gateway = gatewayDouble();
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
 
     expect(await screen.findByText('Ada Lovelace')).toBeTruthy();
     expect(screen.getByTestId(`chat-unread-${roomId}`)).toHaveTextContent('2');
@@ -184,7 +201,7 @@ describe('ChatScreen', () => {
         nextCursor: null,
         hasMore: false,
       });
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
     expect(await screen.findByText('Bu mesaj silindi.')).toBeTruthy();
@@ -202,7 +219,7 @@ describe('ChatScreen', () => {
     gateway.loadRooms = jest.fn()
       .mockRejectedValueOnce(new Error('secret transport detail'))
       .mockResolvedValue([room()]);
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
 
     expect(await screen.findByText('Sohbet odaları yüklenemedi.')).toBeTruthy();
     expect(screen.queryByText('secret transport detail')).toBeNull();
@@ -228,7 +245,7 @@ describe('ChatScreen', () => {
         hasMore: false,
       })
       .mockRejectedValueOnce(new Error('offline room'));
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
 
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
     expect(await screen.findByText('Prova saat dokuzda.')).toBeTruthy();
@@ -250,7 +267,7 @@ describe('ChatScreen', () => {
       throw new NativeChatReadError('inaccessible-room');
     });
     gateway.loadRooms = jest.fn(async () => revoked ? [] : [room()]);
-    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} onBack={jest.fn()} />);
+    await render(<ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGatewayDouble()} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />);
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
     expect(await screen.findByTestId('chat-list-screen')).toBeTruthy();
@@ -273,7 +290,7 @@ describe('ChatScreen', () => {
       .mockResolvedValueOnce([queued({ status: 'failed' })])
       .mockResolvedValueOnce([]);
     await render(
-      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} onBack={jest.fn()} />,
+      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />,
     );
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
     await screen.findByText('Prova saat dokuzda.');
@@ -303,7 +320,7 @@ describe('ChatScreen', () => {
     const sendGateway = sendGatewayDouble();
     (sendGateway.reconcile as jest.Mock).mockResolvedValueOnce([queued({ status: 'failed' })]);
     await render(
-      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} onBack={jest.fn()} />,
+      <ChatScreen scope={scope} choirName="Genova A" gateway={gateway} sendGateway={sendGateway} actionGateway={actionGatewayDouble()} onBack={jest.fn()} />,
     );
     await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
 
@@ -311,5 +328,169 @@ describe('ChatScreen', () => {
     await fireEvent.press(screen.getByTestId(`chat-cancel-${queued().clientMutationId}`));
     await waitFor(() => expect(sendGateway.cancel).toHaveBeenCalledWith(scope, roomId, queued().clientMutationId));
     expect(screen.queryByTestId(`chat-pending-${queued().clientMutationId}`)).toBeNull();
+  });
+
+  it('copies, edits and confirms global deletion only after accepted action acknowledgements', async () => {
+    const gateway = gatewayDouble();
+    gateway.loadMessages = jest.fn(async () => ({
+      room: room(),
+      messages: [message({ senderId: scope.memberId, sender: { id: scope.memberId, firstName: 'Grace', lastName: 'Hopper', photoUrl: null } })],
+      nextCursor: null,
+      hasMore: false,
+    }));
+    const actionGateway = actionGatewayDouble();
+    await render(
+      <ChatScreen
+        scope={scope}
+        choirName="Genova A"
+        gateway={gateway}
+        sendGateway={sendGatewayDouble()}
+        actionGateway={actionGateway}
+        now={() => Date.parse('2026-09-20T09:30:00Z')}
+        onBack={jest.fn()}
+      />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+    await screen.findByText('Prova saat dokuzda.');
+
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+    expect(screen.getByTestId('chat-action-edit')).toBeTruthy();
+    expect(screen.getByTestId('chat-action-delete-everyone')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('chat-action-copy'));
+    await waitFor(() => expect(actionGateway.copy).toHaveBeenCalledTimes(1));
+    expect(screen.getByTestId('chat-action-notice')).toHaveTextContent('Mesaj kopyalandı.');
+
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+    await fireEvent.press(screen.getByTestId('chat-action-edit'));
+    expect(screen.getByTestId('chat-edit-draft')).toBeTruthy();
+    await fireEvent.changeText(screen.getByTestId('chat-composer-input'), 'Yeni prova saati on.');
+    await fireEvent.press(screen.getByTestId('chat-send'));
+    await waitFor(() => expect(actionGateway.edit).toHaveBeenCalledWith(
+      scope,
+      expect.objectContaining({ id: messageId }),
+      'Yeni prova saati on.',
+    ));
+    expect(await screen.findByText('Yeni prova saati on.')).toBeTruthy();
+    expect(screen.getByText('düzenlendi')).toBeTruthy();
+
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+    await fireEvent.press(screen.getByTestId('chat-action-delete-everyone'));
+    expect(screen.getByTestId('chat-action-confirmation')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('chat-action-confirm-cancel'));
+    expect(screen.getByTestId(`chat-action-panel-${messageId}`)).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('chat-action-delete-everyone'));
+    await fireEvent.press(screen.getByTestId('chat-action-confirm'));
+    await waitFor(() => expect(actionGateway.deleteForEveryone).toHaveBeenCalledTimes(1));
+    expect(await screen.findByText('Bu mesaj silindi.')).toBeTruthy();
+  });
+
+  it('offers peer copy/hide but not sender-only controls, then hides only after confirmation', async () => {
+    const gateway = gatewayDouble();
+    const actionGateway = actionGatewayDouble();
+    await render(
+      <ChatScreen
+        scope={scope}
+        choirName="Genova A"
+        gateway={gateway}
+        sendGateway={sendGatewayDouble()}
+        actionGateway={actionGateway}
+        now={() => Date.parse('2026-09-20T09:30:00Z')}
+        onBack={jest.fn()}
+      />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+    await screen.findByText('Prova saat dokuzda.');
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+
+    expect(screen.queryByTestId('chat-action-edit')).toBeNull();
+    expect(screen.queryByTestId('chat-action-delete-everyone')).toBeNull();
+    expect(screen.getByTestId('chat-action-copy')).toBeTruthy();
+    await fireEvent.press(screen.getByTestId('chat-action-hide-self'));
+    await fireEvent.press(screen.getByTestId('chat-action-confirm'));
+
+    await waitFor(() => expect(actionGateway.hideForSelf).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText('Prova saat dokuzda.')).toBeNull();
+    expect(screen.getByTestId('chat-action-notice')).toHaveTextContent('Mesaj yalnız sizden silindi.');
+  });
+
+  it('keeps trusted content visible when clipboard or backend action fails', async () => {
+    const gateway = gatewayDouble();
+    gateway.loadMessages = jest.fn(async () => ({
+      room: room(),
+      messages: [message({ senderId: scope.memberId, sender: null })],
+      nextCursor: null,
+      hasMore: false,
+    }));
+    const actionGateway = actionGatewayDouble();
+    (actionGateway.copy as jest.Mock).mockRejectedValueOnce(new NativeChatMessageActionError('clipboard-failed'));
+    (actionGateway.deleteForEveryone as jest.Mock).mockRejectedValueOnce(new NativeChatMessageActionError('action-failed'));
+    await render(
+      <ChatScreen
+        scope={scope}
+        choirName="Genova A"
+        gateway={gateway}
+        sendGateway={sendGatewayDouble()}
+        actionGateway={actionGateway}
+        now={() => Date.parse('2026-09-20T09:30:00Z')}
+        onBack={jest.fn()}
+      />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+    await screen.findByText('Prova saat dokuzda.');
+
+    await fireEvent.press(screen.getByTestId(`chat-actions-${messageId}`));
+    await fireEvent.press(screen.getByTestId('chat-action-copy'));
+    expect(await screen.findByText('Mesaj panoya kopyalanamadı.')).toBeTruthy();
+    expect(screen.getByTestId(`chat-message-${messageId}`)).toBeTruthy();
+    expect(screen.getAllByText('Prova saat dokuzda.').length).toBeGreaterThan(0);
+
+    await fireEvent.press(screen.getByTestId('chat-action-delete-everyone'));
+    await fireEvent.press(screen.getByTestId('chat-action-confirm'));
+    expect(await screen.findByText('Mesaj işlemi tamamlanamadı; mevcut içerik korundu.')).toBeTruthy();
+    expect(screen.getByTestId(`chat-message-${messageId}`)).toBeTruthy();
+    expect(screen.getAllByText('Prova saat dokuzda.').length).toBeGreaterThan(0);
+  });
+
+  it('keeps expired sender actions server-gated and refuses a late room result in the list UI', async () => {
+    const gateway = gatewayDouble();
+    gateway.loadMessages = jest.fn(async () => ({
+      room: room(),
+      messages: [message({ senderId: scope.memberId, sender: null })],
+      nextCursor: null,
+      hasMore: false,
+    }));
+    const actionGateway = actionGatewayDouble();
+    let releaseHide: ((value: { messageId: string; hiddenId: string }) => void) | undefined;
+    (actionGateway.hideForSelf as jest.Mock).mockImplementationOnce(() => new Promise((resolve) => {
+      releaseHide = resolve;
+    }));
+    await render(
+      <ChatScreen
+        scope={scope}
+        choirName="Genova A"
+        gateway={gateway}
+        sendGateway={sendGatewayDouble()}
+        actionGateway={actionGateway}
+        now={() => Date.parse('2026-09-20T10:00:01Z')}
+        onBack={jest.fn()}
+      />,
+    );
+    await fireEvent.press(await screen.findByTestId(`chat-room-${roomId}`));
+    await fireEvent.press(await screen.findByTestId(`chat-actions-${messageId}`));
+    expect(screen.queryByTestId('chat-action-edit')).toBeNull();
+    expect(screen.queryByTestId('chat-action-delete-everyone')).toBeNull();
+
+    await fireEvent.press(screen.getByTestId('chat-action-hide-self'));
+    await fireEvent.press(screen.getByTestId('chat-action-confirm'));
+    await waitFor(() => expect(actionGateway.hideForSelf).toHaveBeenCalledTimes(1));
+    await fireEvent.press(screen.getByTestId('chat-room-back'));
+    expect(await screen.findByTestId('chat-list-screen')).toBeTruthy();
+    await act(async () => releaseHide?.({
+      messageId,
+      hiddenId: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+    }));
+
+    expect(screen.getByTestId('chat-list-screen')).toBeTruthy();
+    expect(screen.queryByTestId('chat-action-notice')).toBeNull();
   });
 });
