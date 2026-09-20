@@ -110,6 +110,7 @@ function AudioRuntimeRoutes({ setEvent }: { setEvent: (event: string) => void })
         activeChoir={activeChoir}
         canSwitchChoir={false}
         onOpenRepertoire={() => setScreen('repertoire')}
+        onOpenChat={() => setScreen('home')}
         onOpenWeb={() => setEvent('WebView bu kabul girişinde devre dışı')}
         onSwitchChoir={() => {}}
         onSignOut={() => void clearTenantCaches()}

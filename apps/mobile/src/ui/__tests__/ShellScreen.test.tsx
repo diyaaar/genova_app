@@ -9,6 +9,7 @@ function renderShell(notification?: React.ComponentProps<typeof ShellScreen>['no
       canSwitchChoir={false}
       notification={notification}
       onOpenRepertoire={jest.fn()}
+      onOpenChat={jest.fn()}
       onOpenWeb={jest.fn()}
       onSwitchChoir={jest.fn()}
       onSignOut={jest.fn()}

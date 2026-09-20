@@ -14,6 +14,7 @@ import {
 } from '../../test/doubles';
 import type { NativeRepertoireGateway } from '../../repertoire/catalog-gateway';
 import type { NativeNotificationGateway, NativeNotificationResponse } from '../../notifications/notification-gateway';
+import type { NativeChatReadGateway } from '../../chat/chat-read-gateway';
 
 async function renderWithStore(options: {
   memberships?: ReturnType<typeof membership>[];
@@ -24,6 +25,7 @@ async function renderWithStore(options: {
   repertoireGateway?: NativeRepertoireGateway;
   audioGateway?: NativeAudioSourceGateway;
   notificationGateway?: NativeNotificationGateway;
+  chatGateway?: NativeChatReadGateway;
 }) {
   const clientDouble = createClientDouble({
     memberships: options.memberships ?? [membership()],
@@ -49,6 +51,7 @@ async function renderWithStore(options: {
         repertoireGateway={options.repertoireGateway}
         audioGateway={options.audioGateway}
         notificationGateway={options.notificationGateway}
+        chatGateway={options.chatGateway}
       />
     </AuthProvider>
   );
@@ -163,6 +166,27 @@ describe('shell routing', () => {
     expect(await screen.findByTestId('repertoire-empty')).toBeTruthy();
 
     await fireEvent.press(screen.getByTestId('repertoire-back'));
+    expect(await screen.findByTestId('shell-screen')).toBeTruthy();
+  });
+
+  it('opens the native chat list from the ready shell and returns without a web route', async () => {
+    const chatGateway: NativeChatReadGateway = {
+      loadRooms: jest.fn(async () => []),
+      loadMessages: jest.fn(async () => { throw new Error('unexpected room load'); }),
+      markRoomRead: jest.fn(async () => {}),
+      watchRoomList: jest.fn(() => jest.fn()),
+      watchRoom: jest.fn(() => jest.fn()),
+      clear: jest.fn(),
+    };
+    await renderWithStore({ chatGateway });
+    await screen.findByTestId('shell-screen');
+
+    await fireEvent.press(screen.getByTestId('shell-open-chat'));
+    expect(await screen.findByTestId('chat-list-screen')).toBeTruthy();
+    expect(await screen.findByTestId('chat-rooms-empty')).toBeTruthy();
+    expect(screen.queryByTestId('native-webview-screen')).toBeNull();
+
+    await fireEvent.press(screen.getByTestId('chat-back'));
     expect(await screen.findByTestId('shell-screen')).toBeTruthy();
   });
 

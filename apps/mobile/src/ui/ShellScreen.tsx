@@ -4,14 +4,15 @@ import { theme } from './theme';
 
 /**
  * Smallest shell that proves the flow: it names the server-confirmed active choir and
- * offers the implemented native repertoire plus permanent web-owned destinations.
- * Chat, assignments and push remain separate briefs; unavailable tabs are not added here.
+ * offers the implemented native repertoire/chat plus permanent web-owned destinations.
+ * Assignments remain a separate brief; unavailable tabs are not added here.
  */
 export function ShellScreen({
   activeChoir,
   canSwitchChoir,
   notification,
   onOpenRepertoire,
+  onOpenChat,
   onOpenWeb,
   onSwitchChoir,
   onSignOut,
@@ -25,6 +26,7 @@ export function ShellScreen({
     onRequest: () => void;
   };
   onOpenRepertoire: () => void;
+  onOpenChat: () => void;
   onOpenWeb: (path: '/announcements' | '/koristler' | '/devamsizlik' | '/profil') => void;
   onSwitchChoir: () => void;
   onSignOut: () => void;
@@ -45,6 +47,15 @@ export function ShellScreen({
         >
           <Text style={styles.primaryActionText}>Repertuvarı aç</Text>
           <Text style={styles.note}>Eserlerinizi ve partisyon atamalarınızı görüntüleyin.</Text>
+        </Pressable>
+        <Pressable
+          onPress={onOpenChat}
+          accessibilityRole="button"
+          style={styles.primaryAction}
+          testID="shell-open-chat"
+        >
+          <Text style={styles.primaryActionText}>Sohbetleri aç</Text>
+          <Text style={styles.note}>Koro sohbet odalarını ve mesaj geçmişini görüntüleyin.</Text>
         </Pressable>
         <View style={styles.webActions}>
           {([

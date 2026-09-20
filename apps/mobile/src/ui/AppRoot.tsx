@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import type { ChoirMembershipOption } from '@shared/choir-context-core';
+import { createChatReadScope } from '@shared/chat-read-contract';
 import { useAuth } from '../auth/AuthProvider';
+import { ChatScreen } from '../chat/ChatScreen';
+import type { NativeChatReadGateway } from '../chat/chat-read-gateway';
 import { AudioPlaybackProvider, useAudioPlayback } from '../repertoire/AudioPlaybackProvider';
 import { AudioPlayerScreen } from '../repertoire/AudioPlayerScreen';
 import { MiniAudioPlayer } from '../repertoire/MiniAudioPlayer';
@@ -27,6 +30,7 @@ import { theme } from './theme';
  * screen; every other phase renders sign-in, a choice or an explicit status.
  */
 interface ReadyShellProps {
+  userId: string;
   activeChoir: ChoirMembershipOption;
   canSwitchChoir: boolean;
   repertoireGateway?: NativeRepertoireGateway;
@@ -37,9 +41,11 @@ interface ReadyShellProps {
   getWebViewLease: ReturnType<typeof useAuth>['getWebViewLease'];
   changePassword: ReturnType<typeof useAuth>['changePassword'];
   notificationGateway?: NativeNotificationGateway;
+  chatGateway?: NativeChatReadGateway;
 }
 
 function ReadyShellRoutes({
+  userId,
   activeChoir,
   canSwitchChoir,
   repertoireGateway,
@@ -49,9 +55,10 @@ function ReadyShellRoutes({
   getWebViewLease,
   changePassword,
   notificationGateway,
+  chatGateway,
 }: Omit<ReadyShellProps, 'audioGateway'>) {
   const playback = useAudioPlayback();
-  const [screen, setScreen] = useState<'home' | 'repertoire' | 'audio' | 'web'>('home');
+  const [screen, setScreen] = useState<'home' | 'repertoire' | 'chat' | 'audio' | 'web'>('home');
   const [webPath, setWebPath] = useState('/announcements');
   const [repertoireSongId, setRepertoireSongId] = useState<string | null>(null);
 
@@ -70,6 +77,11 @@ function ReadyShellRoutes({
     setScreen('home');
   };
   const notifications = useNotificationRuntime({ gateway: notificationGateway, onOpen: openNotification });
+  const chatScope = useMemo(() => createChatReadScope({
+    userId,
+    choirId: activeChoir.choir_id,
+    memberId: activeChoir.member_id,
+  }), [activeChoir.choir_id, activeChoir.member_id, userId]);
 
   useEffect(() => {
     if (screen === 'audio' && !playback.session) setScreen('repertoire');
@@ -109,6 +121,24 @@ function ReadyShellRoutes({
     );
   } else if (screen === 'audio' && playback.session) {
     content = <AudioPlayerScreen onBack={() => setScreen('repertoire')} />;
+  } else if (screen === 'chat') {
+    content = chatScope ? (
+      <ChatScreen
+        scope={chatScope}
+        choirName={activeChoir.choir_name}
+        gateway={chatGateway}
+        onBack={() => setScreen('home')}
+      />
+    ) : (
+      <StatusScreen
+        title="Sohbet açılamadı"
+        message="Aktif koro üyeliği doğrulanamadı."
+        tone="error"
+        actionLabel="Ana sayfaya dön"
+        onAction={() => setScreen('home')}
+        testID="chat-scope-error"
+      />
+    );
   } else if (screen !== 'home') {
     content = (
       <RepertoireScreen
@@ -140,6 +170,7 @@ function ReadyShellRoutes({
           setRepertoireSongId(null);
           setScreen('repertoire');
         }}
+        onOpenChat={() => setScreen('chat')}
         onOpenWeb={(path) => {
           setWebPath(path);
           setScreen('web');
@@ -166,11 +197,12 @@ function ReadyShell({ audioGateway, ...routeProps }: ReadyShellProps) {
   );
 }
 
-export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway }: {
+export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notificationGateway, chatGateway }: {
   repertoireGateway?: NativeRepertoireGateway;
   readerGateway?: NativeScoreReaderGateway;
   audioGateway?: NativeAudioSourceGateway;
   notificationGateway?: NativeNotificationGateway;
+  chatGateway?: NativeChatReadGateway;
 } = {}) {
   const auth = useAuth();
   const [switching, setSwitching] = useState(false);
@@ -184,11 +216,15 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
     const unregisterReader = readerGateway
       ? registerTenantCache(readerGateway.clear)
       : () => {};
+    const unregisterChat = chatGateway
+      ? registerTenantCache(chatGateway.clear)
+      : () => {};
     return () => {
       unregisterCatalogue();
       unregisterReader();
+      unregisterChat();
     };
-  }, [readerGateway, repertoireGateway]);
+  }, [chatGateway, readerGateway, repertoireGateway]);
 
   const showSelection = auth.phase === 'selection-required' || (switching && auth.choirs.length > 1);
 
@@ -245,12 +281,13 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
     );
   }
 
-  if (auth.phase === 'ready' && auth.activeChoir) {
+  if (auth.phase === 'ready' && auth.activeChoir && auth.user) {
     return (
       <>
         <StatusBar style="light" />
         <ReadyShell
           key={auth.activeChoir.choir_id}
+          userId={auth.user.id}
           activeChoir={auth.activeChoir}
           canSwitchChoir={auth.choirs.length > 1}
           repertoireGateway={repertoireGateway}
@@ -261,6 +298,7 @@ export function AppRoot({ repertoireGateway, readerGateway, audioGateway, notifi
           getWebViewLease={auth.getWebViewLease}
           changePassword={auth.changePassword}
           notificationGateway={notificationGateway}
+          chatGateway={chatGateway}
         />
       </>
     );
