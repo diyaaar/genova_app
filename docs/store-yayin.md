@@ -1,5 +1,39 @@
 # Mağaza Yayını — App Store & Play Store
 
+## Current release direction — 20 September 2026
+
+The owner will create a Google Play developer account; personal versus organization remains
+undecided. Apple enrollment status is unverified. Android is the first physical test platform;
+the same product later passes iOS acceptance. No account, signing or store upload is complete.
+Decisions #28–31 and [the delivery plan](mobil-teslim-plani.md) own sequencing.
+
+First commercial release: five free choir members; additional members billable; individual sales
+deferred. Preserve initial manual invoicing/web administration. Prices, billing interval and seat
+counting lifecycle remain undecided. No automatic checkout or in-app purchase exemption is approved.
+Web legal acceptance does not remove mobile privacy, deletion or disclosure requirements.
+Implement one web policy/terms source, mobile access links and a discoverable deletion entry to
+the actual deletion flow; do not substitute an email-only support detour for that flow.
+
+Official policies reviewed 20 September:
+
+- [Google payment guidance](https://support.google.com/googleplay/android-developer/answer/10281818?hl=en)
+  allows consumption-only access; external purchase links/programs require the actual regional
+  assessment. No global exemption follows merely from billing on the website.
+- [Apple guidelines 3.1.3](https://developer.apple.com/app-store/review/guidelines/) distinguish
+  organizational and consumer sales. A choir label or organization developer account alone does
+  not prove qualification; assess the real sales model before submission.
+- [Apple deletion](https://developer.apple.com/support/offering-account-deletion-in-your-app)
+  and [Google deletion](https://support.google.com/googleplay/android-developer/answer/13327111?hl=en)
+  support a direct path to the deletion web resource under their stated conditions.
+- [Google personal-account testing](https://support.google.com/googleplay/android-developer/answer/14151465?hl=en)
+  requires 12 continuously opted-in testers over 14 days for personal accounts created after
+  13 November 2023, then production-access review. This is an external calendar dependency.
+
+Before claiming store readiness, verify current RN configuration (not legacy Capacitor paths),
+actual backend/release state, user-generated chat-content requirements, privacy/data declarations,
+retention/deletion policy, test access, screenshots, signing and both device gates. The legacy
+inventory below is historical; do not treat its file findings as current or its fixes as accepted.
+
 > Bu kayıt 4 Eylül 2026 tarihli ilk envanterden doğdu ve artık React Native + Expo
 > ürün yoluna göre ele alınır. Aşağıdaki ücret, hesap, kapalı test ve inceleme kuralları
 > tarihsel nottur; herhangi bir mağaza işi veya harcama öncesinde resmi Apple/Google

@@ -4,6 +4,15 @@ Verilmiş kararlar ve gerekçeleri. Kanıtsız tekrar tartışma; yeni kullanıc
 somut çelişkide etkiyi değerlendir. Değişen kararın önceki hâlini tarihsel tut,
 yeni karara açıkça bağla. Eski tahminler güncel doğrulama değildir.
 
+## Android-first delivery and commercial scope — 20 September 2026
+
+| # | Decision | Rationale / boundary | Date |
+|---|---|---|---|
+| 28 | **Deliver the same product Android-first; preserve the complete roadmap and two-store destination** | Owner accepted a usable intermediate release if the final product cannot be ready within a few days. A few days is a delivery target, not a verified completion estimate. The first usable build and final store candidate have separate exits in the delivery plan. No throwaway demo, silent feature deletion or automatic native/WebView reassignment. This refines #21's execution order; 004/010 gaps remain. | 20 Sep 2026 |
+| 29 | **Retain Supabase DB/Auth/Realtime/Edge; replace production Drive file dependency using private object storage** | Owner accepted retaining Supabase and a separate storage solution. Adopt the proposed Cloudflare R2 Standard target for preparation; provider activation, region, credentials, copy/cutover and spending remain separately gated. No Railway database/hosting migration is on the current delivery path. Prefer total recurring infrastructure at or below $5/month; higher cost needs an explicit choice. This is a budget target, not a guaranteed bill. | 20 Sep 2026 |
+| 30 | **First release sells choir plans only: first five members free, additional members billable; individual sales deferred** | Owner accepted both recommendations. The free tier is member-limited, not an approved time-limited trial. Price, billing interval and billable-member lifecycle still need definition before enforcement. Optional choir feature entitlements may be added when specified; do not invent tiers or remove existing functionality. Preserve #10's manual invoicing for v1 unless a checkout is separately selected. | 20 Sep 2026 |
+| 31 | **Web onboarding and commercial administration; mobile accesses the choir service** | Owner prefers web acceptance of terms and web payments. Mobile still exposes privacy/terms and an account-deletion entry; store disclosures and review remain required. No generic external-payment exemption is claimed. Region/business-model assessment precedes purchase links or individual digital sales. | 20 Sep 2026 |
+
 | # | Karar | Gerekçe | Tarih |
 |---|---|---|---|
 | 1 | Sıralama **değere** göre, kolaydan zora değil | WebView'ın gerçekten kötü olduğu ekranlar önce. Duyuruları native yapmak kullanıcıya hiçbir şey kazandırmıyor. | 2 Eyl |

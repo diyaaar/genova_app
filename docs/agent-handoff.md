@@ -1,198 +1,65 @@
 # Genova — agent handoff
 
-Updated 20 September 2026 under [050](briefs/050-native-chat-core-message-actions.md).
-This is a short entry point, not another backlog or acceptance record.
+Updated 20 September 2026 under [WF-008](briefs/WF-008-android-first-delivery-reset.md).
+This is the current entry point; dated acceptance remains in individual briefs.
 
-## Entry and source order
+## Read and verify
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [050](briefs/050-native-chat-core-message-actions.md).
-2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
-   Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
-   load other indexes, decisions and source only as relevant/changed.
-3. Verify Git ownership, current free space, tools and remaining evidence before acting.
-   Follow the owner's latest request. Do not replay accepted work or recreate old runtimes
-   merely because the previous conversation was compacted.
+   [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--20-september-2026).
+2. Read [051](briefs/051-native-chat-starred-messages.md) before touching its owned unfinished
+   code. Use [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
+   merely because the model/session changed.
 
-## Checkout and ownership
+## Current checkout and ownership
 
-Current local product HEAD: `9edda60`; it contains native copy/edit/delete/hide message actions;
-`2118182` contains protected native text/reply/link send/retry;
-`dc86d5d` contains the native chat room list/read flow;
-`3c563d1` contains durable delivered/read web adoption;
-`bed8032` contains the private room Realtime contract/adoption;
-`361ab7c` contains idempotent text-send/retry and web adoption;
-`621147e` contains server-owned core-message mutation authority;
-`1434464` contains durable status authority, `c58f4da` contains the social authority repair,
-`cb4e7ec` contains the room-membership repair,
-`2dfe6ab` contains the shared chat read contract and
-`7a6a78e` contains the chat tenant teardown,
-`b1d565f` contains the native registration protocol,
-`04319e3` contains the native tap consumer and `6883b3b`
-contains the C2 shared event contract. Recorded `origin/main` is `a13f696`; no fetch/push/deploy
-was performed.
-`supabase/.temp/cli-latest` is unrelated CLI cache; keep it unstaged.
-Do not create a second checkout/install solely to avoid these known dirty paths.
+- Planning base: `d8dd8e3` (051). Last accepted product: `9edda60` (050); verify current HEAD.
+- Owned unfinished 051: ChatScreen/action-panel and tests; AppRoot/tenant-cleanup tests; new
+  star gateway/transport/hook/panel and tests under `apps/mobile/src/chat/`.
+- Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
+- Latest 051 focused run after serialization change: 43 PASS / 2 FAIL. Earlier full mobile
+  48/272, root 65/602/build and platform exports predate that change and are not final acceptance.
+- Next action: review/fix 051's synchronization and lifecycle/state concerns, then its required
+  final gates or an explicit unfinished checkpoint. Do not start another chat feature by default.
 
-## Current state
+## Delivery decisions
 
-- M0/A1–A3 local read foundation accepted; 018–032 accepted their bounded local scopes.
-  Historical detail: [progress index](../memory-bank/progress.md) and linked briefs.
-- 033/C1 **ACCEPTED LOCALLY**: both local Release handshakes/routes, the agent-operable Android/iOS
-  composed scenarios and the owner-operated iOS password change/restore now pass. The agent never
-  entered, inspected or submitted either password; a fresh original-fixture sign-in proved restore.
-- 034's shared notification/deep-link contract is **ACCEPTED LOCALLY** at `6883b3b`: seven server
-  event types derive canonical C1-policy destinations, assignment query drift is removed, hostile
-  route overrides fail closed and one server UUID identifies exact duplicate delivery. This is not
-  permission, token lifecycle, provider delivery, real-recipient or device evidence.
-- 035's native permission/tap consumer is **ACCEPTED LOCALLY** at `04319e3`: no mount-time prompt;
-  authenticated cold/live taps reuse 034; exact WebView/repertoire, duplicate, hostile/unavailable
-  and sign-out cleanup paths pass under 36 suites/216 tests and a production JS export. Native
-  binary/OS prompt, device token/backend/provider and real delivery remain unrun.
-- [036](briefs/036-native-push-token-lifecycle-inventory.md) is **DOCUMENTATION ACCEPTED**: the
-  current Web Push-only table/RPC/VAPID sender is kept separate from a native registration
-  relation; account/choir/installation/token rotation, sign-out/offline revocation and compatible
-  rollout are fixed as later acceptance requirements. Expo Push Service is the recommended first
-  transport, but the owner choice and all account/credential/provider actions remain open.
-- [037](briefs/037-native-push-registration-protocol.md) is **ACCEPTED LOCALLY** at `b1d565f`:
-  exact v1 register/revoke/receipt parsing, transport/platform compatibility, stale scope/
-  generation refusal and secret-safe diagnostics pass 57 files/540 tests and the root build.
-  It has no token getter, network, schema, Edge, provider or runtime behavior.
-- [038](briefs/038-native-chat-feature-inventory.md) is **DOCUMENTATION ACCEPTED**: it preserves
-  every current chat capability across a seven-step C3 split and records dated room-authority,
-  RLS, Realtime, cache, order and retry blockers. No live schema was queried and no defect was
-  remediated.
-- [039](briefs/039-chat-tenant-memory-teardown.md) is **ACCEPTED LOCALLY** at `7a6a78e`: successful
-  ordinary and embedded tenant teardown reset the real process-wide chat store synchronously;
-  failed ordinary sign-out preserves it. The 57-file/542-test root gate passes and exact generated
-  outputs are cleaned.
-- [040](briefs/040-shared-chat-read-contract.md) is **ACCEPTED LOCALLY** at `2dfe6ab`: strict shared
-  room/message models, compatible-unknown fallback, account/choir/member scope and microsecond
-  cursor/order/dedup pass mobile 37 suites/218 tests and root 58 files/571 tests. It has no network,
-  cache, DB or UI behavior. Its next authority step is now accepted separately under 041.
-- [041](briefs/041-chat-room-membership-authority.md) is **ACCEPTED LOCALLY** at `cb4e7ec`: local
-  PostgreSQL proves creator/admin member management and own preferences while arbitrary self-join,
-  role escalation and reidentity refuse. Exact down/re-forward and the root 58-file/571-test build
-  pass. Its social-table follow-up is accepted separately under 042 and local private-room
-  Realtime under 046; hosted application/socket and native runtime remain unproved.
-- [042](briefs/042-chat-social-membership-authority.md) is **ACCEPTED LOCALLY** at `c58f4da`: room
-  members retain reaction/poll/vote reads and actor-owned writes/stars while inaccessible-room and
-  other-member paths refuse. Exact no-op upserts, down/re-forward and root 58 files/571 tests/build
-  pass. Status/core/private-room foundations are accepted separately under 043/044/046; poll
-  anonymity and later Realtime/runtime layers remain open.
-- [043](briefs/043-chat-message-status-authority.md) is **ACCEPTED LOCALLY** at `1434464`: a
-  server-time authenticated RPC gives room members monotonic own delivered/read state; senders see
-  all recipient rows and other members only own. Roundtrip and root 58 files/571 tests/build pass.
-  No client adopts it yet; core-message and private-room Realtime foundations are now accepted
-  separately under 044 and 046.
-- [044](briefs/044-chat-core-message-mutation-authority.md) is **ACCEPTED LOCALLY** at `621147e`:
-  sender-only server-timed one-hour edit/delete, per-member hide and tightened member/reply inserts
-  replace direct UPDATE/shared hide metadata. The refusal matrix, exact down/re-forward and root
-  59-file/575-test build pass. Idempotent send and private-room Realtime are now accepted under
-  045/046; durable status client adoption is now accepted under 047, while hosted application and
-  native runtime remain open.
-- [045](briefs/045-chat-text-send-idempotency.md) is **ACCEPTED LOCALLY** at `361ab7c`: exact
-  sender-key/payload reuse returns one text/reply/link message while mismatches and revoked scope
-  refuse. The account/choir/member/room web queue persists before network, expires after seven days,
-  caps at 50, shows retry/cancel and reconciles duplicate acknowledgements/reloads. SQL roundtrip and
-  root 60 files/582 tests/build pass. Browser storage is plain; hosted/native evidence is absent.
-- [046](briefs/046-private-room-realtime-authorization.md) is **ACCEPTED LOCALLY** at `bed8032`:
-  exact room-member Broadcast/Presence policies and three-table publication state pass a reversible
-  PostgreSQL fixture matrix; the guarded browser/embedded JWT is set before the stable private web
-  room channel. Root 62 files/591 tests/build pass. The fixture is not Supabase Realtime: hosted
-  migration/settings, socket join/revocation, global-list/delete delivery, reconnect recovery and
-  caller-supplied ephemeral identity remain unproved.
-- [047](briefs/047-durable-chat-status-web-adoption.md) is **ACCEPTED LOCALLY** at `3c563d1`:
-  inbound server messages use 043's actor/time-derived RPC, hidden memory receipt is delivered and
-  visible+focused room receipt is read. The scope-safe one-writer queue retries only on a later
-  trigger; durable table events/reload replace Broadcast read authority and info errors are visible.
-  Root 65 files/601 tests/build pass. Hosted 043/046, real socket/provider and native runtime remain
-  unproved; “delivered” is this web client observation, not an OS/provider guarantee.
-- [048](briefs/048-native-chat-list-read.md) is **ACCEPTED LOCALLY** at `dc86d5d`: the ready native
-  shell opens searchable authorized rooms and stable message pages, preserves compatibility
-  fallbacks and last trusted snapshots, and returns safely on revoked access. Realtime changes and
-  reconnect only invalidate before a parsed authoritative reload; late scope/subscription work is
-  rejected. PostgreSQL 17 roundtrip, mobile 40/232, root 65/601/build and sequential iOS/Android
-  bundles pass. No hosted schema/socket, simulator/device, real account/data, send control or
-  persisted chat cache was accepted.
-- [049](briefs/049-native-chat-text-send-retry.md) is **ACCEPTED LOCALLY** at `2118182`: exact
-  text/reply/link payloads persist in scoped chunked SecureStore before network, reconcile by
-  mutation ID and remain explicit through lost response, restart, retry/cancel and preview failure.
-  Two-slot pointer commits, retention/count/UTF-8-byte limits, malformed/wrong-room acknowledgement,
-  storage refusal and tenant clear pass. Mobile 43/248, root 65/602/build and sequential 1,431-module
-  iOS/Android exports pass. Hosted RPC/preview/socket, simulator/device and real account/data remain
-  unproved.
-- [050](briefs/050-native-chat-core-message-actions.md) is **ACCEPTED LOCALLY** at `9edda60`:
-  native copy, sender text edit/global delete and per-member hide use 044's exact RPCs and validated
-  UUID acknowledgements. Accessible action/edit/confirmation panels preserve trusted state on
-  malformed/wrong results, backend/clipboard refusal, expired/type/owner hints, repeated taps and
-  stale room/tenant work. Mobile 45/256, root 65/602/build and sequential 1,434-module exports pass.
-  Hosted 044 RPC, real account/data, simulator/device and release remain unproved.
-- `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
-  Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
-- `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
-  SecureStore startup/relaunch; full feature acceptance remains with 033.
-- Before patch alignment, offline normal arm64 Android Release, signature/alignment, SDK 24/36, manifest,
-  SecureStore backup rules and bundle isolation passed. No emulator/runtime result is inferred.
-- `6a5769a` fixes reproduced early-401 renewal: challenged requests force real native refresh,
-  preserving initial non-forced leases and stale-work guards. Typecheck/33 suites/197 tests PASS.
-  Repaired guarded iOS Release passed early-401 recovery and persisted SecureStore relaunch on
-  the real disposable services. `69714b1` then passes real attendance mutation, Realtime invalidation,
-  exact PDF cleanup, terminal second-401/native retry, tenant isolation and WebView sign-out on iOS.
-- Final 19 September password-run cleanup restored the disposable target baseline and removed the
-  exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
-  all four ports closed. A later orphan inactive task-owned 033 VM disk was removed before 041.
-  After 050 build/export cleanup: 21,370,328 KiB (~20.4 GiB) free.
-  Sources/dependencies/shared caches preserved.
-  Recheck before allocating; this snapshot is not a continuing guarantee.
-- M1 hardware is postponed. M2 native writing/sync needs the four
-  [023 owner choices](briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-  C2 delivery beyond 034–037, C3–C5, release candidate and stores remain pending. Dependencies live
-  only in the plan.
+- Same product, Android-first usable beta, then full preserved scope and both-store release.
+  A few days is the owner's delivery target, not a verified final-product/store-publication date.
+- Retain Supabase DB/Auth/Realtime/Edge; private R2 is the Drive-exit preparation target.
+  Existing hosting stays. Railway migration is not on the current path.
+- Prefer <=$5/month total recurring infrastructure. Actual usage must be checked; no new paid
+  plan/provider operation is authorized by this budget preference.
+- First five choir members free, additional members billable. Individual sales deferred.
+  Initial invoicing remains manual/web; price, period and seat-count lifecycle remain undecided.
+- Web onboarding/payment preference does not waive mobile privacy, deletion or store review.
+- After 051: protected storage/read integration -> operational Android beta -> complete features/
+  release obligations -> stable two-platform acceptance -> approved distribution and operations.
 
-## Active bounded sequence
+## Acceptance and resources
 
-`851e9cd` aligns three direct/four required transitive Expo patches. Mobile 197/root 467 tests,
-root build, exports/isolation, Doctor 21/21, normal signed iOS startup/relaunch and guarded Android
-credential/session/sign-out plus normal Android Release/isolation PASS. `69714b1` adds the passing
-guarded iOS feature/fault batch and final root 467-test/build gate. The owner-operated password
-change/restore closes 033 without product changes. `6883b3b` accepts 034's shared seven-event
-contract under the 56-file/488-test root gate. `04319e3` accepts 035's native permission/tap
-consumer under 36 suites/216 tests, config and production JS export. 036 documentation-accepts the
-separate native registration lifecycle; `b1d565f` then accepts its pure provider-neutral v1
-protocol under 57 files/540 tests and the root build. Its exact outputs were removed with about
-12.1 million KiB free. C2 schema/runtime is not resource-ready near the floor and the transport
-adapter awaits the Expo-vs-direct owner choice. 038 accepts the C3 inventory; `7a6a78e`/039 accepts
-tenant-memory teardown, `2dfe6ab`/040 accepts the shared read contract, `cb4e7ec`/041 accepts room
-membership authority, `c58f4da`/042 accepts social authority, `1434464`/043 accepts durable
-message-status authority, `621147e`/044 accepts core-message mutation authority, `361ab7c`/045
-accepts idempotent text-send/retry, `bed8032`/046 accepts the local private-room Realtime contract
-and `3c563d1`/047 accepts durable-status web adoption; `dc86d5d`/048 accepts the memory-only native
-room list/read flow and reconnect snapshot; `2118182`/049 accepts protected native text/reply/link
-send and bounded restart retry/cancel; `9edda60`/050 accepts copy/edit/global-delete/self-hide.
-After cleanup, 21,370,328 KiB is free. Native starred-message state is next;
-reactions/polls/receipts/Presence/media/administration remain later.
-Provider keys, real delivery/recipients and hardware remain gated.
-The 023 owner choices still gate final native-writing UX.
-The revised goal text is in the plan; the application's recreated goal is active (19 September).
+- 018–050 have dated local evidence; 033/C1 is locally accepted, including owner password restore.
+  Their boundaries are in their briefs, not inferred hosted/runtime acceptance.
+- 004 remains 25/27 with hardware postponed; 010 remains 6/7 with two live-product refusals open.
+  Do not recreate deleted fixtures without applicable authority.
+- Native annotation choices in [023](briefs/023-annotation-write-contract-inventory.md),
+  push transport in 036, retention, plan pricing/counting and release accounts remain open.
+- Native chat still lacks accepted social/media/administration and some status/presence flows;
+  C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
+- 21,340,568 KiB (~20.35 GiB) free at WF-008 preflight. Recheck before allocation.
+  Previous .next, coverage and 051 export outputs were removed; no new runtime was started.
+- One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
+  Focused repair and code review precede final heavy gates. Android is the default runtime;
+  iOS runs at integration/candidate gates or earlier when a platform-sensitive change requires it.
+  Keep existing required checks and distinguish test, runtime, hosted, device and release proof.
 
-## Authority
+## Authority and continuity
 
-Existing local implementation, focused tests, required gates and owned local commits continue
-within the latest user scope. Cleanup of identified disposable task artifacts is authorized.
-Push/deploy, remote CI dispatch, hosted migrations/data writes, real accounts/data/email,
-credentials, spending and physical-device work need applicable explicit authorization.
-Preserve existing approval; ask only for a genuinely new operation/choice.
-004 remains 25/27 with two postponed hardware checks; 010 remains 6/7 with revoked-link and
-wrong-account refusals unproved through the live product. Do not recreate its live fixture.
-Decisions #17 and #21–26, the shared annotation contract and MIGRATION route ownership remain.
-Historical GitHub token revocation is still pending; never read/print its value to check it.
-Known dependency-audit findings remain open; no force downgrade or blanket security relaxation.
-
-## Copyable startup prompt
-
-> Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 050 and the revised goal/resource controls in
-> docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
-> preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
-> redacted evidence, clean owned artifacts and continue only to a ready bounded task.
+Local scoped implementation/tests/commits and owned cleanup remain authorized. Hosted data/schema,
+provider activation/cutover, credentials, real accounts/email, spending, push/deploy/remote CI,
+hardware and distribution retain applicable approval boundaries. Prepare concrete work before
+asking for the exact missing choice/authority. Historical account/token risks remain unresolved.
+Do not mark the full goal complete at beta, planning or local-test acceptance.
+The [revised objective](mobil-teslim-plani.md#revised-goal-text) is canonical; WF-008 records its
+application-goal creation receipt.

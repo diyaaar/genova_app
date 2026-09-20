@@ -4,6 +4,13 @@
 > Durum değişikliği, koddan ayrı ama birlikte devredilen belge commit'ine işlenir.
 > Güncel teslim sırası: [mobil teslim planı](docs/mobil-teslim-plani.md), karar #21.
 
+20 September delivery reset: decisions #28–31 refine #21. Android-first beta is an intermediate
+release of the same product; all native/WebView ownership below remains unchanged. Supabase stays;
+private R2 storage preparation replaces production Drive dependency before operational delivery.
+051 is unfinished, with two latest focused test failures; no new screen acceptance is claimed.
+Follow [the current critical path](docs/mobil-teslim-plani.md#current-delivery-priority--20-september-2026),
+not historical next-step prose below. Both platforms remain required for the full store candidate.
+
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
 yetki ve test kapılarını ilgili brief'te kaydet. Bu yönlendirme ürün geçişini başlatmaz.
 

@@ -1,5 +1,11 @@
 # İlerleme indeksi
 
+20 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
+records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
+$5/month preference and five free choir seats. 050 is accepted locally; 051 is IN PROGRESS with
+two latest focused failures. Follow the delivery plan's current priority; older checkpoints below
+are historical and do not override current source or brief evidence.
+
 19 September 2026: `851e9cd` aligns three direct/four required transitive Expo patches: mobile
 197/root 467 tests/build, both normal exports/isolation and Doctor 21/21 PASS. Earlier `6a5769a`
 guarded iOS renewal proof stays historical; post-patch normal signed iOS build/empty SecureStore

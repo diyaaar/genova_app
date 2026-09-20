@@ -1,5 +1,47 @@
 # Genova — long-term mobile delivery plan and execution directive
 
+## Current delivery priority — 20 September 2026
+
+[WF-008](briefs/WF-008-android-first-delivery-reset.md) and decisions #28–31 supersede stale
+next-task pointers below. Deliver one evolving production product: first a usable Android beta,
+then the full preserved roadmap and a verified Android/iOS store candidate and release.
+The owner wants tangible use within a few days; no evidence currently supports a fixed full-product
+or store-publication date. Report remaining release blockers, not completed-brief counts.
+
+### Immediate release sequence
+
+| Order | Outcome / exit | Dependency and boundary |
+|---|---|---|
+| 0 | Resolve or safely checkpoint owned 051 changes; review before final gates | 051 is IN PROGRESS, not accepted. Latest focused run has two failures after a queue change; do not repeat old green claims. Do not start 052 as another chat feature by default. |
+| 1 | Drive-exit file integration: inventory all file classes, implement private R2 access and prove one protected PDF/audio flow early | Retain Supabase DB/Auth/Realtime/Edge and current hosting. Preserve stable file/annotation identities, role/tenant refusal, Range/seek and new uploads. Prepare restartable copy, checksum verification, fallback and rollback. Activation/copy/cutover/source deletion have separate authority. |
+| 2 | Usable Android beta on the owner's phone: sign-in/invite, choir selection, catalogue, protected PDF/current annotations, foreground audio, navigation and sign-out | Same product/source as the final release. All exposed routes must work against their declared backend; do not ship local-only migrations as live features. Show the exact beta feature matrix and pending work. Real user/provider/device actions require applicable authority. Production use must no longer require Drive; a synthetic preview is not this exit. |
+| 3 | Finish complete rehearsal/mobile scope and release blockers in coherent user flows | Native annotation write/sync/offline, remaining C2–C5, limits, deletion/retention, security and all A–E requirements remain tracked. Beta may precede these; full completion may not. Route ownership remains in MIGRATION. Ask pending product choices just before their dependent work. |
+| 4 | One stable candidate passes Android and iOS device acceptance and store preparation | Privacy/terms, deletion entry and web resource, disclosures, review access, signing, listings, billing assessment, developer accounts, backup/restore and rollback. Developer-account verification, required closed tests and store review are external calendar dependencies. |
+| 5 | Authorized beta/public distribution and operational handoff | Verify the actual destination; preserve maintenance/recovery requirements. Preparing a candidate is not publication or completion of M5. |
+
+The first beta is intentionally narrower than the final roadmap, not a replacement objective.
+Core rehearsal editing and other missing features remain outstanding, not silently waived.
+If a release blocker prevents the few-day target, present its concrete cause and next action;
+do not manufacture a date or add unrelated features while awaiting a critical decision.
+
+### Commercial and infrastructure baseline
+
+- Five members per choir are free; only members above five are billable. This is an ongoing
+  free tier, not a time-limited demo. Individual paid features are deferred from the first release.
+  Determine member counting, price and billing period before implementing charges/limit behavior.
+- Preserve manual invoicing for initial choirs; do not build an automatic payment platform merely
+  because payment will happen on the website. Optional feature switches require a defined product
+  entitlement and server enforcement; no speculative paid-feature framework.
+- Retain Supabase services; private R2 Standard is the Drive-exit preparation target. Hosting and
+  database migration to Railway are not current deliverables. The budget preference is **$5/month
+  total recurring infrastructure**, not $5 per service and not spending authority. Inventory actual
+  hosting/provider charges and usage before claiming it fits; store account fees are separate.
+- Web owns registration/legal acceptance and commercial administration. Mobile retains access to
+  terms/privacy and a clear deletion entry. Web payment alone proves no App Store/Play exemption;
+  assess the actual choir sales model and distribution regions before linking purchases.
+- Checkpoint the beta/store critical path every active workday with: user-visible result, remaining
+  blocker, expected next deliverable and whether the few-day target still has supporting evidence.
+
 Execution controls updated 2026-09-15 under
 [WF-007](briefs/WF-007-bounded-execution-and-disk-budget.md) after the owner's disk-pressure
 and delivery-focus review. Local C1 acceptance is complete at 033; C2's shared contract is accepted
@@ -281,38 +323,48 @@ compatibility until an explicit supported-version policy permits retirement.
 
 ## Revised goal text
 
-Deliver all outcomes in docs/mobil-teslim-plani.md through the earliest ready, bounded
-user flow: select -> implement -> test -> evaluate -> record -> clean up -> continue.
-Resume from the verified 033 checkpoint; preserve 018-032 historical acceptance, deferred
-004 device tests, open 010 criteria, all existing product features and approval boundaries.
-The credential repair is at `ec5b19a`, startup error/retry repair at `5a9fb8f`, and a current
-Xcode-signed normal iOS Release passed SecureStore startup/read twice on 18 September.
-`6a5769a` then repaired early-401 forced refresh; guarded iOS recovery and persisted SecureStore
-relaunch passed against the disposable services. On 19 September the repaired guarded Android
-one-use credential, persisted session and WebView-originated sign-out passed and were cleaned.
-The post-alignment normal Android Release/isolation gate then passed and was cleaned. At `69714b1`
-the remaining agent-operable guarded iOS mutation/Realtime/PDF/second-401/tenant/sign-out batch also
-passed and was exactly cleaned. The owner then completed the two required iOS password submissions;
-a fresh original-fixture sign-in proved restoration and the exact runtime was cleaned. Preserve 033
-as accepted evidence and resume at the earliest ready bounded C2 notification/deep-link contract
-slice rather than replaying C1. Follow the execution and resource controls
-below: one active result, at most three next actions, causal reassessment after two failed
-approaches, and a progress review every 60 minutes. Preserve at least 10 GiB of filesystem
-free space; estimate peak allocation before downloads/builds, run heavy work sequentially,
-and remove owned generated artifacts after use. Keep handoffs short and evidence in its
-brief. Prepare concrete owner decisions/releases when gated; stop dependent work with the
-exact missing condition. Never turn an unrun check into a pass or extend test infrastructure
-without an identified product blocker. Continue within existing authority until completion
-or a concrete dependency, resource or approval boundary.
+Deliver the complete Genova mobile product and all outcomes in docs/mobil-teslim-plani.md,
+using its 20 September Android-first sequence. Aim for a usable Android beta within a few days,
+then complete the preserved feature scope, both-platform store readiness, authorized release and
+operational handoff; the beta is an intermediate milestone, not final success or a throwaway demo.
+Resume verified current work, including unfinished 051, without replaying accepted 018–050 work.
+Retain Supabase DB/Auth/Realtime/Edge; remove production Drive dependency via private R2 storage
+with verified authorization, migration and rollback. Do not migrate hosting/database to Railway
+without a new measured reason and owner decision. Prefer total recurring infrastructure <=$5/month;
+any increase, provider activation or paid action needs explicit authority. The first commercial
+release offers five free choir members and charges only additional members; preserve manual/web
+billing and defer individual sales. Do not invent prices or optional paid features. Web onboarding
+does not waive mobile privacy, deletion, disclosures or payment-policy assessment.
+Follow select -> implement -> focused test -> review -> required integration/release gates ->
+record -> cleanup -> continue. Use Android for ordinary runtime development; group iOS acceptance
+at integration/candidate milestones and test earlier when an iOS-specific change demands it.
+Run full gates after code review and targeted repairs stabilize, not after every diagnostic edit;
+never call earlier evidence current after a relevant change. Keep one active outcome, one heavy
+process, >=10 GiB free, bounded artifacts and causal reassessment after two failed approaches.
+Preserve 004's deferred device tests, 010's open refusals, all original feature and evidence
+requirements, live web compatibility and approval boundaries. Prepare concrete decisions and
+release packages before asking for only the remaining authority. Report daily movement toward
+usable delivery and actual blockers; never equate test counts, planning acceptance or beta
+availability with completion of the entire product goal.
 
 This is the canonical revised objective. Repository edits do not themselves edit the Codex
-goal card. WF-007 records whether the application update was possible; never complete the
+goal card. WF-008 records the replacement goal result; never complete the
 unfinished product goal merely to replace its wording.
 
 ## Bounded execution and resource controls
 
 These controls apply to the continuing goal, including work with GPT-5.6 Sol. They are
 project workflow rules, not model-capacity claims or permission to change the selected model.
+
+- **Android-first verification:** ordinary feature development uses focused checks and Android
+  runtime. Run mobile typecheck/full tests at the coherent flow's final gate; run `pnpm check`
+  when web/shared/dependency/build code or the brief requires it. Review security, lifecycle and
+  races before expensive final checks. Group iOS exports/native/runtime acceptance at integrated
+  milestones and the release candidate. Run an earlier iOS check for changed native dependencies,
+  entitlements, permissions, signing, SecureStore, PDF/audio or other platform-sensitive behavior.
+  Do not repeatedly switch simulators for shared UI changes. Both release platforms still need
+  current acceptance. Existing required brief checks remain required unless transparently
+  rescheduled with a named later gate; failed criteria are never deleted to improve status.
 
 - **Work card:** in the current brief, name one observable user benefit or reproduced blocker,
   the exact paths, at most three next actions, required checks and the exit condition. Add a

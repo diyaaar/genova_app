@@ -65,6 +65,13 @@
   davet kabulü → native giriş/koro seçimi → repertuvar/PDF → cihaz pilotu (karar #21).
   Plan-limit mağaza öncesinde kalır; somut pilot engeli yoksa native başlangıcını bekletmez.
   Yeni altyapıyı öne almak için hangi akışı engellediğini ve en küçük çözümü yaz.
+- **20 September delivery reset (#28–31):** Follow the plan's Android-first critical path:
+  resolve/checkpoint owned 051 -> Drive-exit/private-storage read integration -> usable Android
+  beta -> full feature/release scope -> both-store acceptance. Beta is the same product, not final
+  goal completion. Retain Supabase; prefer total infrastructure <=$5/month; no Railway rewrite.
+  Five free choir members, bill only additional members; individual sales deferred. Respect the
+  plan's remaining owner choices and provider/release authority. Do not default to another tiny
+  chat feature while a beta blocker has a ready action.
 - **İki istemci ayrı görünebilir.** Web UI'ını mobile benzetmek için değiştirme; tersi de geçerli. Piksel eşitliği hedef değil.
 - **Anotasyon şeması ortak sözleşmedir.** `lib/repertuvar/annotation-types.ts` tek doğru kaynaktır. RN aynı TypeScript sözleşmesini paylaşır; ayrı Dart aynası üretilmez. Değişiklikte iki istemci ve eski mobil sürümler birlikte değerlendirilir.
 - **Sunucu mantığı Edge Function'a.** Native'e taşınan bir ekran için yeni Next.js API route'u açma; `supabase/functions/` altına yaz ve web'i de aynı fonksiyona bağla.
@@ -100,6 +107,10 @@
 - **Web / ortak kod / bağımlılık / build ayarı:** `pnpm check`
 - **Mobil (RN):** Ürün çalışma alanı kurulduktan sonra orada `npx tsc --noEmit && npm test`;
   ayrıca değişime uygun cihaz/platform kontrolü. Henüz olmayan çalışma alanı geçmiş sayılmaz.
+- Review and fix focused failures before final full gates. Android is the default runtime;
+  group iOS acceptance at integration/release milestones, or earlier for platform-sensitive
+  changes. Follow the plan's test matrix; no automatic simulator switching per small UI change.
+  Do not silently drop an existing required brief check or reuse pre-change green evidence.
 - `pnpm check` E2E, canlı DB, Edge deploy veya gerçek cihaz testi değildir. Gerekli
   katmanları brief'te belirle; çalıştırılmayanı ve başarısız olanı ayrı raporla.
 - Teslimde kapsam/diff, test sonucu ve sınırı, kalan risk, sonraki adım belirtilir.

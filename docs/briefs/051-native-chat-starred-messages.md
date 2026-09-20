@@ -1,6 +1,16 @@
 # 051 — Native chat starred-message state and room panel
 
-**Status / date / responsible writer:** PLANNED / 2026-09-20 / primary agent
+**Status / date / responsible writer:** IN PROGRESS / 2026-09-20 / primary agent
+
+**Interrupted implementation checkpoint — WF-008:** Agent-owned product changes exist in
+`apps/mobile/src/chat/` and `apps/mobile/src/ui/AppRoot.tsx` with accompanying tests. Last focused
+run after adding the state serialization queue: 43 PASS / 2 FAIL (transport-start synchronization
+in gateway tests). Earlier mobile 48/272, root 65/602/build and iOS/Android exports are pre-change
+evidence, not final acceptance. Review panel-only stars, unknown initial state, stale lifecycle
+callbacks and strict cursors as well as the reported failures before closing. Exact .next,
+coverage and 051 exports were cleaned. Preserve these source edits; unrelated CLI cache stays
+unstaged. After this coherent checkpoint, follow WF-008's storage/read delivery path instead of
+automatically selecting another chat capability. All required acceptance rows below remain open.
 
 **Purpose and user need:** Let the current native member star or unstar an authorized room message
 and browse that room's own starred messages without trusting another member, choir or hidden row.
