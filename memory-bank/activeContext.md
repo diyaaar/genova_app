@@ -1,9 +1,11 @@
 # Active context
 
 Updated 20 September 2026. [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns resource controls; [048](../docs/briefs/048-native-chat-list-read.md) now owns C3's accepted
-memory-only native room list/read flow after 038–047. Product `dc86d5d` opens searchable authorized
-rooms, stable message pages and invalidation-only reconnect with revocation/tenant teardown;
+owns resource controls; [049](../docs/briefs/049-native-chat-text-send-retry.md) now owns C3's
+accepted protected native text/reply/link send-and-retry after 048's list/read flow. Product
+`2118182` persists exact scoped payloads before network, reconciles mutation IDs and exposes bounded
+restart retry/cancel; `dc86d5d` opens searchable authorized rooms, stable message pages and
+invalidation-only reconnect with revocation/tenant teardown;
 `3c563d1` records delivered/read through 043's server RPC, consumes durable status events/reload
 state and removes Broadcast receipt authority;
 `bed8032` adds exact room-member Broadcast/Presence policies, declared event-table publication and
@@ -119,6 +121,13 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
   forward/down/re-forward, mobile 40-suite/232-test, root 65-file/601-test/build and sequential
   iOS/Android bundle gates pass. Hosted schema/socket, simulator/device and real account data remain
   unrun; there are no send controls or persisted chat bodies.
+- [049](../docs/briefs/049-native-chat-text-send-retry.md) is **ACCEPTED LOCALLY** at `2118182`:
+  native text/reply/link payloads enter a scoped, seven-day/count/UTF-8-byte-bounded chunked
+  SecureStore queue before network; two-slot pointer commits fail closed. Exact acknowledgements
+  and snapshots reconcile mutation IDs; lost response, restart, explicit retry/cancel, preview
+  failure, wrong-room/payload response, storage refusal and tenant clear pass. Mobile 43/248, root
+  65/602/build and sequential 1,431-module iOS/Android exports pass. Hosted RPC/preview/socket,
+  simulator/device, real account/data, deploy and release remain unrun.
 - Repaired guarded iOS Release passed attendance mutation, external Realtime invalidation, exact
   protected PDF cleanup, first/terminal second-401 with native retry, tenant isolation, WebView
   sign-out and cold-relaunch signed-out state. The owner then performed both native password
@@ -135,10 +144,10 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 - Latest owner requirement: keep roughly 10 GB free; policy uses a conservative 10 GiB floor.
   One outcome, up to three actions, two unsuccessful approaches then causal reassessment,
   and a progress review every 60 active minutes. Expo patch failure resolved without exclusions.
-  An orphan inactive task-owned 033 VM disk was removed before 041. After 048's exact runtime/build
-  cleanup, 21,364,736 KiB (~20.4 GiB) remains free. C2's adapter still awaits the Expo-vs-direct
-  owner choice. C3 is accepted through 048's native list/read slice; native text/reply/link
-  send-and-retry is next, with social/Presence/media/administration later.
+  An orphan inactive task-owned 033 VM disk was removed before 041. After 049's exact build/export
+  cleanup, 21,370,380 KiB (~20.4 GiB) remains free. C2's adapter still awaits the Expo-vs-direct
+  owner choice. C3 is accepted through 049's native list/read/send slices; native core-message
+  actions are next, with reactions/polls/Presence/media/administration later.
   Do not infer hosted DB, provider or device delivery from local tests.
 - The revised goal is saved in the plan. The recreated application goal is active;
   objective editing is unavailable. It was not marked complete.
@@ -148,7 +157,7 @@ dependencies and resource controls. Do not duplicate the historical brief narrat
 004: 25/27, hardware postponed. 010: 6/7, live product refusal paths still open; no new fixture.
 M0/A1–A3 accepted locally; 018–032 historical acceptance remains. B2/B3 depend on
 [023's four owner choices](../docs/briefs/023-annotation-write-contract-inventory.md#owner-decision-packet).
-C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 048,
+C2 token/provider delivery beyond accepted 034–037, C3 implementation beyond accepted 049,
 C4–C5 and release/store work remain pending; C1
 acceptance is local simulator/emulator evidence,
 not hosted-provider, real-account, hardware or distribution acceptance.

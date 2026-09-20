@@ -1,6 +1,6 @@
 # 049 — Native chat text send and protected retry
 
-**Status / date / responsible writer:** PLANNED / 2026-09-20 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-20 / primary agent
 
 **Purpose and user need:** Let an authenticated mobile member send text, reply and link-preview
 messages once, recover a lost acknowledgement after restart and explicitly retry or cancel without
@@ -94,15 +94,15 @@ this queue namespace. Revert the product commit for client rollback; no new DB d
 
 **Done definition:**
 
-- [ ] Text, reply and successful link-preview payloads persist before network and acknowledge one
+- [x] Text, reply and successful link-preview payloads persist before network and acknowledge one
       server message; malformed or mismatched acknowledgements fail closed.
-- [ ] Lost response/restart, explicit retry/cancel, snapshot/event duplicate reconciliation and
+- [x] Lost response/restart, explicit retry/cancel, snapshot/event duplicate reconciliation and
       offline-visible failure keep exact payload and never silently remove queued content.
-- [ ] Queue account/choir/member/room scope, seven-day TTL, count/byte cap, corrupted/partial read,
+- [x] Queue account/choir/member/room scope, seven-day TTL, count/byte cap, corrupted/partial read,
       write refusal and tenant clear pass; message bodies use protected storage, not plain files.
-- [ ] Ready-room composer and message controls are accessible; no send control appears outside an
+- [x] Ready-room composer and message controls are accessible; no send control appears outside an
       authorized loaded room and later chat features are not implied.
-- [ ] Focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`, sequential iOS/Android
+- [x] Focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`, sequential iOS/Android
       Expo bundles, diff review, cleanup and >=10 GiB free-space check pass.
 
 **Optional subtask:** None. One writer; no delegation.
@@ -112,16 +112,26 @@ this queue namespace. Revert the product commit for client rollback; no new DB d
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-20 | Source/ownership/resource preflight | local product `dc86d5d`, records `58409a9` | PASS | Only unrelated CLI marker is dirty; 21,362,264 KiB free. 045 RPC/web retry and native chunked SecureStore/random UUID exist; native has no composer/queue and shared snapshots discard mutation identity. No runtime/build/download started. |
+| 2026-09-20 | Current Supabase client/changelog review | official `functions.invoke`, `rpc` references and changelog | PASS | Current JavaScript shapes match the adapter. Node 20 support ended, while the gate ran on Node 24. No hosted project was queried or changed. |
+| 2026-09-20 | Two-attempt reassessment | focused TypeScript/renderer startup | PASS after repair | Attempt 1 exposed an un-injected default environment gateway; attempt 2 exposed the preview JSON index contract. Work paused for causal review, then explicit injection and the shared JSON shape repaired the causes without weakening acceptance. |
+| 2026-09-20 | Protected queue/coordinator/UI focused acceptance | local product work leading to `2118182` | PASS | Six suites / 39 tests cover persist-before-network, protected two-slot pointer commit, missing/corrupt/partial storage, TTL/count/UTF-8 byte cap, scope/clear, lost response, exact retry, snapshot reconciliation, malformed/wrong-room/payload acknowledgement, restart/manual retry/cancel and tenant cleanup. |
+| 2026-09-20 | Full mobile and root compatibility gates | local Node 24, product `2118182` | PASS | Mobile TypeScript plus 43 suites / 248 tests pass. Root lint/typecheck, 65 files / 602 tests, service-worker syntax and Next production build pass. Existing SafeAreaView/punycode warnings remain non-failing and were not hidden. |
+| 2026-09-20 | Sequential bundle resolution and cleanup | local Expo export, product `2118182` | PASS | iOS and Android each resolve 1,431 modules / 4.3 MB. Both bundle directories, root `.next` and coverage are removed; 21,370,380 KiB (~20.4 GiB) remains free. Bundles are not simulator/device execution. |
+| 2026-09-20 | Scope/security/lifecycle self-review | local diff and exact cleanup | PASS | Native calls only 045's accepted authenticated RPC and existing preview function; no service credential, schema or direct message insert was added. Pointer-less storage fails closed, late room/tenant results cannot update the visible room and injected/default queues participate in tenant clear. Self-review is not independent review. |
+| 2026-09-20 | Acceptance-record consistency gate | five changed Markdown files | PASS | 153 local file links resolve with zero missing; stale 049 pending/next-send markers are absent and `git diff --check` passes. Only the unrelated CLI marker remains outside the document set. |
 
-**Delivery:** Pending planning commit, product/test commit and separate acceptance-record commit.
+**Delivery:** Planning commit `ce9a55a`; product/tests `2118182`; this separate acceptance/status
+record follows. No hosted DB/Edge/socket, real account/data, simulator/device, deploy, push or release
+was run. The next ready C3 slice is a separately bounded native core-message action brief before
+reactions/polls/ephemeral social state.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Shared mutation identity and parsed acknowledgement boundary | yes | NOT RUN | pending focused shared/mobile tests | Old null/absent rows stay compatible; wrong room/key and malformed payload refuse. |
-| Protected scoped queue and restart/retry/cancel lifecycle | yes | NOT RUN | pending storage/coordinator tests | Must prove persist-before-network, TTL/caps/corruption/write refusal/clear and exact payload reuse. |
-| Native composer/reply/link and pending/failed UX | yes | NOT RUN | pending React Native renderer tests | Includes accessible controls, queue-full/storage/preview/send errors and snapshot dedup. |
-| Mobile/root compatibility and iOS/Android bundle resolution | yes | NOT RUN | pending local gates | Exports are not simulator/device/runtime evidence. |
-| Diff/data/lifecycle/accessibility review, cleanup and records | yes | NOT RUN | pending self-review | Self-review is not independent review. |
+| Shared mutation identity and parsed acknowledgement boundary | yes | PASS | 2026-09-20, `2118182`, shared/mobile focused tests | Old null/absent rows stay compatible; invalid UUID, wrong room/key/content/reply/preview acknowledgements refuse. |
+| Protected scoped queue and restart/retry/cancel lifecycle | yes | PASS | 2026-09-20, `2118182`, queue/gateway tests | Persist-before-network, exact retry, reconciliation, TTL/count/UTF-8 byte limits, pointer commit failure, corruption and tenant clear pass. Storage refusal starts no send RPC. |
+| Native composer/reply/link and pending/failed UX | yes | PASS | 2026-09-20, `2118182`, React Native renderer | Accessible loaded-room composer/reply and pending/failed retry/cancel paths pass; preview failure preserves text send and no control appears before an authorized room snapshot. |
+| Mobile/root compatibility and iOS/Android bundle resolution | yes | PASS | 2026-09-20, `2118182`, local gates | Mobile 43/248, root 65/602/build and sequential 1,431-module iOS/Android exports pass. Exports are not simulator/device/runtime evidence. |
+| Diff/data/lifecycle/accessibility review, cleanup and records | yes | PASS | 2026-09-20, `2118182`, local self-review | Exact generated outputs removed, 21,370,380 KiB free; only unrelated CLI marker remains dirty. Self-review is not independent review. |
 | Hosted RPC/preview/socket, real account/data, simulator/hardware/provider/deploy/release | no — separately approved later gates | NOT RUN | no external authority | Blocks deployed/runtime/device claims, not bounded local implementation evidence. |
