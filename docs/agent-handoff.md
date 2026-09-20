@@ -7,8 +7,8 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--20-september-2026).
-2. [051](briefs/051-native-chat-starred-messages.md) is locally accepted. Prepare the bounded
-   Drive-exit/private-R2 read brief; use [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+2. [052](briefs/052-drive-exit-inventory.md) maps Drive exit; implement
+   [053](briefs/053-private-r2-repertoire-read.md), using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
@@ -18,8 +18,10 @@ This is the current entry point; dated acceptance remains in individual briefs.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- Next: inventory all Drive file classes and prepare private-R2 protected PDF/audio integration
-  with copy/checksum/rollback boundaries; do not add another chat feature.
+- 052 source inventory accepted: repertoire/comments, current/history/private-review submissions,
+  chat images/avatars, folder gates, caches and non-Drive storage. No files migrated.
+- Next: 053 private-R2 repertoire read: server-owned verified mapping, streamed PDF/audio access
+  through existing ticket contract. Check schema/runtime/disk first; no new chat feature.
 
 ## Delivery decisions
 
@@ -45,8 +47,12 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 21,300,624 KiB (~20.31 GiB) free after 051 cleanup. Recheck before allocation.
+- 21,300,280 KiB (~20.31 GiB) free after 052 documents. Recheck before allocation.
   Removed .next, coverage and both 051 exports (~471 MiB); no runtime/device started.
+- 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
+  submission replacement before history capture; include these in the remaining write/cutover batch.
+  Existing Storage migration runs toward Drive, not away. Cloudflare/R2 account availability asked;
+  no credentials requested, activation/region/live access unapproved. Does not block local 053.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;
   iOS runs at integration/candidate gates or earlier when a platform-sensitive change requires it.

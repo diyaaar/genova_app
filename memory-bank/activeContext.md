@@ -32,11 +32,16 @@ and the actual Android user flow rather than continuing tiny chat features autom
 - Final mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS exports
   pass. Star state/toggle/panel and lifecycle accepted locally, not live. Detailed evidence:
   [051](../docs/briefs/051-native-chat-starred-messages.md).
-- Next: inventory all Drive file classes and prepare private-R2 PDF/audio access integration
-  with stable identities, authorization, Range, migration/checksum and rollback.
+- [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
+  It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
+  Drive-folder catalogue filter, public-link creation, destructive replacement before history.
+- Next implement [053](../docs/briefs/053-private-r2-repertoire-read.md): verified server-owned
+  mapping and streamed private PDF/audio through current Edge tickets; preflight schema/runtime first.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 051 cleanup: 21,300,624 KiB (~20.31 GiB) free. Build/coverage/exports (~471 MiB) removed.
+- After 052: 21,300,280 KiB (~20.31 GiB) free. 051 build/coverage/exports (~471 MiB) removed.
   No runtime/VM/device or install created. Recheck before allocating.
+- Cloudflare/R2 account availability asked without credentials. Local 053 can proceed without
+  that answer; provider activation/region and real data/cutover remain separate approval gates.
 
 ## Remaining requirements and authority
 
