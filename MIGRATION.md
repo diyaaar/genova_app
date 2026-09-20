@@ -38,7 +38,9 @@ Package 045 accepts idempotent text/reply/link send, bounded retry/cancel and we
 publication contract and guarded web room-channel adoption at `bed8032`. Global-list/reconnect
 Realtime and native chat runtime remain separate; no hosted socket ran.
 Package 047 then adopts durable delivered/read status on web and removes Broadcast receipt authority
-at `3c563d1`. The first memory-only native list/read slice is next.
+at `3c563d1`. Package 048 accepts the memory-only native room list/read flow at `dc86d5d`: the ready
+shell opens searchable authorized rooms, stable message pages and invalidation-only reconnect with
+revocation/tenant teardown. Native send/retry and later chat features remain separate.
 Native binary, provider keys, real delivery/recipients and hardware remain gated.
 
 **Şu an:** RN spike **TAMAMLANDI ve GEÇTİ** (3 Eyl). Karar kesin: React Native + Expo.
@@ -91,7 +93,7 @@ Satır sayıları yaklaşıktır (ilgili sayfa + bileşen + lib dosyaları).
 | Giriş | 164 | native | yerel uygulandı (004); cihaz kabulü yok | 1 |
 | Kabuk (nav, tema, push, mini player) | ~1.000 | native | en küçük kabuk + koro seçimi var (004); 026–027 foreground ses/mini player sürekliliğini, 028–032 WebView katmanlarını ve 033 iki platformlu bileşik yaşam döngüsünü yerelde kabul etti; 034–035 push sözleşmesi/tap tüketicisi, 036 yaşam döngüsü envanteri ve 037 kayıt protokolü kabul edildi; backend/provider bekliyor | 1 |
 | Repertuvar | 9.885 | **native** | katalog (014), ortak güvenli dosya yolu (015), PDF/salt okunur anotasyon (016), non-hardware akış (017), gerçek yerel servis runtime'ı (018), iOS/Android gerçek PDF/Skia çıktısı (019/020), birleşik mobil servis yaşam döngüsü (021), üretim-tipi yerel web uyumluluğu (022), anotasyon-yazma envanteri (023), yerel revizyon-güvenli sunucu/bağdaştırıcı temeli (024), web güvenli-kaydet yaşam döngüsü (025) ve foreground native ses/mini-player akışı (026/027) kabul edildi; native yazma/senkronizasyon ve canlı pilot bekliyor | 2 |
-| Chat | 8.552 | **native** | 038–040 envanter/bellek/okuma, 041 oda üyeliği, 042 sosyal, 043 durum, 044 düzenleme/silme/gizleme, 045 idempotent metin gönderme/yeniden deneme, 046 özel oda Realtime sözleşmesi ve 047 kalıcı durum web uyarlaması yerelde kabul edildi; global/yeniden-bağlanma Realtime kabulü ile RN liste/okuma bekliyor | 3 |
+| Chat | 8.552 | **native** | 038–047 envanter, ortak sözleşme ve yetki temelleri yerelde kabul edildi; 048 RN oda listesi/okuma, kararlı sayfalama ve yeniden-bağlanma snapshot kabulünü `dc86d5d` ile tamamladı. Native gönderme/yeniden deneme, sosyal, medya ve oda yönetimi bekliyor | 3 |
 | Ödevler | 5.557 | native | bekliyor | 4 |
 | Ana sayfa | ~800 | native | bekliyor | 4 |
 | Duyurular | 977 | **WebView — kalıcı** | 028–032 katmanları ve 033 iki platformlu gerçek yerel bileşik rota/yaşam döngüsü kabul edildi | — |

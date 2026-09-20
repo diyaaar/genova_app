@@ -1,12 +1,12 @@
 # Genova — agent handoff
 
-Updated 20 September 2026 under [047](briefs/047-durable-chat-status-web-adoption.md).
+Updated 20 September 2026 under [048](briefs/048-native-chat-list-read.md).
 This is a short entry point, not another backlog or acceptance record.
 
 ## Entry and source order
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [047](briefs/047-durable-chat-status-web-adoption.md).
+   [048](briefs/048-native-chat-list-read.md).
 2. Read the [revised goal and execution controls](mobil-teslim-plani.md#revised-goal-text).
    Use the [guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md) once per session;
    load other indexes, decisions and source only as relevant/changed.
@@ -16,7 +16,8 @@ This is a short entry point, not another backlog or acceptance record.
 
 ## Checkout and ownership
 
-Current local product HEAD: `3c563d1`; it contains durable delivered/read web adoption;
+Current local product HEAD: `dc86d5d`; it contains the native chat room list/read flow;
+`3c563d1` contains durable delivered/read web adoption;
 `bed8032` contains the private room Realtime contract/adoption;
 `361ab7c` contains idempotent text-send/retry and web adoption;
 `621147e` contains server-owned core-message mutation authority;
@@ -105,6 +106,13 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
   trigger; durable table events/reload replace Broadcast read authority and info errors are visible.
   Root 65 files/601 tests/build pass. Hosted 043/046, real socket/provider and native runtime remain
   unproved; “delivered” is this web client observation, not an OS/provider guarantee.
+- [048](briefs/048-native-chat-list-read.md) is **ACCEPTED LOCALLY** at `dc86d5d`: the ready native
+  shell opens searchable authorized rooms and stable message pages, preserves compatibility
+  fallbacks and last trusted snapshots, and returns safely on revoked access. Realtime changes and
+  reconnect only invalidate before a parsed authoritative reload; late scope/subscription work is
+  rejected. PostgreSQL 17 roundtrip, mobile 40/232, root 65/601/build and sequential iOS/Android
+  bundles pass. No hosted schema/socket, simulator/device, real account/data, send control or
+  persisted chat cache was accepted.
 - `ec5b19a` replaces public passwords with one-use loopback delivery; real delivery/scans passed.
   Reject memory-only storage/manual bundle substitution and repeated manual-signing guesses.
 - `5a9fb8f` fixes startup error/retry and late reads. Normally signed iOS Release passed real
@@ -119,7 +127,7 @@ Do not create a second checkout/install solely to avoid these known dirty paths.
 - Final 19 September password-run cleanup restored the disposable target baseline and removed the
   exact runtime, generated native/web builds, app/simulators, wrapper and Colima profile/data/context;
   all four ports closed. A later orphan inactive task-owned 033 VM disk was removed before 041.
-  After 047 build cleanup: 21,657,760 KiB (~20.7 GiB) free.
+  After 048 runtime/build cleanup: 21,364,736 KiB (~20.4 GiB) free.
   Sources/dependencies/shared caches preserved.
   Recheck before allocating; this snapshot is not a continuing guarantee.
 - M1 hardware is postponed. M2 native writing/sync needs the four
@@ -144,9 +152,9 @@ tenant-memory teardown, `2dfe6ab`/040 accepts the shared read contract, `cb4e7ec
 membership authority, `c58f4da`/042 accepts social authority, `1434464`/043 accepts durable
 message-status authority, `621147e`/044 accepts core-message mutation authority, `361ab7c`/045
 accepts idempotent text-send/retry, `bed8032`/046 accepts the local private-room Realtime contract
-and `3c563d1`/047 accepts durable-status web adoption. After cleanup, 21,657,760 KiB is free. The
-first memory-only native chat list/read slice is next; global-list/reconnect acceptance belongs with
-it, while send/social/media remain later.
+and `3c563d1`/047 accepts durable-status web adoption; `dc86d5d`/048 accepts the memory-only native
+room list/read flow and reconnect snapshot. After cleanup, 21,364,736 KiB is free. Native
+text/reply/link send-and-retry is next; social/Presence/media/administration remain later.
 Provider keys, real delivery/recipients and hardware remain gated.
 The 023 owner choices still gate final native-writing UX.
 The revised goal text is in the plan; the application's recreated goal is active (19 September).
@@ -167,7 +175,7 @@ Known dependency-audit findings remain open; no force downgrade or blanket secur
 ## Copyable startup prompt
 
 > Work in /Users/alidiyarduran/Antigravity/genovakorist. Read AGENTS.md, this short handoff,
-> memory-bank/activeContext.md, brief 047 and the revised goal/resource controls in
+> memory-bank/activeContext.md, brief 048 and the revised goal/resource controls in
 > docs/mobil-teslim-plani.md. Verify current state. Resume the exact next owned outcome,
 > preserve the 10 GiB free-space floor and all acceptance/approval boundaries, capture small
 > redacted evidence, clean owned artifacts and continue only to a ready bounded task.

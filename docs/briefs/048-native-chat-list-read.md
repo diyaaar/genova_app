@@ -1,6 +1,6 @@
 # 048 — Native chat room list and read flow
 
-**Status / date / responsible writer:** PLANNED / 2026-09-20 / primary agent
+**Status / date / responsible writer:** ACCEPTED LOCALLY / 2026-09-20 / primary agent
 
 **Purpose and user need:** Let an authenticated mobile member open Chat, see only the current
 membership's rooms and read a stable, refreshable message history without retaining another tenant's
@@ -101,15 +101,15 @@ approaches fail, stop the heavy runtime and reassess before another allocation.
 
 **Done definition:**
 
-- [ ] Ready-shell Chat opens an authorized searchable list with loading, empty, error and refresh.
-- [ ] One listed room opens chronological messages, visible compatibility fallbacks and stable older
+- [x] Ready-shell Chat opens an authorized searchable list with loading, empty, error and refresh.
+- [x] One listed room opens chronological messages, visible compatibility fallbacks and stable older
       paging; inaccessible/revoked room returns safely to the list.
-- [ ] Realtime INSERT/UPDATE and reconnect are invalidation-only; fresh snapshots deduplicate/order
+- [x] Realtime INSERT/UPDATE and reconnect are invalidation-only; fresh snapshots deduplicate/order
       results, offline state is visible and later refresh recovers.
-- [ ] Choir switch/sign-out/unmount synchronously clear memory and invalidate late reads.
-- [ ] Exact index roundtrip, focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`
+- [x] Choir switch/sign-out/unmount synchronously clear memory and invalidate late reads.
+- [x] Exact index roundtrip, focused tests, mobile `npx tsc --noEmit && npm test`, root `pnpm check`
       and sequential iOS/Android Expo bundles pass; outputs are removed and >=10 GiB remains.
-- [ ] Start/delivery controls, self-review, external NOT RUN boundaries and concise records pass.
+- [x] Start/delivery controls, self-review, external NOT RUN boundaries and concise records pass.
 
 **Optional subtask:** None. One writer; no delegation.
 
@@ -118,16 +118,28 @@ approaches fail, stop the heavy runtime and reassess before another allocation.
 | Date | Command / action | Environment | Result | Evidence / limit |
 |---|---|---|---|---|
 | 2026-09-20 | Source/ownership/resource preflight | local product `3c563d1`, records `028c957` | PASS | Only unrelated CLI marker is dirty; 21,407,308 KiB free. Shared parser and native shell seams exist; no native gateway/UI. Existing publication covers messages, not room/member rows; DELETE is deliberately not used. No runtime/build started. |
+| 2026-09-20 | Early focused implementation gates and causal reassessment | local mobile Jest/TypeScript | FAIL | Initial command-path/type issues and later async renderer/mock sequencing failures were corrected without exclusions. After two unsuccessful approaches the work stopped expanding, reviewed lifecycle/order causes, kept one gateway/screen outcome and added serialized snapshots plus stale-scope guards before continuing. No failed result is promoted to evidence. |
+| 2026-09-20 | Final focused gate | local product `dc86d5d`, mobile TypeScript/Jest | PASS | TypeScript and five focused files / 31 tests pass. The matrix covers malformed rows, hidden resurfacing, DM titles, stable paging/dedup/order, inaccessible room, serialized reconnect snapshots, late callback refusal, scope clear, server-time RPC shape, invalidation-only Realtime and rendered list/read/search/empty/error/offline/refresh/revocation behavior. |
+| 2026-09-20 | Stable index/RPC forward, down and re-forward | task-owned `genova048` Colima; loopback PostgreSQL 17; synthetic fixture only | PASS | `048_chat_read_order_runner.sh` refused missing 046 state before changes, then passed exact index/cursor order, authenticated server-time read mark, nonmember refusal, down restoration, re-forward and source/target removal. PostgreSQL warned that local `wal_level` cannot stream logical changes; no socket claim is made. |
+| 2026-09-20 | Full mobile gate | local product `dc86d5d` | PASS | `npx tsc --noEmit && npm test -- --runInBand`: 40 suites / 232 tests. Existing SafeAreaView and Node punycode deprecation warnings remain non-failing and were not suppressed. |
+| 2026-09-20 | Root compatibility gate | local product `dc86d5d` | PASS | Final `pnpm check`: lint/typecheck, 65 test files / 601 tests with coverage, service-worker syntax and Next production build pass. |
+| 2026-09-20 | Sequential bundle resolution | local Expo export, product `dc86d5d` | PASS | Final iOS export resolves 1,428 modules / 4.2 MB; after its exact removal, Android resolves 1,428 modules / 4.3 MB. These are JavaScript bundle checks, not simulator/device execution. |
+| 2026-09-20 | Semantics/lifecycle/accessibility/diff review | product `dc86d5d` | PASS | Self-review found and repaired two acceptance gaps: failed refresh now retains the last authorized snapshot, and stopped same-scope subscriptions reject late callbacks; list/room connection state is separate and the shell scope is stable. Realtime payloads remain untrusted, room access refreshes before message reads, server derives read actor/time and all controls have labels/roles. Self-review is not independent review. |
+| 2026-09-20 | Exact cleanup/resource recheck | local filesystem | PASS | PostgreSQL container and `genova048` profile/data, disposable databases, `.next`, coverage and both bundle directories were removed. 21,364,736 KiB (~20.4 GiB) free; sources/lockfiles/shared caches retained and the unrelated CLI marker remains unstaged. |
+| 2026-09-20 | Documentation consistency gate | five changed Markdown files | PASS | New local targets exist, stale “native list/read next” markers are absent, 004/010 and external NOT RUN boundaries remain explicit, and `git diff --check` passes. |
 
-**Delivery:** Pending planning commit, product/test commit and separate acceptance-record commit.
+**Delivery:** Planning `3810d87`; product/schema/tests `dc86d5d`; this acceptance record follows.
+Revert `dc86d5d` for the app/schema/test rollback; the migration also has the guarded local down
+file. Next ready C3 outcome is a separately briefed native text/reply/link send-and-retry slice;
+social, Presence, media and room administration remain later work.
 
 ## Mandatory acceptance evidence
 
 | Criterion / expected behavior | Required? / N/A reason | Status: PASS / FAIL / NOT RUN / N/A | Date, revision, environment, command or scenario | Evidence and limits |
 |---|---|---|---|---|
-| Stable read index and cursor/order roundtrip | yes | NOT RUN | pending isolated PostgreSQL | Must prove down and re-forward; hosted apply remains separate. |
-| Validated scoped gateway and Realtime snapshot recovery | yes | NOT RUN | pending focused tests | Raw events cannot become data; stale scope and revoked membership must refuse. |
-| Native list/read UI and failure/lifecycle behavior | yes | NOT RUN | pending React Native renderer tests | Includes empty/error/search/page/back/offline and tenant teardown. |
-| Mobile/root compatibility and iOS/Android bundle resolution | yes | NOT RUN | pending local gates | Bundle output is not simulator/device/runtime evidence. |
-| Diff/API/accessibility review, cleanup and records | yes | NOT RUN | pending self-review | Self-review is not independent review. |
+| Stable read index and cursor/order roundtrip | yes | PASS | 2026-09-20, `dc86d5d`, isolated PostgreSQL 17 runner | Missing prerequisite refuses without residue; forward/down/re-forward, same-time `(created_at,id)` order, server-time RPC authority, data/index restoration and disposable DB cleanup pass. Hosted apply remains separate. |
+| Validated scoped gateway and Realtime snapshot recovery | yes | PASS | 2026-09-20, focused gateway/adapter tests | Raw INSERT/UPDATE events and reconnect only invalidate; every snapshot is parsed. Serialization prevents older overwrite; stale scope, stopped callback and revoked/inaccessible room refuse. No real socket ran. |
+| Native list/read UI and failure/lifecycle behavior | yes | PASS | 2026-09-20, React Native renderer tests | Search/list/read/page/back/loading/empty/error/offline/retry, compatibility fallbacks, retained snapshots, revocation and injected tenant teardown pass. No send control or persisted chat cache was added. |
+| Mobile/root compatibility and iOS/Android bundle resolution | yes | PASS | 2026-09-20, `dc86d5d`, local gates | Mobile 40/232, root 65/601/build and sequential 1,428-module exports pass. Bundle output is not simulator/device/runtime evidence. |
+| Diff/API/accessibility review, cleanup and records | yes | PASS | 2026-09-20, local self-review | Approved files only; controls have roles/labels, refresh failure retains trusted content, all exact outputs/runtime data are removed and ~20.4 GiB remains. Self-review is not independent review. |
 | Hosted DB/socket, real account/data, simulator/hardware/provider/deploy/release | no — separately approved later gates | NOT RUN | no external authority | Blocks deployed/runtime/device claims, not bounded local implementation evidence. |
