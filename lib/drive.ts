@@ -6,6 +6,7 @@
 
 import { supabase, DriveFolderResult, RepertoireFile, AssignmentSubmission } from './supabase';
 import { authenticatedWebFetch } from './web-auth-capability';
+import { isPrivateRepertoireUploadEnabled, uploadPrivateRepertoireFile } from './repertuvar/upload';
 
 // Dosyayı base64 string'e çevir (browser-safe)
 async function fileToBase64(file: File): Promise<string> {
@@ -122,8 +123,14 @@ export async function uploadSongFile(
   driveFolderId: string,
   file: File,
   fileType: 'sheet' | 'midi' | 'audio' | 'other',
-  partitionLabel?: string
+  partitionLabel?: string,
+  options?: { legacyOnly?: boolean },
 ): Promise<RepertoireFile> {
+  if (!options?.legacyOnly && isPrivateRepertoireUploadEnabled() && (fileType === 'sheet' || fileType === 'audio')) {
+    return uploadPrivateRepertoireFile({ songId, file, fileType,
+      mimeType: file.type || detectMimeType(file.name), partitionLabel });
+  }
+  if (!driveFolderId) throw new Error('Bu dosya türü için yükleme henüz hazır değil.');
   const base64 = await fileToBase64(file);
   const res = await callDrive<{ file: RepertoireFile }>('upload_song_file', {
     song_id: songId,
@@ -141,6 +148,7 @@ export async function uploadSongFile(
  * Şarkı dosyasını sil (sadece Şef)
  */
 export async function deleteRepertoireFile(driveFileId: string, repertoireFileId: string): Promise<void> {
+  if (driveFileId.startsWith('r2_')) throw new Error('Bu dosya için silme işlemi henüz kullanıma açılmadı.');
   await callDrive('delete_file', {
     drive_file_id: driveFileId,
     repertoire_file_id: repertoireFileId,

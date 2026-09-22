@@ -6,6 +6,8 @@ import { X, Music2, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useMiniAudioPlayerStore } from '@/store/useMiniAudioPlayerStore';
 import { supabase } from '@/lib/supabase';
 import { initSongFolder } from '@/lib/drive';
+import { isPrivateRepertoireUploadEnabled } from '@/lib/repertuvar/upload';
+import { createPrivateRepertoireSong, loadPendingRepertoireSong } from '@/lib/repertuvar/create-song';
 import { LottieIcon } from './LottieIcon';
 
 interface AddSongModalProps {
@@ -21,6 +23,25 @@ export function AddSongModal({ isOpen, onClose, onSuccess }: AddSongModalProps) 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [initialFile, setInitialFile] = useState<File | null>(null);
+  const [pendingFileName, setPendingFileName] = useState<string | null>(null);
+  const [loadingDraft, setLoadingDraft] = useState(false);
+  const privateUpload = isPrivateRepertoireUploadEnabled();
+
+  useEffect(() => {
+    if (!isOpen || !privateUpload) return;
+    let active = true;
+    setLoadingDraft(true);
+    void loadPendingRepertoireSong().then(draft => {
+      if (!active) return;
+      if (draft) {
+        setTitle(draft.title); setComposer(draft.composer); setPendingFileName(draft.fileName);
+      }
+    }).catch(err => {
+      if (active) setError(err instanceof Error ? err.message : 'Bekleyen yükleme kontrol edilemedi.');
+    }).finally(() => { if (active) setLoadingDraft(false); });
+    return () => { active = false; };
+  }, [isOpen, privateUpload]);
 
   useEffect(() => {
     if (isOpen) {
@@ -32,8 +53,9 @@ export function AddSongModal({ isOpen, onClose, onSuccess }: AddSongModalProps) 
   }, [isOpen]);
 
   const handleClose = () => {
-    if (!loading) {
+    if (!loading && !loadingDraft) {
       setTitle(''); setComposer(''); setError(null); setSuccess(false);
+      setInitialFile(null); setPendingFileName(null);
       onClose();
     }
   };
@@ -41,11 +63,18 @@ export function AddSongModal({ isOpen, onClose, onSuccess }: AddSongModalProps) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) { setError('Şarkı adı zorunlu'); return; }
+    if (privateUpload && !initialFile) { setError('İlk PDF veya ses dosyasını seçin.'); return; }
     setLoading(true); setError(null);
 
     let createdSongId: string | null = null;
 
     try {
+      if (privateUpload) {
+        await createPrivateRepertoireSong(title, composer, initialFile!);
+        setSuccess(true); setPendingFileName(null);
+        onSuccess();
+        return;
+      }
       // 1. DB'ye şarkı ekle
       const { data: song, error: insertErr } = await supabase
         .from('repertoire')
@@ -123,7 +152,7 @@ export function AddSongModal({ isOpen, onClose, onSuccess }: AddSongModalProps) 
                 <h2 className="font-serif text-[1.1rem] tracking-[-0.02em] font-medium">Yeni Şarkı Ekle</h2>
               </div>
               <button
-                onClick={handleClose} disabled={loading}
+                onClick={handleClose} disabled={loading || loadingDraft} aria-label="Kapat"
                 className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--color-border)] text-[var(--color-text-medium)] hover:text-[var(--color-text-high)] transition-colors"
               >
                 <X size={16} />
@@ -138,37 +167,49 @@ export function AddSongModal({ isOpen, onClose, onSuccess }: AddSongModalProps) 
                   className="flex flex-col items-center gap-3 py-20"
                 >
                   <CheckCircle2 size={40} className="text-emerald-400" />
-                  <p className="font-medium text-emerald-400">Şarkı eklendi ve Drive klasörü oluşturuldu!</p>
+                  <p className="font-medium text-emerald-400">Şarkı eklendi!</p>
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="px-5 py-5 space-y-5" id="add-song-form">
                   <div>
-                    <label className="block text-[0.65rem] uppercase tracking-[0.22em] text-[var(--color-text-medium)] mb-2">
+                    <label htmlFor="new-song-title" className="block text-[0.65rem] uppercase tracking-[0.22em] text-[var(--color-text-medium)] mb-2">
                       Şarkı Adı *
                     </label>
                     <input
                       type="text"
+                      id="new-song-title"
                       value={title}
                       onChange={e => setTitle(e.target.value)}
                       placeholder="ör. O Fortuna"
                       className="editorial-input"
-                      disabled={loading}
+                      disabled={loading || loadingDraft || Boolean(pendingFileName)}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[0.65rem] uppercase tracking-[0.22em] text-[var(--color-text-medium)] mb-2">
+                    <label htmlFor="new-song-composer" className="block text-[0.65rem] uppercase tracking-[0.22em] text-[var(--color-text-medium)] mb-2">
                       Besteci
                     </label>
                     <input
                       type="text"
+                      id="new-song-composer"
                       value={composer}
                       onChange={e => setComposer(e.target.value)}
                       placeholder="ör. Carl Orff"
                       className="editorial-input"
-                      disabled={loading}
+                      disabled={loading || loadingDraft || Boolean(pendingFileName)}
                     />
                   </div>
+
+                  {privateUpload && (
+                    <div>
+                      <label htmlFor="initial-song-file" className="block text-sm mb-2">İlk PDF veya ses dosyası *</label>
+                      {pendingFileName && <p className="text-xs mb-2">Bekleyen yüklemeyi tamamlamak için {pendingFileName} dosyasını yeniden seçin.</p>}
+                      <input id="initial-song-file" type="file" accept=".pdf,.mp3,.wav,.m4a,.aac,.ogg,.webm,.flac"
+                        disabled={loading || loadingDraft} onChange={event => setInitialFile(event.target.files?.[0] ?? null)} />
+                      <p className="text-xs mt-2 text-[var(--color-text-medium)]">En fazla 100 MB. Şarkı, dosya yüklemesi tamamlanınca repertuvarda görünür.</p>
+                    </div>
+                  )}
 
                   <AnimatePresence>
                     {error && (
@@ -190,12 +231,13 @@ export function AddSongModal({ isOpen, onClose, onSuccess }: AddSongModalProps) 
             {/* Sticky Footer */}
             <div className="shrink-0 px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] border-t border-[var(--color-border)]">
               <button
-                type="submit"
-                form="add-song-form"
-                disabled={loading || !title.trim()}
+                type={success ? 'button' : 'submit'}
+                form={success ? undefined : 'add-song-form'}
+                onClick={success ? handleClose : undefined}
+                disabled={loading || loadingDraft || (!success && (!title.trim() || (privateUpload && !initialFile)))}
                 className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-accent)] py-4 font-sans text-[0.8rem] font-bold uppercase tracking-[0.18em] text-[var(--color-background)] transition-all active:scale-[0.98] disabled:opacity-50"
               >
-                {loading ? <><Loader2 size={16} className="animate-spin" /> Oluşturuluyor...</> : 'Şarkı Ekle'}
+                {loading ? <><Loader2 size={16} className="animate-spin" /> Oluşturuluyor...</> : success ? 'Tamam' : 'Şarkı Ekle'}
               </button>
             </div>
           </motion.div>

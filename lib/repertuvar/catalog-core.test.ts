@@ -4,6 +4,7 @@ import {
   getRepertoireCatalogTenantScope,
   getRepertoireRoleScopeFromNames,
   normalizeRepertoireSong,
+  isRepertoireSongReady,
   type RepertoireFile,
   type RepertoireSong,
   type RepertoireTag,
@@ -46,6 +47,12 @@ const song = (overrides: Partial<RepertoireSong> = {}): RepertoireSong => ({
 });
 
 describe('repertoire catalogue core', () => {
+  it('shows legacy and R2-only songs but hides empty unprovisioned songs', () => {
+    expect(isRepertoireSongReady(song({ files: [] }))).toBe(true);
+    expect(isRepertoireSongReady(song({ drive_folder_id: null }))).toBe(true);
+    expect(isRepertoireSongReady(song({ drive_folder_id: null, files: [] }))).toBe(false);
+    expect(isRepertoireSongReady(song({ drive_folder_id: null, files: undefined }))).toBe(false);
+  });
   it('normalizes Supabase joins without keeping transport-only fields as the public source', () => {
     const normalized = normalizeRepertoireSong({
       ...song({ files: undefined, tags: undefined }),

@@ -22,6 +22,7 @@ import {
   Pencil,
 } from 'lucide-react';
 import { deleteDriveObject, deleteRepertoireFile, formatFileSize, uploadSongFile } from '@/lib/drive';
+import { isPrivateRepertoireUploadEnabled } from '@/lib/repertuvar/upload';
 import { useProtectedDriveFileUrl } from '@/hooks/useProtectedDriveFileUrl';
 import { SongAssignmentModal } from './SongAssignmentModal';
 import { LottieIcon } from '@/components/LottieIcon';
@@ -370,12 +371,12 @@ export function SongEditModal({
       return null;
     }
 
-    if (!currentSong.drive_folder_id) {
+    if (!currentSong.drive_folder_id && !isPrivateRepertoireUploadEnabled()) {
       setError('Bu şarkının Drive klasörü yok. Dosya işlemi yapılamaz.');
       return null;
     }
 
-    return { songId: currentSong.id, folderId: currentSong.drive_folder_id };
+    return { songId: currentSong.id, folderId: currentSong.drive_folder_id ?? '' };
   };
 
   const validateSize = (file: File): boolean => {
@@ -508,11 +509,16 @@ export function SongEditModal({
     const oldSheetFiles = [...sheetFiles];
 
     try {
+      if (oldSheetFiles.some(item => item.drive_file_id.startsWith('r2_'))) {
+        throw new Error('Bu PDF için değiştirme işlemi henüz kullanıma açılmadı.');
+      }
       const uploadedFile = await uploadSongFile(
         context.songId,
         context.folderId,
         file,
         'sheet',
+        undefined,
+        { legacyOnly: oldSheetFiles.length > 0 },
       );
 
       const filesToDelete = oldSheetFiles.filter((item) => item.id !== uploadedFile.id);
@@ -645,6 +651,10 @@ export function SongEditModal({
   };
 
   const handleReplaceAudio = async (targetFile: RepertoireFile, file: File) => {
+    if (targetFile.drive_file_id.startsWith('r2_')) {
+      setError('Bu ses dosyası için değiştirme işlemi henüz kullanıma açılmadı.');
+      return;
+    }
     if (!isMp3File(file)) {
       setError('Sadece MP3 dosyası yükleyebilirsiniz.');
       return;
@@ -671,6 +681,7 @@ export function SongEditModal({
         file,
         'audio',
         getAudioLabel(targetFile),
+        { legacyOnly: true },
       );
       uploaded = true;
 
@@ -900,6 +911,11 @@ export function SongEditModal({
 
   const handleDeleteSong = async () => {
     if (!currentSong || deletingSong || deleteSongCountdown > 0) {
+      return;
+    }
+
+    if (files.some(file => file.drive_file_id.startsWith('r2_'))) {
+      setError('Bu şarkının dosyaları için silme işlemi henüz kullanıma açılmadı.');
       return;
     }
 

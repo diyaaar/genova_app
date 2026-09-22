@@ -121,7 +121,7 @@ describe('native repertoire gateway', () => {
       .rejects.toThrow('network down');
   });
 
-  it('drops catalogue rows without a usable folder like the web query', async () => {
+  it('drops empty unprovisioned catalogue rows like the web query', async () => {
     const source = makeSource({
       loadSongs: jest.fn(async () => [{ ...song, drive_folder_id: null }]),
       loadVersion: jest.fn(async () => ({ version: 'not-a-number', updated_at: null })),
@@ -131,6 +131,20 @@ describe('native repertoire gateway', () => {
 
     expect(result.songs).toEqual([]);
     expect(result.version).toBeNull();
+  });
+
+  it('shows an RLS-returned R2-only song without a Drive folder', async () => {
+    const source = makeSource({
+      loadSongs: jest.fn(async () => [{ ...song, drive_folder_id: null, repertoire_files: [{
+        id: 'file-r2', song_id: song.id, file_name: 'score.pdf', file_type: 'sheet' as const,
+        partition_label: null, drive_file_id: 'r2_file-r2', drive_web_view_link: null,
+        drive_download_link: null, mime_type: 'application/pdf', file_size_bytes: 69,
+        uploaded_by: null, created_at: song.created_at, updated_at: song.created_at,
+      }] }]),
+    });
+    const result = await createNativeRepertoireGateway(source).load({ choirId: 'choir-a', memberId: 'member-a' });
+    expect(result.songs.map(item => item.id)).toEqual([song.id]);
+    expect(result.songs[0]?.files?.[0]?.id).toBe('file-r2');
   });
 
   it('clears a process-owned gateway through the auth tenant boundary', async () => {

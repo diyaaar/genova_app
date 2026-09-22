@@ -99,6 +99,11 @@ export function normalizeRepertoireSongs(
   return (songs ?? []).map(normalizeRepertoireSong);
 }
 
+/** Only inspect rows already authorized by RLS; private provider mappings stay on the server. */
+export function isRepertoireSongReady(song: RepertoireSong): boolean {
+  return Boolean(song.drive_folder_id) || (song.files?.length ?? 0) > 0;
+}
+
 export function normalizeRepertoireRoleName(value: string): string {
   return value
     .normalize('NFKD')

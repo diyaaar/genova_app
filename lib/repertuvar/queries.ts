@@ -3,6 +3,7 @@ import {
 } from '@/lib/supabase';
 import {
   normalizeRepertoireSongs,
+  isRepertoireSongReady,
   type RepertoireSong,
   type RepertoireSongRow,
   type RepertoireTag,
@@ -71,7 +72,7 @@ async function fetchRepertoireRows(): Promise<RepertoireSong[]> {
   }
 
   return normalizeRepertoireSongs(data as RepertoireSongRow[] | null)
-    .filter((song) => Boolean(song.drive_folder_id));
+    .filter(isRepertoireSongReady);
 }
 
 async function fetchRepertoireTags(): Promise<RepertoireTag[]> {
