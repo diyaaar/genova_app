@@ -1,27 +1,28 @@
 # Genova — agent handoff
 
-Updated 22 September 2026 under [WF-008](briefs/WF-008-android-first-delivery-reset.md).
+Updated 23 September 2026 under [WF-008](briefs/WF-008-android-first-delivery-reset.md).
 This is the current entry point; dated acceptance remains in individual briefs.
 
 ## Read and verify
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--22-september-2026).
-2. [056](briefs/056-private-r2-repertoire-cover.md) accepts private repertoire covers; continue
-   with [057](briefs/057-private-r2-assignment-submission-versions.md), using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+2. [057](briefs/057-private-r2-assignment-submission-versions.md) accepts immutable private
+   assignment files/history; continue with [058](briefs/058-private-r2-assignment-review-audio.md),
+   using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product: `d7c960b` (056); verify current HEAD. No unfinished product changes.
+- Last accepted product: `4049266` (057); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- 056 local candidate: exact passive PDF/raster cover upload/read/replace/delete passed PostgreSQL,
-  signed Deno HTTP, protected-ticket Chrome, mobile catalogue regression and full root gates.
-- Next: 057 immutable private assignment submission/resubmit/history. Reviewer audio, bulk copy,
-  provider and live execution remain outside that first assignment package.
+- 057 local candidate: immutable assignment submit/resubmit/history passed PostgreSQL, signed Deno
+  HTTP, protected-ticket Chrome and full root gates without Drive calls.
+- Next: 058 private assignment review audio including visible/hidden pointer transitions. Deletion,
+  bulk copy, provider and live execution remain outside that package.
 
 ## Delivery decisions
 
@@ -47,12 +48,13 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 40,492,424 KiB (~38.62 GiB) was free after 056 cleanup. Build/coverage/screenshot, disposable
-  databases and loopback listeners were removed; no mobile build output was created.
+- 39,778,592 KiB (~37.94 GiB) was free after 057 workspace cleanup. Build/coverage/screenshot were
+  moved to Trash; disposable databases and loopback listeners were removed; no mobile build output
+  was created.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.
   Existing Storage migration runs toward Drive, not away. Cloudflare/R2 account availability asked;
-  no credentials requested, activation/region/live access unapproved. Does not block local 057.
+  no credentials requested, activation/region/live access unapproved. Does not block local 058.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;
   iOS runs at integration/candidate gates or earlier when a platform-sensitive change requires it.

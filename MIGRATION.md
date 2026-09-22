@@ -212,10 +212,11 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**22 Eylül güncel yönlendirme:** [056](docs/briefs/056-private-r2-repertoire-cover.md) `d7c960b`
-üzerinde özel PDF/raster kapak yaşam döngüsünü yerelde kabul etti. Sıradaki hazır iş
-[057](docs/briefs/057-private-r2-assignment-submission-versions.md): önceki dosyayı yok etmeden
-özel ödev teslimi/yeniden teslim/sürüm geçmişi. Gerçek R2
+**23 Eylül güncel yönlendirme:** [057](docs/briefs/057-private-r2-assignment-submission-versions.md)
+`4049266` üzerinde önceki dosyayı yok etmeden özel ödev teslimi/yeniden teslim/sürüm geçmişini
+yerelde kabul etti. Sıradaki hazır iş
+[058](docs/briefs/058-private-r2-assignment-review-audio.md): görünür/gizli yetkiyi koruyan özel
+değerlendirme sesi. Gerçek R2
 hesabı, hosted şema/secret, deploy, dosya kopyası ve cihaz ayrı onay kapılarıdır. Aşağıdaki paket
 özeti tarihseldir.
 
