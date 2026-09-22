@@ -9,7 +9,7 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-054 is now locally accepted; finish the Drive-free repertoire lifecycle and provider-ready
+055 is now locally accepted; finish the Drive-free repertoire media surface and provider-ready
 Android critical path rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
@@ -28,19 +28,18 @@ Android critical path rather than continuing tiny chat features automatically.
 
 ## Exact work checkpoint
 
-- Last accepted product `9459732`/054. Verify actual HEAD; no unfinished product changes.
-- 054 passes service-only/tenant/idempotent SQL forward/down/forward, 38 focused cases, actual
-  signed loopback upload/readback through `Deno.serve`, root 69/648/build, mobile 49/288 plus
-  Android export and production Chrome reload/resume. Detailed evidence:
-  [054](../docs/briefs/054-private-r2-repertoire-upload.md).
+- Last accepted product `dd21522`/055. Verify actual HEAD; no unfinished product changes.
+- 055 passes exact-target/idempotent SQL forward/down/forward/concurrency, 42 focused cases,
+  actual signed loopback deletion/reconciliation, root 71/662/build and production Chrome
+  replace/delete acceptance. Detailed evidence: [055](../docs/briefs/055-private-r2-repertoire-delete-replace.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next implement [055](../docs/briefs/055-private-r2-repertoire-delete-replace.md): exact-target
-  R2 deletion/reconciliation and new-first safe audio/annotation-free PDF replacement.
+- Next implement [056](../docs/briefs/056-private-r2-repertoire-cover.md): exact passive PDF/raster
+  cover upload/read/replace/delete without Drive or public provider URLs.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 054 generated build/coverage/Android-export/screenshot evidence, disposable DB and loopback
-  listeners are removed; 40,593,796 KiB (~38.71 GiB) remained free. No VM/simulator/device created.
+- 055 generated build/coverage/screenshot evidence, disposable DB and loopback listeners are
+  removed; 40,638,320 KiB (~38.76 GiB) remained free. No VM/simulator/device created.
 - Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 

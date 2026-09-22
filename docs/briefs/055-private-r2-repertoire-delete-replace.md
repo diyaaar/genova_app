@@ -1,6 +1,23 @@
 # 055 — Private R2 repertoire delete and safe replacement
 
-**Status/date/writer:** READY / 2026-09-22 / primary agent.
+**Status/date/writer:** LOCAL ACCEPTANCE COMPLETE / 2026-09-22 / primary agent.
+
+## Start checkpoint — 22 September
+
+- Read AGENTS, handoff/active context, transition guide/work cycle, 052–055, the 053 mapping,
+  054 upload transaction and current SongEdit/Drive callers. HEAD `5927c13`; sole unrelated dirty
+  path `supabase/.temp/cli-latest` remains preserved.
+- Authorized writers: this brief/status records; one 055 migration/down/SQL/runtime package;
+  `supabase/functions/repertoire-file-lifecycle/` plus narrow shared auth/config helpers;
+  `lib/repertuvar/`, `lib/drive.ts`, SongEdit caller/tests and browser acceptance.
+- Three actions: implement exact DB-first removal + provider reconciliation; adopt delete and
+  new-first replacement with an annotation guard; review and run focused then required gates.
+- Free space 40,569,668 KiB. Reuse installed Node/Deno/PostgreSQL/signer/browser; estimated peak
+  <1 GiB and one heavy process. Remove owned database/listeners/build/coverage/browser outputs.
+- Technical boundary: explicit delete may remove annotations through the existing cascade after
+  confirmation. Replacement performs a server check and a final locked check; an annotation race
+  refuses retirement and leaves both valid file rows visible, never losing old data. R2-only song
+  delete is supported; a mixed Drive/R2 song is refused until a later coordinated cutover flow.
 
 **Observable result:** A current choir manager can delete an R2-backed repertoire file or song
 without Drive, and can replace audio or an annotation-free PDF only after the new private object is
@@ -44,11 +61,11 @@ preserve `supabase/.temp/cli-latest`. No provider, hosted schema or real-data ac
 
 | Criterion | Required? | Initial status | Proof required | Limit |
 |---|---|---|---|---|
-| Tenant/role/exact-target/idempotent DB lifecycle and exact down | yes | NOT RUN | Isolated PostgreSQL 17 forward/down/forward; wrong choir/song/file, revoked role, duplicate/concurrent request and bounded song batch | Hosted migration separate. |
-| Safe provider deletion and reconciliation | yes | NOT RUN | Actual local Edge + signed loopback R2: success/404, timeout/lost response/5xx, retry and no caller-selected key | Loopback is not real R2. |
-| Replacement ordering and annotation guard | yes | NOT RUN | New verified file remains on failed retirement; old stays until new commit; annotated PDF refusal; audio and annotation-free PDF success | No silent annotation loss. |
-| Web compatibility | yes | NOT RUN | Focused adapter/UI tests plus production-browser file/song delete and replace matrix; legacy Drive calls unchanged and R2 path makes zero Drive calls | No device inference. |
-| Final gates and cleanup | yes | NOT RUN | Deno check, SQL/runtime, root `pnpm check`, relevant mobile regression only if shared catalogue changes, diff/secret/advisor checks and owned cleanup | iOS grouped unless platform-sensitive. |
+| Tenant/role/exact-target/idempotent DB lifecycle and exact down | yes | **PASS** | Isolated PostgreSQL 17 forward/down/forward; privilege/tenant/role, mixed/101-file refusal, concurrent exact replay and rollback guard | Hosted migration separate. |
+| Safe provider deletion and reconciliation | yes | **PASS** | Actual local Edge + signed loopback R2: success, replay, provider 5xx/pending cleanup/retry and DB-owned exact key | Loopback is not real R2. |
+| Replacement ordering and annotation guard | yes | **PASS** | Focused ordering/refusal cases plus browser: annotated preflight stops upload; verified new file precedes old retirement | No silent annotation loss. |
+| Web compatibility | yes | **PASS** | Production Chrome 412×915: annotated refusal, replacement and pending-cleanup delete; zero Drive calls/page errors | No device inference. |
+| Final gates and cleanup | yes | **PASS** | Deno check; SQL/runtime; 42 focused cases; root 71 files/662 tests/build; 054 runtime regression; diff/secret/advisor/process/DB checks and cleanup | Mobile/iOS N/A: no shared/native source or dependency changed. |
 | Hosted schema/Edge/web, real R2 delete or real user/device | no — separate gate | NOT RUN | Release manifest after local acceptance | Data/provider/deploy/device authority required. |
 
 ## Rollback and stop conditions
@@ -59,3 +76,34 @@ rollback needs a fresh backup/restore proof and exact object manifest; Git rever
 After two failed approaches, record the cause and choose the smallest causal repair. Stop on an
 unresolved annotation/version semantic, an unbounded delete surface, less than 10 GiB free or any
 need for live/provider credentials. Required FAIL/NOT RUN prevents local acceptance.
+
+## Acceptance record — 22 September 2026
+
+- Product/test commit `dd21522` adds the service-only 055 lifecycle transaction, exact-target
+  reconciliation rows, signed Edge DELETE, web adapter and existing SongEdit adoption. R2 file
+  deletion removes the product row transactionally before provider cleanup; a provider uncertainty
+  returns `deleted + cleanupPending` and remains retryable without exposing its key. R2-only song
+  deletion is bounded to 100 objects. Mixed Drive/R2 songs and incomplete mappings refuse.
+- Replacement checks annotations before upload and again under the deletion lock. It verifies and
+  commits the new private file first. A final refusal keeps both valid rows, so the old file and its
+  annotations survive. Explicit confirmed delete retains the existing annotation cascade semantics.
+- PostgreSQL 17 passed forward/down/forward, service-only grants/forced RLS, exact choir/role/key,
+  annotated/mixed/101-file refusal, same-target concurrency, source invariance and down refusal with
+  pending cleanup. The disposable database was removed. Advisors exited zero with no error; the
+  existing project-wide warnings are not claimed fixed by 055.
+- Deno checked both Edge entrypoints and the 055 runtime. The first check caught a missing import
+  introduced while extracting shared Auth; the import was restored before acceptance. Actual local
+  HTTP passed signed DELETE, preflight, cleaned replay, provider failure/pending cleanup and retry
+  with three provider requests. The refactored 054 PDF/WAV upload runtime also passed unchanged.
+- Focused tests passed 4 files/42 cases. Root `pnpm check` passed lint, types, 71 files/662 tests,
+  service worker and production build. Production Chrome at 412×915 passed annotated replacement
+  refusal before upload, verified replacement, pending private cleanup wording, zero Drive calls
+  and zero page errors. Mobile/iOS gates are N/A because no shared catalogue, native source,
+  dependency or platform configuration changed.
+- Secret-pattern scan found zero affected files; owned ports/databases were absent. About 464 MiB
+  of rebuildable build/coverage/browser output was removed; 40,638,320 KiB (~38.76 GiB) remained
+  free. `supabase/.temp/cli-latest` remains unrelated and unstaged.
+
+**Unverified boundary:** no hosted schema/function/web release, R2 account/key/bucket/real object,
+real user/device or Drive source was touched. Covers, MIDI/other and every non-repertoire file
+family remain Drive-dependent; real provider activation/copy/cutover still needs exact authority.

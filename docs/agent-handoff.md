@@ -7,21 +7,21 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--22-september-2026).
-2. [054](briefs/054-private-r2-repertoire-upload.md) accepts the local private write candidate;
-   continue with [055](briefs/055-private-r2-repertoire-delete-replace.md), using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+2. [055](briefs/055-private-r2-repertoire-delete-replace.md) accepts the local private lifecycle;
+   continue with [056](briefs/056-private-r2-repertoire-cover.md), using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product: `9459732` (054); verify current HEAD. No unfinished product changes.
+- Last accepted product: `dd21522` (055); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- 054 local candidate: server-owned PDF/audio upload, private readback/hash, retry/reconciliation
-  and folder-free web/native catalogue passed PostgreSQL, actual Deno HTTP, browser and full gates.
-- Next: 055 R2 repertoire delete/safe replacement. Refuse annotated-PDF replacement; no remaining
-  file-family, bulk-copy, provider or live expansion.
+- 055 local candidate: exact-target R2 file/song deletion, provider reconciliation and new-first
+  audio/annotation-free PDF replacement passed PostgreSQL, actual Deno HTTP, Chrome and full gates.
+- Next: 056 private PDF/raster cover lifecycle. No arbitrary other/MIDI, non-repertoire family,
+  bulk-copy, provider or live expansion.
 
 ## Delivery decisions
 
@@ -47,12 +47,12 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 40,593,796 KiB (~38.71 GiB) was free after 054 cleanup. The pinned signer remains intentional;
-  build/coverage/Android export/screenshot, disposable DB and loopback listeners were removed.
+- 40,638,320 KiB (~38.76 GiB) was free after 055 cleanup. Build/coverage/screenshot, disposable
+  databases and loopback listeners were removed; no mobile build output was created.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.
   Existing Storage migration runs toward Drive, not away. Cloudflare/R2 account availability asked;
-  no credentials requested, activation/region/live access unapproved. Does not block local 055.
+  no credentials requested, activation/region/live access unapproved. Does not block local 056.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;
   iOS runs at integration/candidate gates or earlier when a platform-sensitive change requires it.
