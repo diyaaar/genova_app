@@ -75,6 +75,30 @@ describe('054 private upload lifecycle', () => {
     expect(f.provider).not.toHaveBeenCalled();
     expect(f.transact).not.toHaveBeenCalled();
   });
+  it.each([
+    ['cover.pdf','application/pdf',pdf],
+    ['cover.jpg','image/jpeg',new Uint8Array([0xff,0xd8,0xff,0xe0,1,2,3,4])],
+    ['cover.png','image/png',new Uint8Array([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a,1])],
+    ['cover.webp','image/webp',new TextEncoder().encode('RIFF1234WEBPVP8 ')],
+    ['cover.gif','image/gif',new TextEncoder().encode('GIF89a123456')],
+    ['cover.bmp','image/bmp',new TextEncoder().encode('BM123456')],
+    ['cover.avif','image/avif',new Uint8Array([0,0,0,24,0x66,0x74,0x79,0x70,0x61,0x76,0x69,0x66,0,0,0,0,0x61,0x76,0x69,0x66])],
+  ])('accepts exact passive cover %s', async (fileName,mimeType,bytes) => {
+    const f=fixture();
+    const metadata:UploadMetadata={...meta,fileName,fileType:'other',mimeType,size:bytes.length,partitionLabel:'__cover__'};
+    expect((await f.handler(request(metadata,bytes))).status).toBe(201);
+    expect(f.transact.mock.calls[1]?.[0].sha256).toBe(createHash('sha256').update(bytes).digest('hex'));
+  });
+  it.each([
+    [{...meta,fileName:'cover.svg',fileType:'other',mimeType:'image/svg+xml',partitionLabel:'__cover__'},new TextEncoder().encode('<svg/>')],
+    [{...meta,fileName:'cover.png',fileType:'other',mimeType:'image/jpeg',partitionLabel:'__cover__'},new Uint8Array([0xff,0xd8,0xff])],
+    [{...meta,fileName:'cover.png',fileType:'other',mimeType:'image/png',partitionLabel:null},new Uint8Array([0x89,0x50,0x4e,0x47])],
+    [{...meta,fileName:'cover.jpg',fileType:'other',mimeType:'image/jpeg',partitionLabel:'__cover__'},new TextEncoder().encode('<html>bad</html>')],
+  ])('refuses active, renamed, non-cover or forged cover bytes', async (partial,bytes) => {
+    const f=fixture();const metadata={...partial,size:bytes.length} as UploadMetadata;
+    expect((await f.handler(request(metadata,bytes))).ok).toBe(false);
+    expect(f.transact.mock.calls.some(([value])=>value.action==='commit')).toBe(false);
+  });
   it.each(['forbidden','unauthorized'])('refuses %s before reserving bytes', async (code) => {
     const f = fixture();
     f.deps.authorize = async () => { throw new UploadError(code, code === 'forbidden' ? 403 : 401); };

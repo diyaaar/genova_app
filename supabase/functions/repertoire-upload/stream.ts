@@ -14,6 +14,12 @@ function hasMediaSignature(prefix: Uint8Array, mime: string) {
   if (mime === 'audio/ogg') return text.startsWith('OggS');
   if (mime === 'audio/flac') return text.startsWith('fLaC');
   if (mime === 'audio/webm') return [0x1a, 0x45, 0xdf, 0xa3].every((v, i) => prefix[i] === v);
+  if (mime === 'image/jpeg') return prefix[0] === 0xff && prefix[1] === 0xd8 && prefix[2] === 0xff;
+  if (mime === 'image/png') return [0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a].every((v,i)=>prefix[i]===v);
+  if (mime === 'image/webp') return text.startsWith('RIFF') && text.slice(8,12) === 'WEBP';
+  if (mime === 'image/gif') return text.startsWith('GIF87a') || text.startsWith('GIF89a');
+  if (mime === 'image/bmp') return text.startsWith('BM');
+  if (mime === 'image/avif') return text.slice(4,8) === 'ftyp' && /(?:avif|avis)/.test(text.slice(8,64));
   return false;
 }
 
@@ -23,7 +29,7 @@ export function verifiedStream(body: ReadableStream<Uint8Array>, expected: {
 }) {
   const reader = body.getReader();
   const hash = createHash('sha256');
-  const prefix = new Uint8Array(16);
+  const prefix = new Uint8Array(64);
   let prefixLength = 0;
   let size = 0;
   let finished = false;

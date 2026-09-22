@@ -542,6 +542,7 @@ export default function Repertuvar() {
                         ) : (
                           <ProtectedDriveImage
                             file={coverFile}
+                            repertoireFile
                             alt={song.title}
                             className="absolute inset-0 h-full w-full object-cover object-top"
                             loading="lazy"

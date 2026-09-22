@@ -45,4 +45,11 @@ describe('private repertoire web upload', () => {
     await expect(uploadPrivateRepertoireFile(input())).rejects.toThrow('Dosyayı tekrar eklemeyin');
     expect(mock.fetch).toHaveBeenCalledTimes(1);
   });
+  it('sends the exact private cover contract without provider metadata', async () => {
+    const file=new File([new Uint8Array([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a])],'cover.png',{type:'image/png'});
+    await uploadPrivateRepertoireFile({songId,file,fileType:'other',mimeType:'image/png',partitionLabel:'__cover__'});
+    const metadata=JSON.parse(decodeURIComponent(mock.fetch.mock.calls[0][1].headers['X-Upload-Metadata']));
+    expect(metadata).toEqual({songId,fileName:'cover.png',fileType:'other',mimeType:'image/png',size:file.size,partitionLabel:'__cover__'});
+    expect(JSON.stringify(metadata)).not.toContain('bucket');
+  });
 });

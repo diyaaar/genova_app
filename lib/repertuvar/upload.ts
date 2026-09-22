@@ -18,7 +18,7 @@ const messages: Record<string, string> = {
   'upload-reconciliation-required': 'Yükleme sonucu doğrulanamadı. Dosyayı tekrar eklemeyin; aynı yükleme isteğinin kontrol edilmesi gerekiyor.',
   'upload-unavailable': 'Dosya yükleme şu anda kullanılamıyor.',
   'size-exceeded': 'Dosya boyutu 100 MB sınırını aşıyor.',
-  'unsupported-media': 'Bu yükleme için PDF veya desteklenen bir ses dosyası seçin.',
+  'unsupported-media': 'Bu yükleme için desteklenen PDF, ses veya kapak dosyasını seçin.',
   'invalid-media': 'Dosyanın içeriği seçilen dosya türüyle eşleşmiyor.',
 };
 
@@ -26,7 +26,7 @@ const messages: Record<string, string> = {
  * A retry with the same selected File and tenant context keeps its key through an uncertain response.
  */
 export async function uploadPrivateRepertoireFile(input: {
-  songId: string; file: File; fileType: 'sheet' | 'audio'; mimeType: string; partitionLabel?: string;
+  songId: string; file: File; fileType: 'sheet' | 'audio' | 'other'; mimeType: string; partitionLabel?: string;
   retryKey?: string;
 }): Promise<RepertoireFile> {
   if (input.file.size < 1 || input.file.size > REPERTOIRE_UPLOAD_MAX_BYTES) throw new Error(messages['size-exceeded']);

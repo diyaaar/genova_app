@@ -17,7 +17,8 @@ Deno.serve(createRepertoireUploadHandler({
       auth: { persistSession: false, autoRefreshToken: false },
       global: { fetch: (input, init) => fetch(input, { ...init, signal: AbortSignal.timeout(15_000) }) },
     });
-    const { data, error } = await client.rpc('repertoire_upload_054', {
+    const rpc = metadata.fileType === 'other' ? 'repertoire_cover_upload_056' : 'repertoire_upload_054';
+    const { data, error } = await client.rpc(rpc, {
       p_action: action, p_actor_id: actor.userId, p_session_id: actor.sessionId,
       p_choir_id: actor.choirId, p_retry_key: retryKey, p_metadata: metadata,
       p_bucket: bucket, p_lease: lease ?? null,

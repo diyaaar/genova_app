@@ -16,6 +16,7 @@ const token = `synthetic.${Buffer.from(JSON.stringify({ session_id: sessionId })
 const pdf = Buffer.from('%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n');
 const wav = Buffer.concat([Buffer.from('RIFF'), Buffer.from([40,0,0,0]), Buffer.from('WAVEfmt '),
   Buffer.from([16,0,0,0,1,0,1,0,64,31,0,0,128,62,0,0,2,0,16,0]), Buffer.from('data'), Buffer.from([4,0,0,0,0,0,1,0])]);
+const png = Buffer.from([0x89,0x50,0x4e,0x47,0x0d,0x0a,0x1a,0x0a,0,0,0,0,0x49,0x45,0x4e,0x44]);
 const hash = (bytes: Uint8Array | string) => createHash('sha256').update(bytes).digest('hex');
 const objects = new Map<string, { bytes: Buffer; mime: string }>();
 const uploads = new Map<string, { metadata: unknown; state: string; fileId: string; lease: string; objectKey: string; file?: unknown }>();
@@ -67,7 +68,7 @@ const server = createServer(async (request,response) => {
       return json(response,200,{ id:userId, aud:'authenticated',role:'authenticated',app_metadata:{},user_metadata:{},identities:[],created_at:'2026-09-21T00:00:00Z' });
     }
     if (url.pathname === '/rest/v1/rpc/current_choir_id') return json(response,200,choirId);
-    if (url.pathname === '/rest/v1/rpc/repertoire_upload_054') {
+    if (url.pathname === '/rest/v1/rpc/repertoire_upload_054' || url.pathname === '/rest/v1/rpc/repertoire_cover_upload_056') {
       assert.equal(request.headers.authorization,`Bearer ${serviceKey}`);
       const p = JSON.parse((await body(request)).toString());
       assert.equal(p.p_actor_id,userId); assert.equal(p.p_session_id,sessionId); assert.equal(p.p_choir_id,choirId);
@@ -102,9 +103,11 @@ const server = createServer(async (request,response) => {
   }
 });
 
-async function upload(bytes: Buffer, mimeType: string, key = randomUUID(), selectedSong = songId) {
-  const metadata = { songId:selectedSong,fileName:mimeType === 'application/pdf' ? 'score.pdf' : 'rehearsal.wav',
-    fileType:mimeType === 'application/pdf' ? 'sheet' : 'audio',mimeType,size:bytes.length,partitionLabel:null };
+async function upload(bytes: Buffer, mimeType: string, key = randomUUID(), selectedSong = songId,
+  options: { fileName?: string; fileType?: 'sheet'|'audio'|'other'; partitionLabel?: string|null } = {}) {
+  const metadata = { songId:selectedSong,fileName:options.fileName ?? (mimeType === 'application/pdf' ? 'score.pdf' : 'rehearsal.wav'),
+    fileType:options.fileType ?? (mimeType === 'application/pdf' ? 'sheet' : 'audio'),mimeType,size:bytes.length,
+    partitionLabel:options.partitionLabel ?? null };
   return fetch(edgeOrigin,{ method:'POST',headers:{ authorization:`Bearer ${token}`,'content-type':mimeType,
     'x-upload-metadata':encodeURIComponent(JSON.stringify(metadata)),'idempotency-key':key },body:Uint8Array.from(bytes) });
 }
@@ -140,6 +143,13 @@ async function main() {
       assert.equal((await upload(changed,mime,key)).status,409);
       console.log(`PASS signed HTTP upload/readback/replay ${mime} bytes=${bytes.length} sha256=${hash(bytes)}`);
     }
+    const coverKey=randomUUID();
+    const coverOptions={fileName:'cover.png',fileType:'other' as const,partitionLabel:'__cover__'};
+    assert.equal((await upload(png,'image/png',coverKey,songId,coverOptions)).status,201);
+    const coverHits=hits.length;
+    assert.equal((await upload(png,'image/png',coverKey,songId,coverOptions)).status,200);
+    assert.equal(hits.length,coverHits,'Cover replay touched provider');
+    console.log(`PASS signed private cover upload/readback/replay image/png bytes=${png.length} sha256=${hash(png)}`);
     const before = objects.size;
     assert.equal((await upload(pdf,'application/pdf',randomUUID(),randomUUID())).status,403);
     failReadback = true;

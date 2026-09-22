@@ -4,6 +4,11 @@ import { UploadError, verifiedStream } from './stream.ts';
 export const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const AUDIO = new Set(['audio/mpeg','audio/wav','audio/x-wav','audio/mp4','audio/aac','audio/ogg','audio/webm','audio/flac']);
+const COVER_EXTENSIONS: Record<string, Set<string>> = {
+  'application/pdf': new Set(['pdf']), 'image/jpeg': new Set(['jpg','jpeg']),
+  'image/png': new Set(['png']), 'image/webp': new Set(['webp']),
+  'image/gif': new Set(['gif']), 'image/bmp': new Set(['bmp']), 'image/avif': new Set(['avif']),
+};
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -14,7 +19,7 @@ const CORS = {
 };
 
 export interface UploadMetadata {
-  songId: string; fileName: string; fileType: 'sheet' | 'audio'; mimeType: string;
+  songId: string; fileName: string; fileType: 'sheet' | 'audio' | 'other'; mimeType: string;
   size: number; partitionLabel: string | null;
 }
 export interface UploadActor { userId: string; sessionId: string | null; choirId: string }
@@ -55,8 +60,12 @@ export function parseUpload(request: Request): { retryKey: string; metadata: Upl
     typeof m.mimeType !== 'string' || request.headers.get('content-type') !== m.mimeType
   ) throw new UploadError('invalid-metadata');
   if (m.size > MAX_UPLOAD_BYTES) throw new UploadError('size-exceeded', 413);
+  const extension = m.fileName.toLowerCase().match(/\.([^.]+)$/)?.[1] ?? '';
+  const cover = m.fileType === 'other' && m.partitionLabel === '__cover__' &&
+    COVER_EXTENSIONS[m.mimeType]?.has(extension) === true;
   if (isActiveDriveFileContent({ fileName: m.fileName, mimeType: m.mimeType }) ||
-    !((m.fileType === 'sheet' && m.mimeType === 'application/pdf') || (m.fileType === 'audio' && AUDIO.has(m.mimeType)))
+    !((m.fileType === 'sheet' && m.mimeType === 'application/pdf') ||
+      (m.fileType === 'audio' && AUDIO.has(m.mimeType)) || cover)
   ) throw new UploadError('unsupported-media', 415);
   const length = request.headers.get('content-length');
   if (length !== null && (!/^\d+$/.test(length) || Number(length) !== m.size)) throw new UploadError('size-mismatch');

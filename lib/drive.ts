@@ -127,7 +127,9 @@ export async function uploadSongFile(
   partitionLabel?: string,
   options?: { legacyOnly?: boolean },
 ): Promise<RepertoireFile> {
-  if (!options?.legacyOnly && isPrivateRepertoireUploadEnabled() && (fileType === 'sheet' || fileType === 'audio')) {
+  const privateType = fileType === 'sheet' || fileType === 'audio' ||
+    (fileType === 'other' && partitionLabel === '__cover__');
+  if (!options?.legacyOnly && isPrivateRepertoireUploadEnabled() && privateType) {
     return uploadPrivateRepertoireFile({ songId, file, fileType,
       mimeType: file.type || detectMimeType(file.name), partitionLabel });
   }

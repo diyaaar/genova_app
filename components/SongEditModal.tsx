@@ -83,9 +83,8 @@ function isMp3File(file: File): boolean {
 }
 
 function isImageFile(file: File): boolean {
-  if (file.type?.startsWith('image/')) {
-    return true;
-  }
+  const allowedMimes = new Set(['image/jpeg','image/png','image/webp','image/gif','image/bmp','image/avif']);
+  if (file.type) return allowedMimes.has(file.type.toLowerCase());
   const lower = file.name.toLowerCase();
   return ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.avif'].some((ext) => lower.endsWith(ext));
 }
@@ -211,7 +210,7 @@ export function SongEditModal({
     () => audioFiles.filter((file) => !isCollectiveTrack(file)),
     [audioFiles],
   );
-  const { url: coverPreviewUrl } = useProtectedDriveFileUrl(activeCover);
+  const { url: coverPreviewUrl } = useProtectedDriveFileUrl(activeCover, { repertoireFile: true });
 
   const isBusy = loadingSong ||
     uploadingCover ||
