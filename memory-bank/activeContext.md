@@ -1,6 +1,6 @@
 # Active context
 
-Updated 21 September 2026. [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
+Updated 22 September 2026. [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records the owner's approved delivery reset; the [delivery plan](../docs/mobil-teslim-plani.md)
 owns priorities, the objective and resource/test controls. [Handoff](../docs/agent-handoff.md)
 is the short startup source. Historical acceptance remains in briefs and [progress](progress.md).
@@ -9,8 +9,8 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-053 is now locally accepted; prioritize one Drive-free repertoire upload/catalogue flow
-and the actual Android user flow rather than continuing tiny chat features automatically.
+054 is now locally accepted; finish the Drive-free repertoire lifecycle and provider-ready
+Android critical path rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
 
@@ -28,18 +28,19 @@ and the actual Android user flow rather than continuing tiny chat features autom
 
 ## Exact work checkpoint
 
-- Last accepted product `beb4842`/053. Verify actual HEAD; no unfinished product changes.
-- 053 passes tenant/immutable mapping SQL forward/down/forward, 44 focused cases, actual signed
-  loopback R2 through `Deno.serve`, and root 66/615/build. Detailed evidence:
-  [053](../docs/briefs/053-private-r2-repertoire-read.md).
+- Last accepted product `9459732`/054. Verify actual HEAD; no unfinished product changes.
+- 054 passes service-only/tenant/idempotent SQL forward/down/forward, 38 focused cases, actual
+  signed loopback upload/readback through `Deno.serve`, root 69/648/build, mobile 49/288 plus
+  Android export and production Chrome reload/resume. Detailed evidence:
+  [054](../docs/briefs/054-private-r2-repertoire-upload.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next implement [054](../docs/briefs/054-private-r2-repertoire-upload.md): one authorized,
-  verified private PDF/audio upload plus web/native catalogue readiness without Drive folders.
+- Next implement [055](../docs/briefs/055-private-r2-repertoire-delete-replace.md): exact-target
+  R2 deletion/reconciliation and new-first safe audio/annotation-free PDF replacement.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- After 053: 21,355,504 KiB (~20.37 GiB) free. Build/coverage, disposable DB and loopback
-  listeners removed; pinned signer is 80 KiB. No VM/simulator/device created.
+- 054 generated build/coverage/Android-export/screenshot evidence, disposable DB and loopback
+  listeners are removed; 40,593,796 KiB (~38.71 GiB) remained free. No VM/simulator/device created.
 - Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 

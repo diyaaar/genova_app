@@ -7,9 +7,10 @@
 21 September checkpoint under decisions #28–31: Android-first beta is an intermediate
 release of the same product; all native/WebView ownership below remains unchanged. Supabase stays;
 private R2 storage preparation replaces production Drive dependency before operational delivery.
-053 is locally accepted at `beb4842`: tenant-bound private mapping and signed streamed R2 reads pass
-isolated SQL, actual local Deno HTTP and root 66/615/build. No real R2/hosted/device acceptance is claimed.
-Follow [the current critical path](docs/mobil-teslim-plani.md#current-delivery-priority--21-september-2026),
+054 is locally accepted at `9459732`: server-owned verified PDF/audio writes and Drive-folder-free
+catalogues pass isolated SQL, actual local Deno HTTP, mobile/Android, Chrome and root 69/648/build.
+No real R2/hosted/device acceptance is claimed.
+Follow [the current critical path](docs/mobil-teslim-plani.md#current-delivery-priority--22-september-2026),
 not historical next-step prose below. Both platforms remain required for the full store candidate.
 
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
@@ -211,11 +212,12 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**21 Eylül güncel yönlendirme:** [053](docs/briefs/053-private-r2-repertoire-read.md) `beb4842`
-üzerinde özel R2 repertuvar okumasını yerelde kabul etti. Sıradaki hazır iş
-[054](docs/briefs/054-private-r2-repertoire-upload.md): tek yetkili PDF/ses yükleme-doğrulama
-akışı ve Drive klasörüne bağlı olmayan web/native katalog görünürlüğü. Gerçek R2 hesabı, hosted
-şema/secret, deploy, dosya kopyası ve cihaz ayrı onay kapılarıdır. Aşağıdaki paket özeti tarihseldir.
+**22 Eylül güncel yönlendirme:** [054](docs/briefs/054-private-r2-repertoire-upload.md) `9459732`
+üzerinde özel R2 repertuvar yükleme/doğrulama ve klasörsüz katalog akışını yerelde kabul etti.
+Sıradaki hazır iş [055](docs/briefs/055-private-r2-repertoire-delete-replace.md): kesin hedefli
+silme/uzlaştırma ve yeni dosya doğrulanmadan eskisini kaldırmayan güvenli değiştirme. Gerçek R2
+hesabı, hosted şema/secret, deploy, dosya kopyası ve cihaz ayrı onay kapılarıdır. Aşağıdaki paket
+özeti tarihseldir.
 
 **Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
 sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog
