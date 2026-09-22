@@ -9,7 +9,7 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-055 is now locally accepted; finish the Drive-free repertoire media surface and provider-ready
+056 is now locally accepted; move the next active Drive file family to immutable private versions and the provider-ready
 Android critical path rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
@@ -28,18 +28,18 @@ Android critical path rather than continuing tiny chat features automatically.
 
 ## Exact work checkpoint
 
-- Last accepted product `dd21522`/055. Verify actual HEAD; no unfinished product changes.
-- 055 passes exact-target/idempotent SQL forward/down/forward/concurrency, 42 focused cases,
-  actual signed loopback deletion/reconciliation, root 71/662/build and production Chrome
-  replace/delete acceptance. Detailed evidence: [055](../docs/briefs/055-private-r2-repertoire-delete-replace.md).
+- Last accepted product `d7c960b`/056. Verify actual HEAD; no unfinished product changes.
+- 056 passes exact cover SQL forward/down/refusal, focused 3/45, signed loopback PDF/WAV/PNG,
+  root 71/674/build, mobile catalogue/reader 2/12 and production Chrome private cover lifecycle.
+  Detailed evidence: [056](../docs/briefs/056-private-r2-repertoire-cover.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next implement [056](../docs/briefs/056-private-r2-repertoire-cover.md): exact passive PDF/raster
-  cover upload/read/replace/delete without Drive or public provider URLs.
+- Next implement [057](../docs/briefs/057-private-r2-assignment-submission-versions.md): immutable
+  private assignment submit/resubmit/history without Drive or destructive replacement ordering.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 055 generated build/coverage/screenshot evidence, disposable DB and loopback listeners are
-  removed; 40,638,320 KiB (~38.76 GiB) remained free. No VM/simulator/device created.
+- 056 generated build/coverage/screenshot evidence, disposable DB and loopback listeners are
+  removed; 40,492,424 KiB (~38.62 GiB) remained free. No VM/simulator/device created.
 - Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 
