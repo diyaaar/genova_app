@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { getProtectedDriveFileUrl, getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
+import { getProtectedAssignmentFileUrl, getProtectedDriveFileUrl, getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
 import {
   buildRuntimeDriveFileVersion,
   cacheRuntimeDriveFile,
@@ -17,7 +17,7 @@ type DriveFileUrlInput = Pick<RepertoireFile, 'drive_file_id'> &
 
 export function useProtectedDriveFileUrl(
   file: DriveFileUrlInput | null | undefined,
-  options: { repertoireFile?: boolean } = {},
+  options: { repertoireFile?: boolean; assignmentFileVersionId?: string | null } = {},
 ) {
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -94,7 +94,11 @@ export function useProtectedDriveFileUrl(
         if (options.repertoireFile && !repositoryFileId) {
           throw new Error('Dosya kimliği geçersiz.');
         }
-        const nextUrl = options.repertoireFile
+        const nextUrl = options.assignmentFileVersionId
+          ? await getProtectedAssignmentFileUrl(options.assignmentFileVersionId, {
+              file_name: fileName ?? '', mime_type: mimeType ?? null,
+            })
+          : options.repertoireFile
           ? await getProtectedRepertoireFileUrl({
               id: repositoryFileId!,
               drive_file_id: driveFileId,
@@ -152,7 +156,7 @@ export function useProtectedDriveFileUrl(
     return () => {
       cancelled = true;
     };
-  }, [driveFileId, fileName, mimeType, options.repertoireFile, repositoryFileId, updatedAt, fileSizeBytes]);
+  }, [driveFileId, fileName, mimeType, options.assignmentFileVersionId, options.repertoireFile, repositoryFileId, updatedAt, fileSizeBytes]);
 
   return { url, loading, error, isLocal, isStaleLocal };
 }

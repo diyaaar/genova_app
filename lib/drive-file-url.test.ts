@@ -17,6 +17,7 @@ vi.mock('@/lib/supabase', () => ({
 
 import {
   clearProtectedDriveFileUrlCache,
+  getProtectedAssignmentFileUrl,
   getProtectedDriveFileUrl,
   getProtectedRepertoireFileUrl,
 } from '@/lib/drive-file-url';
@@ -120,5 +121,23 @@ describe('protected Drive URL cache', () => {
     expect(first).toContain('ticket=a');
     expect(second).toContain('ticket=b');
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('requests an assignment version ticket from the assignment-only Edge boundary', async () => {
+    mocks.getSession.mockResolvedValue(session('user-a', 'token-a'));
+    const versionId = '22222222-2222-4222-8222-222222222222';
+    fetchMock.mockImplementation(() => Promise.resolve(Response.json({
+      url: `https://project.supabase.co/functions/v1/assignment-file?fileId=${versionId}&ticket=private`,
+      expiresAt: Date.now() + 60_000,
+    })));
+
+    const url = await getProtectedAssignmentFileUrl(versionId, file);
+
+    expect(url).toContain('/functions/v1/assignment-file?');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toEqual(new URL(
+      'https://project.supabase.co/functions/v1/assignment-file',
+    ));
+    expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ fileId: versionId }));
   });
 });

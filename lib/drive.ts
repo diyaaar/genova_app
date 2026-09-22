@@ -8,6 +8,7 @@ import { supabase, DriveFolderResult, RepertoireFile, AssignmentSubmission } fro
 import { authenticatedWebFetch } from './web-auth-capability';
 import { isPrivateRepertoireUploadEnabled, uploadPrivateRepertoireFile } from './repertuvar/upload';
 import { deletePrivateRepertoireFile } from './repertuvar/lifecycle';
+import { isPrivateAssignmentUploadEnabled, uploadPrivateAssignmentSubmission } from './assignments/upload';
 
 // Dosyayı base64 string'e çevir (browser-safe)
 async function fileToBase64(file: File): Promise<string> {
@@ -243,6 +244,9 @@ export async function uploadSubmission(
   file: File,
   note?: string
 ): Promise<AssignmentSubmission> {
+  if (isPrivateAssignmentUploadEnabled()) {
+    return uploadPrivateAssignmentSubmission({ assignmentId, file, note });
+  }
   return uploadSubmissionViaApi(assignmentId, file, note);
 }
 

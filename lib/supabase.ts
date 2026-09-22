@@ -392,6 +392,7 @@ export interface AssignmentSubmission {
   mime_type: string | null;
   file_size_bytes: number | null;
   drive_member_folder_id: string | null;
+  current_file_version_id?: string | null;
   submitted_at: string;
   updated_at: string;
   status?: 'pending' | 'approved' | 'rejected';

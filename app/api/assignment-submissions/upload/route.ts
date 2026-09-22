@@ -19,7 +19,7 @@ const STORAGE_LINK_PREFIX = 'storage://';
 const SUBMISSION_SELECT_COLUMNS =
   'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, reviewer_note_history, submission_note_history, hidden_by, hidden_at, approved_at, approved_by';
 const SUBMISSION_SNAPSHOT_COLUMNS =
-  'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, approved_at, approved_by';
+  'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, current_file_version_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, approved_at, approved_by';
 
 interface SubmissionSnapshot {
   id: string;
@@ -32,6 +32,7 @@ interface SubmissionSnapshot {
   mime_type: string | null;
   file_size_bytes: number | null;
   drive_member_folder_id: string | null;
+  current_file_version_id: string | null;
   submitted_at: string;
   updated_at: string | null;
   status: string | null;
@@ -63,6 +64,14 @@ interface ReviewerMemberRow {
   voice_group: string | null;
   is_active: boolean | null;
 }
+
+interface PrivateUploadNotificationBody {
+  action?: string;
+  submissionId?: string;
+  fileVersionId?: string;
+}
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const REVIEWER_ROLE_CHEF = 'sef';
 const REVIEWER_ROLE_SECTION_LEADER = 'partisyon sefi';
@@ -154,6 +163,59 @@ async function getAssignmentSubmissionReviewerMemberIds(params: {
   }
 
   return Array.from(recipientIds);
+}
+
+async function notifyCommittedPrivateUpload(params: {
+  request: Request;
+  userId: string;
+  accessToken: string;
+}) {
+  let body: PrivateUploadNotificationBody;
+  try { body = await params.request.json() as PrivateUploadNotificationBody; }
+  catch { return new NextResponse('Geçersiz bildirim isteği.', { status: 400 }); }
+  if (body.action !== 'notify_private_upload' ||
+    !body.submissionId || !UUID_PATTERN.test(body.submissionId) ||
+    !body.fileVersionId || !UUID_PATTERN.test(body.fileVersionId)) {
+    return new NextResponse('Geçersiz bildirim isteği.', { status: 400 });
+  }
+  const serviceClient = await createTenantServiceClient(params.userId, params.accessToken);
+  const { data: member, error: memberError } = await serviceClient.from('choir_members')
+    .select('id, first_name, last_name, voice_group, is_active')
+    .eq('auth_user_id', params.userId).maybeSingle();
+  if (memberError || !member?.id || member.is_active === false) {
+    return new NextResponse('Korist kaydı bulunamadı.', { status: 403 });
+  }
+  const { data: submission, error: submissionError } = await serviceClient.from('assignment_submissions')
+    .select('id, choir_id, assignment_id, member_id, current_file_version_id')
+    .eq('id', body.submissionId).eq('member_id', member.id).maybeSingle();
+  if (submissionError || !submission || submission.current_file_version_id !== body.fileVersionId) {
+    return new NextResponse('Teslim bildirimi doğrulanamadı.', { status: 403 });
+  }
+  const { data: claimed, error: claimError } = await serviceClient.rpc('claim_assignment_notification_057', {
+    p_actor_id: params.userId, p_choir_id: submission.choir_id,
+    p_submission_id: submission.id, p_file_version_id: body.fileVersionId,
+  });
+  if (claimError) return new NextResponse('Teslim bildirimi kaydedilemedi.', { status: 500 });
+  if (claimed !== true) return new NextResponse(null, { status: 204 });
+  const [{ data: assignment }, { count: historyCount }] = await Promise.all([
+    serviceClient.from('assignments').select('id, title').eq('id', submission.assignment_id).maybeSingle(),
+    serviceClient.from('assignment_submission_history').select('id', { count: 'exact', head: true })
+      .eq('source_submission_id', submission.id),
+  ]);
+  if (!assignment?.id) return new NextResponse('Ödev bulunamadı.', { status: 404 });
+  try {
+    const targetMemberIds = await getAssignmentSubmissionReviewerMemberIds({
+      serviceClient, submitterMemberId: member.id, submitterVoiceGroup: member.voice_group ?? null,
+    });
+    await sendAssignmentSubmittedPush({
+      assignmentId: assignment.id, assignmentTitle: assignment.title,
+      submitterName: `${member.first_name ?? ''} ${member.last_name ?? ''}`.trim(),
+      targetMemberIds, isResubmission: (historyCount ?? 0) > 0,
+    });
+  } catch (pushError) {
+    console.error('Private assignment submission push failed:', pushError);
+  }
+  return new NextResponse(null, { status: 204 });
 }
 
 function sanitizeFileName(fileName: string) {
@@ -370,6 +432,9 @@ export async function POST(request: Request) {
 
   try {
     const { user, accessToken } = await requireAuthenticatedUser(request);
+    if (request.headers.get('content-type')?.split(';', 1)[0]?.trim() === 'application/json') {
+      return notifyCommittedPrivateUpload({ request, userId: user.id, accessToken });
+    }
     const formData = await request.formData();
 
     const assignmentId = formData.get('assignmentId');
@@ -455,6 +520,9 @@ export async function POST(request: Request) {
       return new NextResponse(existingSnapshotError.message, { status: 400 });
     }
     const existingSubmissionSnapshot = (existingSubmissionSnapshotRow ?? null) as SubmissionSnapshot | null;
+    if (existingSubmissionSnapshot?.current_file_version_id) {
+      return new NextResponse('Bu teslim yalnız özel dosya akışıyla güncellenebilir.', { status: 409 });
+    }
 
     await ensureStorageBucketExists();
 

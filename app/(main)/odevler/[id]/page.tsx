@@ -112,6 +112,7 @@ interface AssignmentSubmissionHistoryRow {
   assignment_id: string;
   member_id: string;
   source_submission_id: string | null;
+  file_version_id: string | null;
   drive_file_id: string | null;
   drive_web_view_link: string | null;
   drive_download_link: string | null;
@@ -592,11 +593,13 @@ function SubmissionFileLink({
   className,
   children,
 }: {
-  submission: Pick<AssignmentSubmission, 'drive_file_id' | 'file_name' | 'mime_type' | 'drive_web_view_link'> | null | undefined;
+  submission: Pick<AssignmentSubmission, 'drive_file_id' | 'file_name' | 'mime_type' | 'drive_web_view_link' | 'current_file_version_id'> | null | undefined;
   className: string;
   children?: ReactNode;
 }) {
-  const { url, loading } = useProtectedDriveFileUrl(submission);
+  const { url, loading } = useProtectedDriveFileUrl(submission, {
+    assignmentFileVersionId: submission?.current_file_version_id,
+  });
 
   if (!submission?.drive_file_id && !submission?.drive_web_view_link) {
     return null;
@@ -742,7 +745,7 @@ async function fetchAssignmentDetail({
       supabase
         .from('assignment_submissions')
         .select(
-          'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, approved_at, approved_by',
+          'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, current_file_version_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, approved_at, approved_by',
         )
         .eq('assignment_id', assignmentId)
         .eq('member_id', effectiveMemberId)
@@ -750,7 +753,7 @@ async function fetchAssignmentDetail({
       supabase
         .from('assignment_submission_history')
         .select(
-          'id, assignment_id, member_id, source_submission_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, approved_at, approved_by, archived_at, archive_reason',
+          'id, assignment_id, member_id, source_submission_id, file_version_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, approved_at, approved_by, archived_at, archive_reason',
         )
         .eq('assignment_id', assignmentId)
         .eq('member_id', effectiveMemberId)
@@ -921,7 +924,7 @@ async function fetchAssignmentDetail({
       let submissionsQuery = supabase
         .from('assignment_submissions')
         .select(`
-          id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link,
+          id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, current_file_version_id,
           file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at,
           status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name,
           reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at,
@@ -1145,6 +1148,7 @@ async function fetchAssignmentDetail({
       mime_type: historyRow.mime_type,
       file_size_bytes: historyRow.file_size_bytes,
       drive_member_folder_id: historyRow.drive_member_folder_id,
+      current_file_version_id: historyRow.file_version_id,
       submitted_at: historyRow.submitted_at,
       updated_at: historyRow.updated_at ?? historyRow.submitted_at,
       status: historyRow.status ?? 'pending',
@@ -1869,6 +1873,10 @@ export default function AssignmentDetailPage() {
                                     {historySubmission.file_name}
                                   </p>
                                 </div>
+                                <SubmissionFileLink
+                                  submission={historySubmission}
+                                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[var(--color-text-medium)] transition-colors hover:text-[var(--color-text-high)]"
+                                />
                               </div>
 
                               {historySubmission.submission_note ? (

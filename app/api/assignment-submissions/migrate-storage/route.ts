@@ -104,8 +104,9 @@ export async function POST(request: Request) {
 
     const { data: submissions, error: submissionsError } = await serviceClient
       .from('assignment_submissions')
-      .select('id, assignment_id, drive_download_link, file_name, mime_type, file_size_bytes, submission_note')
+      .select('id, assignment_id, drive_download_link, file_name, mime_type, file_size_bytes, submission_note, current_file_version_id')
       .ilike('drive_download_link', 'storage://%')
+      .is('current_file_version_id', null)
       .order('submitted_at', { ascending: true });
     if (submissionsError) {
       return new NextResponse(submissionsError.message, { status: 400 });

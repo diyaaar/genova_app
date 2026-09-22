@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
     const { data: existingSubmission, error: existingSubmissionError } = await serviceClient
       .from('assignment_submissions')
-      .select('id, assignment_id, member_id')
+      .select('id, assignment_id, member_id, current_file_version_id')
       .eq('id', submissionId)
       .maybeSingle();
     if (existingSubmissionError) {
@@ -91,6 +91,9 @@ export async function POST(request: Request) {
     }
     if (!existingSubmission?.id) {
       return new NextResponse('Teslim bulunamadı.', { status: 404 });
+    }
+    if (existingSubmission.current_file_version_id) {
+      return new NextResponse('Özel teslim sürümleri saklama politikası tamamlanmadan silinemez.', { status: 409 });
     }
 
     const { data: deletedSubmission, error: deleteError } = await serviceClient

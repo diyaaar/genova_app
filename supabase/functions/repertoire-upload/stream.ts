@@ -25,7 +25,7 @@ function hasMediaSignature(prefix: Uint8Array, mime: string) {
 
 /** Constant-memory byte/hash verification. This validates media headers, not a malware scan. */
 export function verifiedStream(body: ReadableStream<Uint8Array>, expected: {
-  size: number; sha256?: string; mimeType: string;
+  size: number; sha256?: string; mimeType: string; validateSignature?: boolean;
 }) {
   const reader = body.getReader();
   const hash = createHash('sha256');
@@ -41,7 +41,10 @@ export function verifiedStream(body: ReadableStream<Uint8Array>, expected: {
         const next = await reader.read();
         if (next.done) {
           if (size !== expected.size) throw new UploadError('size-mismatch');
-          if (!hasMediaSignature(prefix.subarray(0, prefixLength), expected.mimeType)) throw new UploadError('invalid-media', 415);
+          if (expected.validateSignature !== false &&
+            !hasMediaSignature(prefix.subarray(0, prefixLength), expected.mimeType)) {
+            throw new UploadError('invalid-media', 415);
+          }
           actualSha256 = hash.digest('hex');
           if (expected.sha256 && actualSha256 !== expected.sha256) throw new UploadError('hash-mismatch');
           finished = true;
