@@ -7,6 +7,7 @@
 import { supabase, DriveFolderResult, RepertoireFile, AssignmentSubmission } from './supabase';
 import { authenticatedWebFetch } from './web-auth-capability';
 import { isPrivateRepertoireUploadEnabled, uploadPrivateRepertoireFile } from './repertuvar/upload';
+import { deletePrivateRepertoireFile } from './repertuvar/lifecycle';
 
 // Dosyayı base64 string'e çevir (browser-safe)
 async function fileToBase64(file: File): Promise<string> {
@@ -147,12 +148,13 @@ export async function uploadSongFile(
 /**
  * Şarkı dosyasını sil (sadece Şef)
  */
-export async function deleteRepertoireFile(driveFileId: string, repertoireFileId: string): Promise<void> {
-  if (driveFileId.startsWith('r2_')) throw new Error('Bu dosya için silme işlemi henüz kullanıma açılmadı.');
+export async function deleteRepertoireFile(driveFileId: string, repertoireFileId: string): Promise<{ cleanupPending: boolean }> {
+  if (driveFileId.startsWith('r2_')) return deletePrivateRepertoireFile(repertoireFileId);
   await callDrive('delete_file', {
     drive_file_id: driveFileId,
     repertoire_file_id: repertoireFileId,
   });
+  return { cleanupPending: false };
 }
 
 /**

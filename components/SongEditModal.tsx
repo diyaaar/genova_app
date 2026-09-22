@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { deleteDriveObject, deleteRepertoireFile, formatFileSize, uploadSongFile } from '@/lib/drive';
 import { isPrivateRepertoireUploadEnabled } from '@/lib/repertuvar/upload';
+import { deletePrivateRepertoireSong, replacePrivateRepertoireFile } from '@/lib/repertuvar/lifecycle';
 import { useProtectedDriveFileUrl } from '@/hooks/useProtectedDriveFileUrl';
 import { SongAssignmentModal } from './SongAssignmentModal';
 import { LottieIcon } from '@/components/LottieIcon';
@@ -509,8 +510,16 @@ export function SongEditModal({
     const oldSheetFiles = [...sheetFiles];
 
     try {
-      if (oldSheetFiles.some(item => item.drive_file_id.startsWith('r2_'))) {
-        throw new Error('Bu PDF için değiştirme işlemi henüz kullanıma açılmadı.');
+      const r2Sheets = oldSheetFiles.filter(item => item.drive_file_id.startsWith('r2_'));
+      if (r2Sheets.length > 0) {
+        if (oldSheetFiles.length !== 1 || r2Sheets.length !== 1) {
+          throw new Error('Karma PDF kaynakları güvenli değiştirme için hazır değil.');
+        }
+        const result = await replacePrivateRepertoireFile({ oldFile:r2Sheets[0],file,fileType:'sheet',mimeType:'application/pdf' });
+        await refreshSong();
+        await onSaved();
+        showSuccess(result.cleanupPending ? 'PDF değiştirildi; özel depolama temizliği bekliyor.' : 'PDF güncellendi.');
+        return;
       }
       const uploadedFile = await uploadSongFile(
         context.songId,
@@ -554,10 +563,10 @@ export function SongEditModal({
     setError(null);
 
     try {
-      await deleteRepertoireFile(activeSheet.drive_file_id, activeSheet.id);
+      const result = await deleteRepertoireFile(activeSheet.drive_file_id, activeSheet.id);
       await refreshSong();
       await onSaved();
-      showSuccess('PDF silindi.');
+      showSuccess(result.cleanupPending ? 'PDF kaldırıldı; özel depolama temizliği bekliyor.' : 'PDF silindi.');
     } catch (deleteError: unknown) {
       setError(deleteError instanceof Error ? deleteError.message : 'PDF silinemedi.');
     } finally {
@@ -651,10 +660,6 @@ export function SongEditModal({
   };
 
   const handleReplaceAudio = async (targetFile: RepertoireFile, file: File) => {
-    if (targetFile.drive_file_id.startsWith('r2_')) {
-      setError('Bu ses dosyası için değiştirme işlemi henüz kullanıma açılmadı.');
-      return;
-    }
     if (!isMp3File(file)) {
       setError('Sadece MP3 dosyası yükleyebilirsiniz.');
       return;
@@ -675,6 +680,14 @@ export function SongEditModal({
     let uploaded = false;
 
     try {
+      if (targetFile.drive_file_id.startsWith('r2_')) {
+        const result = await replacePrivateRepertoireFile({ oldFile:targetFile,file,fileType:'audio',
+          mimeType:file.type || 'audio/mpeg',partitionLabel:getAudioLabel(targetFile) });
+        await refreshSong();
+        await onSaved();
+        showSuccess(result.cleanupPending ? 'MP3 değiştirildi; özel depolama temizliği bekliyor.' : 'MP3 dosyası değiştirildi.');
+        return;
+      }
       await uploadSongFile(
         context.songId,
         context.folderId,
@@ -707,10 +720,10 @@ export function SongEditModal({
     setError(null);
 
     try {
-      await deleteRepertoireFile(targetFile.drive_file_id, targetFile.id);
+      const result = await deleteRepertoireFile(targetFile.drive_file_id, targetFile.id);
       await refreshSong();
       await onSaved();
-      showSuccess('MP3 silindi.');
+      showSuccess(result.cleanupPending ? 'MP3 kaldırıldı; özel depolama temizliği bekliyor.' : 'MP3 silindi.');
     } catch (deleteError: unknown) {
       setError(deleteError instanceof Error ? deleteError.message : 'MP3 silinemedi.');
     } finally {
@@ -914,15 +927,22 @@ export function SongEditModal({
       return;
     }
 
-    if (files.some(file => file.drive_file_id.startsWith('r2_'))) {
-      setError('Bu şarkının dosyaları için silme işlemi henüz kullanıma açılmadı.');
-      return;
-    }
-
     setDeletingSong(true);
     setError(null);
 
     try {
+      const r2Files = files.filter(file => file.drive_file_id.startsWith('r2_'));
+      if (r2Files.length > 0) {
+        if (r2Files.length !== files.length || currentSong.drive_folder_id) {
+          throw new Error('Karma Drive/R2 şarkı silme işlemi henüz kullanıma açılmadı.');
+        }
+        const result = await deletePrivateRepertoireSong(currentSong.id);
+        setShowDeleteSongDialog(false);
+        await onSaved();
+        onClose();
+        if (result.cleanupPending) showSuccess('Şarkı kaldırıldı; özel depolama temizliği bekliyor.');
+        return;
+      }
       if (currentSong.drive_folder_id) {
         try {
           await deleteDriveObject(currentSong.drive_folder_id);
