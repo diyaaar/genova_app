@@ -47,6 +47,7 @@ import { sanitizeRichText } from '@/lib/richText';
 import { createSlugLookup, isUuidLike } from '@/lib/internalPageLinks';
 import { useProtectedDriveFileUrl } from '@/hooks/useProtectedDriveFileUrl';
 import { createRealtimeTopic } from '@/lib/realtime';
+import { isPrivateAssignmentReviewUploadEnabled, uploadPrivateAssignmentReview } from '@/lib/assignments/review-upload';
 
 type ExtendedChoirMember = { first_name: string; last_name: string; photo_url?: string | null };
 
@@ -126,6 +127,7 @@ interface AssignmentSubmissionHistoryRow {
   submission_note: string | null;
   reviewer_note: string | null;
   reviewer_audio_drive_file_id: string | null;
+  reviewer_audio_file_version_id: string | null;
   reviewer_audio_file_name: string | null;
   reviewer_audio_mime_type: string | null;
   reviewer_audio_file_size_bytes: number | null;
@@ -453,6 +455,7 @@ interface ReviewSubmissionResponse {
   status: 'approved' | 'rejected' | 'pending';
   reviewer_note: string | null;
   reviewer_audio_drive_file_id?: string | null;
+  reviewer_audio_file_version_id?: string | null;
   reviewer_audio_file_name?: string | null;
   reviewer_audio_mime_type?: string | null;
   reviewer_audio_file_size_bytes?: number | null;
@@ -472,6 +475,7 @@ interface HideReviewResponse {
   id: string;
   reviewer_note: string | null;
   reviewer_audio_drive_file_id?: string | null;
+  reviewer_audio_file_version_id?: string | null;
   reviewer_audio_file_name?: string | null;
   reviewer_audio_mime_type?: string | null;
   reviewer_audio_file_size_bytes?: number | null;
@@ -526,6 +530,14 @@ async function reviewAssignmentSubmission(params: {
   reviewerNote?: string;
   reviewerAudioFile?: File | null;
 }) {
+  if (params.reviewerAudioFile && params.status !== 'pending' && isPrivateAssignmentReviewUploadEnabled()) {
+    return uploadPrivateAssignmentReview({
+      submissionId: params.submissionId,
+      status: params.status,
+      reviewerNote: params.reviewerNote,
+      file: params.reviewerAudioFile,
+    });
+  }
   const formData = new FormData();
   formData.set('submissionId', params.submissionId);
   formData.set('status', params.status);
@@ -624,10 +636,12 @@ function SubmissionFileLink({
 
 function AssignmentReviewAudioPlayer({
   driveFileId,
+  fileVersionId,
   fileName,
   mimeType,
 }: {
   driveFileId: string;
+  fileVersionId?: string | null;
   fileName: string | null | undefined;
   mimeType: string | null | undefined;
 }) {
@@ -635,7 +649,7 @@ function AssignmentReviewAudioPlayer({
     drive_file_id: driveFileId,
     file_name: fileName ?? 'degerlendirme-sesi',
     mime_type: mimeType ?? 'audio/webm',
-  });
+  }, { assignmentReviewFileVersionId: fileVersionId });
 
   return (
     <div className="mt-2 rounded-[10px] border border-[var(--color-border)] bg-black/5 p-2 dark:bg-white/5">
@@ -727,6 +741,15 @@ async function fetchAssignmentDetail({
   const privateReviewerNotesBySubmissionId = new Map<string, {
     reviewer_note: string | null;
     reviewer_audio_drive_file_id: string | null;
+    reviewer_audio_file_version_id: string | null;
+    reviewer_audio_file_name: string | null;
+    reviewer_audio_mime_type: string | null;
+    reviewer_audio_file_size_bytes: number | null;
+  }>();
+  const privateHistoryByHistoryId = new Map<string, {
+    reviewer_note: string | null;
+    reviewer_audio_drive_file_id: string | null;
+    reviewer_audio_file_version_id: string | null;
     reviewer_audio_file_name: string | null;
     reviewer_audio_mime_type: string | null;
     reviewer_audio_file_size_bytes: number | null;
@@ -745,7 +768,7 @@ async function fetchAssignmentDetail({
       supabase
         .from('assignment_submissions')
         .select(
-          'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, current_file_version_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, approved_at, approved_by',
+          'id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, current_file_version_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, approved_at, approved_by',
         )
         .eq('assignment_id', assignmentId)
         .eq('member_id', effectiveMemberId)
@@ -753,7 +776,7 @@ async function fetchAssignmentDetail({
       supabase
         .from('assignment_submission_history')
         .select(
-          'id, assignment_id, member_id, source_submission_id, file_version_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, approved_at, approved_by, archived_at, archive_reason',
+          'id, assignment_id, member_id, source_submission_id, file_version_id, drive_file_id, drive_web_view_link, drive_download_link, file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at, status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, approved_at, approved_by, archived_at, archive_reason',
         )
         .eq('assignment_id', assignmentId)
         .eq('member_id', effectiveMemberId)
@@ -780,6 +803,24 @@ async function fetchAssignmentDetail({
       submissionHistoryRows = (historyData ?? []) as AssignmentSubmissionHistoryRow[];
       if (submissionHistoryRows.length > 0) {
         revisedMemberIds.add(effectiveMemberId);
+      }
+      if (canReviewSubmissions && submissionHistoryRows.length > 0) {
+        const { data: privateHistoryRows, error: privateHistoryError } = await supabase
+          .from('assignment_submission_private_history')
+          .select('history_id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes')
+          .in('history_id', submissionHistoryRows.map((row) => row.id));
+        if (privateHistoryError) throw privateHistoryError;
+        for (const row of (privateHistoryRows ?? []) as Array<{
+          history_id: string;
+          reviewer_note: string | null;
+          reviewer_audio_drive_file_id: string | null;
+          reviewer_audio_file_version_id: string | null;
+          reviewer_audio_file_name: string | null;
+          reviewer_audio_mime_type: string | null;
+          reviewer_audio_file_size_bytes: number | null;
+        }>) {
+          privateHistoryByHistoryId.set(row.history_id, row);
+        }
       }
     }
 
@@ -926,7 +967,7 @@ async function fetchAssignmentDetail({
         .select(`
           id, assignment_id, member_id, drive_file_id, drive_web_view_link, drive_download_link, current_file_version_id,
           file_name, mime_type, file_size_bytes, drive_member_folder_id, submitted_at, updated_at,
-          status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name,
+          status, submission_note, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name,
           reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at,
           approved_at, approved_by
         `)
@@ -998,7 +1039,7 @@ async function fetchAssignmentDetail({
       if (privateSubmissionIds.length > 0) {
         const { data: privateRows, error: privateRowsError } = await supabase
           .from('assignment_submission_private_notes')
-          .select('submission_id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes')
+          .select('submission_id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes')
           .in('submission_id', privateSubmissionIds);
 
         if (!privateRowsError) {
@@ -1006,6 +1047,7 @@ async function fetchAssignmentDetail({
             submission_id: string;
             reviewer_note: string | null;
             reviewer_audio_drive_file_id: string | null;
+            reviewer_audio_file_version_id: string | null;
             reviewer_audio_file_name: string | null;
             reviewer_audio_mime_type: string | null;
             reviewer_audio_file_size_bytes: number | null;
@@ -1013,6 +1055,7 @@ async function fetchAssignmentDetail({
             privateReviewerNotesBySubmissionId.set(row.submission_id, {
               reviewer_note: row.reviewer_note,
               reviewer_audio_drive_file_id: row.reviewer_audio_drive_file_id,
+              reviewer_audio_file_version_id: row.reviewer_audio_file_version_id,
               reviewer_audio_file_name: row.reviewer_audio_file_name,
               reviewer_audio_mime_type: row.reviewer_audio_mime_type,
               reviewer_audio_file_size_bytes: row.reviewer_audio_file_size_bytes,
@@ -1034,6 +1077,9 @@ async function fetchAssignmentDetail({
           reviewer_audio_drive_file_id: submission.is_reviewer_note_hidden
             ? (privateNote?.reviewer_audio_drive_file_id ?? null)
             : submission.reviewer_audio_drive_file_id,
+          reviewer_audio_file_version_id: submission.is_reviewer_note_hidden
+            ? (privateNote?.reviewer_audio_file_version_id ?? null)
+            : submission.reviewer_audio_file_version_id,
           reviewer_audio_file_name: submission.is_reviewer_note_hidden
             ? (privateNote?.reviewer_audio_file_name ?? null)
             : submission.reviewer_audio_file_name,
@@ -1102,6 +1148,9 @@ async function fetchAssignmentDetail({
       reviewer_audio_drive_file_id: mySubmissionRow.is_reviewer_note_hidden
         ? (privateNote?.reviewer_audio_drive_file_id ?? null)
         : mySubmissionRow.reviewer_audio_drive_file_id,
+      reviewer_audio_file_version_id: mySubmissionRow.is_reviewer_note_hidden
+        ? (privateNote?.reviewer_audio_file_version_id ?? null)
+        : mySubmissionRow.reviewer_audio_file_version_id,
       reviewer_audio_file_name: mySubmissionRow.is_reviewer_note_hidden
         ? (privateNote?.reviewer_audio_file_name ?? null)
         : mySubmissionRow.reviewer_audio_file_name,
@@ -1137,6 +1186,7 @@ async function fetchAssignmentDetail({
   for (const historyRow of submissionHistoryRows) {
     const choirMember = historyRow.member_id ? submissionMembersById.get(historyRow.member_id) : undefined;
     const reviewerMember = historyRow.approved_by ? submissionMembersById.get(historyRow.approved_by) : undefined;
+    const privateHistory = privateHistoryByHistoryId.get(historyRow.id);
     submissionHistory.push({
       id: `history-${historyRow.id}`,
       assignment_id: historyRow.assignment_id,
@@ -1153,11 +1203,12 @@ async function fetchAssignmentDetail({
       updated_at: historyRow.updated_at ?? historyRow.submitted_at,
       status: historyRow.status ?? 'pending',
       submission_note: historyRow.submission_note,
-      reviewer_note: historyRow.reviewer_note,
-      reviewer_audio_drive_file_id: historyRow.reviewer_audio_drive_file_id,
-      reviewer_audio_file_name: historyRow.reviewer_audio_file_name,
-      reviewer_audio_mime_type: historyRow.reviewer_audio_mime_type,
-      reviewer_audio_file_size_bytes: historyRow.reviewer_audio_file_size_bytes,
+      reviewer_note: privateHistory?.reviewer_note ?? historyRow.reviewer_note,
+      reviewer_audio_drive_file_id: privateHistory?.reviewer_audio_drive_file_id ?? historyRow.reviewer_audio_drive_file_id,
+      reviewer_audio_file_version_id: privateHistory?.reviewer_audio_file_version_id ?? historyRow.reviewer_audio_file_version_id,
+      reviewer_audio_file_name: privateHistory?.reviewer_audio_file_name ?? historyRow.reviewer_audio_file_name,
+      reviewer_audio_mime_type: privateHistory?.reviewer_audio_mime_type ?? historyRow.reviewer_audio_mime_type,
+      reviewer_audio_file_size_bytes: privateHistory?.reviewer_audio_file_size_bytes ?? historyRow.reviewer_audio_file_size_bytes,
       approved_at: historyRow.approved_at,
       approved_by: historyRow.approved_by,
       choir_members: choirMember
@@ -1496,6 +1547,7 @@ export default function AssignmentDetailPage() {
                   status: updatedSubmission.status,
                   reviewer_note: updatedSubmission.reviewer_note ?? null,
                   reviewer_audio_drive_file_id: updatedSubmission.reviewer_audio_drive_file_id ?? null,
+                  reviewer_audio_file_version_id: updatedSubmission.reviewer_audio_file_version_id ?? null,
                   reviewer_audio_file_name: updatedSubmission.reviewer_audio_file_name ?? null,
                   reviewer_audio_mime_type: updatedSubmission.reviewer_audio_mime_type ?? null,
                   reviewer_audio_file_size_bytes: updatedSubmission.reviewer_audio_file_size_bytes ?? null,
@@ -1896,6 +1948,7 @@ export default function AssignmentDetailPage() {
                               {historySubmission.reviewer_audio_drive_file_id ? (
                                 <AssignmentReviewAudioPlayer
                                   driveFileId={historySubmission.reviewer_audio_drive_file_id}
+                                  fileVersionId={historySubmission.reviewer_audio_file_version_id}
                                   fileName={historySubmission.reviewer_audio_file_name}
                                   mimeType={historySubmission.reviewer_audio_mime_type}
                                 />
@@ -2178,6 +2231,7 @@ export default function AssignmentDetailPage() {
                                 {mySubmission.reviewer_audio_drive_file_id ? (
                                   <AssignmentReviewAudioPlayer
                                     driveFileId={mySubmission.reviewer_audio_drive_file_id}
+                                    fileVersionId={mySubmission.reviewer_audio_file_version_id}
                                     fileName={mySubmission.reviewer_audio_file_name}
                                     mimeType={mySubmission.reviewer_audio_mime_type}
                                   />

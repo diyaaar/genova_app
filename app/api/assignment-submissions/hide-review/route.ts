@@ -15,10 +15,12 @@ interface HideReviewBody {
 
 interface SubmissionRow {
   id: string;
+  choir_id: string;
   assignment_id: string;
   member_id: string;
   reviewer_note: string | null;
   reviewer_audio_drive_file_id: string | null;
+  reviewer_audio_file_version_id: string | null;
   reviewer_audio_file_name: string | null;
   reviewer_audio_mime_type: string | null;
   reviewer_audio_file_size_bytes: number | null;
@@ -29,6 +31,7 @@ interface SubmissionRow {
 interface PrivateNoteRow {
   reviewer_note: string | null;
   reviewer_audio_drive_file_id: string | null;
+  reviewer_audio_file_version_id: string | null;
   reviewer_audio_file_name: string | null;
   reviewer_audio_mime_type: string | null;
   reviewer_audio_file_size_bytes: number | null;
@@ -72,7 +75,7 @@ export async function POST(request: Request) {
 
     const { data: submissionData, error: submissionError } = await serviceClient
       .from('assignment_submissions')
-      .select('id, assignment_id, member_id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, reviewer_note_history, is_reviewer_note_hidden')
+      .select('id, choir_id, assignment_id, member_id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, reviewer_note_history, is_reviewer_note_hidden')
       .eq('id', submissionId)
       .maybeSingle();
 
@@ -92,15 +95,29 @@ export async function POST(request: Request) {
         is_reviewer_note_hidden: currentlyHidden,
         reviewer_note: submission.reviewer_note,
         reviewer_audio_drive_file_id: submission.reviewer_audio_drive_file_id,
+        reviewer_audio_file_version_id: submission.reviewer_audio_file_version_id,
         reviewer_audio_file_name: submission.reviewer_audio_file_name,
         reviewer_audio_mime_type: submission.reviewer_audio_mime_type,
         reviewer_audio_file_size_bytes: submission.reviewer_audio_file_size_bytes,
       });
     }
 
+    if (process.env.NEXT_PUBLIC_ASSIGNMENT_REVIEW_R2_ENABLED === 'true') {
+      const { data: updated, error: transitionError } = await serviceClient.rpc('set_assignment_review_visibility_058', {
+        p_actor_id: user.id,
+        p_choir_id: submission.choir_id,
+        p_submission_id: submission.id,
+        p_hidden: hidden,
+      });
+      if (transitionError || !updated) {
+        return new NextResponse(transitionError?.message ?? 'Görünürlük değiştirilemedi.', { status: 500 });
+      }
+      return NextResponse.json(updated);
+    }
+
     const { data: privateNoteData, error: privateNoteError } = await serviceClient
       .from('assignment_submission_private_notes')
-      .select('reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, note_history_json, is_hidden, last_hidden_by, last_hidden_at')
+      .select('reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, note_history_json, is_hidden, last_hidden_by, last_hidden_at')
       .eq('submission_id', submission.id)
       .maybeSingle();
 
@@ -123,6 +140,8 @@ export async function POST(request: Request) {
           reviewer_note: privateNote?.reviewer_note ?? submission.reviewer_note ?? null,
           reviewer_audio_drive_file_id:
             privateNote?.reviewer_audio_drive_file_id ?? submission.reviewer_audio_drive_file_id ?? null,
+          reviewer_audio_file_version_id:
+            privateNote?.reviewer_audio_file_version_id ?? submission.reviewer_audio_file_version_id ?? null,
           reviewer_audio_file_name:
             privateNote?.reviewer_audio_file_name ?? submission.reviewer_audio_file_name ?? null,
           reviewer_audio_mime_type:
@@ -156,6 +175,7 @@ export async function POST(request: Request) {
     const restoredAudioFields = hidden
       ? {
           reviewer_audio_drive_file_id: null,
+          reviewer_audio_file_version_id: null,
           reviewer_audio_file_name: null,
           reviewer_audio_mime_type: null,
           reviewer_audio_file_size_bytes: null,
@@ -163,6 +183,8 @@ export async function POST(request: Request) {
       : {
           reviewer_audio_drive_file_id:
             privateNote?.reviewer_audio_drive_file_id ?? submission.reviewer_audio_drive_file_id ?? null,
+          reviewer_audio_file_version_id:
+            privateNote?.reviewer_audio_file_version_id ?? submission.reviewer_audio_file_version_id ?? null,
           reviewer_audio_file_name:
             privateNote?.reviewer_audio_file_name ?? submission.reviewer_audio_file_name ?? null,
           reviewer_audio_mime_type:
@@ -190,7 +212,7 @@ export async function POST(request: Request) {
         updated_at: nowIso,
       })
       .eq('id', submission.id)
-      .select('id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, updated_at')
+      .select('id, reviewer_note, reviewer_audio_drive_file_id, reviewer_audio_file_version_id, reviewer_audio_file_name, reviewer_audio_mime_type, reviewer_audio_file_size_bytes, is_reviewer_note_hidden, hidden_by, hidden_at, updated_at')
       .maybeSingle();
 
     if (updateError) {

@@ -1,0 +1,11 @@
+import{beforeEach,describe,expect,it,vi}from'vitest';
+const mocks=vi.hoisted(()=>({auth:vi.fn(),tenant:vi.fn(),actor:vi.fn(),audit:vi.fn()}));
+vi.mock('@/lib/server/supabase-auth',()=>({requireAuthenticatedUser:mocks.auth}));
+vi.mock('@/lib/server/tenant-client',()=>({createTenantServiceClient:mocks.tenant}));
+vi.mock('@/lib/server/reviewer-auth',()=>({getActorMemberWithRoles:mocks.actor}));
+vi.mock('@/lib/server/assignment-audit',()=>({insertAssignmentAuditLog:mocks.audit}));
+import{POST}from'./route';
+function request(){return new Request('http://local/api/assignment-submissions/hide-review',{method:'POST',headers:{authorization:'Bearer token','content-type':'application/json'},body:JSON.stringify({submissionId:'60000000-0000-4000-8000-000000000058',hidden:true})});}
+describe('private review visibility adapter',()=>{beforeEach(()=>{vi.resetAllMocks();vi.stubEnv('NEXT_PUBLIC_ASSIGNMENT_REVIEW_R2_ENABLED','true');mocks.auth.mockResolvedValue({user:{id:'chef-user'},accessToken:'token'});mocks.actor.mockResolvedValue({actorMember:{id:'chef-member'},isChef:true});});
+  it('delegates the visible/private pointer move to one database transaction',async()=>{const submission={id:'60000000-0000-4000-8000-000000000058',choir_id:'choir-1',assignment_id:'assignment-1',member_id:'member-1',reviewer_note:'Good',reviewer_audio_drive_file_id:'r2_review_v',reviewer_audio_file_version_id:'version-1',reviewer_audio_file_name:'review.wav',reviewer_audio_mime_type:'audio/wav',reviewer_audio_file_size_bytes:16,reviewer_note_history:[],is_reviewer_note_hidden:false};const chain:Record<string,unknown>={};for(const method of['select','eq'])chain[method]=vi.fn(()=>chain);chain.maybeSingle=vi.fn(async()=>({data:submission,error:null}));const rpc=vi.fn(async()=>({data:{...submission,is_reviewer_note_hidden:true,reviewer_audio_file_version_id:null},error:null}));mocks.tenant.mockResolvedValue({from:()=>chain,rpc});const response=await POST(request());expect(response.status).toBe(200);expect(rpc).toHaveBeenCalledWith('set_assignment_review_visibility_058',{p_actor_id:'chef-user',p_choir_id:'choir-1',p_submission_id:submission.id,p_hidden:true});expect(mocks.audit).not.toHaveBeenCalled();});
+});

@@ -24,6 +24,7 @@ export interface RepertoireFileRecord {
 export interface RepertoireFileAuthorization {
   choirId: string;
   file: RepertoireFileRecord;
+  ticketSubject?: string;
 }
 
 export type RepertoireStorageMode = 'legacy' | 'mixed' | 'r2-required';
@@ -47,12 +48,20 @@ export interface RepertoireFileHandlerDependencies {
     accessToken: string;
     fileId: string;
   }): Promise<RepertoireFileAuthorization | null>;
-  loadTicketFile(input: { fileId: string; choirId: string }): Promise<RepertoireFileRecord | null>;
+  loadTicketFile(input: {
+    fileId: string;
+    choirId: string;
+    ticket: RepertoireFileTicketPayload;
+  }): Promise<RepertoireFileRecord | null>;
   loadR2Location(input: {
     fileId: string;
     choirId: string;
   }): Promise<RepertoireFileStorageLocation | null>;
-  createTicket(input: { fileId: string; choirId: string }): Promise<{ token: string; expiresAt: number }>;
+  createTicket(input: {
+    fileId: string;
+    choirId: string;
+    ticketSubject?: string;
+  }): Promise<{ token: string; expiresAt: number }>;
   verifyTicket(token: string): Promise<RepertoireFileTicketPayload | null>;
   fetchDrive(driveFileId: string): Promise<Response>;
   fetchStorage(bucket: string, path: string): Promise<Response>;
@@ -286,7 +295,11 @@ async function issueTicket(request: Request, dependencies: RepertoireFileHandler
       mimeType: authorized.file.mime_type,
     })) return textResponse('Bu dosya türü desteklenmiyor.', 415);
 
-    const ticket = await dependencies.createTicket({ fileId, choirId: authorized.choirId });
+    const ticket = await dependencies.createTicket({
+      fileId,
+      choirId: authorized.choirId,
+      ...(authorized.ticketSubject ? { ticketSubject: authorized.ticketSubject } : {}),
+    });
     const query = new URLSearchParams({ fileId, ticket: ticket.token });
     // The Edge runtime sees an internal worker URL behind the gateway. Return only
     // the query so the shared client resolves it against its configured public endpoint.
@@ -310,7 +323,11 @@ async function serveFile(request: Request, dependencies: RepertoireFileHandlerDe
   try {
     const ticket = await dependencies.verifyTicket(token);
     if (!ticket || ticket.fileId !== fileId) return textResponse('Dosya bağlantısı geçersiz.', 401);
-    const file = await dependencies.loadTicketFile({ fileId: ticket.fileId, choirId: ticket.choirId });
+    const file = await dependencies.loadTicketFile({
+      fileId: ticket.fileId,
+      choirId: ticket.choirId,
+      ticket,
+    });
     if (!file || file.id !== ticket.fileId || file.choir_id !== ticket.choirId) {
       return textResponse('Dosya bulunamadı.', 404);
     }

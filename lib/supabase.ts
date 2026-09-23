@@ -399,6 +399,7 @@ export interface AssignmentSubmission {
   submission_note?: string | null;
   reviewer_note?: string | null;
   reviewer_audio_drive_file_id?: string | null;
+  reviewer_audio_file_version_id?: string | null;
   reviewer_audio_file_name?: string | null;
   reviewer_audio_mime_type?: string | null;
   reviewer_audio_file_size_bytes?: number | null;

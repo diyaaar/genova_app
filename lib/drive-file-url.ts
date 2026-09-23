@@ -30,6 +30,12 @@ function getAssignmentEndpoint() {
   return `${baseUrl.replace(/\/+$/u, '')}/functions/v1/assignment-file`;
 }
 
+function getAssignmentReviewEndpoint() {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!baseUrl) throw new Error('Dosya servisi yapılandırılmamış.');
+  return `${baseUrl.replace(/\/+$/u, '')}/functions/v1/assignment-review-file`;
+}
+
 export function clearProtectedDriveFileUrlCache() {
   driveUrlCache.clear();
 }
@@ -101,6 +107,22 @@ export async function getProtectedAssignmentFileUrl(
   if (cached && cached.expiresAt - Date.now() > 30_000) return cached.url;
   const payload = await requestProtectedRepertoireFileTicket({
     endpoint: getAssignmentEndpoint(), accessToken: access.accessToken, fileId: versionId,
+    fetcher: (input, init) => authenticatedWebFetch(input, init, access),
+  });
+  driveUrlCache.set(cacheKey, payload);
+  return payload.url;
+}
+
+export async function getProtectedAssignmentReviewFileUrl(
+  versionId: string,
+  file: Pick<RepertoireFile, 'file_name' | 'mime_type'>,
+) {
+  const access = await requireCurrentSession();
+  const cacheKey = getCacheKey(access.userId, `assignment-review:${versionId}`, file.file_name, file.mime_type);
+  const cached = driveUrlCache.get(cacheKey);
+  if (cached && cached.expiresAt - Date.now() > 30_000) return cached.url;
+  const payload = await requestProtectedRepertoireFileTicket({
+    endpoint: getAssignmentReviewEndpoint(), accessToken: access.accessToken, fileId: versionId,
     fetcher: (input, init) => authenticatedWebFetch(input, init, access),
   });
   driveUrlCache.set(cacheKey, payload);

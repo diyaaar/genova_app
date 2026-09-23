@@ -95,6 +95,18 @@ export async function POST(request: Request) {
     if (existingSubmission.current_file_version_id) {
       return new NextResponse('Özel teslim sürümleri saklama politikası tamamlanmadan silinemez.', { status: 409 });
     }
+    const { data: privateReviewVersion, error: privateReviewVersionError } = await serviceClient
+      .from('assignment_review_audio_versions')
+      .select('id')
+      .eq('submission_id', submissionId)
+      .limit(1)
+      .maybeSingle();
+    if (privateReviewVersionError) {
+      return new NextResponse(privateReviewVersionError.message, { status: 500 });
+    }
+    if (privateReviewVersion?.id) {
+      return new NextResponse('Özel değerlendirme sesleri saklama politikası tamamlanmadan silinemez.', { status: 409 });
+    }
 
     const { data: deletedSubmission, error: deleteError } = await serviceClient
       .from('assignment_submissions')
