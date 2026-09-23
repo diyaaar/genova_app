@@ -2,9 +2,10 @@
 
 23 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 057 is accepted locally at `4049266`: exact SQL
-forward/down/refusal, focused 5/27, signed loopback upload/read/reconciliation, root 74/694/build and
-Chrome private submit/resubmit/history pass. Next is 058's private assignment review-audio flow.
+$5/month preference and five free choir seats. 058 is accepted locally at `ce2b438`: exact SQL
+forward/down/refusal, focused 6/39, signed loopback upload/read/reconciliation/live revocation, root
+79/708/build and Chrome replace/hide/private-history pass. Next is 059's private repertoire comment
+audio create/read/delete flow.
 No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 

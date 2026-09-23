@@ -9,7 +9,7 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-057 is now locally accepted; move the next active Drive file family to immutable private versions and the provider-ready
+058 is now locally accepted; move the next active Drive file family to immutable private versions and the provider-ready
 Android critical path rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
@@ -28,18 +28,18 @@ Android critical path rather than continuing tiny chat features automatically.
 
 ## Exact work checkpoint
 
-- Last accepted product `4049266`/057. Verify actual HEAD; no unfinished product changes.
-- 057 passes assignment-version SQL forward/down/refusal, focused 5/27, signed loopback upload/read/
-  reconciliation, root 74/694/build and production Chrome private submit/resubmit/history.
-  Detailed evidence: [057](../docs/briefs/057-private-r2-assignment-submission-versions.md).
+- Last accepted product `ce2b438`/058. Verify actual HEAD; no unfinished product changes.
+- 058 passes review-audio SQL forward/down/refusal, focused 6/39, signed loopback upload/read/
+  reconciliation/live revocation, root 79/708/build and production Chrome replace/hide/history.
+  Detailed evidence: [058](../docs/briefs/058-private-r2-assignment-review-audio.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next implement [058](../docs/briefs/058-private-r2-assignment-review-audio.md): private assignment
-  reviewer audio with visible/hidden/history authority and no Drive/public provider URL.
+- Next implement [059](../docs/briefs/059-private-r2-repertoire-comment-audio.md): private repertoire
+  comment audio create/read/delete with target-group/live visibility and no Drive/public provider URL.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 057 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
-  are removed; 39,778,592 KiB (~37.94 GiB) remained free. No VM/simulator/device created.
+- 058 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
+  are removed; 38,792,124 KiB (~37.0 GiB) remained free. No VM/simulator/device created.
 - Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 

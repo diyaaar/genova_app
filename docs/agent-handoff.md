@@ -7,22 +7,22 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--22-september-2026).
-2. [057](briefs/057-private-r2-assignment-submission-versions.md) accepts immutable private
-   assignment files/history; continue with [058](briefs/058-private-r2-assignment-review-audio.md),
+2. [058](briefs/058-private-r2-assignment-review-audio.md) accepts private assignment review audio;
+   continue with [059](briefs/059-private-r2-repertoire-comment-audio.md),
    using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product: `4049266` (057); verify current HEAD. No unfinished product changes.
+- Last accepted product: `ce2b438` (058); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- 057 local candidate: immutable assignment submit/resubmit/history passed PostgreSQL, signed Deno
-  HTTP, protected-ticket Chrome and full root gates without Drive calls.
-- Next: 058 private assignment review audio including visible/hidden pointer transitions. Deletion,
-  bulk copy, provider and live execution remain outside that package.
+- 058 locally passes private review-audio upload/read/replace, atomic hide/unhide, reviewer-only
+  hidden history, actor-bound live ticket revocation, Chrome and full root gates without Drive.
+- Next: 059 private repertoire comment audio create/read/delete. Assignment retention, chat media,
+  bulk copy, provider and live execution remain later packages.
 
 ## Delivery decisions
 
@@ -48,7 +48,7 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 39,778,592 KiB (~37.94 GiB) was free after 057 workspace cleanup. Build/coverage/screenshot were
+- 38,792,124 KiB (~37.0 GiB) was free after 058 workspace cleanup. Build/coverage/screenshot were
   moved to Trash; disposable databases and loopback listeners were removed; no mobile build output
   was created.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
