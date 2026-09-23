@@ -9,7 +9,8 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-062 is now locally accepted; the 053–060 release chain, runbook and bounded copy executor are ready.
+063 is now locally accepted; the 053–060 release chain, runbook, deterministic inventory contract
+and bounded copy executor are ready.
 The next critical step is an owner-authorized provider choice/activation, then separately gated
 hosted backup, migration/functions, live inventory/copy and activation—not another small feature.
 
@@ -29,18 +30,19 @@ hosted backup, migration/functions, live inventory/copy and activation—not ano
 
 ## Exact work checkpoint
 
-- Last accepted product/test `e4a4c23`/062. Verify actual HEAD; no unfinished product changes.
+- Last accepted product/schema/test `a69a936`/063. Verify actual HEAD; no unfinished product changes.
 - 062 passes 38 focused manifest/stream/resume/refusal/batch cases and root 89 files/773 tests/build.
   Detailed evidence: [062](../docs/briefs/062-bounded-private-r2-copy-executor.md).
+- 063 passes the six-family inventory/status/order/identity/privilege matrix and exact down/reapply
+  on a disposable PG17 clone. [Evidence](../docs/briefs/063-private-r2-copy-inventory-contract.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
 - Next ask the owner to choose EU jurisdiction (recommended) or Automatic and explicitly authorize
   R2 activation/bucket/token within the stated budget. Hosted/data steps remain separate approvals.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 061 disposable DB/listeners remain removed; no VM/simulator/device was created. 062 removed its
-  test temp/build/coverage output and left
-  40,783,000 KiB (~38.9 GiB) free. Cloudflare credentials must never be pasted into chat or Git.
+- 063's disposable DB is removed; no VM/simulator/device/build/media output was created. About
+  40.7 million KiB (~38.9 GiB) remains free. Cloudflare credentials must never enter chat or Git.
 
 ## Remaining requirements and authority
 

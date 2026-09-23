@@ -7,7 +7,8 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--23-september-2026).
-2. [062](briefs/062-bounded-private-r2-copy-executor.md) accepts the bounded copy data plane;
+2. [063](briefs/063-private-r2-copy-inventory-contract.md) accepts the service-only inventory input
+   to [062's](briefs/062-bounded-private-r2-copy-executor.md) bounded copy data plane;
    continue at the exact provider/hosted inventory/copy/activation approval gates,
    using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
@@ -15,12 +16,14 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 ## Current checkout and ownership
 
-- Last accepted product/test: `e4a4c23` (062); verify current HEAD. No unfinished product changes.
+- Last accepted product/schema/test: `a69a936` (063); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
 - 062 locally passes manifest/journal binding, bounded streaming Drive→signed R2 copy, independent
   destination SHA-256, resume/adopt/refusal and batch limits; no real object was copied.
+- 063 locally passes a deterministic six-family, service-only source inventory, honest gap/status
+  classification, prerequisite/down/refusal and exact reapply; no hosted row was read or changed.
 - Next blocking choices are R2 jurisdiction and authority for provider activation. Hosted backup,
   migration/deploy, real inventory/copy and cutover remain subsequent explicit gates.
 
@@ -48,12 +51,13 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 40,783,000 KiB (~38.9 GiB) remained after final 062 cleanup. Test temp directories/processes,
-  root build and coverage outputs were removed; no database, VM, simulator or mobile build was created.
+- About 40.7 million KiB (~38.9 GiB) remained after 063 cleanup. Test clones/processes,
+  root build and coverage outputs were removed; no database, VM, simulator or mobile build remains.
   Dark-theme room-info contrast is a recorded beta UI follow-up, not a storage failure.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.
-  Existing Storage migration runs toward Drive, not away. Cloudflare/R2 account availability asked;
+  Existing Storage migration runs toward Drive, not away. 063 now makes the authorized snapshot
+  inventory deterministic, but Google metadata enrichment remains real-data work. R2 availability asked;
   no credentials requested, activation/region/live access unapproved. Does not block local work.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;

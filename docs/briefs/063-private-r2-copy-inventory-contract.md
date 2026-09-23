@@ -1,6 +1,6 @@
 # 063 — Service-only private R2 copy inventory contract
 
-**Status/date/writer:** CONTRACT READY / 2026-09-23 / primary agent.
+**Status/date/writer:** ACCEPTED LOCALLY / 2026-09-23 / primary agent.
 
 **Observable result and user need:** An authorized release operator can query one choir's legacy
 file references as a deterministic, read-only inventory across all six accepted copy families,
@@ -16,7 +16,8 @@ any mapping.
 **Start evidence:** `main/c98ed7d`; product/test `e4a4c23`/062 accepted. Only user-owned
 `supabase/.temp/cli-latest` is dirty and remains unstaged. 40,787,220 KiB (~38.9 GiB) is free.
 The restored local base confirms the legacy columns named by 052; 053–060 add the private target
-tables/pointers but do not inventory old references. Supabase CLI 2.107.0 documents `migration new`.
+tables/pointers but do not inventory old references. Supabase CLI 2.107.0 documents `migration new`;
+its UTC scaffold name is moved after 060 because 063 explicitly depends on the complete chain.
 No owner reply yet authorizes provider activation, credentials, hosted DB/data reads or real copy.
 
 **Current work card:**
@@ -46,15 +47,16 @@ Use one PostgreSQL test clone, remove it after the final dependent check, and re
 - Input is one non-null choir UUID and one validated private bucket name. Output is stable ordered
   rows, never provider requests or writes. Each row includes family, owner table/row/slot/version,
   legacy reference and recognized Drive ID when present, stored name/MIME/length, deterministic
-  item/version or batch identities, exact 053–060 destination key, and a machine-readable status.
+  item/version or batch identities, exact 053–060 destination key where representable, and a
+  machine-readable status. An over-limit legacy chat position has no invented destination key.
 - Enumerate repertoire files; current and historical assignment submissions; visible, private,
   public-history and private-history review audio; repertoire comment audio; both single/array chat
   image metadata; and URL-only room avatars. Preserve chat image order. A duplicate reference in
   distinct product slots remains distinct inventory; the copy/activation stage decides dedupe.
 - Recognize only direct Drive IDs and the existing first-party `drive.google.com/file/d/...` or
   `drive.google.com/uc?...id=...` URL forms. `sb_` Storage aliases, external URLs, malformed IDs,
-  missing stored metadata, orphaned history activation parents and current R2 aliases are visible
-  status rows, not silently selected as copy-ready.
+  missing references/metadata, over-limit chat batches, orphaned history activation parents and
+  current R2 aliases are visible status rows, not silently selected as copy-ready.
 - Database size/MIME/name are untrusted hints. Even a structurally ready row requires Google
   metadata verification before it becomes a 062 manifest entry. The function emits no SHA-256.
 - Stable UUIDs are derived only for migration identity; they are not proof of object existence.
@@ -101,11 +103,11 @@ Use one PostgreSQL test clone, remove it after the final dependent check, and re
 
 | Criterion / expected behavior | Required? | Status | Proof required | Limit |
 |---|---|---|---|---|
-| Six-family complete ordered inventory | yes | NOT RUN | Local fixtures cover every accepted owner/slot, chat single/array order and room-avatar URL extraction | Synthetic rows only. |
-| Honest classification and exact destination identity | yes | NOT RUN | Ready-hint, missing metadata, non-Drive/unsupported, malformed/orphan and already-private cases; deterministic IDs/keys stable across repeated calls | No provider verification or SHA-256. |
-| Read-only and least privilege | yes | NOT RUN | Repeated call leaves product/private tables unchanged; volatility/body review; only service role executes; invalid choir/bucket and other roles refuse | Self-review, not hosted abuse test. |
-| Forward/down/reapply and prerequisite refusal | yes | NOT RUN | Disposable PG17 clone applies 053–063, tests, exact down, absence, reapply; wrong baseline refuses closed | Not hosted migration/restore evidence. |
-| Required local gates and cleanup | yes | NOT RUN | Runner/shell syntax, doc links, `git diff --check`, final diff/security/resource review; clone/output removed, free space measured | No root/mobile build needed. |
+| Six-family complete ordered inventory | yes | PASS | 2026-09-23, `a69a936`, `063_private_r2_copy_inventory_runner.sh`; repertoire, current/history submissions, four review owners, comment, chat single/array/empty/overflow and avatar fixtures | Synthetic rows only. |
+| Honest classification and exact destination identity | yes | PASS | Same run: provider-metadata candidate, missing reference/metadata, Storage/external, over-limit batch, orphan activation parent, already-private/conflict classes; repeated fingerprint and exact valid keys | No provider verification or SHA-256. |
+| Read-only and least privilege | yes | PASS | Stable fixed-search-path function; authenticated refusal; service-only wrapper; helpers/schema unavailable to service role; invalid choir/bucket refuse; repeated query leaves fixtures unchanged | Self-review, not hosted abuse test. |
+| Forward/down/reapply and prerequisite refusal | yes | PASS | Disposable PG17 clone: incomplete 052-era baseline refuses; 053–063 applies; unexpected dependent blocks down; exact down restores 060 schema hash; clean reapply passes | Not hosted migration/restore evidence. |
+| Required local gates and cleanup | yes | PASS | Final runner + `bash -n`, 187 changed-document local links, `git diff --check`, migration ordering/security/diff review; clone removed; 40,742,632 KiB (~38.9 GiB) free | No root/mobile build needed. |
 | Hosted/provider/real-data/copy/activation/device/release | no — later authority | NOT RUN | Separate approved brief/run | Still required for operational beta/full goal. |
 
 Required FAIL or NOT RUN keeps 063 open. Passing local SQL is not current hosted inventory, copied
@@ -115,3 +117,23 @@ data, Drive exit, Android beta or store acceptance.
 Then generate the migration with the inspected CLI, implement only the allowed paths, and keep the
 next external request unchanged: choose EU jurisdiction or Automatic and explicitly authorize R2
 activation; hosted/data operations remain separately gated.
+
+## Result and review
+
+Contract commit: `1fe3c33`. Product/schema/test commit: `a69a936`
+(`063: add service-only private copy inventory`). The final disposable PostgreSQL run passed the
+six-family/status/order/identity/privilege matrix, prerequisite refusal, dependency-refusing down,
+exact schema restoration and clean reapply. The first acceptance run stopped because the test
+expected PostgreSQL's empty `search_path` catalogue text as `search_path=` while PG17 reports
+`search_path=""`; the function's fixed empty path and grants were already correct. The assertion
+was corrected to the observed catalogue value. Later self-review found that the CLI UTC timestamp
+would sort 063 before its future-dated 060 prerequisite; the scaffold was moved after 060 and an
+ordering guard was added before the final green run.
+
+The inventory reports missing legacy image references, chat batches beyond five, unsupported URLs,
+Storage aliases, incomplete stored metadata, orphaned activation parents, existing private rows and
+structurally ready provider candidates without upgrading any to verified copy evidence. No hosted
+Supabase/Google/Cloudflare call, real row/file read, schema deploy, manifest, copy, activation,
+source mutation, device or release ran. The disposable database was removed; no build, simulator,
+VM, downloaded media or retained 063 output remains. `supabase/.temp/cli-latest` remains unrelated
+and unstaged. The next critical gate is still the owner's R2 jurisdiction/activation authority.

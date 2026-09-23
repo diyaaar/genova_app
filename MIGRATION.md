@@ -10,7 +10,7 @@ private R2 storage preparation replaces production Drive dependency before opera
 056 is locally accepted at `d7c960b`: private passive covers plus the 053–055 repertoire lifecycle
 pass isolated SQL, signed local Deno HTTP, protected Chrome, mobile regression and root 71/674/build.
 No real R2/hosted/device acceptance is claimed.
-Follow [the current critical path](docs/mobil-teslim-plani.md#current-delivery-priority--22-september-2026),
+Follow [the current critical path](docs/mobil-teslim-plani.md#current-delivery-priority--23-september-2026),
 not historical next-step prose below. Both platforms remain required for the full store candidate.
 
 **Ajan başlangıcı:** [Geçiş rehberini](docs/gecis-rehberi.md) oku; kapsam, kaynak,
@@ -212,11 +212,12 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**23 Eylül güncel yönlendirme:** [062](docs/briefs/062-bounded-private-r2-copy-executor.md)
-`e4a4c23` üzerinde dış/private manifest ve journal, exact target/batch limitleri, akış halinde
-Drive→R2 kopyası, bağımsız hedef SHA-256, resume/adopt/refusal ve ilk hatada durmayı yerelde kabul
-etti. Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon kararıdır; hosted backup/şema/
-secret/deploy, onaylı canlı envanter-kopya-aktivasyon, flag ve kaynak silme ayrı onaylardır. Koyu
+**23 Eylül güncel yönlendirme:** [063](docs/briefs/063-private-r2-copy-inventory-contract.md)
+`a69a936` üzerinde 062 kopya yürütücüsünü besleyen, servis rolüne özel ve altı aileyi kapsayan
+deterministik envanter/statü sözleşmesini yerelde kabul etti. Eksik/harici/Storage/özel/hedef-çatışmalı
+satırlar kopyaya hazır sayılmıyor. Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon
+kararıdır; hosted backup/şema/secret/deploy, onaylı gerçek envanter-metadata-kopya-aktivasyon, flag
+ve kaynak silme ayrı onaylardır. Koyu
 temadaki oda bilgisi çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
 
 **Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar

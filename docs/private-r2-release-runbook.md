@@ -7,7 +7,8 @@ individual briefs remain the acceptance authority for each local implementation.
 ## Candidate and immutable boundaries
 
 - Candidate base: product commits `beb4842`, `9459732`, `dd21522`, `d7c960b`, `4049266`,
-  `ce2b438`, `879d4ec`, `bfe994d`, release config `6acea76` and copy executor `e4a4c23`.
+  `ce2b438`, `879d4ec`, `bfe994d`, release config `6acea76`, copy executor `e4a4c23`
+  and service-only inventory contract `a69a936`.
 - Supabase project must resolve to `hievmwwctjjlhmssoxsu` immediately before every approved hosted
   step. A Git remote, local `.env` or old CLI link is not target proof.
 - Supabase DB/Auth/Realtime/Edge and current web hosting remain. This runbook does not move them to
@@ -60,8 +61,10 @@ Forward, only after a fresh backup and demonstrated disposable restore:
 6. `20260923103000_private_r2_assignment_review_audio_058.sql`
 7. `20260923170000_private_r2_repertoire_comment_audio_059.sql`
 8. `20260923193000_private_r2_chat_media_060.sql`
+9. `20260923194500_private_r2_copy_inventory_063.sql`
 
-Reverse order is `060_private_r2_chat_media_down.sql`,
+Reverse order starts with `063_private_r2_copy_inventory_down.sql`, then
+`060_private_r2_chat_media_down.sql`,
 `059_private_r2_repertoire_comment_audio_down.sql`,
 `058_private_r2_assignment_review_audio_down.sql`,
 `057_private_r2_assignment_versions_down.sql`,
@@ -106,10 +109,11 @@ Each numbered stage needs the authority named in its heading and stops on any fa
 1. **Provider authority:** verify Cloudflare account and owner choice; create one private Standard
    bucket; create the least-privilege bucket token. Record account/bucket/jurisdiction, no values.
 2. **Hosted read authority:** resolve Supabase project; take a current backup; restore it to an
-   isolated target and run all existing schema acceptance. Inventory current bytes/rows/recognized
-   Drive sources without downloading a bulk mirror. Produce a measured cost estimate.
+   isolated target, rehearse 053–063 there and run all existing schema acceptance. Query the 063
+   inventory from that snapshot, then enrich current bytes/recognized Drive sources without a bulk
+   mirror. Produce a measured cost estimate before any hosted schema write.
 3. **Hosted write authority:** set server secrets with modes `legacy` and enables `false`; apply the
-   ordered additive migrations; deploy only the thirteen manifest functions. Probe disabled writes,
+   ordered additive migrations through 063; deploy only the thirteen manifest functions. Probe disabled writes,
    user/ticket refusals and current legacy reads. A failed function blocks every client flag.
 4. **Copy authority:** run a separately reviewed bounded copy executor. For every source slot record
    `choir_id`, family, source table/row/slot/version, legacy ID or recognized URL, destination bucket
@@ -124,6 +128,20 @@ Each numbered stage needs the authority named in its heading and stops on any fa
    compatibility. Keep Drive sources. Public ACL revocation and source deletion are separate steps.
 
 ### Bounded copy executor
+
+[063](briefs/063-private-r2-copy-inventory-contract.md) supplies the read-only inventory input to
+this stage. Run `private_r2_copy_inventory_063(choir_id,bucket)` only as `service_role`, once per
+exact choir, on the approved restored snapshot or separately authorized hosted target. Never expose
+it to a browser/mobile/admin client. Keep its raw result as a private external `0600` artifact.
+
+The 063 result is not a 062 manifest. Only `ready-for-provider-metadata` rows are candidates for
+Google metadata enrichment; even those still need an exact current name/MIME/length check and the
+object bytes remain unverified. Reconcile `already-private` and `private-target-conflict`; resolve or
+explicitly retain `missing-reference`, `needs-provider-metadata`, `unsupported-reference`,
+`non-drive-storage`, `activation-parent-missing`, `activation-shape-unsupported` and unresolved
+private aliases. Never invent a destination for an over-limit chat position. Snapshot/reconcile
+writes before treating the inventory as current. Activation must reuse the deterministic IDs/keys
+from 063 or refuse; 063 itself writes no mapping or product row.
 
 [062](briefs/062-bounded-private-r2-copy-executor.md) adds the reviewed local operator command
 `scripts/private-r2-copy.ts`; it is not an Edge Function and it performs no database write. Raw
