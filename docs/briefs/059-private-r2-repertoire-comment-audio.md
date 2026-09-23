@@ -1,6 +1,14 @@
 # 059 — Private R2 repertoire comment audio lifecycle
 
-**Status/date/writer:** READY / 2026-09-23 / unassigned.
+**Status/date/writer:** LOCAL ACCEPTANCE COMPLETE / 2026-09-23 / primary agent.
+
+**Start checkpoint:** HEAD `45a0e45`; only user-owned `supabase/.temp/cli-latest` is dirty.
+38,792,124 KiB (~37.0 GiB) free; no listener, simulator or disposable database remains. Source and
+restored-schema inspection confirmed the Drive/base64/public-ACL path above and a schema-history
+gap: `is_hidden` exists in the restored production snapshot but not in checked-in migrations. The
+tenant-wide permissive policy also means UI filtering alone cannot protect hidden comments. 059
+must add a restrictive live-visibility policy and actor-bound content recheck; it must not treat the
+existing UI filter as authorization. No hosted lookup or mutation was performed.
 
 **Observable result:** An authorized chef or same-section leader can publish a text-only comment or
 a bounded private audio comment without Drive; only the existing target audience can read the audio,
@@ -68,12 +76,37 @@ orphaned active row.
 
 | Criterion | Required? | Status | Proof required | Limit |
 |---|---|---|---|---|
-| Comment/audio schema, authority and exact rollback | yes | NOT RUN | Isolated PostgreSQL 17 forward/down/refusal; chef/section/global/voice/wrong-voice/wrong-choir/hidden/delete/retry matrix and catalogue checks | Hosted migration separate. |
-| Bounded private create/read/delete | yes | NOT RUN | Actual Edge HTTP + signed loopback provider; exact hash/readback, replay/reconciliation, Range and live ticket revocation; no orphan active row | Loopback is not real R2. |
-| Web compatibility | yes | NOT RUN | Focused tests and production Chrome 412x915 text-only + audio create/play/hide/delete with zero Drive/public provider URL | No device inference. |
-| Required gates and cleanup | yes | NOT RUN | Deno/SQL/runtime, root `pnpm check`, diff/secret/script/resource review; mobile only if shared/native code changes | iOS remains grouped unless platform-sensitive. |
+| Comment/audio schema, authority and exact rollback | yes | **PASS** | Isolated PostgreSQL 17 forward/down/refusal; chef/section/global/voice/wrong-voice/wrong-choir/hidden/delete/retry, legacy-audio orphan refusal and catalogue checks | Hosted migration separate. |
+| Bounded private create/read/delete | yes | **PASS** | Actual Deno HTTP + signed loopback S3: exact SHA-256/readback, committed replay, failed-readback cleanup, lost-response reconciliation, Range, old-ticket live revocation, text create and exact-key delete/replay | Loopback is not real R2. |
+| Web compatibility | yes | **PASS** | Focused 5 files/21 cases and production Chrome 412x915: text/audio create, private play, other-author hide/unhide, creator delete; 1 upload, 2 tickets, 1 content read, zero Drive/errors | No device inference. |
+| Required gates and cleanup | yes | **PASS** | Deno check; SQL/runtime; root `pnpm check` 83 files/722 tests, SW syntax and production build; diff/script/resource review; generated output and listeners removed | No mobile/shared-native change; iOS remains grouped. |
 | Hosted/provider/real-data/device | no — separate gate | NOT RUN | Controlled release/copy manifest later | Authority required. |
 
 **Rollback:** down refuses accepted/private object or unresolved create/delete state. Hosted rollback
 must preserve any R2-only comment and object manifest; Git revert is not data rollback. The result
 record must name residual legacy reads and the next Drive family.
+
+## Result
+
+- Product commit `879d4ec` adds immutable private comment-audio versions, server-owned bounded
+  upload/read/delete, actor-bound tickets with live target/hidden recheck and Google-free text
+  creation. Comment audio never enters the offline repertoire cache. Legacy Drive audio remains a
+  mixed-read/delete compatibility path and cannot be directly deleted into an orphaned object.
+- SQL acceptance passed exact forward/down and unresolved-provider refusal without changing the
+  source restore. The matrix covers chef/global, section leader/own voice, singer, wrong voice,
+  wrong choir, hidden visibility, immutable identity, idempotent text/upload/delete and legacy
+  audio direct-delete refusal. The restored production snapshot still exposes the pre-existing
+  `is_hidden` migration-history gap; 059 fails closed if that column is absent.
+- Actual local signed S3 HTTP passed SHA-256 readback, Range, replay, cleanup and live ticket
+  revocation before provider access. Production Chrome passed the visible flow at 412x915 with
+  zero Drive calls or page errors. Root gates passed 83 files/722 tests plus production build.
+- Hosted schema/functions/flags, real R2, current live Drive objects/ACLs, deployment, real users,
+  device and publication are **NOT RUN** and remain separate authority. Existing Drive objects are
+  neither copied nor removed by this package.
+- `.next`, coverage and browser screenshot left the workspace; disposable DB/listeners are gone.
+  Free space after cleanup was 37,689,584 KiB (~35.9 GiB). The unrelated
+  `supabase/.temp/cli-latest` remains unstaged.
+
+**Next:** prepare the remaining Drive-owned chat image/message and room-avatar family as one
+room-authorized private-media flow, then the controlled provider/copy/cutover package. Do not
+activate a provider or inspect/copy live data without the applicable owner authority.

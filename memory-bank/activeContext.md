@@ -9,7 +9,7 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-058 is now locally accepted; move the next active Drive file family to immutable private versions and the provider-ready
+059 is now locally accepted; move the last active Drive media family to immutable private versions and the provider-ready
 Android critical path rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
@@ -28,18 +28,18 @@ Android critical path rather than continuing tiny chat features automatically.
 
 ## Exact work checkpoint
 
-- Last accepted product `ce2b438`/058. Verify actual HEAD; no unfinished product changes.
-- 058 passes review-audio SQL forward/down/refusal, focused 6/39, signed loopback upload/read/
-  reconciliation/live revocation, root 79/708/build and production Chrome replace/hide/history.
-  Detailed evidence: [058](../docs/briefs/058-private-r2-assignment-review-audio.md).
+- Last accepted product `879d4ec`/059. Verify actual HEAD; no unfinished product changes.
+- 059 passes comment-audio SQL forward/down/refusal, focused 5/21, signed loopback upload/read/
+  delete/reconciliation/live revocation, root 83/722/build and production Chrome text/audio/hide/delete.
+  Detailed evidence: [059](../docs/briefs/059-private-r2-repertoire-comment-audio.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next implement [059](../docs/briefs/059-private-r2-repertoire-comment-audio.md): private repertoire
-  comment audio create/read/delete with target-group/live visibility and no Drive/public provider URL.
+- Next prepare private room-authorized chat message images and room avatars, the remaining first-party
+  Drive media family from 052, without expanding native chat features.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 058 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
-  are removed; 38,792,124 KiB (~37.0 GiB) remained free. No VM/simulator/device created.
+- 059 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
+  are removed; 37,689,584 KiB (~35.9 GiB) remained free. No VM/simulator/device created.
 - Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 

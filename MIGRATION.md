@@ -212,11 +212,10 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**23 Eylül güncel yönlendirme:** [058](docs/briefs/058-private-r2-assignment-review-audio.md)
-`ce2b438` üzerinde özel ödev değerlendirme sesini, atomik görünür/gizli geçişi, yalnız değerlendirene
-açık gizli geçmişi ve gizleme sonrası canlı bilet iptalini yerelde kabul etti. Sıradaki hazır iş
-[059](docs/briefs/059-private-r2-repertoire-comment-audio.md): hedef ses grubu ve gizlilik yetkisini
-koruyan özel repertuvar yorum sesi oluşturma/okuma/silme akışı. Gerçek R2
+**23 Eylül güncel yönlendirme:** [059](docs/briefs/059-private-r2-repertoire-comment-audio.md)
+`879d4ec` üzerinde Google'sız metin notunu, özel repertuvar yorum sesi oluşturma/okuma/silme akışını,
+hedef ses grubu/gizlilik yetkisini ve gizleme sonrası canlı bilet iptalini yerelde kabul etti.
+Sıradaki hazır iş oda-yetkili özel chat mesaj görselleri ve oda avatarlarıdır. Gerçek R2
 hesabı, hosted şema/secret, deploy, dosya kopyası ve cihaz ayrı onay kapılarıdır. Aşağıdaki paket
 özeti tarihseldir.
 

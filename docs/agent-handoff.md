@@ -7,22 +7,22 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--22-september-2026).
-2. [058](briefs/058-private-r2-assignment-review-audio.md) accepts private assignment review audio;
-   continue with [059](briefs/059-private-r2-repertoire-comment-audio.md),
+2. [059](briefs/059-private-r2-repertoire-comment-audio.md) accepts private repertoire comment audio;
+   continue with the remaining private chat-media family,
    using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product: `ce2b438` (058); verify current HEAD. No unfinished product changes.
+- Last accepted product: `879d4ec` (059); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- 058 locally passes private review-audio upload/read/replace, atomic hide/unhide, reviewer-only
-  hidden history, actor-bound live ticket revocation, Chrome and full root gates without Drive.
-- Next: 059 private repertoire comment audio create/read/delete. Assignment retention, chat media,
-  bulk copy, provider and live execution remain later packages.
+- 059 locally passes Google-free text comments plus private comment-audio upload/read/hide/delete,
+  actor-bound live ticket revocation, exact rollback, Chrome and full root gates without Drive.
+- Next: private room-authorized chat image/message and room-avatar storage. Retention, bulk copy,
+  provider activation and live execution remain later packages.
 
 ## Delivery decisions
 
@@ -48,13 +48,13 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 38,792,124 KiB (~37.0 GiB) was free after 058 workspace cleanup. Build/coverage/screenshot were
+- 37,689,584 KiB (~35.9 GiB) was free after 059 workspace cleanup. Build/coverage/screenshot were
   moved to Trash; disposable databases and loopback listeners were removed; no mobile build output
   was created.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.
   Existing Storage migration runs toward Drive, not away. Cloudflare/R2 account availability asked;
-  no credentials requested, activation/region/live access unapproved. Does not block local 058.
+  no credentials requested, activation/region/live access unapproved. Does not block local work.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;
   iOS runs at integration/candidate gates or earlier when a platform-sensitive change requires it.
