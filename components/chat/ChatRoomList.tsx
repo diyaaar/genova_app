@@ -19,8 +19,8 @@ import {
   setRoomNotifications,
   type ChatRoom,
 } from '@/lib/chat';
-import { getDriveImageUrl } from '@/lib/drive';
 import { RoomListContextMenu } from './RoomListContextMenu';
+import { ProtectedChatMediaImage } from './ProtectedChatMediaImage';
 
 const MAX_ONLINE_AVATARS = 4;
 
@@ -374,8 +374,8 @@ export function ChatRoomList() {
                         className="h-full w-full rounded-full object-cover"
                       />
                     ) : room.avatar_url ? (
-                      <img
-                        src={getDriveImageUrl(room.avatar_url)}
+                      <ProtectedChatMediaImage
+                        value={room.avatar_url}
                         alt={displayName}
                         className="h-full w-full rounded-full object-cover"
                       />

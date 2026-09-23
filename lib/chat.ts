@@ -1,5 +1,12 @@
 import { supabase } from '@/lib/supabase';
 import { uploadChatImage } from '@/lib/drive';
+import {
+  deletePrivateChatMessage,
+  hydrateChatMessageMedia,
+  isPrivateChatMediaEnabled,
+  sendPrivateChatImages,
+  uploadPrivateRoomAvatar,
+} from '@/lib/chat-media';
 
 // =============================================
 // Type Definitions
@@ -880,13 +887,14 @@ export async function fetchMessages(
   if (error) throw error;
 
   // Map sender
-  return (data ?? []).map((msg) => ({
+  const messages = (data ?? []).map((msg) => ({
     ...msg,
     sender: (msg.choir_members as unknown as ChatMessage['sender']),
     reply_to: normalizeReplyRelation(msg.reply_to),
     metadata_json: (msg.metadata_json ?? {}) as Record<string, unknown>,
     message_type: msg.message_type as ChatMessageType,
   })) as ChatMessage[];
+  return Promise.all(messages.map(hydrateChatMessageMedia));
 }
 
 /** Fetch room members */
@@ -1251,6 +1259,14 @@ export async function editMessage(messageId: string, newContent: string) {
 
 /** Soft-delete a message (only own messages) */
 export async function deleteMessage(messageId: string) {
+  if (isPrivateChatMediaEnabled()) {
+    try {
+      await deletePrivateChatMessage(messageId);
+      return;
+    } catch (error) {
+      if (!(error instanceof Error) || error.message !== 'not-private-media') throw error;
+    }
+  }
   const { error } = await supabase.rpc('delete_chat_message_for_everyone', {
     p_message_id: messageId,
   });
@@ -1353,8 +1369,11 @@ export async function updateMemberRole(roomId: string, memberId: string, role: C
   if (error) throw error;
 }
 
-/** Update room avatar — uploads to Google Drive */
+/** Update room avatar through private media when enabled; legacy Drive remains mixed-read fallback. */
 export async function updateRoomAvatar(roomId: string, file: File) {
+  if (isPrivateChatMediaEnabled()) {
+    return (await uploadPrivateRoomAvatar(roomId, file)).alias;
+  }
   const { public_url } = await uploadChatImage(roomId, file);
   await updateRoom(roomId, { avatar_url: public_url });
   return public_url;
@@ -1441,6 +1460,9 @@ export async function sendImageMessage(
 ) {
   if (!files || files.length === 0) throw new Error('No files provided');
   if (files.length > 5) throw new Error('Maximum 5 files allowed');
+  if (isPrivateChatMediaEnabled()) {
+    return sendPrivateChatImages(roomId, files, options?.replyToId ?? null);
+  }
 
   const uploadPromises = files.map(async (file) => {
     const result = await uploadChatImage(roomId, file);
@@ -1518,7 +1540,7 @@ export async function fetchStarredMessages(memberId: string, roomId?: string) {
   const { data, error } = await query;
   if (error) throw error;
 
-  return data.map(d => d.chat_messages) as unknown as ChatMessage[];
+  return Promise.all((data.map(d => d.chat_messages) as unknown as ChatMessage[]).map(hydrateChatMessageMedia));
 }
 
 export async function fetchRoomMedia(roomId: string) {
@@ -1534,7 +1556,7 @@ export async function fetchRoomMedia(roomId: string) {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data as unknown as ChatMessage[];
+  return Promise.all((data as unknown as ChatMessage[]).map(hydrateChatMessageMedia));
 }
 
 export async function fetchRoomLinks(roomId: string) {

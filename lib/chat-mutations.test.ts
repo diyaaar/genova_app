@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { rpc } = vi.hoisted(() => ({ rpc: vi.fn() }));
 
@@ -10,9 +10,11 @@ import { deleteMessage, deleteMessageForMe, editMessage, markChatMessageStatus, 
 
 describe('chat message mutation adapters', () => {
   beforeEach(() => {
+    vi.stubEnv('NEXT_PUBLIC_CHAT_R2_MEDIA_ENABLED', 'false');
     rpc.mockReset();
     rpc.mockResolvedValue({ data: null, error: null });
   });
+  afterEach(() => vi.unstubAllEnvs());
 
   it('delegates edit identity and content to the server RPC', async () => {
     await editMessage('00000000-0000-4000-8000-000000000001', 'Yeni içerik');

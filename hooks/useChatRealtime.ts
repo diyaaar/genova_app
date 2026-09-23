@@ -6,6 +6,7 @@ import { createPrivateChatRoomTopic, createRealtimeTopic } from '@/lib/realtime'
 import { useChatStore } from '@/store/useChatStore';
 import type { ChatMessage, ChatMessageType, ChatReaction, ChatRoom } from '@/lib/chat';
 import type { RealtimeChannel } from '@supabase/supabase-js';
+import { hydrateChatMessageMedia } from '@/lib/chat-media';
 
 function removeChatChannel(channel: RealtimeChannel) {
   return supabase.removeChannel(channel).catch((err) => {
@@ -90,11 +91,15 @@ export function useChatRealtime(memberId: string | null, roomId: string | null) 
             newMessage.reply_to = replyRes.data as any;
           }
 
-          useChatStore.getState().addMessage(msgRoomId, newMessage);
+          useChatStore.getState().addMessage(msgRoomId, await hydrateChatMessageMedia(newMessage));
         } catch (err) {
           console.error('Error fetching message details:', err);
           // Still add the message even if details fetch fails
-          useChatStore.getState().addMessage(msgRoomId, newMessage);
+          try {
+            useChatStore.getState().addMessage(msgRoomId, await hydrateChatMessageMedia(newMessage));
+          } catch {
+            useChatStore.getState().addMessage(msgRoomId, newMessage);
+          }
         }
       };
 

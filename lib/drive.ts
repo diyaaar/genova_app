@@ -282,7 +282,7 @@ export interface ChatImageUploadResult {
   public_url: string;
 }
 
-async function normalizeChatImageForUpload(file: File): Promise<File> {
+export async function normalizeChatImageForUpload(file: File): Promise<File> {
   if (!file.type.startsWith('image/')) return file;
   if (typeof window === 'undefined') return file;
 

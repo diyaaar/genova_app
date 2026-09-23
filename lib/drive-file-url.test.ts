@@ -19,6 +19,7 @@ import {
   clearProtectedDriveFileUrlCache,
   getProtectedAssignmentFileUrl,
   getProtectedAssignmentReviewFileUrl,
+  getProtectedChatMediaFileUrl,
   getProtectedDriveFileUrl,
   getProtectedRepertoireCommentFileUrl,
   getProtectedRepertoireFileUrl,
@@ -173,6 +174,23 @@ describe('protected Drive URL cache', () => {
     expect(url).toContain('/functions/v1/repertoire-comment-file?');
     expect(fetchMock.mock.calls[0]?.[0]).toEqual(new URL(
       'https://project.supabase.co/functions/v1/repertoire-comment-file',
+    ));
+    expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ fileId: versionId }));
+  });
+
+  it('requests a chat media ticket from the room-authorized Edge boundary', async () => {
+    mocks.getSession.mockResolvedValue(session('user-a', 'token-a'));
+    const versionId = '55555555-5555-4555-8555-555555555555';
+    fetchMock.mockImplementation(() => Promise.resolve(Response.json({
+      url: `https://project.supabase.co/functions/v1/chat-media-file?fileId=${versionId}&ticket=private`,
+      expiresAt: Date.now() + 60_000,
+    })));
+
+    const url = await getProtectedChatMediaFileUrl(versionId, file);
+
+    expect(url).toContain('/functions/v1/chat-media-file?');
+    expect(fetchMock.mock.calls[0]?.[0]).toEqual(new URL(
+      'https://project.supabase.co/functions/v1/chat-media-file',
     ));
     expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ fileId: versionId }));
   });

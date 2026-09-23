@@ -36,7 +36,7 @@ import { StarredMessagesPanel } from './StarredMessagesPanel';
 import { MemberActionSheet } from './MemberActionSheet';
 import { LinksPanel } from './LinksPanel';
 import { FilesPanel } from './FilesPanel';
-import { getDriveImageUrl } from '@/lib/drive';
+import { ProtectedChatMediaImage } from './ProtectedChatMediaImage';
 import { AddMemberModal } from './AddMemberModal';
 import { ChatOverlayPortal } from './ChatOverlayPortal';
 
@@ -297,8 +297,8 @@ export function RoomInfoDrawer({
                       className="h-full w-full rounded-full object-cover"
                     />
                   ) : room.avatar_url ? (
-                    <img
-                      src={getDriveImageUrl(room.avatar_url)}
+                    <ProtectedChatMediaImage
+                      value={room.avatar_url}
                       alt={roomDisplayName}
                       className={`h-full w-full rounded-full object-cover ${isAdmin && !isDm ? 'group-hover:opacity-60 transition-opacity' : ''}`}
                     />

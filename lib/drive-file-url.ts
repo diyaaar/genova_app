@@ -42,6 +42,12 @@ function getRepertoireCommentEndpoint() {
   return `${baseUrl.replace(/\/+$/u, '')}/functions/v1/repertoire-comment-file`;
 }
 
+function getChatMediaEndpoint() {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!baseUrl) throw new Error('Dosya servisi yapılandırılmamış.');
+  return `${baseUrl.replace(/\/+$/u, '')}/functions/v1/chat-media-file`;
+}
+
 export function clearProtectedDriveFileUrlCache() {
   driveUrlCache.clear();
 }
@@ -145,6 +151,22 @@ export async function getProtectedRepertoireCommentFileUrl(
   if (cached && cached.expiresAt - Date.now() > 30_000) return cached.url;
   const payload = await requestProtectedRepertoireFileTicket({
     endpoint: getRepertoireCommentEndpoint(), accessToken: access.accessToken, fileId: versionId,
+    fetcher: (input, init) => authenticatedWebFetch(input, init, access),
+  });
+  driveUrlCache.set(cacheKey, payload);
+  return payload.url;
+}
+
+export async function getProtectedChatMediaFileUrl(
+  versionId: string,
+  file: Pick<RepertoireFile, 'file_name' | 'mime_type'>,
+) {
+  const access = await requireCurrentSession();
+  const cacheKey = getCacheKey(access.userId, `chat-media:${versionId}`, file.file_name, file.mime_type);
+  const cached = driveUrlCache.get(cacheKey);
+  if (cached && cached.expiresAt - Date.now() > 30_000) return cached.url;
+  const payload = await requestProtectedRepertoireFileTicket({
+    endpoint: getChatMediaEndpoint(), accessToken: access.accessToken, fileId: versionId,
     fetcher: (input, init) => authenticatedWebFetch(input, init, access),
   });
   driveUrlCache.set(cacheKey, payload);
