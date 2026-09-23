@@ -7,20 +7,20 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--23-september-2026).
-2. [061](briefs/061-private-r2-release-chain-readiness.md) accepts the local 053–060 release chain;
-   continue at its exact provider/hosted/copy/cutover approval gates,
+2. [062](briefs/062-bounded-private-r2-copy-executor.md) accepts the bounded copy data plane;
+   continue at the exact provider/hosted inventory/copy/activation approval gates,
    using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product/config: `6acea76` (061); verify current HEAD. No unfinished product changes.
+- Last accepted product/test: `e4a4c23` (062); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- 061 locally passes the exact 13-function gateway manifest, 053–060 forward/reverse chain,
-  unresolved-provider refusal and the complete root gate; its runbook fixes order and rollback.
+- 062 locally passes manifest/journal binding, bounded streaming Drive→signed R2 copy, independent
+  destination SHA-256, resume/adopt/refusal and batch limits; no real object was copied.
 - Next blocking choices are R2 jurisdiction and authority for provider activation. Hosted backup,
   migration/deploy, real inventory/copy and cutover remain subsequent explicit gates.
 
@@ -48,8 +48,8 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 40,775,456 KiB (~38.9 GiB) remained after final 061 cleanup. Disposable databases, loopback
-  listeners, root build and coverage outputs were removed; no mobile build output was created.
+- 40,783,000 KiB (~38.9 GiB) remained after final 062 cleanup. Test temp directories/processes,
+  root build and coverage outputs were removed; no database, VM, simulator or mobile build was created.
   Dark-theme room-info contrast is a recorded beta UI follow-up, not a storage failure.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.

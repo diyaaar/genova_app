@@ -1,6 +1,6 @@
 # 062 — Bounded private R2 copy executor
 
-**Status/date/writer:** IN PROGRESS / 2026-09-23 / primary agent.
+**Status/date/writer:** ACCEPTED LOCALLY / 2026-09-23 / primary agent.
 
 **Observable result and user need:** An operator can take an approved, external JSONL manifest and
 copy one bounded batch of legacy Google Drive objects to the exact private R2 keys without a local
@@ -49,8 +49,9 @@ test temp output after the last dependent check; stay above 10 GiB.
 - Reuse the existing pinned `aws4fetch@1.0.20`, safe R2 target builder and length-preserving upload
   transport; install no package. The operator journal contains IDs/metadata but no URL token or key.
 - Every input row identifies project, choir, family, owner table/row/slot/version, Drive file ID,
-  exact destination bucket/key, byte count and MIME. SHA-256 may be supplied or is established by
-  the first verified copy. Stable IDs and object-key contracts are not invented by the executor.
+  exact destination bucket/key, byte count, file name and MIME. SHA-256 may be supplied or is
+  established by the first verified copy. Stable IDs and object-key contracts are not invented by
+  the executor.
 - Resume re-verifies a matching destination digest. An existing destination without accepted
   evidence is compared with source bytes and adopted only when equal; a mismatch is a hard refusal,
   never overwrite/delete. Redirect, missing/trashed/Google-native, wrong size/MIME, oversize,
@@ -94,11 +95,28 @@ test temp output after the last dependent check; stay above 10 GiB.
 
 | Criterion | Required? | Status | Proof required | Limit |
 |---|---|---|---|---|
-| Manifest and execution boundary | yes | NOT RUN | Exact schema/fingerprint, unique items/destinations, project/choir/key/family/owner/slot/version/Drive/bytes/MIME validation; external private paths, target confirmation and item/byte caps | Synthetic inputs only. |
-| Constant-memory copy and independent verification | yes | NOT RUN | Chunked Drive source -> signed R2 PUT with backpressure; source hash/length and a separate destination GET hash/length/MIME agree | Mock HTTP R2/Drive, not real providers. |
-| Resume and fail-closed matrix | yes | NOT RUN | Verified match skips PUT after re-read; unjournaled equal object is adopted; mismatch/redirect/missing/trashed/native/size/MIME/partial/oversize/provider/duplicate cases refuse and journal safely | No provider deletion or retry inference. |
-| Required gates and cleanup | yes | NOT RUN | Focused tests, CLI dry validation/refusal, root `pnpm check`, diff/security/resource review; build/coverage/temp/listeners removed | Self-review, not independent review. |
+| Manifest and execution boundary | yes | PASS | Focused Vitest checks exact six-family schema/fingerprint, owner/slot/key shapes, duplicates, journal binding, private external paths, exact target confirmation and item/byte caps | Synthetic inputs only. |
+| Constant-memory copy and independent verification | yes | PASS | 1.25 MiB/20-chunk stream plus actual local OAuth Drive GET and signed S3 HEAD/PUT/GET; source and separately re-read destination length/MIME/SHA-256 agree | Mock HTTP R2/Drive, not real providers. |
+| Resume and fail-closed matrix | yes | PASS | 38 focused cases: copied/adopted/resumed; verified-missing, mismatch, redirects, missing/trashed/native, size/MIME/hash/partial, provider failure, cancellation, duplicates and batch stop/refusal | No provider deletion or retry inference. |
+| Required gates and cleanup | yes | PASS | CLI validate and pre-approval refusal pass; root `pnpm check` passes lint, TypeScript, 89 files / 773 tests, service worker syntax and production build; diff/security/resource review passes; outputs removed | Self-review, not independent review. |
 | Provider/hosted/real-data/DB/device/release | no — later gate | NOT RUN | Owner-authorized run in a later brief | Required before operational beta. |
 
 Required FAIL or NOT RUN keeps 062 open. A mocked S3/Drive loopback is not real R2, Google, hosted
 Supabase, copied production data, database cutover, Android beta or store acceptance.
+
+## Result and review
+
+Product/test commit: `e4a4c23` (`062: add bounded private storage copy executor`). The first focused
+run passed 28/30; its two failures were test assertions comparing equal typed arrays created in
+different JavaScript realms, not byte-transfer failures. Converting those assertions to numeric byte
+arrays fixed the test evidence; later review added full journal-to-manifest binding, verified-target
+loss refusal, transport cancellation, pending-first batch ordering and accurate remaining counts.
+The final focused suite passed 38/38 and the complete root gate passed 89 files / 773 tests/build.
+
+The command loads no `.env`, prints only bounded status/error codes, never accepts provider secrets
+as arguments, and writes the journal only after exact target approval. Real manifest generation,
+Cloudflare/Google/Supabase access, provider billing, hosted DB/Edge changes, object copy, activation,
+source ACL/delete, Android device and release were not run. 062 advances the local release package;
+it does not advance operational Drive exit or beta acceptance. Final cleanup found no owned
+`genova-062-*` temp directory or copy/test process, removed `.next` and coverage, and measured
+40,783,000 KiB (~38.9 GiB) free. The unrelated `supabase/.temp/cli-latest` remains unstaged.

@@ -9,9 +9,9 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-061 is now locally accepted; the 053–060 release chain and operator runbook are ready. The next
-critical step is an owner-authorized provider choice/activation, then separately gated hosted
-backup, migration/function deployment, inventory/copy and cutover—not another small feature.
+062 is now locally accepted; the 053–060 release chain, runbook and bounded copy executor are ready.
+The next critical step is an owner-authorized provider choice/activation, then separately gated
+hosted backup, migration/functions, live inventory/copy and activation—not another small feature.
 
 ## Latest owner choices
 
@@ -29,18 +29,18 @@ backup, migration/function deployment, inventory/copy and cutover—not another 
 
 ## Exact work checkpoint
 
-- Last accepted product/config `6acea76`/061. Verify actual HEAD; no unfinished product changes.
-- 061 passes the exact 13-function gateway contract, full 053–060 PostgreSQL forward/reverse and
-  refusal rehearsal, 13 Deno checks and root 88 files/735 tests/build. Detailed evidence:
-  [061](../docs/briefs/061-private-r2-release-chain-readiness.md).
+- Last accepted product/test `e4a4c23`/062. Verify actual HEAD; no unfinished product changes.
+- 062 passes 38 focused manifest/stream/resume/refusal/batch cases and root 89 files/773 tests/build.
+  Detailed evidence: [062](../docs/briefs/062-bounded-private-r2-copy-executor.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
 - Next ask the owner to choose EU jurisdiction (recommended) or Automatic and explicitly authorize
   R2 activation/bucket/token within the stated budget. Hosted/data steps remain separate approvals.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 061 disposable DB/listeners are removed and final build output is cleaned after acceptance; no
-  VM/simulator/device was created. Cloudflare credentials must never be pasted into chat or Git.
+- 061 disposable DB/listeners remain removed; no VM/simulator/device was created. 062 removed its
+  test temp/build/coverage output and left
+  40,783,000 KiB (~38.9 GiB) free. Cloudflare credentials must never be pasted into chat or Git.
 
 ## Remaining requirements and authority
 

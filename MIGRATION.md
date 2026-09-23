@@ -212,12 +212,12 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**23 Eylül güncel yönlendirme:** [061](docs/briefs/061-private-r2-release-chain-readiness.md)
-`6acea76` üzerinde 053–060 için 13 fonksiyonlu gateway sözleşmesini, tam forward/reverse şema
-provasını, provider-state reddini ve kontrollü release/copy/cutover runbook'unu yerelde kabul etti.
-Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon kararıdır; hosted backup/şema/secret,
-deploy, canlı veri/dosya kopyası, flag ve kaynak silme ayrı onaylardır. Koyu temadaki oda bilgisi
-çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
+**23 Eylül güncel yönlendirme:** [062](docs/briefs/062-bounded-private-r2-copy-executor.md)
+`e4a4c23` üzerinde dış/private manifest ve journal, exact target/batch limitleri, akış halinde
+Drive→R2 kopyası, bağımsız hedef SHA-256, resume/adopt/refusal ve ilk hatada durmayı yerelde kabul
+etti. Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon kararıdır; hosted backup/şema/
+secret/deploy, onaylı canlı envanter-kopya-aktivasyon, flag ve kaynak silme ayrı onaylardır. Koyu
+temadaki oda bilgisi çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
 
 **Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
 sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog

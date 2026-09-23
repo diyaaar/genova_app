@@ -2,10 +2,10 @@
 
 23 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 061 is accepted locally at `6acea76`: the exact
-13-function gateway contract, 053–060 full forward/reverse and refusal rehearsal, 13 Deno checks,
-root 88/735/build and an approval-bounded operator runbook pass. Next is the owner's R2 jurisdiction
-and activation authority, followed by separately approved hosted/copy/cutover stages.
+$5/month preference and five free choir seats. 062 is accepted locally at `e4a4c23`: bounded
+Drive→private-R2 streaming, independent destination SHA-256, resume/adopt/refusal and batch limits
+pass 38 focused cases plus root 89/773/build. Next is the owner's R2 jurisdiction and activation
+authority, followed by separately approved hosted inventory/copy/activation stages.
 No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 
@@ -34,6 +34,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | 052–060 Drive exit private-file foundation | All inventoried first-party active Drive media writers accepted locally | [053](../docs/briefs/053-private-r2-repertoire-read.md) through [060](../docs/briefs/060-private-r2-chat-media.md), latest product `bfe994d`; repertoire files/covers, assignment submit/history/review, targeted comment audio and room-authorized chat images/avatars have private identities and recoverable ordering. Real R2/hosted/copy/cutover/device are NOT RUN; assignment retention and controlled release remain. |
 | 061 private R2 release-chain readiness | Local release configuration and rehearsal accepted | [061](../docs/briefs/061-private-r2-release-chain-readiness.md), product/config `6acea76`; exact function gateway, full schema forward/reverse/refusal and operator order pass locally. Provider activation, hosted execution, real copy/cutover and device remain NOT RUN. |
+| 062 bounded private R2 copy executor | Local data-plane executor accepted | [062](../docs/briefs/062-bounded-private-r2-copy-executor.md), product/test `e4a4c23`; external private manifest/journal, exact target/caps, streamed copy, independent destination hash, resume/adopt/refusal and stop-on-first-failure pass locally. Real provider/data/DB/device remain NOT RUN. |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
 | Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |

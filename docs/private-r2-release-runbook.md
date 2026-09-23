@@ -7,7 +7,7 @@ individual briefs remain the acceptance authority for each local implementation.
 ## Candidate and immutable boundaries
 
 - Candidate base: product commits `beb4842`, `9459732`, `dd21522`, `d7c960b`, `4049266`,
-  `ce2b438`, `879d4ec`, `bfe994d`; 061 config commit is recorded after acceptance.
+  `ce2b438`, `879d4ec`, `bfe994d`, release config `6acea76` and copy executor `e4a4c23`.
 - Supabase project must resolve to `hievmwwctjjlhmssoxsu` immediately before every approved hosted
   step. A Git remote, local `.env` or old CLI link is not target proof.
 - Supabase DB/Auth/Realtime/Edge and current web hosting remain. This runbook does not move them to
@@ -122,6 +122,42 @@ Each numbered stage needs the authority named in its heading and stops on any fa
 6. **R2-required authority:** only when every active recognized source is verified and no current
    first-party writer calls Drive. Switch reads to `r2-required`; prove Android beta flows and web
    compatibility. Keep Drive sources. Public ACL revocation and source deletion are separate steps.
+
+### Bounded copy executor
+
+[062](briefs/062-bounded-private-r2-copy-executor.md) adds the reviewed local operator command
+`scripts/private-r2-copy.ts`; it is not an Edge Function and it performs no database write. Raw
+manifest and journal files contain live row/file identifiers, so an approved run keeps both as
+absolute `0600` files outside the repository. The manifest is JSONL, one immutable item per line,
+with version `1`, exact project/choir/family/source owner-row-slot-version/Drive ID, R2 bucket/key,
+byte count, display file name, MIME and optional known SHA-256. Generate it only from the approved
+inventory snapshot; do not hand-edit identities or infer unknown URLs.
+
+Validation needs no provider secret:
+
+```sh
+node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \
+  scripts/private-r2-copy.ts validate \
+  --manifest /absolute/private/path/manifest.jsonl \
+  --project-ref hievmwwctjjlhmssoxsu \
+  --bucket <approved-private-bucket>
+```
+
+Execution additionally requires the existing Google OAuth refresh credentials, bucket-scoped R2
+credentials, `R2_ACCOUNT_ID`, the approved `R2_JURISDICTION` (`eu` or omitted for Automatic), and
+`GENOVA_PRIVATE_R2_COPY_APPROVED` set through the operator's private environment. Its value must
+exactly equal the same `<project-ref>/<account-id>/<bucket>/<eu-or-auto>` supplied to
+`--confirm-target`; never put secret values on the command line, in the manifest, journal or log.
+Start with `--max-items 1` and `--max-total-bytes` equal to that canary's declared size, then widen
+only from measured evidence. One failure is journaled and stops the batch.
+
+The executor checks Drive metadata, refuses redirects and Google-native/trashed/drifted sources,
+streams a single PUT with backpressure, then performs a separate R2 GET and compares actual length,
+MIME and SHA-256. It never uses multipart ETag as a content checksum. Existing unjournaled objects
+are adopted only when source/destination hashes match; mismatch is never overwritten. A previously
+verified object that disappears is a stop. A matching private journal permits deterministic resume;
+raw journal evidence must be redacted before any repository record. Database activation and source
+cleanup remain later, separately approved stages.
 
 ## Stop and rollback
 
