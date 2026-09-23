@@ -2,10 +2,10 @@
 
 23 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 060 is accepted locally at `bfe994d`: exact SQL
-forward/down/refusal, signed loopback ordered upload/read/delete/avatar reconciliation, root
-87/732/build and Chrome legacy/private media flow pass. Next is controlled provider/hosted
-release, assignment-retention and copy/cutover preparation.
+$5/month preference and five free choir seats. 061 is accepted locally at `6acea76`: the exact
+13-function gateway contract, 053–060 full forward/reverse and refusal rehearsal, 13 Deno checks,
+root 88/735/build and an approval-bounded operator runbook pass. Next is the owner's R2 jurisdiction
+and activation authority, followed by separately approved hosted/copy/cutover stages.
 No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 
@@ -33,6 +33,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 007 operatör kontrollü koro oluşturma | Tamamlandı; authenticated başarı yolu canlıda kabul edildi | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); taze backup/restore, DB `20260905160539`, Edge v1 ve hosted 003/005/006/007 geçti. Allow-list dolduruldu ve RPC canlıda gerçek operatör JWT'siyle koro oluşturdu. Oluşturulan test korosu 010'un 8. adımında silindi; kabul kaydı geçerli |
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
 | 052–060 Drive exit private-file foundation | All inventoried first-party active Drive media writers accepted locally | [053](../docs/briefs/053-private-r2-repertoire-read.md) through [060](../docs/briefs/060-private-r2-chat-media.md), latest product `bfe994d`; repertoire files/covers, assignment submit/history/review, targeted comment audio and room-authorized chat images/avatars have private identities and recoverable ordering. Real R2/hosted/copy/cutover/device are NOT RUN; assignment retention and controlled release remain. |
+| 061 private R2 release-chain readiness | Local release configuration and rehearsal accepted | [061](../docs/briefs/061-private-r2-release-chain-readiness.md), product/config `6acea76`; exact function gateway, full schema forward/reverse/refusal and operator order pass locally. Provider activation, hosted execution, real copy/cutover and device remain NOT RUN. |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
 | Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |
@@ -89,10 +90,11 @@ Kanıt: [WF-003](../docs/briefs/WF-003-mobil-teslim-odagi.md).
 Hata geçmişi ayrı dev liste yerine ilgili brief/doğrulama kaydında tutulur:
 belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 
-## Latest handoff — 21 September 2026
+## Latest handoff — 23 September 2026
 
 [Current handoff](../docs/agent-handoff.md) and [active context](activeContext.md) carry only
 the current checkpoint. Historical acceptance stays in the table's linked briefs.
 WF-006 owns the original long-term plan; [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns the revised execution controls and verified cleanup. 053 is local-only; no provider or beta
-milestone advanced. 054 is the current ready package.
+owns the revised execution controls and verified cleanup. 061 is locally accepted; no provider,
+hosted data or beta milestone advanced. The next gate is the owner's R2 jurisdiction/activation
+decision, followed by the runbook's separately authorized hosted stages.

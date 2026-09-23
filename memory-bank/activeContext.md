@@ -9,8 +9,9 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-060 is now locally accepted; move to the controlled provider/hosted release, assignment-retention
-and copy/cutover preparation rather than continuing tiny chat features automatically.
+061 is now locally accepted; the 053–060 release chain and operator runbook are ready. The next
+critical step is an owner-authorized provider choice/activation, then separately gated hosted
+backup, migration/function deployment, inventory/copy and cutover—not another small feature.
 
 ## Latest owner choices
 
@@ -28,20 +29,18 @@ and copy/cutover preparation rather than continuing tiny chat features automatic
 
 ## Exact work checkpoint
 
-- Last accepted product `bfe994d`/060. Verify actual HEAD; no unfinished product changes.
-- 060 passes chat-media SQL forward/down/refusal, signed loopback ordered upload/read/delete/avatar
-  lifecycle, root 87/732/build and production Chrome legacy/private send/read/delete/avatar flow.
-  Detailed evidence: [060](../docs/briefs/060-private-r2-chat-media.md).
+- Last accepted product/config `6acea76`/061. Verify actual HEAD; no unfinished product changes.
+- 061 passes the exact 13-function gateway contract, full 053–060 PostgreSQL forward/reverse and
+  refusal rehearsal, 13 Deno checks and root 88 files/735 tests/build. Detailed evidence:
+  [061](../docs/briefs/061-private-r2-release-chain-readiness.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next prepare one controlled provider/hosted release and copy/cutover package for 053–060, including
-  assignment retention and exact owner choices, without activating or touching live data yet.
+- Next ask the owner to choose EU jurisdiction (recommended) or Automatic and explicitly authorize
+  R2 activation/bucket/token within the stated budget. Hosted/data steps remain separate approvals.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 060 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
-  are removed; 40,837,836 KiB (~38.9 GiB) remained free. No VM/simulator/device created.
-- Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
-  that answer; provider activation/region and real data/cutover remain separate approval gates.
+- 061 disposable DB/listeners are removed and final build output is cleaned after acceptance; no
+  VM/simulator/device was created. Cloudflare credentials must never be pasted into chat or Git.
 
 ## Remaining requirements and authority
 

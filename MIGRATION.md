@@ -212,13 +212,12 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**23 Eylül güncel yönlendirme:** [060](docs/briefs/060-private-r2-chat-media.md) `bfe994d`
-üzerinde sıralı özel chat görseli, canlı oda yetkili okuma, DB-first silme ve özel oda avatarı
-değişimini yerelde kabul etti. 052 envanterindeki aktif birinci taraf Drive medya yazıcılarının
-tamamı artık özel R2 hazırlık yoluna sahiptir. Sıradaki hazır iş assignment retention ile 053–060
-için kontrollü provider/hosted release ve copy/cutover paketidir. Gerçek R2 hesabı, credential,
-hosted şema/secret, deploy, canlı veri/dosya ve kaynak silme ayrı onay kapılarıdır. Koyu temadaki oda
-bilgisi çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
+**23 Eylül güncel yönlendirme:** [061](docs/briefs/061-private-r2-release-chain-readiness.md)
+`6acea76` üzerinde 053–060 için 13 fonksiyonlu gateway sözleşmesini, tam forward/reverse şema
+provasını, provider-state reddini ve kontrollü release/copy/cutover runbook'unu yerelde kabul etti.
+Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon kararıdır; hosted backup/şema/secret,
+deploy, canlı veri/dosya kopyası, flag ve kaynak silme ayrı onaylardır. Koyu temadaki oda bilgisi
+çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
 
 **Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
 sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog

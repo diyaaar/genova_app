@@ -1,6 +1,6 @@
 # 061 — Private R2 release-chain readiness
 
-**Status/date/writer:** IN PROGRESS / 2026-09-23 / primary agent.
+**Status/date/writer:** ACCEPTED LOCALLY / 2026-09-23 / primary agent.
 
 **Observable result:** The locally accepted 053–060 private-file stack has one machine-checked
 production function-gateway contract, one exact ordered migration/down rehearsal, and one operator
@@ -36,7 +36,8 @@ download. Remove the DB, `.next` and coverage after their last dependent checks;
 
 - `supabase/config.toml`: explicit gateway verification for the accepted private-file functions.
 - `scripts/*061*` or one focused config test: machine-check function/config/release invariants.
-- `supabase/test-support/*061*`: disposable full-chain forward/down rehearsal only.
+- `supabase/test-support/*061*` and the narrow `053` down guard: disposable full-chain
+  forward/down rehearsal and refusal to discard mapped provider state.
 - `docs/private-r2-release-runbook.md`: exact release, copy evidence, rollback and approval gates.
 - This brief plus concise handoff/active/progress/plan/MIGRATION records after acceptance.
 
@@ -103,12 +104,30 @@ download. Remove the DB, `.next` and coverage after their last dependent checks;
 
 | Criterion | Required? | Status | Proof required | Limit |
 |---|---|---|---|---|
-| Explicit production function-gateway contract | yes | NOT RUN | Machine-check every 053–060 R2 entrypoint/config; ticket endpoints accept handler-owned ticket auth and all endpoints retain internal authorization | Static/local; no hosted gateway inference. |
-| Ordered full-chain schema rehearsal | yes | NOT RUN | PostgreSQL 17 disposable copy: prerequisites + 053–060 forward in timestamp order, catalogue/security checks, 060→053 exact down and unresolved-state refusal | No live schema/data. |
-| Operator release/copy/rollback runbook | yes | NOT RUN | Exact revisions, migrations, functions, secret names, server/client flags, staged probes, manifest fields, stop/rollback/approval gates; local links and consistency | Plan is not execution authority. |
-| Required code/document gates and cleanup | yes | NOT RUN | Focused test, Deno checks, root `pnpm check`, diff/security/resource review; DB/build/coverage/listeners removed | Self-review, not independent review. |
+| Explicit production function-gateway contract | yes | PASS | Focused Vitest 1 file / 3 tests discovers the exact 13 R2 entrypoints and checks every explicit handler-owned gateway contract in `supabase/config.toml` | Static/local; no hosted gateway inference. |
+| Ordered full-chain schema rehearsal | yes | PASS | PostgreSQL 17 disposable copy applied prerequisites + 053–060, checked catalogues/refusals, rejected 053/054 down with unresolved provider state, then restored the exact baseline in 060→053 order | No live schema/data. |
+| Operator release/copy/rollback runbook | yes | PASS | [Runbook](../private-r2-release-runbook.md) records exact revisions, migrations, 13 functions, secret/flag names, staged probes, manifest fields, stop/rollback and approval gates; local links pass | Plan is not execution authority. |
+| Required code/document gates and cleanup | yes | PASS | 13 Deno entrypoints pass; root `pnpm check` passes 88 files / 735 tests, TypeScript and production build; diff/security/resource review passes; disposable DB/listeners/build/coverage removed | Self-review, not independent review. |
 | Hosted/provider/real-data/device/release | no — separate gate | NOT RUN | Owner-authorized execution in a later brief | Required before operational beta. |
 
 Required FAIL or NOT RUN keeps 061 open. Do not convert official pricing/free-tier documentation
 into a guaranteed bill, and do not promote a disposable schema or static config check to hosted
 function, provider, copy, device or beta evidence.
+
+## Result and review
+
+Product/config commit: `6acea76` (`061: harden private storage release chain`). Documentation is
+recorded separately. The first schema rehearsal exposed the missing historic assignment-review
+prerequisite; the second exposed trigger-created cache state in synthetic cleanup. After the
+required two-approach reassessment, the runner declared the exact prerequisite and cleanup instead
+of weakening comparison, and the next complete rehearsal passed.
+
+The release-critical defect fixed here is gateway ordering: ticket GET/HEAD requests for assignment,
+comment and chat files would otherwise depend on default user-JWT verification and could be rejected
+before their signed ticket reached the handler. All thirteen handlers now have explicit gateway
+configuration and retain their own method-specific bearer/ticket/live-authority checks.
+
+Cloudflare account access, billing activation, bucket/jurisdiction/token, Supabase hosted backup,
+schema/functions/secrets, real inventory/copy/cutover, web flags, Android hardware and distribution
+were not run. The next owner decision is EU jurisdiction (recommended for guaranteed EU processing)
+or Automatic, plus explicit provider-activation authority within the stated budget preference.
