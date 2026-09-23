@@ -1,0 +1,10 @@
+import{beforeEach,describe,expect,it,vi}from'vitest';
+const mock=vi.hoisted(()=>({access:vi.fn(),rpc:vi.fn(),fetch:vi.fn()}));vi.mock('../web-auth-capability',()=>({requireCurrentWebAccess:mock.access,authenticatedWebFetch:mock.fetch}));vi.mock('../supabase',()=>({supabase:{rpc:mock.rpc}}));
+import{createPrivateSongComment,deletePrivateSongComment}from'./comment-audio';
+const commentId='60000000-0000-4000-8000-000000000059',versionId='70000000-0000-4000-8000-000000000059';
+beforeEach(()=>{vi.resetAllMocks();vi.stubEnv('NEXT_PUBLIC_SUPABASE_URL','https://example.supabase.co');mock.access.mockResolvedValue({userId:'user-a',accessToken:'token-a'});mock.rpc.mockResolvedValue({data:'choir-a',error:null});});
+describe('private repertoire comment adapter',()=>{
+  it('creates text without uploading a provider body',async()=>{mock.fetch.mockResolvedValue(new Response(JSON.stringify({comment:{id:commentId}}),{status:201}));await expect(createPrivateSongComment({commentId,songId:'song-a',contentHtml:'<p>Text</p>',targetVoiceGroup:null})).resolves.toBe(commentId);expect(mock.fetch.mock.calls[0][0]).toContain('/repertoire-comment-lifecycle');expect(mock.fetch.mock.calls[0][1].method).toBe('POST');});
+  it('streams an audio File and validates the returned version',async()=>{mock.fetch.mockResolvedValue(new Response(JSON.stringify({comment:{id:commentId,audio_file_version_id:versionId},fileVersionId:versionId}),{status:201}));const file=new File(['audio'],'note.webm',{type:'audio/webm'});await expect(createPrivateSongComment({commentId,songId:'song-a',contentHtml:'',targetVoiceGroup:'Soprano',audioFile:file})).resolves.toBe(commentId);expect(mock.fetch.mock.calls[0][0]).toContain('/repertoire-comment-upload');expect(mock.fetch.mock.calls[0][1].body).toBe(file);});
+  it('deletes through the recoverable private lifecycle',async()=>{mock.fetch.mockResolvedValue(new Response(JSON.stringify({deleted:true,cleanupPending:true}),{status:202}));await expect(deletePrivateSongComment(commentId)).resolves.toEqual({cleanupPending:true});expect(mock.fetch.mock.calls[0][1].method).toBe('DELETE');});
+});

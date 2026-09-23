@@ -36,6 +36,12 @@ function getAssignmentReviewEndpoint() {
   return `${baseUrl.replace(/\/+$/u, '')}/functions/v1/assignment-review-file`;
 }
 
+function getRepertoireCommentEndpoint() {
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!baseUrl) throw new Error('Dosya servisi yapılandırılmamış.');
+  return `${baseUrl.replace(/\/+$/u, '')}/functions/v1/repertoire-comment-file`;
+}
+
 export function clearProtectedDriveFileUrlCache() {
   driveUrlCache.clear();
 }
@@ -123,6 +129,22 @@ export async function getProtectedAssignmentReviewFileUrl(
   if (cached && cached.expiresAt - Date.now() > 30_000) return cached.url;
   const payload = await requestProtectedRepertoireFileTicket({
     endpoint: getAssignmentReviewEndpoint(), accessToken: access.accessToken, fileId: versionId,
+    fetcher: (input, init) => authenticatedWebFetch(input, init, access),
+  });
+  driveUrlCache.set(cacheKey, payload);
+  return payload.url;
+}
+
+export async function getProtectedRepertoireCommentFileUrl(
+  versionId: string,
+  file: Pick<RepertoireFile, 'file_name' | 'mime_type'>,
+) {
+  const access = await requireCurrentSession();
+  const cacheKey = getCacheKey(access.userId, `repertoire-comment:${versionId}`, file.file_name, file.mime_type);
+  const cached = driveUrlCache.get(cacheKey);
+  if (cached && cached.expiresAt - Date.now() > 30_000) return cached.url;
+  const payload = await requestProtectedRepertoireFileTicket({
+    endpoint: getRepertoireCommentEndpoint(), accessToken: access.accessToken, fileId: versionId,
     fetcher: (input, init) => authenticatedWebFetch(input, init, access),
   });
   driveUrlCache.set(cacheKey, payload);

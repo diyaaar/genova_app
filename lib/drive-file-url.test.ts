@@ -20,6 +20,7 @@ import {
   getProtectedAssignmentFileUrl,
   getProtectedAssignmentReviewFileUrl,
   getProtectedDriveFileUrl,
+  getProtectedRepertoireCommentFileUrl,
   getProtectedRepertoireFileUrl,
 } from '@/lib/drive-file-url';
 
@@ -155,6 +156,23 @@ describe('protected Drive URL cache', () => {
     expect(url).toContain('/functions/v1/assignment-review-file?');
     expect(fetchMock.mock.calls[0]?.[0]).toEqual(new URL(
       'https://project.supabase.co/functions/v1/assignment-review-file',
+    ));
+    expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ fileId: versionId }));
+  });
+
+  it('requests a comment version ticket from the comment-only Edge boundary', async () => {
+    mocks.getSession.mockResolvedValue(session('user-a', 'token-a'));
+    const versionId = '44444444-4444-4444-8444-444444444444';
+    fetchMock.mockImplementation(() => Promise.resolve(Response.json({
+      url: `https://project.supabase.co/functions/v1/repertoire-comment-file?fileId=${versionId}&ticket=private`,
+      expiresAt: Date.now() + 60_000,
+    })));
+
+    const url = await getProtectedRepertoireCommentFileUrl(versionId, file);
+
+    expect(url).toContain('/functions/v1/repertoire-comment-file?');
+    expect(fetchMock.mock.calls[0]?.[0]).toEqual(new URL(
+      'https://project.supabase.co/functions/v1/repertoire-comment-file',
     ));
     expect(fetchMock.mock.calls[0]?.[1]?.body).toBe(JSON.stringify({ fileId: versionId }));
   });

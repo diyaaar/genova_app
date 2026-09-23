@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { getProtectedAssignmentFileUrl, getProtectedAssignmentReviewFileUrl, getProtectedDriveFileUrl, getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
+import { getProtectedAssignmentFileUrl, getProtectedAssignmentReviewFileUrl, getProtectedDriveFileUrl, getProtectedRepertoireCommentFileUrl, getProtectedRepertoireFileUrl } from '@/lib/drive-file-url';
 import {
   buildRuntimeDriveFileVersion,
   cacheRuntimeDriveFile,
@@ -17,7 +17,7 @@ type DriveFileUrlInput = Pick<RepertoireFile, 'drive_file_id'> &
 
 export function useProtectedDriveFileUrl(
   file: DriveFileUrlInput | null | undefined,
-  options: { repertoireFile?: boolean; assignmentFileVersionId?: string | null; assignmentReviewFileVersionId?: string | null } = {},
+  options: { repertoireFile?: boolean; assignmentFileVersionId?: string | null; assignmentReviewFileVersionId?: string | null; repertoireCommentFileVersionId?: string | null } = {},
 ) {
   const [url, setUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ export function useProtectedDriveFileUrl(
       const localUrl = getOfflineDriveFileUrl(fileDescriptor, runtimeVersion);
       // Review visibility can be revoked by a chef. Never let a previously visible
       // review bypass the live authorization check through the offline cache.
-      const runtimeSupported = isRepertoireRuntimeCacheSupported() && !options.assignmentReviewFileVersionId;
+      const runtimeSupported = isRepertoireRuntimeCacheSupported() && !options.assignmentReviewFileVersionId && !options.repertoireCommentFileVersionId;
       const online = typeof navigator === 'undefined' ? true : navigator.onLine;
       let localFallbackUrl: string | null = null;
       let localFallbackStale = false;
@@ -96,7 +96,11 @@ export function useProtectedDriveFileUrl(
         if (options.repertoireFile && !repositoryFileId) {
           throw new Error('Dosya kimliği geçersiz.');
         }
-        const nextUrl = options.assignmentReviewFileVersionId
+        const nextUrl = options.repertoireCommentFileVersionId
+          ? await getProtectedRepertoireCommentFileUrl(options.repertoireCommentFileVersionId, {
+              file_name: fileName ?? '', mime_type: mimeType ?? null,
+            })
+          : options.assignmentReviewFileVersionId
           ? await getProtectedAssignmentReviewFileUrl(options.assignmentReviewFileVersionId, {
               file_name: fileName ?? '', mime_type: mimeType ?? null,
             })
@@ -162,7 +166,7 @@ export function useProtectedDriveFileUrl(
     return () => {
       cancelled = true;
     };
-  }, [driveFileId, fileName, mimeType, options.assignmentFileVersionId, options.assignmentReviewFileVersionId, options.repertoireFile, repositoryFileId, updatedAt, fileSizeBytes]);
+  }, [driveFileId, fileName, mimeType, options.assignmentFileVersionId, options.assignmentReviewFileVersionId, options.repertoireCommentFileVersionId, options.repertoireFile, repositoryFileId, updatedAt, fileSizeBytes]);
 
   return { url, loading, error, isLocal, isStaleLocal };
 }

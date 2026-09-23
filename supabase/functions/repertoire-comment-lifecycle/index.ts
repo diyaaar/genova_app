@@ -1,0 +1,14 @@
+import{createClient}from'npm:@supabase/supabase-js@2.112.4';
+import{AwsClient}from'npm:aws4fetch@1.0.20';
+import{makeR2ObjectUrl,parseR2Jurisdiction}from'../repertoire-file/r2.ts';
+import{authorizeAssignmentActor,requiredEnv}from'../assignment-upload/auth.ts';
+import{UploadError}from'../repertoire-upload/stream.ts';
+import{createCommentLifecycleHandler}from'./handler.ts';
+const mode=Deno.env.get('REPERTOIRE_STORAGE_MODE')??'legacy',bucket=Deno.env.get('R2_BUCKET')??'';
+function admin(){return createClient(requiredEnv('SUPABASE_URL'),requiredEnv('SUPABASE_SERVICE_ROLE_KEY'),{auth:{persistSession:false,autoRefreshToken:false},global:{fetch:(input,init)=>fetch(input,{...init,signal:AbortSignal.timeout(15_000)})}});}
+Deno.serve(createCommentLifecycleHandler({
+  enabled:Deno.env.get('REPERTOIRE_COMMENT_R2_ENABLED')==='true'&&(mode==='mixed'||mode==='r2-required'),bucket,authorize:authorizeAssignmentActor,
+  async create({actor,commentId,songId,contentHtml,targetVoiceGroup}){const{data,error}=await admin().rpc('create_repertoire_text_comment_059',{p_actor_id:actor.userId,p_session_id:actor.sessionId,p_choir_id:actor.choirId,p_comment_id:commentId,p_song_id:songId,p_content_html:contentHtml,p_target_voice_group:targetVoiceGroup});if(error)throw new UploadError(error.code==='42501'?'forbidden':error.code==='23505'?'comment-conflict':'comment-create-failed',error.code==='42501'?403:error.code==='23505'?409:502);if(!data||typeof data!=='object')throw new UploadError('invalid-lifecycle-result',502);return data;},
+  async transact({action,actor,retryKey,commentId,lease}){const{data,error}=await admin().rpc('repertoire_comment_delete_059',{p_action:action,p_actor_id:actor.userId,p_choir_id:actor.choirId,p_retry_key:retryKey,p_comment_id:commentId,p_lease:lease??null});if(error){const mapped=error.code==='42501'?['forbidden',403]as const:error.code==='23505'?['lifecycle-conflict',409]as const:error.code==='0A000'?['legacy-comment',409]as const:['lifecycle-transaction-failed',502]as const;throw new UploadError(mapped[0],mapped[1]);}if(!data||typeof data!=='object')throw new UploadError('invalid-lifecycle-result',502);return data;},
+  async remove({result,signal}){const jurisdiction=parseR2Jurisdiction(Deno.env.get('R2_JURISDICTION'));if(jurisdiction===null||result.bucket!==bucket||!result.objectKey)throw new Error('Invalid R2 target');const url=makeR2ObjectUrl({accountId:requiredEnv('R2_ACCOUNT_ID'),jurisdiction,bucket,objectKey:result.objectKey,testEndpoint:Deno.env.get('R2_TEST_ENDPOINT'),allowInsecureLoopback:Deno.env.get('R2_ALLOW_INSECURE_LOOPBACK')==='true'});if(!url)throw new Error('Invalid R2 target');const client=new AwsClient({service:'s3',region:'auto',retries:0,accessKeyId:requiredEnv('R2_ACCESS_KEY_ID'),secretAccessKey:requiredEnv('R2_SECRET_ACCESS_KEY')});return fetch(await client.sign(url,{method:'DELETE',redirect:'manual',signal}));},
+}));

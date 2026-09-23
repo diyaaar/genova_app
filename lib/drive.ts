@@ -8,6 +8,7 @@ import { supabase, DriveFolderResult, RepertoireFile, AssignmentSubmission } fro
 import { authenticatedWebFetch } from './web-auth-capability';
 import { isPrivateRepertoireUploadEnabled, uploadPrivateRepertoireFile } from './repertuvar/upload';
 import { deletePrivateRepertoireFile } from './repertuvar/lifecycle';
+import { createPrivateSongComment, deletePrivateSongComment, isPrivateRepertoireCommentEnabled } from './repertuvar/comment-audio';
 import { isPrivateAssignmentUploadEnabled, uploadPrivateAssignmentSubmission } from './assignments/upload';
 
 // Dosyayı base64 string'e çevir (browser-safe)
@@ -192,6 +193,9 @@ export async function createSongComment({
   targetVoiceGroup,
   audioFile,
 }: CreateSongCommentParams): Promise<string | null> {
+  if (isPrivateRepertoireCommentEnabled()) {
+    return createPrivateSongComment({ songId, contentHtml, targetVoiceGroup, audioFile });
+  }
   const payload: Record<string, unknown> = {
     song_id: songId,
     content_html: contentHtml,
@@ -211,7 +215,11 @@ export async function createSongComment({
 /**
  * Şef notunu ve varsa ses ekini sil.
  */
-export async function deleteSongComment(commentId: string): Promise<void> {
+export async function deleteSongComment(commentId: string, audioDriveFileId?: string | null): Promise<void> {
+  if (isPrivateRepertoireCommentEnabled() && (!audioDriveFileId || audioDriveFileId.startsWith('r2_comment_'))) {
+    await deletePrivateSongComment(commentId);
+    return;
+  }
   await callDrive('delete_song_comment', {
     comment_id: commentId,
   });

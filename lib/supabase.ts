@@ -330,6 +330,7 @@ export interface RepertoireSongComment {
   content_html: string;
   target_voice_group: string | null;
   audio_drive_file_id: string | null;
+  audio_file_version_id?: string | null;
   audio_file_name: string | null;
   audio_mime_type: string | null;
   audio_file_size_bytes: number | null;

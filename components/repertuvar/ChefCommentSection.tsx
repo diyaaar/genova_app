@@ -35,6 +35,7 @@ interface SongChefComment {
   content_html: string;
   target_voice_group: VoiceGroup | null;
   audio_drive_file_id: string | null;
+  audio_file_version_id: string | null;
   audio_file_name: string | null;
   audio_mime_type: string | null;
   audio_file_size_bytes: number | null;
@@ -124,6 +125,7 @@ async function fetchComments(
       content_html,
       target_voice_group,
       audio_drive_file_id,
+      audio_file_version_id,
       audio_file_name,
       audio_mime_type,
       audio_file_size_bytes,
@@ -162,16 +164,18 @@ function ProtectedCommentAudioPlayer({
   driveFileId,
   fileName,
   mimeType,
+  fileVersionId,
 }: {
   driveFileId: string;
   fileName: string | null;
   mimeType: string | null;
+  fileVersionId: string | null;
 }) {
   const { url, loading, error } = useProtectedDriveFileUrl({
     drive_file_id: driveFileId,
     file_name: fileName ?? 'sef-notu',
     mime_type: mimeType ?? 'audio/webm',
-  });
+  }, fileVersionId ? { repertoireCommentFileVersionId: fileVersionId } : {});
 
   return (
     <div className="mt-2 rounded-[10px] border border-[var(--color-border)] bg-black/5 dark:bg-white/5 p-2">
@@ -456,8 +460,9 @@ export function ChefCommentSection({
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (commentId: string) => {
-      await deleteSongComment(commentId);
+    mutationFn: async (comment: Pick<SongChefComment, 'id' | 'audio_drive_file_id'>) => {
+      await deleteSongComment(comment.id, comment.audio_drive_file_id);
+      const commentId = comment.id;
       return commentId;
     },
     onSuccess: async (commentId) => {
@@ -706,6 +711,7 @@ export function ChefCommentSection({
                             driveFileId={comment.audio_drive_file_id}
                             fileName={comment.audio_file_name}
                             mimeType={comment.audio_mime_type}
+                            fileVersionId={comment.audio_file_version_id}
                           />
                         ) : null}
                       </div>
@@ -862,7 +868,7 @@ export function ChefCommentSection({
         onClose={() => setConfirmDeleteId(null)}
         onConfirm={() => {
           if (pendingDeleteComment) {
-            deleteMutation.mutate(pendingDeleteComment.id);
+            deleteMutation.mutate(pendingDeleteComment);
           }
         }}
       />
