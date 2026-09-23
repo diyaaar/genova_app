@@ -16,6 +16,9 @@ begin
     ) then
     raise exception '053 down refused: expected applied state is incomplete';
   end if;
+  if exists (select 1 from public.repertoire_file_storage_locations) then
+    raise exception '053 down refused: reconcile private object mappings first';
+  end if;
 end
 $preflight$;
 

@@ -25,6 +25,46 @@ verify_jwt = false
 # Auth.getUser verifies the bearer; DB records exact private cleanup targets before provider delete.
 verify_jwt = false
 
+[functions.assignment-file]
+# POST verifies the user bearer; GET/HEAD verify a short-lived actor-bound ticket in the handler.
+verify_jwt = false
+
+[functions.assignment-upload]
+# The handler verifies the bearer and the service-only RPC rechecks assignment/member authority.
+verify_jwt = false
+
+[functions.assignment-review-file]
+# POST verifies reviewer/student access; GET/HEAD live-recheck the actor-bound content ticket.
+verify_jwt = false
+
+[functions.assignment-review-upload]
+# The handler verifies the bearer; the service-only RPC rechecks reviewer and visibility authority.
+verify_jwt = false
+
+[functions.repertoire-comment-file]
+# POST verifies the user bearer; GET/HEAD verify a ticket and current target visibility.
+verify_jwt = false
+
+[functions.repertoire-comment-upload]
+# The handler verifies the bearer and the RPC rechecks chef/section target authority.
+verify_jwt = false
+
+[functions.repertoire-comment-lifecycle]
+# The handler verifies the bearer before DB-first deletion and exact provider cleanup.
+verify_jwt = false
+
+[functions.chat-media-file]
+# POST verifies room membership; GET/HEAD verify a ticket and live room access in the handler.
+verify_jwt = false
+
+[functions.chat-media-upload]
+# The handler verifies the bearer and the RPC rechecks current room/admin authority.
+verify_jwt = false
+
+[functions.chat-media-lifecycle]
+# The handler verifies the bearer before DB-first message/partial-batch cleanup.
+verify_jwt = false
+
 [functions.resend-inbound]
 # Resend is not a Supabase user. The handler authenticates the raw request with
 # Svix HMAC signatures and timestamp checks before reading or forwarding mail.
