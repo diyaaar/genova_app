@@ -2,9 +2,10 @@
 
 23 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 063 is accepted locally at `a69a936`: its
-service-only six-family inventory/status contract feeds 062's bounded Drive→private-R2 streaming,
-independent destination SHA-256 and resume/refusal data plane. Next is R2 jurisdiction and activation
+$5/month preference and five free choir seats. 064 is accepted locally at `792195b`: 063's
+service-only six-family inventory is converted through exact approval and current metadata into
+062's bounded Drive→private-R2 input, independent destination SHA-256 and resume/refusal data plane.
+Next is R2 jurisdiction and activation
 authority, followed by separately approved hosted inventory/copy/activation stages.
 No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
@@ -36,6 +37,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 061 private R2 release-chain readiness | Local release configuration and rehearsal accepted | [061](../docs/briefs/061-private-r2-release-chain-readiness.md), product/config `6acea76`; exact function gateway, full schema forward/reverse/refusal and operator order pass locally. Provider activation, hosted execution, real copy/cutover and device remain NOT RUN. |
 | 062 bounded private R2 copy executor | Local data-plane executor accepted | [062](../docs/briefs/062-bounded-private-r2-copy-executor.md), product/test `e4a4c23`; external private manifest/journal, exact target/caps, streamed copy, independent destination hash, resume/adopt/refusal and stop-on-first-failure pass locally. Real provider/data/DB/device remain NOT RUN. |
 | 063 private R2 copy inventory | Local control-plane inventory accepted | [063](../docs/briefs/063-private-r2-copy-inventory-contract.md), product/schema/test `a69a936`; deterministic service-only rows cover all six families and explicit gaps/private/conflict states with exact valid destination identities. Real hosted rows, Google metadata, manifest/copy/activation and device remain NOT RUN. |
+| 064 verified private R2 manifest preparation | Local metadata control-plane accepted | [064](../docs/briefs/064-private-r2-manifest-preparation.md), source/test `792195b`; exact private 063 snapshot approval, sequential metadata reconciliation, all six 062 families, complete excluded-row report and atomic private outputs pass 24 focused cases plus root 90 files/797 tests/build. Real inventory/Google/R2/copy/activation/device remain NOT RUN. |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
 | Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |
@@ -97,6 +99,6 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 [Current handoff](../docs/agent-handoff.md) and [active context](activeContext.md) carry only
 the current checkpoint. Historical acceptance stays in the table's linked briefs.
 WF-006 owns the original long-term plan; [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns the revised execution controls and verified cleanup. 063 is locally accepted; no provider,
+owns the revised execution controls and verified cleanup. 064 is locally accepted; no provider,
 hosted data or beta milestone advanced. The next gate is the owner's R2 jurisdiction/activation
 decision, followed by the runbook's separately authorized hosted stages.

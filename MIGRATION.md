@@ -212,10 +212,11 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**23 Eylül güncel yönlendirme:** [063](docs/briefs/063-private-r2-copy-inventory-contract.md)
-`a69a936` üzerinde 062 kopya yürütücüsünü besleyen, servis rolüne özel ve altı aileyi kapsayan
-deterministik envanter/statü sözleşmesini yerelde kabul etti. Eksik/harici/Storage/özel/hedef-çatışmalı
-satırlar kopyaya hazır sayılmıyor. Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon
+**23 Eylül güncel yönlendirme:** [064](docs/briefs/064-private-r2-manifest-preparation.md)
+`792195b` üzerinde 063'ün servis rolüne özel altı ailelik envanterini, kesin snapshot onayı ve güncel
+provider metadata'sı ile 062 manifestine hazırlayan yerel kontrol düzlemini kabul etti. Hariç kalan
+her satır raporda korunuyor; eksik/harici/Storage/özel/hedef-çatışmalı satırlar kopyaya hazır
+sayılmıyor. Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon
 kararıdır; hosted backup/şema/secret/deploy, onaylı gerçek envanter-metadata-kopya-aktivasyon, flag
 ve kaynak silme ayrı onaylardır. Koyu
 temadaki oda bilgisi çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.

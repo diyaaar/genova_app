@@ -8,7 +8,7 @@ individual briefs remain the acceptance authority for each local implementation.
 
 - Candidate base: product commits `beb4842`, `9459732`, `dd21522`, `d7c960b`, `4049266`,
   `ce2b438`, `879d4ec`, `bfe994d`, release config `6acea76`, copy executor `e4a4c23`
-  and service-only inventory contract `a69a936`.
+  and service-only inventory contract `a69a936` plus verified manifest preparation `792195b`.
 - Supabase project must resolve to `hievmwwctjjlhmssoxsu` immediately before every approved hosted
   step. A Git remote, local `.env` or old CLI link is not target proof.
 - Supabase DB/Auth/Realtime/Edge and current web hosting remain. This runbook does not move them to
@@ -110,8 +110,8 @@ Each numbered stage needs the authority named in its heading and stops on any fa
    bucket; create the least-privilege bucket token. Record account/bucket/jurisdiction, no values.
 2. **Hosted read authority:** resolve Supabase project; take a current backup; restore it to an
    isolated target, rehearse 053–063 there and run all existing schema acceptance. Query the 063
-   inventory from that snapshot, then enrich current bytes/recognized Drive sources without a bulk
-   mirror. Produce a measured cost estimate before any hosted schema write.
+   inventory from that snapshot, then run 064's metadata-only preparation without a bulk mirror.
+   Produce a measured cost estimate before any hosted schema write.
 3. **Hosted write authority:** set server secrets with modes `legacy` and enables `false`; apply the
    ordered additive migrations through 063; deploy only the thirteen manifest functions. Probe disabled writes,
    user/ticket refusals and current legacy reads. A failed function blocks every client flag.
@@ -134,14 +134,51 @@ this stage. Run `private_r2_copy_inventory_063(choir_id,bucket)` only as `servic
 exact choir, on the approved restored snapshot or separately authorized hosted target. Never expose
 it to a browser/mobile/admin client. Keep its raw result as a private external `0600` artifact.
 
-The 063 result is not a 062 manifest. Only `ready-for-provider-metadata` rows are candidates for
-Google metadata enrichment; even those still need an exact current name/MIME/length check and the
-object bytes remain unverified. Reconcile `already-private` and `private-target-conflict`; resolve or
-explicitly retain `missing-reference`, `needs-provider-metadata`, `unsupported-reference`,
-`non-drive-storage`, `activation-parent-missing`, `activation-shape-unsupported` and unresolved
-private aliases. Never invent a destination for an over-limit chat position. Snapshot/reconcile
-writes before treating the inventory as current. Activation must reuse the deterministic IDs/keys
-from 063 or refuse; 063 itself writes no mapping or product row.
+The 063 result is not a 062 manifest. [064](briefs/064-private-r2-manifest-preparation.md) adds the
+reviewed metadata-only preparation command. Both `ready-for-provider-metadata` and
+`needs-provider-metadata` rows with valid Drive/key identities are candidates; the latter must get
+all missing name/MIME/length values from current Google metadata. Every other accepted status stays
+itemized in the sidecar report rather than disappearing. Object bytes remain unverified. Reconcile
+`already-private` and `private-target-conflict`; resolve or explicitly retain missing, unsupported,
+non-Drive, orphaned activation, unsupported-shape and unresolved private-alias rows. Never invent a
+destination for an over-limit chat position. Snapshot/reconcile writes before treating the inventory
+as current. Activation must reuse the deterministic IDs/keys from 063 or refuse.
+
+Audit needs no Google credential or provider call. Use the exact external inventory path, choir and
+approved bucket; record the printed fingerprint without copying row/file identifiers into docs:
+
+```sh
+node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \
+  scripts/private-r2-manifest.ts audit \
+  --inventory /absolute/private/path/inventory.jsonl \
+  --project-ref hievmwwctjjlhmssoxsu \
+  --choir <exact-choir-uuid> \
+  --bucket <approved-private-bucket>
+```
+
+Preparation requires the existing Google OAuth refresh credentials plus
+`GENOVA_PRIVATE_R2_MANIFEST_APPROVED` set in the operator's private environment. Its value and
+`--confirm-inventory` must both exactly equal
+`<project-ref>/<choir>/<bucket>/<inventory-fingerprint>`. Manifest and report must be two absent
+absolute paths in the same private external directory. Set item/byte bounds to cover every candidate;
+064 refuses partial output. The report is published first and the copy-driving manifest last:
+
+```sh
+node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON \
+  scripts/private-r2-manifest.ts prepare \
+  --inventory /absolute/private/path/inventory.jsonl \
+  --project-ref hievmwwctjjlhmssoxsu \
+  --choir <exact-choir-uuid> \
+  --bucket <approved-private-bucket> \
+  --manifest /absolute/private/path/manifest.jsonl \
+  --report /absolute/private/path/manifest-report.json \
+  --max-items <all-candidate-count> \
+  --max-total-bytes <explicit-total-byte-cap> \
+  --confirm-inventory <exact-approval-value>
+```
+
+Review every excluded row and the report/manifest hash before allowing 062 validation. A valid 064
+artifact proves metadata reconciliation only, not content bytes, R2 copy or database activation.
 
 [062](briefs/062-bounded-private-r2-copy-executor.md) adds the reviewed local operator command
 `scripts/private-r2-copy.ts`; it is not an Edge Function and it performs no database write. Raw

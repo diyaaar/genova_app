@@ -1,6 +1,6 @@
 # 064 — Verified private R2 manifest preparation
 
-**Status/date/writer:** CONTRACT READY / 2026-09-23 / primary agent.
+**Status/date/writer:** ACCEPTED LOCALLY / 2026-09-23 / primary agent.
 
 **Observable result and user need:** An authorized operator can transform one exact 063 inventory
 snapshot into a private 062 copy manifest using current Google Drive metadata, while preserving a
@@ -62,8 +62,9 @@ headroom remains above the 10 GiB floor. No DB clone, media download, VM or simu
 - Require absolute `0600` inventory input outside the repository, two distinct absent external
   output paths, exact CLI confirmation and matching `GENOVA_PRIVATE_R2_MANIFEST_APPROVED` value:
   `<project>/<choir>/<bucket>/<inventory-fingerprint>`. Secrets are environment-only.
-- Publish report then manifest from same-directory `0600` temp files; final manifest is renamed
-  last. Any validation/metadata/output failure cleans owned temps and leaves no final manifest.
+- Publish report then manifest from same-directory `0600` temp files with no-overwrite hard links;
+  final manifest is published last. Any validation/metadata/output failure cleans owned temps and
+  leaves no final manifest.
   The report binds inventory fingerprint, manifest SHA-256, counts, excluded identities/statuses,
   unresolved count, limits and timestamp. It contains no token or credential.
 - Preparation is all-or-nothing for the candidate set. `--max-items` must cover every candidate;
@@ -106,11 +107,11 @@ headroom remains above the 10 GiB floor. No DB clone, media download, VM or simu
 
 | Criterion / expected behavior | Required? | Status | Proof required | Limit |
 |---|---|---|---|---|
-| Exact 063 input and six-family 062 output | yes | NOT RUN | Focused tests cover exact keys, one choir/bucket, candidate statuses, every family/owner/slot/key, deterministic fingerprint/order and 062 parser acceptance | Synthetic inventory only. |
-| Honest metadata/status reconciliation | yes | NOT RUN | Current metadata fills missing hints; any non-null hint drift, trash/native/missing/unsafe/limit/duplicate fails; every excluded row appears unchanged in report | Mock metadata only. |
-| Private authorization and atomic artifacts | yes | NOT RUN | External `0600` paths, exact fingerprint confirmation/env, absent/distinct outputs, no overwrite; failure leaves no manifest; success report hash binds manifest and no secrets print | Temporary local text only. |
-| Bounds, CLI and integration gates | yes | NOT RUN | Item/total-byte caps, metadata-only calls, CLI audit/pre-approval refusal, focused suite and root `pnpm check`; final diff/security review | No real OAuth/R2/DB/device. |
-| Cleanup and records | yes | NOT RUN | Temp/build/coverage removed, >=10 GiB measured, links/diff pass and separate code/docs commits recorded | `supabase/.temp/cli-latest` remains unrelated. |
+| Exact 063 input and six-family 062 output | yes | PASS | 2026-09-23, `792195b`, focused Vitest 24/24: exact keys, one choir/bucket, both candidate statuses, every family/owner/slot/key, deterministic fingerprint/order and 062 parser acceptance | Synthetic inventory only. |
+| Honest metadata/status reconciliation | yes | PASS | Same suite: current metadata fills missing hints; non-null hint drift, trash/native/unsafe/family MIME/size/duplicate and cap cases fail; every excluded row appears in the report | Mock metadata only; missing/provider HTTP behavior remains inherited 062 coverage. |
+| Private authorization and atomic artifacts | yes | PASS | Same suite: external `0600` input/output, repository/permissive/conflicting path refusal, exact dual approval, no overwrite, no final output after failure, report hash and secret non-disclosure | Temporary local text only. |
+| Bounds, CLI and integration gates | yes | PASS | Item/total-byte all-or-nothing tests, metadata-only port, actual CLI pre-approval refusal; root `pnpm check`: lint, typecheck, 90 files/797 tests, service-worker syntax and production build | No real OAuth/R2/DB/device. |
+| Cleanup and records | yes | PASS | `.next`, coverage and temp fixtures removed; 7 changed docs/193 local links/zero missing, `git diff --check` and security/diff review pass; 40,744,080 KiB (~38.9 GiB) free; separate contract/source/docs commits | `supabase/.temp/cli-latest` remains unrelated. |
 | Real inventory/Google/R2/copy/activation/device/release | no — later authority | NOT RUN | Separate owner-authorized execution | Still required before operational beta/full goal. |
 
 Required FAIL or NOT RUN keeps 064 open. A mocked metadata request or valid local manifest is not a
@@ -119,3 +120,26 @@ real source inventory, copied byte, Drive exit, Android beta or full product rel
 **Delivery:** Commit this contract separately as `064: define verified manifest preparation`, then
 implement only the allowed source/tests. The external request remains EU-vs-Automatic plus explicit
 R2 activation authority; real inventory/Google metadata and copy require their separate approvals.
+
+## Result and review
+
+Contract commit: `cc68e86`. Source/test commit: `792195b`
+(`064: add verified manifest preparation`). The accepted command validates an exact private 063
+JSONL snapshot without provider access, binds the operator's CLI and environment approval to its
+stable fingerprint, then sequentially requests metadata only for eligible rows. It produces a
+private 062 manifest plus a report that retains every excluded status and binds the manifest hash.
+No media bytes are downloaded and no R2 or database adapter is present in the preparation core.
+
+The first focused run passed 22/23: an assignment-review PDF was correctly rejected by the stricter
+family-MIME rule before the more general stored-MIME-drift rule. The test was corrected to the
+actual fail-closed precedence; no product behavior or acceptance requirement was weakened. A first
+typecheck then exposed the existing Drive adapter's `getMetadata` method name and the repository's
+required `NODE_ENV` augmentation on `ProcessEnv`; the CLI now wraps only the metadata method and
+uses a narrower read-only environment type. Focused tests then passed 24/24 and the full root gate
+passed 90 files/797 tests plus build.
+
+No real 063 inventory, Google account/OAuth request, R2 account/bucket/token/object, hosted
+Supabase row/schema/function, copied byte, mapping activation, device or release was used. Generated
+build/coverage/test output was removed. The next critical gate remains the owner's R2 jurisdiction
+and explicit provider-activation authority; real inventory preparation and copy are separately
+authorized stages after backup/restore.
