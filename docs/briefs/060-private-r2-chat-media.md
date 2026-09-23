@@ -1,6 +1,6 @@
 # 060 — Private R2 chat image and room-avatar lifecycle
 
-**Status/date/writer:** IN PROGRESS / 2026-09-23 / primary agent.
+**Status/date/writer:** LOCAL ACCEPTANCE COMPLETE / 2026-09-23 / primary agent.
 
 **Observable result:** A room member can send one ordered image message containing up to five
 private images, every current room member can view/download it, its sender can delete it inside the
@@ -123,11 +123,45 @@ revert is not data rollback. Legacy Drive sources are untouched.
 
 | Criterion | Required? | Status | Proof required | Limit |
 |---|---|---|---|---|
-| Schema, room authority and exact rollback | yes | NOT RUN | PostgreSQL 17 forward/down/refusal; sender/member/admin/non-member/wrong-choir/reply/order/direct-mutation matrix and prior-DDL restore | Hosted migration separate. |
-| Bounded private batch/create/read/delete/replace | yes | NOT RUN | Actual Edge HTTP + signed loopback S3; 1/5 files, byte/hash/readback, replay/conflict, partial abort, lost response, Range, old-ticket revocation, exact delete and avatar replacement cleanup | Loopback is not real R2. |
-| Web mixed compatibility | yes | NOT RUN | Focused tests and production Chrome 412x915 send/gallery/download/delete plus avatar replace; legacy singular/array/external reads; zero new Drive/public provider URL | No device inference. |
-| Required gates, review and cleanup | yes | NOT RUN | Deno checks; focused tests; root `pnpm check`; security/lifecycle/race/diff/secret/resource review; mobile gate only if native/shared code changes | Self-review is not independent review. |
+| Schema, room authority and exact rollback | yes | **PASS** | PostgreSQL 17 forward/down/refusal; sender/member/admin/non-member/wrong-choir/order/direct-mutation matrix, catalogue checks and exact prior-DDL restore | Hosted migration separate. |
+| Bounded private batch/create/read/delete/replace | yes | **PASS** | Actual Edge HTTP + signed loopback S3: 1/5 files, byte/hash/readback, replay, failed-readback cleanup, partial abort, lost response, Range, old-ticket revocation, exact delete and avatar replacement cleanup | Loopback is not real R2. |
+| Web mixed compatibility | yes | **PASS** | Latest focused 4 files/15 cases plus root suite; production Chrome 412x915: legacy singular/array, ordered two-image send/read/delete and avatar replace; 3 uploads/tickets/reads, zero Drive/errors | No device inference. |
+| Required gates, review and cleanup | yes | **PASS** | Three Deno checks; SQL/runtime; root `pnpm check` 87 files/732 tests, SW syntax and production build; security/lifecycle/race/diff/secret/resource review; generated output/listeners removed | No native/shared-mobile change; iOS remains grouped. |
 | Hosted/provider/real-data/device | no — separate gate | NOT RUN | Controlled release/copy/cutover evidence later | Explicit authority required. |
 
 Required FAIL or NOT RUN keeps 060 open. Record exact commands, revisions, dates, environments and
 limits in the result section; do not promote local loopback or Chrome to provider/device evidence.
+
+## Result
+
+- Product commit `bfe994d` adds server-owned immutable private chat-media versions, ordered atomic
+  one-to-five image messages, actor-bound protected reads with live room reauthorization, DB-first
+  sender deletion and admin-only avatar replacement. Durable message/avatar state stores version
+  IDs or the `r2_chat_<uuid>` alias; expiring ticket URLs remain client-only. Legacy singular/array
+  Drive or external metadata remains readable and the feature-disabled writer stays unchanged.
+- PostgreSQL 17 acceptance passed forward, room/member/admin/outsider/wrong-choir and direct-identity
+  refusal checks, exact down restore and unresolved-provider rollback refusal. The source restore was
+  unchanged and the disposable `genova_060_test_runtime` database was removed.
+- Actual Deno HTTP against a signed loopback S3 service passed exact byte/MIME/SHA-256 readback,
+  one/five-part commit, replay, failed-readback deletion, partial abort, lost-commit reconciliation,
+  Range, live ticket revocation, message delete replay and prior-avatar exact-key cleanup.
+- Production Chrome at 412x915 passed legacy single/array rendering, two-image private send/read,
+  sender delete and avatar replace with three uploads, three tickets, three reads, zero Drive calls
+  and zero page errors. Two initial harness attempts failed on asynchronous message rendering and
+  the visible blur overlay target; the bounded correction waits for content and clicks the actual
+  user-visible layer. Visual review also found a pre-existing low-contrast dark-theme room drawer;
+  it is a beta UI follow-up, not private-storage acceptance or a reason to broaden 060.
+- Latest root gate passed lint, typecheck, 87 files/732 tests, service-worker syntax and production
+  build. Protected-ticket failure now hides only the affected private image instead of failing the
+  room, and avatar state retains its durable alias rather than an expiring URL. `.next`, coverage and
+  browser capture were removed; ports 4174/8000/18060 and disposable databases are absent. Free
+  space after cleanup is 40,837,836 KiB (~38.9 GiB). The unrelated
+  `supabase/.temp/cli-latest` remains unstaged.
+- Hosted schema/functions/flags, real R2/provider objects, live rows/Drive ACLs, deployment, device
+  and publication are **NOT RUN** and require their separate authority. No production file moved or
+  public source was removed.
+
+**Next:** prepare one controlled provider/hosted release and copy/cutover package covering the
+accepted 053–060 private-file families and assignment retention. Do not create an account, spend,
+request credentials, inspect/copy live data, deploy, flip flags or remove Drive sources without the
+exact owner authority.

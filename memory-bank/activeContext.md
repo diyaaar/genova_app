@@ -9,8 +9,8 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-059 is now locally accepted; move the last active Drive media family to immutable private versions and the provider-ready
-Android critical path rather than continuing tiny chat features automatically.
+060 is now locally accepted; move to the controlled provider/hosted release, assignment-retention
+and copy/cutover preparation rather than continuing tiny chat features automatically.
 
 ## Latest owner choices
 
@@ -28,18 +28,18 @@ Android critical path rather than continuing tiny chat features automatically.
 
 ## Exact work checkpoint
 
-- Last accepted product `879d4ec`/059. Verify actual HEAD; no unfinished product changes.
-- 059 passes comment-audio SQL forward/down/refusal, focused 5/21, signed loopback upload/read/
-  delete/reconciliation/live revocation, root 83/722/build and production Chrome text/audio/hide/delete.
-  Detailed evidence: [059](../docs/briefs/059-private-r2-repertoire-comment-audio.md).
+- Last accepted product `bfe994d`/060. Verify actual HEAD; no unfinished product changes.
+- 060 passes chat-media SQL forward/down/refusal, signed loopback ordered upload/read/delete/avatar
+  lifecycle, root 87/732/build and production Chrome legacy/private send/read/delete/avatar flow.
+  Detailed evidence: [060](../docs/briefs/060-private-r2-chat-media.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next prepare private room-authorized chat message images and room avatars, the remaining first-party
-  Drive media family from 052, without expanding native chat features.
+- Next prepare one controlled provider/hosted release and copy/cutover package for 053–060, including
+  assignment retention and exact owner choices, without activating or touching live data yet.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
-- 059 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
-  are removed; 37,689,584 KiB (~35.9 GiB) remained free. No VM/simulator/device created.
+- 060 build/coverage/screenshot evidence left the workspace, disposable DB and loopback listeners
+  are removed; 40,837,836 KiB (~38.9 GiB) remained free. No VM/simulator/device created.
 - Cloudflare/R2 account availability asked without credentials. Local 054 can proceed without
   that answer; provider activation/region and real data/cutover remain separate approval gates.
 

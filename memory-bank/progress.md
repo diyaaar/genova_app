@@ -2,10 +2,10 @@
 
 23 September current direction: [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
-$5/month preference and five free choir seats. 059 is accepted locally at `879d4ec`: exact SQL
-forward/down/refusal, focused 5/21, signed loopback upload/read/delete/reconciliation/live revocation,
-root 83/722/build and Chrome text/audio/hide/delete pass. Next is private room-authorized chat
-message image and room-avatar storage.
+$5/month preference and five free choir seats. 060 is accepted locally at `bfe994d`: exact SQL
+forward/down/refusal, signed loopback ordered upload/read/delete/avatar reconciliation, root
+87/732/build and Chrome legacy/private media flow pass. Next is controlled provider/hosted
+release, assignment-retention and copy/cutover preparation.
 No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 
@@ -32,7 +32,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 006 üyelik yönetimi güvenlik kapısı | Kapatıldı; kalan 27 hesap riski ürün sahibi tarafından kabul edildi | [006](../docs/briefs/006-uyelik-yonetimi-guvenlik-kapisi.md); eski public bootstrap silindi, 15 restrictive politika ve hosted 003/005/006 testleri geçti. Toplu parola/oturum düzeltmesi ve e-posta bilinçli olarak yapılmadı; bu hesapların güvenli olduğu anlamına gelmez |
 | 007 operatör kontrollü koro oluşturma | Tamamlandı; authenticated başarı yolu canlıda kabul edildi | [007](../docs/briefs/007-operator-kontrollu-koro-olusturma.md); taze backup/restore, DB `20260905160539`, Edge v1 ve hosted 003/005/006/007 geçti. Allow-list dolduruldu ve RPC canlıda gerçek operatör JWT'siyle koro oluşturdu. Oluşturulan test korosu 010'un 8. adımında silindi; kabul kaydı geçerli |
 | Railway / Drive'dan çıkış | Araştırma ve ayrı staging hazırlığı | [Altyapı](../docs/altyapi-2026-09-04.md); uygulama yayını/veri taşıması yok |
-| 052–059 Drive exit private-file foundation | Repertoire, assignment and comment lifecycles accepted locally | [053](../docs/briefs/053-private-r2-repertoire-read.md) through [059](../docs/briefs/059-private-r2-repertoire-comment-audio.md), latest product `879d4ec`; stable repertoire files/covers, immutable assignment submit/history/review and target-authorized comment audio have private identities and non-destructive ordering. Real R2/hosted/copy/cutover/device are NOT RUN; chat images/avatars remain the active Drive family. |
+| 052–060 Drive exit private-file foundation | All inventoried first-party active Drive media writers accepted locally | [053](../docs/briefs/053-private-r2-repertoire-read.md) through [060](../docs/briefs/060-private-r2-chat-media.md), latest product `bfe994d`; repertoire files/covers, assignment submit/history/review, targeted comment audio and room-authorized chat images/avatars have private identities and recoverable ordering. Real R2/hosted/copy/cutover/device are NOT RUN; assignment retention and controlled release remain. |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
 | Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |

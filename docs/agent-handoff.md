@@ -6,23 +6,23 @@ This is the current entry point; dated acceptance remains in individual briefs.
 ## Read and verify
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
-   [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--22-september-2026).
-2. [059](briefs/059-private-r2-repertoire-comment-audio.md) accepts private repertoire comment audio;
-   continue with the remaining private chat-media family,
+   [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--23-september-2026).
+2. [060](briefs/060-private-r2-chat-media.md) accepts the last active first-party Drive media writer;
+   continue with the controlled provider/release/copy/cutover preparation,
    using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product: `879d4ec` (059); verify current HEAD. No unfinished product changes.
+- Last accepted product: `bfe994d` (060); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
-- 059 locally passes Google-free text comments plus private comment-audio upload/read/hide/delete,
-  actor-bound live ticket revocation, exact rollback, Chrome and full root gates without Drive.
-- Next: private room-authorized chat image/message and room-avatar storage. Retention, bulk copy,
-  provider activation and live execution remain later packages.
+- 060 locally passes ordered private chat images, live room-authorized reads, DB-first deletion and
+  private room-avatar replacement while preserving legacy mixed reads and exact rollback.
+- Next: one controlled release/copy/cutover package for 053–060 plus assignment retention. Provider
+  activation, hosted migration, credentials, real data and live execution retain owner authority.
 
 ## Delivery decisions
 
@@ -48,9 +48,9 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- 37,689,584 KiB (~35.9 GiB) was free after 059 workspace cleanup. Build/coverage/screenshot were
-  moved to Trash; disposable databases and loopback listeners were removed; no mobile build output
-  was created.
+- 40,837,836 KiB (~38.9 GiB) was free after 060 workspace cleanup. Build/coverage/screenshot were
+  deleted; disposable databases and loopback listeners were removed; no mobile build output was
+  created. Dark-theme room-info contrast is a recorded beta UI follow-up, not a storage failure.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.
   Existing Storage migration runs toward Drive, not away. Cloudflare/R2 account availability asked;
