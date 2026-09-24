@@ -24,6 +24,31 @@ Core rehearsal editing and other missing features remain outstanding, not silent
 If a release blocker prevents the few-day target, present its concrete cause and next action;
 do not manufacture a date or add unrelated features while awaiting a critical decision.
 
+### Controlled execution queue — 24 September 2026
+
+[WF-009](briefs/WF-009-controlled-delivery-execution-queue.md) reconciles this queue with the
+current checkout. The read-only GitHub `main` check returned `a13f696` while local `main` was
+`2c54cd8`, 170 commits ahead across 536 changed files. The live web revision was not measured.
+A local green gate is therefore not a deployed build. Push may deploy; review the exact candidate,
+CI and DB/Edge/web order before any promotion. Do not bulk-push merely to close the count.
+
+| Gate | Required result and evidence | Current action / authority |
+|---|---|---|
+| 1. Release source | Identify the exact deployable candidate from the 170-commit gap; compare web, mobile, migrations and Edge dependencies; prove CI and the live host's current revision; stage backend before client. | Local read-only preflight is ready. Push/deploy remain separate release actions. Recheck remote before acting. |
+| 2. Finish local Drive-exit mechanics | Implement and test the missing activation/reconciliation transaction using 063 identities and 062 verified journal/hash. Refuse stale snapshots, conflicting targets, orphaned history and partial family activation; prove down/refusal on an isolated DB. | Earliest ready implementation package. No Cloudflare account or hosted write is needed for its local contract. |
+| 3. Provision private storage | Verify the owner's Cloudflare account, choose EU jurisdiction or Automatic, inspect actual R2/billing state, then provision one private Standard bucket and a bucket-scoped Object Read & Write token. Measure existing bytes/operations and total hosting cost against the <=$5/month preference. | Region/activation/spending and credentials need the owner's explicit authority; no assumption that a free allowance equals a $0 or <=$5 total bill. [Runbook](private-r2-release-runbook.md). |
+| 4. Rehearse and deploy backend | Fresh hosted backup plus demonstrated isolated restore; apply 053–063 in the verified order; export and reconcile real 063 inventory; set secrets with legacy/disabled flags; deploy exact Edge functions and prove disabled/legacy/denied paths. | Hosted reads, writes, secrets and deployment are distinct approved stages. Both web and mobile compatibility remain required. |
+| 5. Copy and cut over by family | Prepare 064 manifest, copy a bounded real canary through 062, verify destination bytes/hash and journal, then activate mappings only against the approved snapshot. Reconcile concurrent writes, enable one family at a time, test web roles/Range/seek and rollback; reach `r2-required` only after every active writer/read path is accounted for. Preserve Drive sources until separate removal authority. | Actual Google/R2 access, copy, mapping activation, flags and source ACL/delete each have their own gate. No bulk mirror or silent skipped rows. |
+| 6. Usable Android beta | From one signed candidate, run the owner-approved chef and chorist phone matrix: sign-in/invite, choir choice, protected repertoire/PDF/annotations, audio, navigation, relaunch and sign-out, including wrong-choir/expired/offline failures and web compatibility. Publish only to the approved beta destination and verify installation. | 004's two hardware criteria and 010's two live invitation refusals retain their recorded status until actually exercised; beta is not M5. |
+| 7. Finish full product | Complete B's native annotation write/recoverable sync/offline; C2 push, C3 remaining social/media/administration and C4–C5 assignments/home; D2–D3 plan limits, five-free-member enforcement, account/data lifecycle; D6 security, accessibility and recovery. Preserve existing web features and native/WebView ownership. | Use the A–E tables and feature inventories below as acceptance scope. Ask price/counting, retention and other owner choices just before their dependent work. |
+| 8. Two-store candidate and operations | Reconcile every preserved feature; refresh current Apple/Google rules, legal/deletion/payment disclosures and account requirements; prove Android and iOS signed device builds, closed-test/review access, rollback, actual publication and first backup/incident/budget exercise. | Store accounts, tester communications, uploads/publication and recurring monitoring retain their respective authority. M4 and M5 close only on external evidence. |
+
+Use the [existing provider runbook](private-r2-release-runbook.md) for the exact migration,
+secret, function and copy order. Keep one active bounded work card. If the external R2 decision
+waits, gate 2 remains a legitimate local critical-path task; the whole product is not finished or
+technically immobile. Record one daily checkpoint with the next user-visible outcome, tested layer,
+remaining blocker and whether the few-day beta target still has evidence.
+
 ### Commercial and infrastructure baseline
 
 - Five members per choir are free; only members above five are billable. This is an ongoing
@@ -64,7 +89,7 @@ stable paging and invalidation-only reconnect recovery. [049](briefs/049-native-
 accepts protected native text/reply/link send, exact acknowledgement reconciliation and bounded
 restart retry/cancel. [050](briefs/050-native-chat-core-message-actions.md) accepts native copy,
 sender edit/global delete and per-member hide through 044's authority. Native starred-message state
-is next.
+was subsequently accepted locally in [051](briefs/051-native-chat-starred-messages.md).
 Originally prepared under
 [WF-006](briefs/WF-006-long-term-execution-plan.md).
 This is the canonical delivery sequence, extending the earlier 5–8 September plan. It is a
@@ -256,6 +281,11 @@ that product/security boundary before shipping. Offline support is not implied b
 | C3 / C1 + chat inventory | [038](briefs/038-native-chat-feature-inventory.md) maps the split. [039](briefs/039-chat-tenant-memory-teardown.md) resets tenant state at `7a6a78e`; [040](briefs/040-shared-chat-read-contract.md) accepts read models/order at `2dfe6ab`; [041](briefs/041-chat-room-membership-authority.md) repairs membership at `cb4e7ec`; [042](briefs/042-chat-social-membership-authority.md) binds social rows at `c58f4da`; [043](briefs/043-chat-message-status-authority.md) adds server-time status authority at `1434464`; [044](briefs/044-chat-core-message-mutation-authority.md) moves edit/delete/hide to server authority at `621147e`; [045](briefs/045-chat-text-send-idempotency.md) accepts idempotent text/reply/link send and bounded web retry/cancel at `361ab7c`; [046](briefs/046-private-room-realtime-authorization.md) accepts exact room-member Broadcast/Presence policy, declared event-table publication and private web room-channel setup at `bed8032`; [047](briefs/047-durable-chat-status-web-adoption.md) adopts durable delivered/read state and removes Broadcast receipt authority at `3c563d1`; [048](briefs/048-native-chat-list-read.md) accepts memory-only native room list/read, stable paging and invalidation-only reconnect at `dc86d5d`; [049](briefs/049-native-chat-text-send-retry.md) accepts protected native text/reply/link send and retry at `2118182`; [050](briefs/050-native-chat-core-message-actions.md) accepts copy, sender edit/global delete and per-member hide at `9edda60`. Native starred-message state is next. `lib/chat.ts`, `components/chat/`, native adapters | Preserve rooms/memberships, messages, receipts/reactions/polls and every mapped feature; RLS on every read/write; private room topics; reconnect/order/dedup; idempotent offline retry; inaccessible room and choir switch | 039–050 locally prove the foundations plus native list/read/send/core actions. The status writer and native read cache are process-memory only; caller-supplied typing/Presence identity and native star/reaction/poll/media flows remain. The fixture is not a real socket or hosted-setting test. No hosted schema application, real socket or device-runtime claim. Native pending message bodies use bounded chunked SecureStore; this is not server delivery evidence. Dart UI and Socket.IO are not reusable RN/Supabase code |
 | C4 / C1 + file/upload contract | Native assignments, split read → submission → review. `lib/assignment-scope.ts`, `app/(main)/odevler/`, existing assignment APIs | Existing role/deadline/lock/withdrawal/review rules; authorized upload completion, failed/resumed submission, hidden review, wrong tenant and audit behavior | Native server logic moves to shared Edge paths; web uses the same path. Any schema change requires DB gates |
 | C5 / C1, C3–C4 as needed | Native home and performance views. Existing main pages, `lib/korist-performance.ts` | Same role/data meaning; empty/error/refresh and tenant change; counters cannot leak a prior choir; deep links resolve correctly | No new analytics product or silent change to calculations |
+
+Current correction, 24 September: C3's statement that native stars are next is historical;
+[051](briefs/051-native-chat-starred-messages.md) accepted that local slice. C2's near-disk-floor
+deferral also describes its earlier checkpoint; the current planning preflight has about 39 GiB
+available. Push transport and the remaining C2 implementation still need their own decisions/tests.
 
 Do not treat these rows as full feature inventories. Each module brief must trace all current
 web actions, API/Realtime dependencies, accessibility and file behavior before deciding its split.

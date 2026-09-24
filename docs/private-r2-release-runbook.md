@@ -18,6 +18,20 @@ individual briefs remain the acceptance authority for each local implementation.
 - `R2_TEST_ENDPOINT` — forbidden in every hosted environment.
 - `R2_ALLOW_INSECURE_LOOPBACK` — forbidden in every hosted environment.
 
+## Source-control and deployment preflight — 24 September 2026
+
+The read-only GitHub `main` check returned `a13f696` while local `main` was `2c54cd8`, 170
+commits ahead. The live host's current revision has not been verified. Before stage 3, recheck
+remote and live-host revisions, review the candidate's full web/mobile/Edge/schema dependency
+diff and run the gates for that exact candidate. Record the intended DB → Edge → web/client
+promotion and old-client compatibility order. A push can trigger web deployment; do not push the
+entire local backlog merely because local checks passed. A repository push, hosted migration,
+function deployment, client flag and installed mobile build are separately evidenced actions.
+
+The [current execution queue](mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
+also identifies a local activation/reconciliation contract still to implement. Do not attempt
+stage 5 until that transaction, its refusal/rollback tests and a real copy journal are accepted.
+
 ## Provider choice that still needs the owner
 
 Recommended initial choice: Cloudflare R2 **Standard** with the **EU jurisdiction**. The current
@@ -107,7 +121,9 @@ Edge secret update does not update already-built client code.
 Each numbered stage needs the authority named in its heading and stops on any failed required row.
 
 1. **Provider authority:** verify Cloudflare account and owner choice; create one private Standard
-   bucket; create the least-privilege bucket token. Record account/bucket/jurisdiction, no values.
+   bucket; create the least-privilege bucket token. Record account/bucket/jurisdiction and the
+   provider's current billing state, never secret values. Measure actual usage before claiming
+   the owner's total monthly infrastructure target is met.
 2. **Hosted read authority:** resolve Supabase project; take a current backup; restore it to an
    isolated target, rehearse 053–063 there and run all existing schema acceptance. Query the 063
    inventory from that snapshot, then run 064's metadata-only preparation without a bulk mirror.

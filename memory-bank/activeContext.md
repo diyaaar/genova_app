@@ -1,7 +1,8 @@
 # Active context
 
-Updated 23 September 2026. [WF-008](../docs/briefs/WF-008-android-first-delivery-reset.md)
-records the owner's approved delivery reset; the [delivery plan](../docs/mobil-teslim-plani.md)
+Updated 24 September 2026. [WF-009](../docs/briefs/WF-009-controlled-delivery-execution-queue.md)
+reconciles the execution queue after [WF-008's](../docs/briefs/WF-008-android-first-delivery-reset.md)
+owner-approved reset; the [delivery plan](../docs/mobil-teslim-plani.md)
 owns priorities, the objective and resource/test controls. [Handoff](../docs/agent-handoff.md)
 is the short startup source. Historical acceptance remains in briefs and [progress](progress.md).
 
@@ -11,8 +12,9 @@ Deliver the same production product Android-first: usable beta soon, then comple
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
 064 is now locally accepted; the 053–060 release chain, runbook, deterministic inventory contract,
 verified metadata-only manifest preparation and bounded copy executor are ready.
-The next critical step is an owner-authorized provider choice/activation, then separately gated
-hosted backup, migration/functions, live inventory/copy and activation—not another small feature.
+The next ready local critical-path outcome is an activation/reconciliation contract bound to the
+063 inventory and 062 verified copy journal. Owner-authorized R2 choice/activation then unlocks
+the separately gated hosted backup, migration/functions, real copy and cutover sequence.
 
 ## Latest owner choices
 
@@ -31,6 +33,9 @@ hosted backup, migration/functions, live inventory/copy and activation—not ano
 ## Exact work checkpoint
 
 - Last accepted product/schema/test `792195b`/064. Verify actual HEAD; no unfinished product changes.
+- On 24 Sep GitHub `main` was `a13f696`, 170 commits behind local `2c54cd8`; live hosting
+  revision remains unverified. Follow the [controlled queue](../docs/mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
+  and runbook source preflight before any push or deploy.
 - 062 passes 38 focused manifest/stream/resume/refusal/batch cases and root 89 files/773 tests/build.
   Detailed evidence: [062](../docs/briefs/062-bounded-private-r2-copy-executor.md).
 - 063 passes the six-family inventory/status/order/identity/privilege matrix and exact down/reapply
@@ -40,8 +45,9 @@ hosted backup, migration/functions, live inventory/copy and activation—not ano
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next ask the owner to choose EU jurisdiction (recommended) or Automatic and explicitly authorize
-  R2 activation/bucket/token within the stated budget. Hosted/data steps remain separate approvals.
+- Next local package implements activation/refusal on an isolated DB. Ask the owner for EU
+  jurisdiction (recommended) or Automatic and R2 activation/bucket/token authority before provider
+  setup. Hosted/data steps remain separate approvals.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
 - 064's build/coverage/temp output is removed; no VM/simulator/device/media output remains. About
   40.7 million KiB (~38.9 GiB) remains free. Cloudflare credentials must never enter chat or Git.

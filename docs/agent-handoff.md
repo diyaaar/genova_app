@@ -1,17 +1,15 @@
 # Genova — agent handoff
 
-Updated 23 September 2026 under [WF-008](briefs/WF-008-android-first-delivery-reset.md).
+Updated 24 September 2026 under [WF-009](briefs/WF-009-controlled-delivery-execution-queue.md).
 This is the current entry point; dated acceptance remains in individual briefs.
 
 ## Read and verify
 
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--23-september-2026).
-2. [063](briefs/063-private-r2-copy-inventory-contract.md) accepts the service-only inventory and
-   [064](briefs/064-private-r2-manifest-preparation.md) safely prepares
-   [062's](briefs/062-bounded-private-r2-copy-executor.md) bounded-copy manifest from current metadata;
-   continue at the exact provider/hosted inventory/copy/activation approval gates,
-   using [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+2. Follow the [current queue](mobil-teslim-plani.md#controlled-execution-queue--24-september-2026):
+   063 inventory → 064 manifest → 062 verified copy still needs a local activation transaction;
+   use [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
@@ -27,8 +25,9 @@ This is the current entry point; dated acceptance remains in individual briefs.
   classification, prerequisite/down/refusal and exact reapply; no hosted row was read or changed.
 - 064 locally passes exact snapshot approval, metadata-only six-family reconciliation, private
   manifest/report publication and all failure/path/cap gates; no real inventory or provider ran.
-- Next blocking choices are R2 jurisdiction and authority for provider activation. Hosted backup,
-  migration/deploy, real inventory/copy and cutover remain subsequent explicit gates.
+- GitHub `main` was confirmed at `a13f696` on 24 Sep; local HEAD was 170 commits ahead and
+  the live host revision is unverified. Next local package: activation/reconciliation contract.
+  R2 region/activation and later hosted/copy/cutover actions retain separate gates.
 
 ## Delivery decisions
 
@@ -54,7 +53,7 @@ This is the current entry point; dated acceptance remains in individual briefs.
   push transport in 036, retention, plan pricing/counting and release accounts remain open.
 - Native chat still lacks accepted social/media/administration and some status/presence flows;
   C4/C5, native writing/sync/offline, release/lifecycle/security and stores remain outstanding.
-- About 40.7 million KiB (~38.9 GiB) remained after 064 cleanup. Test clones/processes,
+- About 39 GiB was free at the 24 Sep planning preflight. Test clones/processes,
   root build and coverage outputs were removed; no database, VM, simulator or mobile build remains.
   Dark-theme room-info contrast is a recorded beta UI follow-up, not a storage failure.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive

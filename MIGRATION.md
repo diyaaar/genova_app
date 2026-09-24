@@ -201,7 +201,8 @@ beklerse bağımsız, yetkili 004 yerel çalışması ilerleyebilir; canlı kabu
 ## Ürün yönü ve maliyet
 
 **`docs/urun-ve-maliyet.md`** tarihsel varsayım kaydıdır; güncel fiyat veya kapasite
-kanıtı değildir. Railway tercihi korunur; hazırlık, production taşıması değildir.
+kanıtı değildir. Önceki Railway tercihi karar #29 ile değişti: mevcut hedefte Supabase kalır,
+dosya depolama için özel R2 hazırlanır. Hazırlık, production taşıması değildir.
 Sağlayıcı geçişi [teslim planında](docs/mobil-teslim-plani.md) ayrı iş olarak izlenir.
 
 ## Mağaza yayını
@@ -221,7 +222,7 @@ kararıdır; hosted backup/şema/secret/deploy, onaylı gerçek envanter-metadat
 ve kaynak silme ayrı onaylardır. Koyu
 temadaki oda bilgisi çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
 
-**Sıradaki iş:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
+**Tarihsel paket özeti:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar
 sözleşmesini böldü; [014](docs/briefs/014-native-repertoire-catalogue.md) ortak saf katalog
 çekirdeğini ve native katalog UI'ını yerelde kabul etti. [015](docs/briefs/015-shared-protected-repertoire-file.md)
 ortak güvenli dosya Edge yolunu ve web uyarlamasını yerelde kabul etti; deploy ve canlı ürün
