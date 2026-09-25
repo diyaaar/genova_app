@@ -8,14 +8,14 @@ This is the current entry point; dated acceptance remains in individual briefs.
 1. Read [AGENTS](../AGENTS.md), [active context](../memory-bank/activeContext.md) and
    [the current delivery priority](mobil-teslim-plani.md#current-delivery-priority--23-september-2026).
 2. Follow the [current queue](mobil-teslim-plani.md#controlled-execution-queue--24-september-2026):
-   063 inventory → 064 manifest → 062 verified copy still needs a local activation transaction;
-   use [the guide](gecis-rehberi.md) and [work cycle](ai-calisma-duzeni.md).
+   063 inventory → 064 manifest → 062 verified copy → 065 atomic activation are locally accepted;
+   use the linked guide/work cycle.
 3. Verify Git ownership, disk and active goal. Do not repeat accepted work or rebuild environments
    merely because the model/session changed.
 
 ## Current checkout and ownership
 
-- Last accepted product/schema/test: `792195b` (064); verify current HEAD. No unfinished product changes.
+- Last accepted product/schema/test: `53c258f` (065); verify current HEAD. No unfinished product changes.
 - Unrelated `supabase/.temp/cli-latest` remains unstaged. Stage only owned task paths.
 - Final 051: mobile typecheck/49 suites/287 tests, root 65/602/build and sequential Android/iOS
   exports PASS. Star snapshot/toggle/panel, refusal and lifecycle accepted locally only.
@@ -25,9 +25,10 @@ This is the current entry point; dated acceptance remains in individual briefs.
   classification, prerequisite/down/refusal and exact reapply; no hosted row was read or changed.
 - 064 locally passes exact snapshot approval, metadata-only six-family reconciliation, private
   manifest/report publication and all failure/path/cap gates; no real inventory or provider ran.
-- GitHub `main` was confirmed at `a13f696` on 24 Sep; local HEAD was 170 commits ahead and
-  the live host revision is unverified. Next local package: activation/reconciliation contract.
-  R2 region/activation and later hosted/copy/cutover actions retain separate gates.
+- 065 locally binds the exact current snapshot/report/latest verified journal, atomically activates
+  all six families and refuses stale/orphan/partial/conflicting requests; no hosted row changed.
+- GitHub `main` was confirmed at `a13f696` on 25 Sep; local `53c258f` is 173 commits ahead; the live
+  host is unverified. Next local package: exact candidate/dependency preflight; R2 remains gated.
 
 ## Delivery decisions
 
@@ -61,8 +62,8 @@ This is the current entry point; dated acceptance remains in individual briefs.
 - 052 found Drive-folder filters in both catalogues, public Drive ACL writes and destructive
   submission replacement before history capture; include these in the remaining write/cutover batch.
   Existing Storage migration runs toward Drive, not away. 063 makes the authorized snapshot
-  deterministic and 064 removes hand-edited metadata/manifest preparation; running it against
-  Google remains real-data work. R2 availability asked;
+  deterministic, 064 removes hand-edited metadata/manifest preparation and 065 adds atomic
+  activation/refusal; running the chain against Google/R2 remains real-data work. R2 availability asked;
   no credentials requested, activation/region/live access unapproved. Does not block local work.
 - One active result/one heavy process; >=10 GiB free; reassess after two failed approaches.
   Focused repair and code review precede final heavy gates. Android is the default runtime;
@@ -76,5 +77,4 @@ provider activation/cutover, credentials, real accounts/email, spending, push/de
 hardware and distribution retain applicable approval boundaries. Prepare concrete work before
 asking for the exact missing choice/authority. Historical account/token risks remain unresolved.
 Do not mark the full goal complete at beta, planning or local-test acceptance.
-The [revised objective](mobil-teslim-plani.md#revised-goal-text) is canonical; WF-008 records its
-application-goal creation receipt.
+The [revised objective](mobil-teslim-plani.md#revised-goal-text) is canonical; WF-008 records its receipt.

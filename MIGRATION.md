@@ -213,13 +213,13 @@ olduğu gibi taşınır. Sona bırakılırsa Faz 1 biter ama yayınlanamaz.
 
 ## Sıradaki iş
 
-**23 Eylül güncel yönlendirme:** [064](docs/briefs/064-private-r2-manifest-preparation.md)
-`792195b` üzerinde 063'ün servis rolüne özel altı ailelik envanterini, kesin snapshot onayı ve güncel
-provider metadata'sı ile 062 manifestine hazırlayan yerel kontrol düzlemini kabul etti. Hariç kalan
-her satır raporda korunuyor; eksik/harici/Storage/özel/hedef-çatışmalı satırlar kopyaya hazır
-sayılmıyor. Sıradaki kritik kapı sahibin R2 jurisdiction ve aktivasyon
-kararıdır; hosted backup/şema/secret/deploy, onaylı gerçek envanter-metadata-kopya-aktivasyon, flag
-ve kaynak silme ayrı onaylardır. Koyu
+**25 Eylül güncel yönlendirme:** [065](docs/briefs/065-private-r2-activation-reconciliation.md)
+`53c258f` üzerinde 063 snapshot'ını, 064 raporunu ve 062'nin doğrulanmış günlüğünü bağlayan atomik
+aktivasyon/uzlaştırma işlemini yerelde kabul etti. Eski/yetim/eksik/hedef-çatışmalı veya kısmi istek
+ürün satırı değiştirmeden reddediliyor. Sıradaki yerel iş 173 commitlik fark için kesin yayın adayı
+ve DB→Edge→web/client sırasını sabitlemektir. Sahibin R2 jurisdiction/aktivasyon kararı; hosted
+backup/şema/secret/deploy, gerçek envanter-metadata-kopya-aktivasyon, flag ve kaynak silme ayrı
+onaylardır. Koyu
 temadaki oda bilgisi çekmecesi kontrastı beta UI takibidir. Aşağıdaki paket özeti tarihseldir.
 
 **Tarihsel paket özeti:** [013](docs/briefs/013-native-repertoire-contract.md) native repertuvar

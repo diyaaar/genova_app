@@ -10,11 +10,11 @@ is the short startup source. Historical acceptance remains in briefs and [progre
 
 Deliver the same production product Android-first: usable beta soon, then complete the full
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
-064 is now locally accepted; the 053–060 release chain, runbook, deterministic inventory contract,
-verified metadata-only manifest preparation and bounded copy executor are ready.
-The next ready local critical-path outcome is an activation/reconciliation contract bound to the
-063 inventory and 062 verified copy journal. Owner-authorized R2 choice/activation then unlocks
-the separately gated hosted backup, migration/functions, real copy and cutover sequence.
+065 is now locally accepted; the 053–060 release chain, deterministic inventory, verified manifest,
+bounded copy executor and atomic activation/refusal transaction are ready locally.
+The next ready local outcome is the exact release candidate/dependency preflight for the remote
+gap. Owner-authorized R2 choice/activation separately unlocks hosted backup, migration/functions,
+real inventory/copy and cutover.
 
 ## Latest owner choices
 
@@ -34,8 +34,8 @@ the separately gated hosted backup, migration/functions, real copy and cutover s
 
 - [WF-010 local health report](../docs/reports/2026-09-25-proje-saglik-kontrolu.md): web and
   mobile gates pass; browser E2E lacks Chromium; live/device/release remain unverified.
-- Last accepted product/schema/test `792195b`/064. Verify actual HEAD; no unfinished product changes.
-- On 24 Sep GitHub `main` was `a13f696`, 170 commits behind local `2c54cd8`; live hosting
+- Last accepted product/schema/test `53c258f`/065. Verify actual HEAD; no unfinished product changes.
+- On 25 Sep GitHub `main` was `a13f696`, 173 commits behind local `53c258f`; live hosting
   revision remains unverified. Follow the [controlled queue](../docs/mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
   and runbook source preflight before any push or deploy.
 - 062 passes 38 focused manifest/stream/resume/refusal/batch cases and root 89 files/773 tests/build.
@@ -44,12 +44,15 @@ the separately gated hosted backup, migration/functions, real copy and cutover s
   on a disposable PG17 clone. [Evidence](../docs/briefs/063-private-r2-copy-inventory-contract.md).
 - 064 passes 24 focused exact-input/metadata/status/private-path/atomic-output/refusal cases and the
   root 90 files/797 tests/build. [Evidence](../docs/briefs/064-private-r2-manifest-preparation.md).
+- 065 passes exact snapshot/report/journal binding, atomic activation for six families/all accepted
+  assignment owners, replay and stale/orphan/partial/target/role refusal on a disposable PG17 clone.
+  [Evidence](../docs/briefs/065-private-r2-activation-reconciliation.md).
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next local package implements activation/refusal on an isolated DB. Ask the owner for EU
-  jurisdiction (recommended) or Automatic and R2 activation/bucket/token authority before provider
-  setup. Hosted/data steps remain separate approvals.
+- Next local package fixes the exact release candidate and DB/Edge/web/client order without push.
+  Ask the owner for EU jurisdiction (recommended) or Automatic and R2 activation/bucket/token
+  authority before provider setup. Hosted/data steps remain separate approvals.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
 - 064's build/coverage/temp output is removed; no VM/simulator/device/media output remains. About
   40.7 million KiB (~38.9 GiB) remains free. Cloudflare credentials must never enter chat or Git.

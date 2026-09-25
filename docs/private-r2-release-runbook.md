@@ -1,14 +1,15 @@
 # Private R2 release runbook
 
 Status: **PREPARED LOCALLY — NOT AUTHORIZED OR EXECUTED** on 23 September 2026.
-Owner: release operator designated by the product owner. This is the single 053–060 release index;
+Owner: release operator designated by the product owner. This is the single 053–065 release index;
 individual briefs remain the acceptance authority for each local implementation.
 
 ## Candidate and immutable boundaries
 
 - Candidate base: product commits `beb4842`, `9459732`, `dd21522`, `d7c960b`, `4049266`,
   `ce2b438`, `879d4ec`, `bfe994d`, release config `6acea76`, copy executor `e4a4c23`
-  and service-only inventory contract `a69a936` plus verified manifest preparation `792195b`.
+  and service-only inventory contract `a69a936`, verified manifest preparation `792195b` plus
+  atomic activation/reconciliation `53c258f`.
 - Supabase project must resolve to `hievmwwctjjlhmssoxsu` immediately before every approved hosted
   step. A Git remote, local `.env` or old CLI link is not target proof.
 - Supabase DB/Auth/Realtime/Edge and current web hosting remain. This runbook does not move them to
@@ -29,8 +30,8 @@ entire local backlog merely because local checks passed. A repository push, host
 function deployment, client flag and installed mobile build are separately evidenced actions.
 
 The [current execution queue](mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
-also identifies a local activation/reconciliation contract still to implement. Do not attempt
-stage 5 until that transaction, its refusal/rollback tests and a real copy journal are accepted.
+records [065](briefs/065-private-r2-activation-reconciliation.md) as locally accepted. Do not attempt
+stage 5 until the exact candidate is fixed and a real copy journal passes the same contract.
 
 ## Provider choice that still needs the owner
 
@@ -76,8 +77,10 @@ Forward, only after a fresh backup and demonstrated disposable restore:
 7. `20260923170000_private_r2_repertoire_comment_audio_059.sql`
 8. `20260923193000_private_r2_chat_media_060.sql`
 9. `20260923194500_private_r2_copy_inventory_063.sql`
+10. `20260925083611_private_r2_activation_065.sql`
 
-Reverse order starts with `063_private_r2_copy_inventory_down.sql`, then
+Reverse order starts with `065_private_r2_activation_down.sql`, then
+`063_private_r2_copy_inventory_down.sql`, then
 `060_private_r2_chat_media_down.sql`,
 `059_private_r2_repertoire_comment_audio_down.sql`,
 `058_private_r2_assignment_review_audio_down.sql`,
@@ -125,17 +128,18 @@ Each numbered stage needs the authority named in its heading and stops on any fa
    provider's current billing state, never secret values. Measure actual usage before claiming
    the owner's total monthly infrastructure target is met.
 2. **Hosted read authority:** resolve Supabase project; take a current backup; restore it to an
-   isolated target, rehearse 053–063 there and run all existing schema acceptance. Query the 063
+   isolated target, rehearse 053–063 plus dormant 065 there and run all existing schema acceptance. Query the 063
    inventory from that snapshot, then run 064's metadata-only preparation without a bulk mirror.
    Produce a measured cost estimate before any hosted schema write.
 3. **Hosted write authority:** set server secrets with modes `legacy` and enables `false`; apply the
-   ordered additive migrations through 063; deploy only the thirteen manifest functions. Probe disabled writes,
+   ordered additive migrations through 065; deploy only the thirteen manifest functions. Probe disabled writes,
    user/ticket refusals and current legacy reads. A failed function blocks every client flag.
 4. **Copy authority:** run a separately reviewed bounded copy executor. For every source slot record
    `choir_id`, family, source table/row/slot/version, legacy ID or recognized URL, destination bucket
    and object key, bytes, MIME, SHA-256, attempt/status and verification timestamp. Stream one file;
    never keep a local mirror. Missing, mismatched, unsupported and external URLs remain explicit.
-5. **Cutover authority:** freeze or reconcile relevant writes; activate verified mappings; switch one
+5. **Cutover authority:** freeze or reconcile relevant writes; invoke 065 only with the exact current
+   063 snapshot, matching 064 report and latest verified 062 journal; then switch one
    family to `mixed`, enable its server writer, deploy its client flag, and run authorized role/live
    UI acceptance. Reconcile before the next family. Chat and assignment are not canaries for each
    other because their authorization differs.
