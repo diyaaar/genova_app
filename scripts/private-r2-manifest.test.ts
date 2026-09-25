@@ -407,7 +407,8 @@ describe('064 private operator CLI and artifact publication', () => {
     const row = inventoryRow();
     const inventory = writeInventory(directory, [row]);
     const result = spawnSync(process.execPath, [
-      '--experimental-strip-types', '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
+      '--experimental-strip-types', '--disable-warning=ExperimentalWarning',
+      '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
       resolve('scripts/private-r2-manifest.ts'), 'prepare', '--inventory', inventory,
       '--project-ref', PROJECT, '--choir', CHOIR, '--bucket', BUCKET,
       '--manifest', join(directory, 'manifest.jsonl'), '--report', join(directory, 'report.json'),

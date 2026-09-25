@@ -1,4 +1,4 @@
-#!/usr/bin/env -S node --experimental-strip-types --disable-warning=MODULE_TYPELESS_PACKAGE_JSON
+#!/usr/bin/env -S node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON
 
 import { existsSync, openSync, closeSync, statSync } from 'node:fs';
 import { open, readFile } from 'node:fs/promises';

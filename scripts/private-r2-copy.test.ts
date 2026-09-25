@@ -428,7 +428,8 @@ describe('062 real HTTP transports and CLI boundary', () => {
     writeFileSync(manifest, `${JSON.stringify(entry())}\n`, { mode: 0o600 });
     chmodSync(manifest, 0o600);
     const validate = spawnSync(process.execPath, [
-      '--experimental-strip-types', '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
+      '--experimental-strip-types', '--disable-warning=ExperimentalWarning',
+      '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
       'scripts/private-r2-copy.ts', 'validate', '--manifest', manifest,
       '--project-ref', 'hievmwwctjjlhmssoxsu', '--bucket', 'genova-private',
     ], { cwd: process.cwd(), encoding: 'utf8' });
@@ -436,7 +437,8 @@ describe('062 real HTTP transports and CLI boundary', () => {
     expect(JSON.parse(validate.stdout)).toMatchObject({ status: 'valid', itemCount: 1, totalBytes: bytes.length });
 
     const execute = spawnSync(process.execPath, [
-      '--experimental-strip-types', '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
+      '--experimental-strip-types', '--disable-warning=ExperimentalWarning',
+      '--disable-warning=MODULE_TYPELESS_PACKAGE_JSON',
       'scripts/private-r2-copy.ts', 'execute', '--manifest', manifest, '--journal', journal,
       '--project-ref', 'hievmwwctjjlhmssoxsu', '--bucket', 'genova-private', '--max-items', '1',
       '--max-total-bytes', String(bytes.length), '--confirm-target',
