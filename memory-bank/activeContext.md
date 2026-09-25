@@ -12,9 +12,10 @@ Deliver the same production product Android-first: usable beta soon, then comple
 roadmap and both-store readiness/release. The beta is neither a disposable demo nor final success.
 065 is now locally accepted; the 053–060 release chain, deterministic inventory, verified manifest,
 bounded copy executor and atomic activation/refusal transaction are ready locally.
-The next ready local outcome is the exact release candidate/dependency preflight for the remote
-gap. Owner-authorized R2 choice/activation separately unlocks hosted backup, migration/functions,
-real inventory/copy and cutover.
+[WF-011's](../docs/briefs/WF-011-release-candidate-source-preflight.md) local preflight fixes the
+exact release candidate and dependency order. Owner-authorized candidate-branch CI/preview and R2
+choice/activation separately unlock hosted backup, migration/functions, real inventory/copy and
+cutover.
 
 ## Latest owner choices
 
@@ -34,10 +35,10 @@ real inventory/copy and cutover.
 
 - [WF-010 local health report](../docs/reports/2026-09-25-proje-saglik-kontrolu.md): web and
   mobile gates pass; browser E2E lacks Chromium; live/device/release remain unverified.
-- Last accepted product/schema/test `53c258f`/065. Verify actual HEAD; no unfinished product changes.
-- On 25 Sep GitHub `main` was `a13f696`, 173 commits behind local `53c258f`; live hosting
-  revision remains unverified. Follow the [controlled queue](../docs/mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
-  and runbook source preflight before any push or deploy.
+- Last accepted product/schema/test is `53c258f`/065; immutable source candidate is `12a236f`.
+- On 25 Sep GitHub `main` and Vercel Ready production were both `a13f696`, 174 commits / 544 files
+  behind the candidate. Exact-candidate remote CI is NOT RUN. Follow [WF-011](../docs/briefs/WF-011-release-candidate-source-preflight.md)
+  and the controlled queue before any push or deploy.
 - 062 passes 38 focused manifest/stream/resume/refusal/batch cases and root 89 files/773 tests/build.
   Detailed evidence: [062](../docs/briefs/062-bounded-private-r2-copy-executor.md).
 - 063 passes the six-family inventory/status/order/identity/privilege matrix and exact down/reapply
@@ -50,9 +51,10 @@ real inventory/copy and cutover.
 - [052](../docs/briefs/052-drive-exit-inventory.md) source inventory accepted; no files migrated.
   It maps uploads/reads/history/private audio/chat avatars/caches and three critical traps:
   Drive-folder catalogue filter, public-link creation, destructive replacement before history.
-- Next local package fixes the exact release candidate and DB/Edge/web/client order without push.
-  Ask the owner for EU jurisdiction (recommended) or Automatic and R2 activation/bucket/token
-  authority before provider setup. Hosted/data steps remain separate approvals.
+- Local source preflight is complete. Ask the owner for EU jurisdiction (recommended) or Automatic,
+  candidate-branch/preview authority and R2 activation/bucket/token authority before external setup.
+  Hosted/data steps remain separate approvals. Resolve `chori` versus signed-in `choir` Gmail spelling
+  before any account/email action.
 - User-owned `supabase/.temp/cli-latest` stays unstaged.
 - 064's build/coverage/temp output is removed; no VM/simulator/device/media output remains. About
   40.7 million KiB (~38.9 GiB) remains free. Cloudflare credentials must never enter chat or Git.

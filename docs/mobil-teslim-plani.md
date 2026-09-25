@@ -27,14 +27,16 @@ do not manufacture a date or add unrelated features while awaiting a critical de
 ### Controlled execution queue — 24 September 2026
 
 [WF-009](briefs/WF-009-controlled-delivery-execution-queue.md) reconciles this queue with the
-current checkout. The read-only GitHub `main` check returned `a13f696` while local `main` was
-`2c54cd8`, 170 commits ahead across 536 changed files. The live web revision was not measured.
-A local green gate is therefore not a deployed build. Push may deploy; review the exact candidate,
-CI and DB/Edge/web order before any promotion. Do not bulk-push merely to close the count.
+current checkout. On 25 September [WF-011](briefs/WF-011-release-candidate-source-preflight.md)
+fixed local candidate `12a236f` (product payload `53c258f`). Direct GitHub and signed-in Vercel
+inspection put both `origin/main` and current Ready production at `a13f696`: 174 linear commits
+and 544 changed files behind the candidate. Exact-candidate remote CI remains NOT RUN. Push may
+deploy; use the recorded candidate-branch → DB/Edge → exact `main`/Vercel order rather than a
+direct bulk push.
 
 | Gate | Required result and evidence | Current action / authority |
 |---|---|---|
-| 1. Release source | Identify the exact deployable candidate from the 170-commit gap; compare web, mobile, migrations and Edge dependencies; prove CI and the live host's current revision; stage backend before client. | Local read-only preflight is ready. Push/deploy remain separate release actions. Recheck remote before acting. |
+| 1. Release source | **LOCAL PREFLIGHT COMPLETE:** [WF-011](briefs/WF-011-release-candidate-source-preflight.md) fixes `12a236f`, proves GitHub/Vercel base `a13f696`, classifies the 544-file gap and records candidate-branch CI → DB → dormant Edge → web/main → copy/activation → mobile order. | Exact-candidate remote CI, candidate-branch push/preview and every hosted/deploy step remain NOT RUN and separately authorized. Recheck remote/live before acting. |
 | 2. Finish local Drive-exit mechanics | **COMPLETE locally at `53c258f`:** [065](briefs/065-private-r2-activation-reconciliation.md) binds the current 063 snapshot, 064 report and latest verified 062 journal; stale, conflicting, orphaned, partial and changed-replay requests refuse atomically. | Disposable PG17 acceptance only. No Cloudflare, hosted row, real object or cutover evidence. |
 | 3. Provision private storage | Verify the owner's Cloudflare account, choose EU jurisdiction or Automatic, inspect actual R2/billing state, then provision one private Standard bucket and a bucket-scoped Object Read & Write token. Measure existing bytes/operations and total hosting cost against the <=$5/month preference. | Region/activation/spending and credentials need the owner's explicit authority; no assumption that a free allowance equals a $0 or <=$5 total bill. [Runbook](private-r2-release-runbook.md). |
 | 4. Rehearse and deploy backend | Fresh hosted backup plus demonstrated isolated restore; apply 053–063 and dormant 065 in the verified order; export and reconcile real 063 inventory; set secrets with legacy/disabled flags; deploy exact Edge functions and prove disabled/legacy/denied paths. | Hosted reads, writes, secrets and deployment are distinct approved stages. Both web and mobile compatibility remain required. |

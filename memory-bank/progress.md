@@ -4,8 +4,9 @@
 records Android-first beta -> full product/two-store delivery, retained Supabase/private R2 target,
 $5/month preference and five free choir seats. 065 is accepted locally at `53c258f`: 063's
 six-family inventory, 064 report and 062 verified copy journal now bind to an atomic activation/
-reconciliation transaction. Next local work fixes the exact release candidate/dependency order;
-R2 jurisdiction and activation authority separately unlock hosted inventory/copy/cutover stages.
+reconciliation transaction. WF-011 fixes source candidate `12a236f`, proves GitHub/Vercel baseline
+`a13f696` and records the release dependency order; exact-candidate remote CI/provider/hosted work
+remain gated. R2 jurisdiction and activation authority unlock hosted inventory/copy/cutover stages.
 No hosted provider/DB change, real file migration or deployment occurred. Follow the current priority; older checkpoints below
 are historical and do not override current source or brief evidence.
 
@@ -38,6 +39,7 @@ buraya taşımak testin veya canlı ortam kontrolünün yeniden yapıldığı an
 | 063 private R2 copy inventory | Local control-plane inventory accepted | [063](../docs/briefs/063-private-r2-copy-inventory-contract.md), product/schema/test `a69a936`; deterministic service-only rows cover all six families and explicit gaps/private/conflict states with exact valid destination identities. Real hosted rows, Google metadata, manifest/copy/activation and device remain NOT RUN. |
 | 064 verified private R2 manifest preparation | Local metadata control-plane accepted | [064](../docs/briefs/064-private-r2-manifest-preparation.md), source/test `792195b`; exact private 063 snapshot approval, sequential metadata reconciliation, all six 062 families, complete excluded-row report and atomic private outputs pass 24 focused cases plus root 90 files/797 tests/build. Real inventory/Google/R2/copy/activation/device remain NOT RUN. |
 | 065 atomic private R2 activation | Local activation/reconciliation accepted | [065](../docs/briefs/065-private-r2-activation-reconciliation.md), product/schema/test `53c258f`; exact current snapshot/report/latest verified journal activates all six families atomically, with replay and stale/orphan/partial/target/role refusal plus exact down/reapply. Hosted schema/data, real R2/Google copy/cutover and device remain NOT RUN. |
+| WF-011 release candidate/source preflight | Local preflight accepted | [WF-011](../docs/briefs/WF-011-release-candidate-source-preflight.md): immutable source `12a236f`, product payload `53c258f`, GitHub/Vercel base `a13f696`, 174 commits/544 files, staged DB → Edge → web/mobile order. Remote CI and all external changes remain NOT RUN. |
 | AI çalışma düzeni | Yerel kurulum/doğrulama tamamlandı | [WF-001](../docs/briefs/WF-001-ai-calisma-duzeni.md); 114 test geçti, ürün değişikliği yok |
 | Geçiş ajanı yönlendirmesi | Yerel belge/doğrulama tamamlandı, ürün başlangıcında kullanıldı | [WF-002](../docs/briefs/WF-002-gecis-rehberi.md); 44 yerel bağlantı ve `pnpm check` geçti |
 | Çok korolu ürün / RN ürün / mağazalar | 008 ve 012 tamamlandı; 010 6/7 açık, 004 25/27 ve iki cihaz ölçütü ertelendi. Yerel repertuvar/PDF paketleri 8 Eylül'de başlatıldı | [MIGRATION](../MIGRATION.md), [mobil teslim planı](../docs/mobil-teslim-plani.md), [handoff](../docs/agent-handoff.md) |
@@ -99,6 +101,6 @@ belirti → neden/kanıt → düzeltme → regresyon testi → kalan risk.
 [Current handoff](../docs/agent-handoff.md) and [active context](activeContext.md) carry only
 the current checkpoint. Historical acceptance stays in the table's linked briefs.
 WF-006 owns the original long-term plan; [WF-007](../docs/briefs/WF-007-bounded-execution-and-disk-budget.md)
-owns the revised execution controls and verified cleanup. 065 is locally accepted; no provider,
-hosted data or beta milestone advanced. Next local work is the release candidate/dependency
-preflight; the owner's R2 jurisdiction/activation decision separately gates provider setup.
+owns the revised execution controls and verified cleanup. 065 and WF-011 are locally accepted; no
+provider, hosted data or beta milestone advanced. The owner's candidate-branch/preview and R2
+jurisdiction/activation decisions separately gate the next external steps.

@@ -19,15 +19,16 @@ individual briefs remain the acceptance authority for each local implementation.
 - `R2_TEST_ENDPOINT` — forbidden in every hosted environment.
 - `R2_ALLOW_INSECURE_LOOPBACK` — forbidden in every hosted environment.
 
-## Source-control and deployment preflight — 24 September 2026
+## Source-control and deployment preflight — 25 September 2026
 
-The read-only GitHub `main` check returned `a13f696` while local `main` was `2c54cd8`, 170
-commits ahead. The live host's current revision has not been verified. Before stage 3, recheck
-remote and live-host revisions, review the candidate's full web/mobile/Edge/schema dependency
-diff and run the gates for that exact candidate. Record the intended DB → Edge → web/client
-promotion and old-client compatibility order. A push can trigger web deployment; do not push the
-entire local backlog merely because local checks passed. A repository push, hosted migration,
-function deployment, client flag and installed mobile build are separately evidenced actions.
+[WF-011](briefs/WF-011-release-candidate-source-preflight.md) fixes the local candidate at
+`12a236f` (product/schema/test payload `53c258f`). Direct GitHub and signed-in Vercel inspection
+both put remote `main` and current Ready production at `a13f696`; the candidate is 174 linear
+commits ahead across 544 changed files. The full DB → Edge → web/mobile order, fail-closed flags
+and candidate-branch-before-`main` requirement are recorded there. Exact-candidate remote CI is
+still NOT RUN because the candidate has not been pushed. A repository push, preview/production
+deployment, hosted migration, function deployment, client flag and installed mobile build remain
+separately authorized and evidenced actions.
 
 The [current execution queue](mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
 records [065](briefs/065-private-r2-activation-reconciliation.md) as locally accepted. Do not attempt

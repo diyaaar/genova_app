@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Updated 25 September 2026 after [WF-010](briefs/WF-010-project-health-check.md); [WF-009](briefs/WF-009-controlled-delivery-execution-queue.md) owns the queue.
+Updated 25 September 2026 after [WF-011](briefs/WF-011-release-candidate-source-preflight.md); [WF-009](briefs/WF-009-controlled-delivery-execution-queue.md) owns the queue.
 This is the current entry point; dated acceptance remains in individual briefs.
 
 ## Read and verify
@@ -27,8 +27,10 @@ This is the current entry point; dated acceptance remains in individual briefs.
   manifest/report publication and all failure/path/cap gates; no real inventory or provider ran.
 - 065 locally binds the exact current snapshot/report/latest verified journal, atomically activates
   all six families and refuses stale/orphan/partial/conflicting requests; no hosted row changed.
-- GitHub `main` was confirmed at `a13f696` on 25 Sep; local `53c258f` is 173 commits ahead; the live
-  host is unverified. Next local package: exact candidate/dependency preflight; R2 remains gated.
+- [WF-011](briefs/WF-011-release-candidate-source-preflight.md) fixes candidate `12a236f`
+  (product/schema/test `53c258f`). GitHub `main` and Vercel Ready production were both confirmed at
+  `a13f696`; the 174-commit/544-file gap and DB → Edge → web/mobile order are recorded. Candidate
+  remote CI, push/preview, provider and hosted work remain gated.
 
 ## Delivery decisions
 
@@ -78,3 +80,5 @@ hardware and distribution retain applicable approval boundaries. Prepare concret
 asking for the exact missing choice/authority. Historical account/token risks remain unresolved.
 Do not mark the full goal complete at beta, planning or local-test acceptance.
 The [revised objective](mobil-teslim-plani.md#revised-goal-text) is canonical; WF-008 records its receipt.
+The latest request typed `genesinova.chori@gmail.com`, while the signed-in Gmail/profile and
+repository record show `genesinova.choir@gmail.com`; resolve the identity before account/email work.
