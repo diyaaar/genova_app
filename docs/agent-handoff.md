@@ -1,6 +1,6 @@
 # Genova — agent handoff
 
-Updated 24 September 2026 under [WF-009](briefs/WF-009-controlled-delivery-execution-queue.md).
+Updated 25 September 2026 after [WF-010](briefs/WF-010-project-health-check.md); [WF-009](briefs/WF-009-controlled-delivery-execution-queue.md) owns the queue.
 This is the current entry point; dated acceptance remains in individual briefs.
 
 ## Read and verify
@@ -45,6 +45,8 @@ This is the current entry point; dated acceptance remains in individual briefs.
 
 ## Acceptance and resources
 
+- 25 Sep [health check](reports/2026-09-25-proje-saglik-kontrolu.md): root 90/797 and mobile
+  49/288 passed locally; E2E UI could not launch without Chromium. No live/device acceptance.
 - 018–051 have dated local evidence; 033/C1 is locally accepted, including owner password restore.
   Their boundaries are in their briefs, not inferred hosted/runtime acceptance.
 - 004 remains 25/27 with hardware postponed; 010 remains 6/7 with two live-product refusals open.

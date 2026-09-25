@@ -1,6 +1,6 @@
 # Active context
 
-Updated 24 September 2026. [WF-009](../docs/briefs/WF-009-controlled-delivery-execution-queue.md)
+Updated 25 September 2026. [WF-009](../docs/briefs/WF-009-controlled-delivery-execution-queue.md)
 reconciles the execution queue after [WF-008's](../docs/briefs/WF-008-android-first-delivery-reset.md)
 owner-approved reset; the [delivery plan](../docs/mobil-teslim-plani.md)
 owns priorities, the objective and resource/test controls. [Handoff](../docs/agent-handoff.md)
@@ -32,6 +32,8 @@ the separately gated hosted backup, migration/functions, real copy and cutover s
 
 ## Exact work checkpoint
 
+- [WF-010 local health report](../docs/reports/2026-09-25-proje-saglik-kontrolu.md): web and
+  mobile gates pass; browser E2E lacks Chromium; live/device/release remain unverified.
 - Last accepted product/schema/test `792195b`/064. Verify actual HEAD; no unfinished product changes.
 - On 24 Sep GitHub `main` was `a13f696`, 170 commits behind local `2c54cd8`; live hosting
   revision remains unverified. Follow the [controlled queue](../docs/mobil-teslim-plani.md#controlled-execution-queue--24-september-2026)
