@@ -18,9 +18,11 @@ jobs:
           fetch-depth: 0
 
       - name: Set up SSH key for upstream access
+        env:
+          UPSTREAM_KEY: ${{ secrets.UPSTREAM_SYNC_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${ secrets.UPSTREAM_SYNC_KEY }" > ~/.ssh/upstream_key
+          echo "$UPSTREAM_KEY" > ~/.ssh/upstream_key
           chmod 600 ~/.ssh/upstream_key
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
